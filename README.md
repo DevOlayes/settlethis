@@ -1,13 +1,20 @@
 # Settle This! (SETHIS)
 
-Initial deployment scaffold for the Settle This! web experience and Telegram Mini App.
+Settle This! is a football entertainment platform built around structured debates ("Courts"), opposing arguments, community verdicts, and competitive participation.
+
+## Phase One
+
+The first release focuses on the complete core journey: discover a Court, enter a side, argue and engage, receive a verdict, and review outcomes and rewards. It includes Courts, My Courts, Tasks, Rankings, Wallet, profiles, notifications, moderation basics, and a server-backed CT/SETHIS ledger.
+
+The full scope, acceptance checklist, delivery sequence, and deferred features are documented in **[Phase One Delivery Plan](docs/PHASE_ONE.md)**.
 
 ## Stack
 
-- React + TypeScript
-- Vite
-- Cloudflare Workers with static assets
-- Cloudflare D1 will be added when the database is provisioned
+- React + TypeScript + Vite
+- Cloudflare Workers for backend services and web delivery
+- Cloudflare D1 for persistent application data
+- Cloudflare R2 for media storage when required
+- Telegram Mini App integration plus a browser-accessible web app
 
 ## Local development
 
@@ -41,4 +48,4 @@ For Workers Builds, connect this repository and configure:
 - Deploy command: `npx wrangler deploy`
 - Root directory: repository root
 
-No secrets or database resources are required for this initial static deployment.
+Database and other Cloudflare resources must be provisioned and configured before their related features can work in production.
