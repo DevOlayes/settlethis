@@ -4,7 +4,7 @@ type Tab = "Courts" | "My Courts" | "Tasks" | "Rankings" | "Wallet";
 const crest = (id: number) => `https://media.api-sports.io/football/teams/${id}.png`;
 function Brand() { return <a className="brand" href="#" aria-label="Settle This home"><span className="brand-mark">ST<span>!</span></span><span className="brand-name">SETTLE<span>THIS</span><i>!</i></span></a>; }
 function Team({ id, name }: { id: number; name: string }) { return <span className="team"><span className="crest"><img src={crest(id)} alt="" /></span><b>{name}</b></span>; }
-function App() {
+function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser | null }) {
   const [tab, setTab] = useState<Tab>("Courts");
     const [walletOpen, setWalletOpen] = useState(false);
   const [courtOpen, setCourtOpen] = useState(false);
@@ -27,7 +27,7 @@ function App() {
       {searchOpen && <input className="search-input" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search Courts, clubs..." autoFocus />}
       <button className="icon-button" aria-label="Search" onClick={() => { setSearchOpen(v => !v); setSearch(""); }}>⌕</button>
       <button className="balance-pill" onClick={() => setWalletOpen(true)}><span className="ct-gem">◆</span><b>3,500</b><small>CT</small><span className="plus">＋</span></button>
-      <button className="profile-dot" onClick={() => showNotice("Your football profile is coming together.")}>G</button>
+      <button className="profile-dot" title={telegramUser ? (telegramUser.username ? `@${telegramUser.username}` : telegramUser.first_name) : "Guest"} onClick={() => showNotice(telegramUser ? `Signed in as ${telegramUser.first_name}.` : "Your football profile is coming together.")}>{telegramUser?.first_name?.slice(0, 1).toUpperCase() || "G"}</button>
     </div></header>
     <main className="main-content">
       {tab === "Courts" && <>
