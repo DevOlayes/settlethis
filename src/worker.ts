@@ -3,7 +3,7 @@ interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: { pr
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
 const encoder=new TextEncoder();
 const hex=(bytes:ArrayBuffer)=>Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,"0")).join("");
-async function hmac(keyBytes:Uint8Array,message:string):Promise<ArrayBuffer>{const key=await crypto.subtle.importKey("raw",keyBytes,{name:"HMAC",hash:"SHA-256"},false,["sign"]);return crypto.subtle.sign("HMAC",key,encoder.encode(message));}
+async function hmac(keyBytes:Uint8Array<ArrayBuffer>,message:string):Promise<ArrayBuffer>{const key=await crypto.subtle.importKey("raw",keyBytes,{name:"HMAC",hash:"SHA-256"},false,["sign"]);return crypto.subtle.sign("HMAC",key,encoder.encode(message));}
 function safeEqual(a:string,b:string){if(a.length!==b.length)return false;let diff=0;for(let i=0;i<a.length;i++)diff|=a.charCodeAt(i)^b.charCodeAt(i);return diff===0;}
 async function verify(initData:string,token:string):Promise<Record<string,unknown>|null>{
  if(!initData||initData.length>8192)return null;
