@@ -3,6 +3,13 @@
   "name": "settlethis",
   "main": "src/worker.ts",
   "compatibility_date": "2026-11-14",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sethis-production",
+      "database_id": "23504232-c4ea-464d-8ed0-a9aef4cad02f"
+    }
+  ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"
