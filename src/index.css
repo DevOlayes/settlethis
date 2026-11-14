@@ -74,3 +74,29 @@
 .entry-preview span{font-size:7px;line-height:1.4;max-width:75%}
 .entry-preview b{font:800 22px 'Barlow Condensed';color:var(--cyan)}
 @media(max-width:370px){.main-content{padding:0 10px}.featured-content{padding:11px}.featured-content h3{font-size:21px}.entry-callout{padding:7px 8px}.onboarding-art{height:130px}}
+
+
+/* Refined mobile Court entry + reward hierarchy and quiz feature */
+.entry-callout{grid-template-columns:minmax(0,1fr) auto;gap:5px 10px;padding:9px 10px}
+.entry-callout>div:first-child{display:flex;flex-direction:column;gap:3px}
+.entry-callout>div:first-child span,.reward-line>span{font-size:7px;font-weight:900;letter-spacing:.12em;color:#c2dbe4}
+.entry-callout>div:first-child small{font-size:8px;color:#aebfcb}
+.entry-callout>b{font-size:25px;color:var(--cyan)}
+.entry-callout .reward-line{grid-column:1/-1;display:flex;flex-direction:column;gap:3px;padding-top:7px;margin-top:3px;border-top:1px solid #ffffff1c}
+.entry-callout .reward-line small{font-size:8px;line-height:1.45;color:#f5d58e}
+.entry-preview{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:11px 0}
+.entry-preview>div{display:flex;flex-direction:column;gap:3px}
+.entry-preview>div>span{font-size:7px;letter-spacing:.1em;color:#bfd0da;font-weight:900}
+.entry-preview>div>b{font:800 22px 'Barlow Condensed';color:var(--cyan)}
+.entry-preview .modal-reward{flex:1;text-align:right}
+.entry-preview .modal-reward>b{color:var(--gold)}
+.entry-preview .modal-reward>small{font-size:7px;line-height:1.4;color:#c4d0d9}
+.quiz-promo-button{min-height:112px;overflow:hidden;background:radial-gradient(ellipse at 8% 50%,#675027 0,#30291e 34%,#17283b 78%);border-color:#806333;box-shadow:0 10px 26px #0003}
+.quiz-art{width:76px;height:76px;flex:0 0 76px;position:relative;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#1b5365,#10283a);border:1px solid #48a0ad;box-shadow:inset 0 0 22px #27d7f222}
+.quiz-ball{font-size:42px;filter:drop-shadow(0 5px 6px #0008);transform:rotate(-12deg)}
+.quiz-art-mark{position:absolute;right:4px;top:3px;width:23px;height:23px;display:grid;place-items:center;border-radius:50%;background:var(--gold);color:#1a1c20;font:900 16px 'Barlow Condensed';border:2px solid #fce7b8}
+.quiz-promo-button h3{font:800 20px/1.05 'Barlow Condensed';margin:4px 0 5px}
+.quiz-promo-button p{font-size:8px;line-height:1.45;color:#e1e7eb;margin:0 0 8px}
+.quiz-promo-button .quiz-meta span:last-child{color:var(--cyan)}
+.quiz-chevron{align-self:center;background:#f5b942;color:#142235;width:25px;height:25px;display:grid;place-items:center;border-radius:7px;font-size:15px;font-weight:900}
+@media(max-width:380px){.quiz-art{width:62px;height:68px;flex-basis:62px}.quiz-ball{font-size:34px}.quiz-promo-button h3{font-size:18px}.entry-callout .reward-line small{font-size:7px}}
