@@ -1,4 +1,5 @@
-interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }\ninterface D1Database { prepare(query: string): D1Statement; batch(statements: D1Statement[]): Promise<unknown[]>; }
+interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }
+interface D1Database { prepare(query: string): D1Statement; batch(statements: D1Statement[]): Promise<unknown[]>; }
 interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: D1Database; TELEGRAM_BOT_TOKEN?: string; }
 type TelegramIdentity = { id: number; first_name: string; [key: string]: unknown };
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
@@ -11,7 +12,8 @@ async function verify(initData:string,token:string):Promise<TelegramIdentity|nul
  const p=new URLSearchParams(initData),hash=p.get("hash"),authDate=Number(p.get("auth_date")),raw=p.get("user");
  if(!hash||! /^[a-f0-9]{64}$/i.test(hash)||!Number.isFinite(authDate)||!raw)return null;
  const now=Math.floor(Date.now()/1000);if(authDate>now+60||now-authDate>86400)return null;
- const check=[...p.entries()].filter(([k])=>k!=="hash").sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>k+"="+v).join("\n");
+ const check=[...p.entries()].filter(([k])=>k!=="hash").sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>k+"="+v).join("
+");
  const secret=await hmac(encoder.encode("WebAppData"),token),actual=hex(await hmac(new Uint8Array(secret),check));
  if(!safeEqual(actual,hash.toLowerCase()))return null;
  try{const u=JSON.parse(raw) as TelegramIdentity;return Number.isSafeInteger(u.id)&&typeof u.first_name==="string"&&u.first_name.trim()?u:null;}catch{return null;}
