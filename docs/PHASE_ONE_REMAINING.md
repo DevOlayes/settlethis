@@ -17,6 +17,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Audit Pool Court losing-side outcome and duplicate settlement protection end-to-end.
 - [ ] Audit cancellation/refunds and reserve release consistency.
 - [x] Added Node built-in unit tests for proportional Pool Court allocation, deterministic remainder distribution, zero-value outcomes and invalid input; the four allocation tests pass under Node 22.16.
+- [x] Validated the revised Regular/Pool settlement SQL statements against production D1 using read-only EXPLAIN queries; no production rows were changed.
 - [ ] Add D1-backed automated tests for critical Court and settlement transactions, including concurrent/duplicate requests.
 
 ## Wallet and reward integrity
