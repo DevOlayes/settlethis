@@ -51,8 +51,11 @@ function createEnvironment() {
   };
   return {
     DB,
+    testDb: sqlite,
     TELEGRAM_BOT_TOKEN: botToken,
     TELEGRAM_BOT_USERNAME: "SettleThisTestBot",
+    MONETAG_POSTBACK_SECRET: "integration-only-postback-secret",
+    MONETAG_ZONE_ID: "12269852",
     ASSETS: { fetch: async () => new Response("asset") }
   };
 }
@@ -352,4 +355,119 @@ test("Telegram accounts persist independently through onboarding, profile, check
     target_type: "argument", target_id: argumentId, reason: "Hidden content", details: "A hidden argument should no longer accept a new report."
   });
   assert.equal(hiddenReport.response.status, 404);
+});
+
+
+async function monetagPostback(env, fields, secret = env.MONETAG_POSTBACK_SECRET) {
+  const query = new URLSearchParams({ ...fields, secret });
+  const response = await worker.fetch(new Request("https://settlethis.test/api/ads/monetag/postback?" + query.toString()), env);
+  return { response, data: await response.json() };
+}
+
+test("Monetag postbacks enforce secret, valued-event, user, placement, shared cooldown, daily cap and exactly-once wallet notifications", async () => {
+  const env = createEnvironment();
+  const user = { id: 710001, first_name: "AdTest", username: "ad_test_member" };
+  const initData = signedInitData(user);
+  const signIn = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ initData })
+  }), env);
+  assert.equal(signIn.status, 200);
+
+  const status = await api(env, "/api/ads/status", initData);
+  assert.equal(status.response.status, 200);
+  assert.equal(status.data.configured, true);
+  assert.equal(status.data.daily_limit, 30);
+  assert.equal(status.data.home_ct_reward, 100);
+  assert.equal(status.data.tasks_sethis_reward, 150);
+
+  const payload = {
+    ymid: "integration-home-event-1",
+    reward_event_type: "valued",
+    telegram_id: String(user.id),
+    zone_id: "12269852",
+    request_var: "home_ct"
+  };
+  const noSecret = await monetagPostback(env, payload, "wrong-secret");
+  assert.equal(noSecret.response.status, 401);
+  assert.equal(noSecret.data.accepted, undefined);
+
+  const nonValued = await monetagPostback(env, { ...payload, ymid: "integration-non-valued", reward_event_type: "non_valued" });
+  assert.equal(nonValued.response.status, 200);
+  assert.equal(nonValued.data.accepted, false);
+
+  const wrongZone = await monetagPostback(env, { ...payload, ymid: "integration-wrong-zone", zone_id: "999999" });
+  assert.equal(wrongZone.data.accepted, false);
+  const wrongPlacement = await monetagPostback(env, { ...payload, ymid: "integration-wrong-placement", request_var: "other" });
+  assert.equal(wrongPlacement.data.accepted, false);
+  const unknownUser = await monetagPostback(env, { ...payload, ymid: "integration-unknown-user", telegram_id: "710099" });
+  assert.equal(unknownUser.data.accepted, false);
+
+  const creditedHome = await monetagPostback(env, payload);
+  assert.equal(creditedHome.response.status, 200);
+  assert.deepEqual(creditedHome.data.reward, { token: "CT", amount: 100 });
+  const duplicateHome = await monetagPostback(env, payload);
+  assert.equal(duplicateHome.data.accepted, true);
+  assert.equal(duplicateHome.data.duplicate, true);
+
+  const blockedTasksDuringSharedCooldown = await monetagPostback(env, {
+    ...payload,
+    ymid: "integration-tasks-during-cooldown",
+    request_var: "tasks_sethis"
+  });
+  assert.equal(blockedTasksDuringSharedCooldown.data.accepted, false);
+
+  const walletAfterHome = await api(env, "/api/wallet", initData);
+  assert.equal(walletAfterHome.data.wallet.ct_balance, 100);
+  assert.equal(walletAfterHome.data.wallet.sethis_balance, 0);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM wallet_ledger WHERE user_id=? AND transaction_type='ad_reward'").get(String(user.id)).n), 1);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM notifications WHERE user_id=? AND event_key='monetag:integration-home-event-1'").get(String(user.id)).n), 1);
+
+  env.testDb.prepare("UPDATE ad_reward_events SET created_at=datetime('now','-21 minutes') WHERE provider_event_id=?").run("integration-home-event-1");
+  for (let index = 0; index < 29; index++) {
+    env.testDb.prepare("INSERT INTO ad_reward_events(id,provider,provider_event_id,telegram_user_id,placement,reward_token,reward_amount,event_type,zone_id,created_at) VALUES(?,?,?,?,?,?,?,?,?,datetime('now','-21 minutes'))")
+      .run("seed-ad-" + index, "monetag", "seed-ad-event-" + index, String(user.id), "home_ct", "CT", 100, "valued", "12269852");
+  }
+  const statusAt29 = await api(env, "/api/ads/status", initData);
+  assert.equal(statusAt29.data.ads_today, 30); // one real credit plus 29 seeded records
+  assert.equal(statusAt29.data.remaining_today, 0);
+
+  // Use a fresh member for an exact 29 -> 30 -> 31 daily-cap boundary.
+  const capUser = { id: 710002, first_name: "CapTest", username: "cap_test_member" };
+  const capInit = signedInitData(capUser);
+  const capSignIn = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ initData: capInit })
+  }), env);
+  assert.equal(capSignIn.status, 200);
+  for (let index = 0; index < 29; index++) {
+    env.testDb.prepare("INSERT INTO ad_reward_events(id,provider,provider_event_id,telegram_user_id,placement,reward_token,reward_amount,event_type,zone_id,created_at) VALUES(?,?,?,?,?,?,?,?,?,datetime('now','-21 minutes'))")
+      .run("cap-seed-" + index, "monetag", "cap-seed-event-" + index, String(capUser.id), "home_ct", "CT", 100, "valued", "12269852");
+  }
+  const thirtieth = await monetagPostback(env, {
+    ymid: "cap-thirtieth-event",
+    reward_event_type: "valued",
+    telegram_id: String(capUser.id),
+    zone_id: "12269852",
+    request_var: "tasks_sethis"
+  });
+  assert.equal(thirtieth.data.accepted, true);
+  assert.deepEqual(thirtieth.data.reward, { token: "SETHIS", amount: 150 });
+  env.testDb.prepare("UPDATE ad_reward_events SET created_at=datetime('now','-21 minutes') WHERE provider_event_id=?").run("cap-thirtieth-event");
+  const thirtyFirst = await monetagPostback(env, {
+    ymid: "cap-thirty-first-event",
+    reward_event_type: "valued",
+    telegram_id: String(capUser.id),
+    zone_id: "12269852",
+    request_var: "home_ct"
+  });
+  assert.equal(thirtyFirst.data.accepted, false);
+  assert.match(thirtyFirst.data.reason, /limit|Cooldown/i);
+  const capWallet = await api(env, "/api/wallet", capInit);
+  assert.equal(capWallet.data.wallet.sethis_balance, 150);
+  assert.equal(capWallet.data.wallet.ct_balance, 0);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM ad_reward_events WHERE telegram_user_id=?").get(String(capUser.id)).n), 30);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM notifications WHERE user_id=? AND type='wallet_credit'").get(String(capUser.id)).n), 1);
 });
