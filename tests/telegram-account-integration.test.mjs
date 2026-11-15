@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { createHmac } from "node:crypto";
+import { createHash, createHmac } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -83,6 +83,15 @@ async function api(env, path, initData, method = "GET", body) {
     method,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body)
+  }), env);
+  return { response, data: await response.json() };
+}
+
+async function adminApi(env, path, token, method = "GET", body) {
+  const headers = { cookie: "st_admin=" + token, origin: "https://settlethis.test" };
+  if (body !== undefined) headers["content-type"] = "application/json";
+  const response = await worker.fetch(new Request("https://settlethis.test" + path, {
+    method, headers, body: body === undefined ? undefined : JSON.stringify(body)
   }), env);
   return { response, data: await response.json() };
 }
@@ -368,6 +377,9 @@ test("Telegram accounts persist independently through onboarding, profile, check
   env.DB.prepare("INSERT INTO admin_users (id,email,password_salt,password_hash,password_iterations) VALUES (1,?,?,?,?)")
     .bind("admin@settlethis.test", "0123456789abcdef0123456789abcdef", "test-hash", 100000)
     .run();
+  const adminToken = "a".repeat(64);
+  const adminTokenHash = createHash("sha256").update(adminToken).digest("hex");
+  env.testDb.prepare("INSERT INTO admin_sessions (token_hash,admin_id,expires_at) VALUES (?,1,datetime('now','+10 minutes'))").run(adminTokenHash);
   env.DB.prepare("INSERT INTO user_restrictions (user_id,status,reason,updated_by) VALUES (?,?,?,?)")
     .bind(String(secondUser.id), "restricted", "Repeated abusive posting in this integration test.", 1)
     .run();
@@ -393,6 +405,32 @@ test("Telegram accounts persist independently through onboarding, profile, check
     target_type: "argument", target_id: argumentId, reason: "Hidden content", details: "A hidden argument should no longer accept a new report."
   });
   assert.equal(hiddenReport.response.status, 404);
+
+  const contentModerated = await adminApi(env, "/api/admin/moderation/" + report.data.report_id + "/content", adminToken, "POST", { action: "hidden" });
+  assert.equal(contentModerated.response.status, 200);
+  assert.equal(env.testDb.prepare("SELECT status FROM moderation_reports WHERE id=?").get(report.data.report_id).status, "actioned");
+  const reopenedContentReport = await adminApi(env, "/api/admin/moderation/" + report.data.report_id + "/review", adminToken, "POST", { status: "dismissed", note: "This report must remain closed." });
+  assert.equal(reopenedContentReport.response.status, 409);
+  const restoredContent = await adminApi(env, "/api/admin/moderation/" + report.data.report_id + "/content", adminToken, "POST", { action: "visible" });
+  assert.equal(restoredContent.response.status, 200);
+  assert.equal(env.testDb.prepare("SELECT moderation_status FROM court_arguments WHERE id=?").get(argumentId).moderation_status, "visible");
+
+  const userReport = await api(env, "/api/reports", firstInit, "POST", {
+    target_type: "user", target_id: String(secondUser.id), reason: "Abusive conduct", details: "A report against this member for moderator review."
+  });
+  assert.equal(userReport.response.status, 201);
+  const suspendedMember = await adminApi(env, "/api/admin/users/" + secondUser.id + "/restriction", adminToken, "POST", {
+    status: "suspended", reason: "Repeated abusive conduct reviewed by an administrator.", report_id: userReport.data.report_id
+  });
+  assert.equal(suspendedMember.response.status, 200);
+  assert.equal(env.testDb.prepare("SELECT status FROM moderation_reports WHERE id=?").get(userReport.data.report_id).status, "actioned");
+  const reopenedUserReport = await adminApi(env, "/api/admin/moderation/" + userReport.data.report_id + "/review", adminToken, "POST", { status: "reviewing", note: "Should not reopen." });
+  assert.equal(reopenedUserReport.response.status, 409);
+  const restoredMember = await adminApi(env, "/api/admin/users/" + secondUser.id + "/restriction", adminToken, "POST", {
+    status: "active", reason: "Restoring member after moderator review.", report_id: userReport.data.report_id
+  });
+  assert.equal(restoredMember.response.status, 200);
+  assert.equal(env.testDb.prepare("SELECT status FROM user_restrictions WHERE user_id=?").get(String(secondUser.id)).status, "active");
 });
 
 
