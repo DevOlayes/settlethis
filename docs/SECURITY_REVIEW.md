@@ -22,7 +22,7 @@ Review scope: Telegram Mini App, Cloudflare Worker/D1, browser Admin portal, wal
 - Member records, wallet reads, referrals, task claims, notifications and My Courts data are scoped to the verified Telegram user.
 - Notification read operations are user-scoped and have automated cross-account isolation coverage.
 - Community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per member. Pool Court invitation creation is limited to five links per member per Pool Court per hour.
-- Suspended members cannot perform member write actions; restricted members cannot publish arguments/replies or react. Hidden/removed Courts and content are excluded from public reads and guarded in write routes.
+- Suspended members cannot perform member write actions other than submitting abuse reports; restricted members cannot publish arguments/replies or react. Hidden/removed Courts and content are excluded from public reads and guarded in write routes.
 - Reports support Courts, arguments, replies and members; member reports resolve public usernames server-side without exposing Telegram numeric IDs.
 
 ### Wallet and rewarded ads
