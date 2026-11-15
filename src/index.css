@@ -1341,3 +1341,19 @@
 .ranking-result>b small{font:800 7px Inter,sans-serif;color:#9fb2c2;letter-spacing:.08em}
 .ranking-result>span{font-size:8px;color:#e9c477;font-weight:800}
 .ranking-footnote{font-size:8px;line-height:1.6;color:#9eafbf;margin:12px 2px}
+
+/* Phase One profile and review controls */
+.profile-identity{display:flex;align-items:center;gap:12px;padding:13px;margin:14px 0;border:1px solid #ffffff18;border-radius:10px;background:#101e30}
+.profile-identity img,.profile-identity>span{width:46px;height:46px;flex:0 0 46px;border-radius:50%;object-fit:cover;background:#18394b;color:var(--cyan);display:grid;place-items:center;font-weight:900}
+.profile-identity>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.profile-identity b{font-size:13px;color:#fff}
+.profile-identity small,.profile-note{font-size:8px;color:#b7c6d2;overflow-wrap:anywhere}
+.profile-field{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:8px;font-weight:900;letter-spacing:.1em;color:#c7d4de}
+.profile-field input,.profile-field select,.profile-field textarea{width:100%;min-height:39px;padding:10px;border:1px solid #ffffff20;border-radius:7px;background:#0d1a2a;color:#fff;font:inherit;letter-spacing:normal}
+.profile-field textarea{min-height:76px;resize:vertical}
+.profile-note{line-height:1.6;margin:12px 0}
+.admin-task-actions{display:flex;flex-direction:column;gap:7px;min-width:112px;align-self:center}
+.admin-task-actions button{min-height:32px;padding:7px 9px;font-size:8px}
+.admin-grant-row textarea{width:100%;min-height:54px;margin-top:8px;padding:8px;border:1px solid #ffffff20;border-radius:6px;background:#0d1a2a;color:#fff;font:inherit;font-size:9px}
+.admin-grant-row a{color:var(--cyan);font-size:9px}
+@media(max-width:600px){.admin-task-actions{width:100%;flex-direction:row;flex-wrap:wrap}.admin-task-actions button{flex:1}.admin-grant-row{align-items:flex-start}}
