@@ -27,8 +27,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 ## Wallet and reward integrity
 - [x] Source-audited every Worker wallet balance mutation: welcome gift, admin grant, task/referral/ad reward, Court entry/reward/refund and Pool stake/prize/refund are batched with ledger/idempotency checks.
 - [x] Expanded the production wallet integrity audit to 32 checks, including orphaned Court/Pool CT debits and refunds, ineligible Court/Pool prize recipients, proportional Pool prize bounds, orphaned task/referral credits, and agreement between Court outcome fields and immutable adjudication records.
-- [x] Executed all 32 wallet integrity SQL checks against the current production D1 schema/data; all returned zero issues. This is only a clean-baseline check: the database currently has no wallet entries, Regular Court participants, Pool positions, task claims or referrals to exercise transaction scenarios.
-- [x] Executed all 32 wallet integrity checks read-only against the production D1 database; every check returned zero issues. Also exercised the checks against staging fixtures; the nonzero findings were traced to deliberately synthetic/incomplete test rows (not production data), with no production rows modified.
+- [x] Executed all 32 wallet integrity checks read-only against production D1; every check returned zero issues. Production currently has no wallet entries, Regular Court participants, Pool positions, task claims or referrals, so representative transaction scenarios were exercised separately in staging. The staging audit's nonzero findings were traced to deliberately synthetic/incomplete test fixtures; no production rows were changed.
 - [x] Verified welcome gift, Admin CT grant, referral milestone, Pool stake/reserve gate, duplicate stake rollback, Pool refund/reserve release and Regular Court entry against the separate staging D1 database; Regular Court fixed-reward settlement and Pool proportional prize settlement now have automated SQLite transaction tests. Task approval has now been exercised in staging D1; the real Monetag provider callback remains to be exercised.
 - [x] Confirmed there is no client balance-setting API; wallet mutations require verified Telegram identity, an authenticated Admin session or the secret-verified Monetag postback, with server-side amounts and transaction checks.
 
@@ -50,7 +49,6 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Implemented server-side reward validation for `valued` events only, main-zone validation, placement validation, unique `ymid` idempotency, one reward per user per 20 minutes, Lagos daily cap 30, and 100 CT Home / 150 SETHIS Tasks rewards.
 - [x] Owner confirmed the complete Monetag SSP main-zone Postback URL has been entered. The external Monetag dashboard configuration cannot be independently inspected from the connected Cloudflare account.
 - [ ] Run the real valued-ad credit test inside Telegram and confirm exactly one wallet credit; owner plans to do this after the build is ready.
-- [ ] Add official Telegram/Facebook/WhatsApp destinations when supplied.
 
 ## Phase One scope cleanup
 - [x] Cancelled the generic production Pool Court placeholder after confirming it had no attested reserve, positions, adjudication or wallet ledger entries; no fake pool remains open or scheduled for members.
