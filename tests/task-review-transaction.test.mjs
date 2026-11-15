@@ -32,7 +32,7 @@ function setup() {
 function approve(db, adminId = "admin-1") {
   const statements = taskApprovalStatements({
     claimId: "claim-1", userId: "user-1", token: "SETHIS", amount: 150,
-    taskTitle: "Join the official Telegram channel", adminId, note: "Evidence checked.",
+    taskKey: "telegram", taskTitle: "Join the official Telegram channel", adminId, note: "Evidence checked.",
     ledgerId: "ledger-" + adminId, notificationId: "notice-" + adminId
   });
   db.exec("BEGIN");
@@ -83,6 +83,6 @@ test("an approval that wins the race cannot be overwritten by a stale rejection"
 });
 
 test("rejects unsupported reward tokens and invalid amounts", () => {
-  assert.throws(() => taskApprovalStatements({claimId:"c",userId:"u",token:"DOGE",amount:1,taskTitle:"t",adminId:"a",note:"",ledgerId:"l",notificationId:"n"}), /Unsupported task reward token/);
+  assert.throws(() => taskApprovalStatements({claimId:"c",userId:"u",token:"DOGE",amount:1,taskKey:"k",taskTitle:"t",adminId:"a",note:"",ledgerId:"l",notificationId:"n"}), /Unsupported task reward token/);
   assert.throws(() => taskApprovalStatements({claimId:"c",userId:"u",token:"CT",amount:0,taskTitle:"t",adminId:"a",note:"",ledgerId:"l",notificationId:"n"}), /positive safe integer/);
 });
