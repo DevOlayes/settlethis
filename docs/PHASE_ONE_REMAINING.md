@@ -35,7 +35,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Tasks, referrals, ads
 - [x] Compared production task catalog with member UI and server rewards: Telegram 150, Facebook 100, WhatsApp 70, invite-three milestone 500 SETHIS; ad placements remain 100 CT Home / 150 SETHIS Tasks. Referral milestone is server-settled rather than a manual claim.
-- [ ] Add authenticated Admin controls to edit the official Telegram, Facebook and WhatsApp task destinations; member rows currently remain visible with generic platform fallbacks until official HTTPS links are configured.
+- [x] Added an authenticated Admin Social Links section to edit Telegram, Facebook and WhatsApp task destinations. Worker validation enforces HTTPS and the matching platform host, saves are recorded in the Admin audit log, and integration tests cover authorization, host mismatch, save and clear operations. The feature is on draft PR #1 and is not merged or deployed.
 - [x] Improved task-claim duplicate handling so already-pending and already-approved tasks return accurate conflict responses instead of reporting a false new submission.
 - [x] Require a configured official destination and an HTTPS proof link before accepting manual social-task claims; the Admin review queue displays the submitted evidence link.
 - [x] Verified staging social-task claim submission, duplicate pending-claim preservation and rejected-claim resubmission with fresh HTTPS evidence.
@@ -48,6 +48,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Configured the Monetag main zone `12269852` and private postback secret as Cloudflare Worker secrets; confirmed both secret bindings exist on the production Worker (values are not readable through Cloudflare secret metadata).
 - [x] Standardized on the React `monetag-tg-sdk` package as the sole SDK loader; removed the duplicate HTML SDK script tag.
 - [x] Improved rewarded-ad confirmation UX: distinguish valued, non-valued and pending server postback outcomes; removed stale Wallet copy that always claimed setup was pending.
+- [x] Polished the CT balance popup with a clear balance/use explanation, verified-ad reward explanation, live daily allowance, cooldown/availability state and a status refresh action. The Watch Ad control remains disabled when ads are unconfigured, cooling down or at the daily cap; only a verified Monetag valued-event postback credits the wallet.
 - [x] Implemented server-side reward validation for `valued` events only, main-zone validation, placement validation, unique `ymid` idempotency, one reward per user per 20 minutes, Lagos daily cap 30, and 100 CT Home / 150 SETHIS Tasks rewards.
 - [x] Added Worker-route integration coverage for Monetag postbacks using the isolated migrated SQLite test database: rejects missing/wrong secrets, non-valued events, wrong zones/placements and unknown Telegram users; verifies Home 100 CT and Tasks 150 SETHIS mapping, duplicate callback idempotency, shared cross-placement cooldown, exact 30th/31st daily-cap boundary, matching wallet ledger/balance updates and exactly-once reward notifications. Full GitHub verification run `43741963493` passed: 44/44 automated tests and the TypeScript/Vite production build.
 - [x] Owner confirmed the complete Monetag SSP main-zone Postback URL has been entered. The external Monetag dashboard configuration cannot be independently inspected from the connected Cloudflare account.
@@ -57,6 +58,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Cancelled the generic production Pool Court placeholder after confirming it had no attested reserve, positions, adjudication or wallet ledger entries; no fake pool remains open or scheduled for members.
 - [x] Removed the unfinished sample football quiz from the Phase One Tasks page; quizzes remain a later-phase feature rather than a non-functional placeholder.
 - [x] Keep Telegram, Facebook and WhatsApp task rows visible in Earn & Engage using generic platform destinations when official owner-configured links are not yet available.
+- [x] Mark generic social task destinations clearly: members can open the platform homepage, but proof submission remains disabled until the official destination is configured in Admin, avoiding a misleading failed claim.
 
 ## Community and account
 - [x] Corrected the check-in calendar to show the trailing six days plus today, matching its rolling seven-day history label rather than displaying future dates.
@@ -102,7 +104,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Require same-origin requests for all Admin and editorial write endpoints, in addition to the HttpOnly, Secure, SameSite=Strict session cookie.
 - [x] Added the `ADMIN_SETUP_SECRET` secret binding, `admin_setup_authorizations` table and a D1 trigger that rejects first-admin inserts without a short-lived authorization row. The new Worker creates that row and the admin record in one atomic batch. The latest main revision has now been deployed to production through Cloudflare Workers Builds; deployment version `9e45c60f-c9c0-4934-88d5-c4763bc2fd2d` is receiving 100% traffic.
 - [x] Added an authenticated, read-only Admin audit-history API and a dedicated Admin Portal screen showing recent task-review, moderation, content-action and member-restriction records; live Admin-session UI verification remains pending below.
-- [x] Exposed task-claim reviewer/time metadata and moderation review notes/timestamps in the Admin queues; successful review and moderation actions now refresh the audit history. Automated UI/build verification is pending the current workflow run.
+- [x] Exposed task-claim reviewer/time metadata and moderation review notes/timestamps in the Admin queues; successful review and moderation actions now refresh the audit history. Automated build verification passed in draft PR #1; real authenticated Admin-session UI verification remains pending.
 - [x] Added server-side failed-login throttling: five attempts per IP hash within 15 minutes, reserved atomically so concurrent requests cannot bypass the limit, generic credential errors, successful-login reset, and automatic cleanup of expired attempt records.
 - [x] Added migration `0022_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
 
