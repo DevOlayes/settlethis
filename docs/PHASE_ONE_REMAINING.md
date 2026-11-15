@@ -44,7 +44,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Community and account
 - [x] Corrected the check-in calendar to show the trailing six days plus today, matching its rolling seven-day history label rather than displaying future dates.
-- [ ] Test Telegram initData verification, onboarding resume/completion and account profile persistence; test check-in Lagos midnight boundary, duplicate prevention and streak calculation.
+- [x] Extracted Lagos check-in date/streak logic and added automated tests for the 23:00 UTC date boundary, current streaks, yesterday fallback and seven-day calendar window.
+- [ ] Test Telegram initData verification, onboarding resume/completion and account profile persistence; test check-in duplicate prevention and real Telegram account persistence.
 - [ ] Test notifications for argument/reply/reaction/verdict/wallet/referral/task events and read states.
 - [ ] Test reports for users/Courts/arguments/replies; moderation queue, hide/restore, restriction/suspension, audit log and enforcement.
 - [x] Added server-side community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per user; identical argument/reply submissions within two minutes are rejected, and restricted users cannot react.
@@ -56,6 +57,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 ## Rankings and history
 - [x] Implemented rankings with the documented wins → win rate → SETHIS earned → entries tie-break order, a stable row-number rank, and an authenticated member's own rank even when outside the top 100.
 - [x] Connected homepage SETHIS earned and member rank figures to ledger-backed and settled-outcome data instead of fixed placeholder dashes.
+- [x] Validated the rankings SQL and wallet/reward/refund/check-in transaction statements against production D1 with read-only EXPLAIN checks; no fixture rows were written.
 - [ ] Verify rankings metric/formula, tie-breaks, resolved-entry counts, win rate, SETHIS earned and user identity against representative seeded records.
 - [ ] Test Rankings and My Courts using representative seeded records and real Telegram participants.
 
