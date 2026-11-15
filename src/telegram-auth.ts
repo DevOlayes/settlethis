@@ -37,7 +37,7 @@ export async function verifyTelegramInitData(
   const authDate = Number(params.get("auth_date"));
   const rawUser = params.get("user");
   if (!hash || !/^[a-f0-9]{64}$/i.test(hash) || !Number.isFinite(authDate) || !rawUser) return null;
-  if (authDate > nowSeconds + 60 || nowSeconds - authDate > 86400) return null;
+  if (!Number.isSafeInteger(authDate) || authDate > nowSeconds + 60 || nowSeconds - authDate > 86400) return null;
 
   const checkString = [...params.entries()]
     .filter(([key]) => key !== "hash")
@@ -51,9 +51,9 @@ export async function verifyTelegramInitData(
 
   try {
     const user = JSON.parse(rawUser) as TelegramIdentity;
-    return Number.isSafeInteger(user.id) &&
+    return Number.isSafeInteger(user.id) && user.id > 0 &&
       typeof user.first_name === "string" &&
-      user.first_name.trim()
+      user.first_name.trim().length > 0 && user.first_name.trim().length <= 256
       ? user
       : null;
   } catch {

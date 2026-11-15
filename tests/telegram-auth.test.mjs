@@ -39,8 +39,10 @@ test("rejects tampered fields and signatures", async () => {
 test("rejects expired and implausibly future-dated initData", async () => {
   const expired = signedInitData({ ...validFields(), auth_date: String(now - 86401) });
   const future = signedInitData({ ...validFields(), auth_date: String(now + 61) });
+  const fractional = signedInitData({ ...validFields(), auth_date: String(now + 0.5) });
   assert.equal(await verifyTelegramInitData(expired, token, now), null);
   assert.equal(await verifyTelegramInitData(future, token, now), null);
+  assert.equal(await verifyTelegramInitData(fractional, token, now), null);
 });
 
 test("rejects missing fields, malformed hashes and invalid user identities", async () => {

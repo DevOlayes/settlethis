@@ -436,10 +436,103 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(restoredMember.response.status, 200);
   assert.equal(env.testDb.prepare("SELECT status FROM user_restrictions WHERE user_id=?").get(String(secondUser.id)).status, "active");
 
+  const healthResponse = await worker.fetch(new Request("https://settlethis.test/api/health"), env);
+  assert.equal(healthResponse.headers.get("x-content-type-options"), "nosniff");
+  assert.equal(healthResponse.headers.get("x-frame-options"), "DENY");
+  assert.equal(healthResponse.headers.get("referrer-policy"), "strict-origin-when-cross-origin");
+  assert.match(healthResponse.headers.get("strict-transport-security"), /max-age=31536000/);
+  const assetResponse = await worker.fetch(new Request("https://settlethis.test/"), env);
+  assert.equal(assetResponse.headers.get("x-content-type-options"), "nosniff");
+  assert.equal(assetResponse.headers.get("x-frame-options"), "DENY");
+  assert.match(assetResponse.headers.get("content-security-policy-report-only"), /script-src 'self'.*https:\/\/yoszi\.com/);
+
   const walletAudit = await adminApi(env, "/api/admin/wallet-audit", adminToken);
   assert.equal(walletAudit.response.status, 200);
   assert.equal(walletAudit.data.checks.length, 36);
   assert.equal(walletAudit.data.healthy, true, JSON.stringify(walletAudit.data.checks.filter(item => item.issues > 0)));
+
+  const unauthenticatedDestinations = await adminApi(env, "/api/admin/task-destinations", "b".repeat(64));
+  assert.equal(unauthenticatedDestinations.response.status, 401);
+  const initialDestinations = await adminApi(env, "/api/admin/task-destinations", adminToken);
+  assert.equal(initialDestinations.response.status, 200);
+  assert.equal(initialDestinations.data.destinations.length, 3);
+  const wrongPlatform = await adminApi(env, "/api/admin/task-destinations", adminToken, "POST", {
+    destinations: { telegram_channel: "https://www.facebook.com/not-a-telegram-link" }
+  });
+  assert.equal(wrongPlatform.response.status, 400);
+  env.testDb.prepare("UPDATE task_catalog SET destination_url=? WHERE task_key='telegram_channel'").run("https://www.facebook.com/not-telegram");
+  const mismatchedStoredDestination = await api(env, "/api/tasks/telegram_channel/claim", firstInit, "POST", { evidence: "https://example.com/proof" });
+  assert.equal(mismatchedStoredDestination.response.status, 409);
+  const savedDestinations = await adminApi(env, "/api/admin/task-destinations", adminToken, "POST", {
+    destinations: {
+      telegram_channel: "https://t.me/settlethis_test",
+      facebook_follow: "https://www.facebook.com/settlethis_test",
+      whatsapp_community: "https://chat.whatsapp.com/AbCdEf123456"
+    }
+  });
+  assert.equal(savedDestinations.response.status, 200);
+  assert.equal(env.testDb.prepare("SELECT destination_url FROM task_catalog WHERE task_key='telegram_channel'").get().destination_url, "https://t.me/settlethis_test");
+  const officialTaskClaim = await api(env, "/api/tasks/telegram_channel/claim", firstInit, "POST", { evidence: "https://example.com/telegram-follow-proof" });
+  assert.equal(officialTaskClaim.response.status, 200);
+  const clearedDestinations = await adminApi(env, "/api/admin/task-destinations", adminToken, "POST", {
+    destinations: { telegram_channel: "", facebook_follow: "", whatsapp_community: "" }
+  });
+  assert.equal(clearedDestinations.response.status, 200);
+  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM task_catalog WHERE task_key IN ('telegram_channel','facebook_follow','whatsapp_community') AND destination_url IS NOT NULL").get().n, 0);
+
+  const crossOriginAdminWrite = await worker.fetch(new Request("https://settlethis.test/api/admin/task-destinations", {
+    method: "POST", headers: { cookie: "st_admin=" + adminToken, origin: "https://attacker.test", "content-type": "application/json" },
+    body: JSON.stringify({ destinations: { telegram_channel: "https://t.me/attacker" } })
+  }), env);
+  assert.equal(crossOriginAdminWrite.status, 403);
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const failedLogin = await adminApi(env, "/api/admin/login", adminToken, "POST", { email: "unknown@example.invalid", password: "incorrect" });
+    assert.equal(failedLogin.response.status, 401);
+  }
+  const throttledLogin = await adminApi(env, "/api/admin/login", adminToken, "POST", { email: "unknown@example.invalid", password: "incorrect" });
+  assert.equal(throttledLogin.response.status, 429);
+
+  env.testDb.prepare("INSERT INTO pool_courts(id,title,prize_amount,minimum_stake_ct,duration_days,status,opens_at,closes_at,reserve_status) VALUES(?,?,?,?,?,'open',datetime('now','-1 minute'),datetime('now','+1 day'),'secured')").run("pool-invite-rate-test","Invite rate test",10000,500,7);
+  env.testDb.prepare("INSERT INTO pool_positions(id,pool_id,user_id,side,stake_ct,status) VALUES(?,?,?,?,?,'active')").run("pool-invite-position","pool-invite-rate-test",String(firstUser.id),"A",500);
+  for (let invite = 0; invite < 5; invite++) {
+    const createdInvite = await api(env, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
+    assert.equal(createdInvite.response.status, 200);
+  }
+  const sixthInvite = await api(env, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
+  assert.equal(sixthInvite.response.status, 429);
+  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invites WHERE pool_id=? AND inviter_user_id=?").get("pool-invite-rate-test", String(firstUser.id)).n, 5);
+
+  const poolInviteCode = env.testDb.prepare("SELECT invite_code FROM pool_invites WHERE pool_id=? AND inviter_user_id=? ORDER BY created_at LIMIT 1").get("pool-invite-rate-test", String(firstUser.id)).invite_code;
+  env.testDb.prepare("UPDATE pool_invites SET invite_code=lower(invite_code) WHERE invite_code=?").run(poolInviteCode);
+  // Use a fresh identity, separate from the three referral-qualification fixtures.
+  const poolInviteUser = { id: 700004, first_name: "Liverpool", username: "liverpool_pool_fan" };
+  const thirdPoolInit = signedInitData(poolInviteUser, { start_param: "pool_" + poolInviteCode });
+  const thirdAuthResponse = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: thirdPoolInit })
+  }), env);
+  const thirdAuth = await thirdAuthResponse.json();
+  assert.equal(thirdAuthResponse.status, 200);
+  assert.equal(thirdAuth.pool_invite.pool_id, "pool-invite-rate-test");
+  assert.equal(thirdAuth.pool_invite.side, "A");
+  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invite_acceptances WHERE invite_id=(SELECT id FROM pool_invites WHERE invite_code=lower(?)) AND invitee_user_id=?").get(poolInviteCode, String(poolInviteUser.id)).n, 1);
+  const replayedPoolAuth = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: thirdPoolInit })
+  }), env);
+  assert.equal(replayedPoolAuth.status, 200);
+  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invite_acceptances WHERE invite_id=(SELECT id FROM pool_invites WHERE invite_code=lower(?)) AND invitee_user_id=?").get(poolInviteCode, String(poolInviteUser.id)).n, 1);
+  const selfPoolInit = signedInitData(firstUser, { start_param: "pool_" + poolInviteCode });
+  const selfPoolResponse = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: selfPoolInit })
+  }), env);
+  const selfPoolAuth = await selfPoolResponse.json();
+  assert.equal(selfPoolResponse.status, 200);
+  assert.equal(selfPoolAuth.pool_invite, null);
+  const invalidBotEnv = { ...env, TELEGRAM_BOT_USERNAME: "attacker.example/path" };
+  const invalidBotReferral = await api(invalidBotEnv, "/api/referrals", firstInit);
+  assert.equal(invalidBotReferral.response.status, 200);
+  assert.equal(invalidBotReferral.data.invite_link, null);
+  const invalidBotPoolInvite = await api(invalidBotEnv, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
+  assert.equal(invalidBotPoolInvite.response.status, 503);
 });
 
 
