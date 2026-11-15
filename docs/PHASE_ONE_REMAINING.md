@@ -20,14 +20,15 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Expanded Telegram initData tests for missing tokens, oversized payloads and the exact 24-hour expiry boundary.
 - [x] Extracted HTTPS-only URL validation used by editorial evidence, social-task destinations/proof and image/source links; added tests for accepted HTTPS URLs and rejected schemes/invalid input (20 Pool Court, URL-validation, Telegram-authentication and Lagos check-in tests pass locally under Node 22).
 - [x] Validated the revised Regular/Pool settlement SQL statements against production D1 using read-only EXPLAIN queries; no production rows were changed.
-- [ ] Add D1-backed automated tests for critical Court and settlement transactions, including concurrent/duplicate requests.
+- [x] Exercised critical transaction SQL against the separate `sethis-phase-one-test` D1 database: welcome gift credits exactly once, check-in uniqueness holds, referral qualification reaches three and credits exactly 500 SETHIS once, Pool staking is blocked while reserve is pending, duplicate Pool stake rolls back without a second debit, and cancellation returns CT/releases the reserve exactly once. No production rows were changed.
+- [ ] Convert these staging scenarios into repeatable automated D1 tests and add true concurrent-request coverage for Court and Pool settlement.
 
 ## Wallet and reward integrity
 - [x] Source-audited every Worker wallet balance mutation: welcome gift, admin grant, task/referral/ad reward, Court entry/reward/refund and Pool stake/prize/refund are batched with ledger/idempotency checks.
 - [x] Expanded the production wallet integrity audit to 32 checks, including orphaned Court/Pool CT debits and refunds, ineligible Court/Pool prize recipients, proportional Pool prize bounds, orphaned task/referral credits, and agreement between Court outcome fields and immutable adjudication records.
 - [x] Executed all 32 wallet integrity SQL checks against the current production D1 schema/data; all returned zero issues. This is only a clean-baseline check: the database currently has no wallet entries, Regular Court participants, Pool positions, task claims or referrals to exercise transaction scenarios.
 - [ ] Exercise the 32-check wallet integrity audit against representative seeded scenarios and correct any false positives/omissions.
-- [ ] Verify welcome gift, Admin grant, Court entry/debit, Court reward, Pool stake/prize/refund, task/referral/ad credits.
+- [x] Verified welcome gift, referral milestone, Pool stake/reserve gate, duplicate stake rollback, Pool refund and reserve release against the separate staging D1 database; Admin grant, Regular Court entry/reward, Pool prize settlement, task approval and Monetag reward transactions remain to be exercised.
 - [x] Confirmed there is no client balance-setting API; wallet mutations require verified Telegram identity, an authenticated Admin session or the secret-verified Monetag postback, with server-side amounts and transaction checks.
 
 ## Tasks, referrals, ads
@@ -37,7 +38,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Require a configured official destination and an HTTPS proof link before accepting manual social-task claims; the Admin review queue displays the submitted evidence link.
 - [ ] Test social task submission, admin review, approved credit, rejected resubmission and duplicate prevention end-to-end.
 - [x] Made referral qualification retry-safe: repeat welcome-gift confirmation now rechecks an eligible invitee and can complete a missed qualification/milestone after a partial failure, without double-crediting the inviter.
-- [ ] Test referral deep link attribution, self-referral/duplicate prevention, onboarding+gift qualification, 3-referral milestone and exactly-once 500 SETHIS with multiple Telegram accounts.
+- [x] Verified the onboarding+welcome-gift qualification condition and exactly-once 500 SETHIS milestone using three separate synthetic invitee identities in staging D1.
+- [ ] Test real Telegram referral deep-link attribution, self-referral/duplicate prevention and the milestone with multiple Telegram accounts.
 - [x] Configured the Monetag main zone `12269852` and private postback secret as Cloudflare Worker secrets; confirmed both secret bindings exist on the production Worker (values are not readable through Cloudflare secret metadata).
 - [x] Standardized on the React `monetag-tg-sdk` package as the sole SDK loader; removed the duplicate HTML SDK script tag.
 - [x] Improved rewarded-ad confirmation UX: distinguish valued, non-valued and pending server postback outcomes; removed stale Wallet copy that always claimed setup was pending.
@@ -55,7 +57,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Corrected the check-in calendar to show the trailing six days plus today, matching its rolling seven-day history label rather than displaying future dates.
 - [x] Extracted Lagos check-in date/streak logic and added automated tests for the 23:00 UTC date boundary, current streaks, yesterday fallback and seven-day calendar window.
 - [x] Extracted Telegram initData verification and added automated tests for valid HMAC signatures, tampering, expiry, future timestamps and invalid identity payloads.
-- [ ] Test onboarding resume/completion and account profile persistence; test check-in duplicate prevention and real Telegram account persistence.
+- [x] Verified duplicate daily check-in insertion is constrained to one row per Telegram user/date in staging D1.
+- [ ] Test onboarding resume/completion, account profile persistence and check-in persistence with real Telegram accounts.
 - [ ] Test notifications for argument/reply/reaction/verdict/wallet/referral/task events and read states.
 - [ ] Test reports for users/Courts/arguments/replies; moderation queue, hide/restore, restriction/suspension, audit log and enforcement.
 - [x] Added server-side community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per user; identical argument/reply submissions within two minutes are rejected, and restricted users cannot react.
