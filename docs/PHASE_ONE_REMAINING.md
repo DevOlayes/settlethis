@@ -72,6 +72,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 ## Admin Portal security
 - [x] Locked first-admin creation behind the owner-only `ADMIN_SETUP_SECRET`, compared in constant time; the Admin Portal asks for the one-time key and refuses setup when the Worker binding is absent. Production D1 already contains one administrator record, so first-admin registration is currently closed.
 - [x] Rate-limited first-admin setup attempts to five per IP hash per 15 minutes using the same atomic limiter as Admin sign-in.
+- [x] Require same-origin requests for all Admin and editorial write endpoints, in addition to the HttpOnly, Secure, SameSite=Strict session cookie.
 - [x] Added the `ADMIN_SETUP_SECRET` secret binding, `admin_setup_authorizations` table and a D1 trigger that rejects first-admin inserts without a short-lived authorization row. The new Worker creates that row and the admin record in one atomic batch. The currently deployed Worker is still on the older revision until the deployment credential is configured and the new code is deployed.
 - [x] Added server-side failed-login throttling: five attempts per IP hash within 15 minutes, reserved atomically so concurrent requests cannot bypass the limit, generic credential errors, successful-login reset, and automatic cleanup of expired attempt records.
 - [x] Added migration `0022_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
