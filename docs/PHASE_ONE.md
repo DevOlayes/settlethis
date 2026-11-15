@@ -13,7 +13,7 @@ Phase One is not just a visual prototype. It includes the core user journey, per
 - The product must not look or behave like a generic forum, betting app, fantasy game, or creator platform.
 - Platform-created Courts come first. User-created Courts are deferred until moderation and quality controls are proven.
 - The approved visual system uses Midnight Navy (#0B1220), Deep Slate (#121D2E), Raised Slate (#1A2940), Electric Cyan (#27D7F2), white primary text, and restrained Stadium Gold (#F5B942) only for rewards and wins.
-- The final brand logo is supplied by the product owner; until then, use a neutral logo placeholder.
+- Use the approved standalone S monogram currently displayed in the app header consistently across the Mini App, Wallet, gift reveal, and Admin Portal.
 
 ## Phase One scope
 
@@ -54,7 +54,10 @@ Also deliver Telegram-based identity, onboarding, user profile, club selection, 
 
 ### E. Tasks, rewards and wallet
 
-- Tasks hub with daily activities, streaks, and clearly described reward opportunities.
+- Tasks hub with mandatory seven-story onboarding, one-time 3,500 CT welcome gift, daily check-in streak, social tasks, referral milestone, and rewarded-ad placements.
+- Social task rewards: Telegram 150 SETHIS, Facebook 100 SETHIS, WhatsApp 70 SETHIS; claims require verification and moderator approval unless a provider-side verification path is configured.
+- Referral milestone: 500 SETHIS after three invited members complete onboarding and claim their welcome gift. Referral attribution uses Telegram Mini App deep links.
+- Monetag Rewarded Interstitial placements: Home = 100 CT; Tasks = 150 SETHIS. One shared 20-minute cooldown and a maximum of 30 verified ad events per user per Lagos calendar day. Monetag postbacks are the only source of ad reward credits.
 - CT is the activity/entry currency. It is not the same as SETHIS.
 - SETHIS is the main reward token earned through eligible winning and reward activities.
 - Record every credit, debit, reversal, and settlement as an auditable ledger transaction.
@@ -66,7 +69,8 @@ Also deliver Telegram-based identity, onboarding, user profile, club selection, 
 
 - Basic rankings based on transparent, defined Phase One metrics.
 - User reporting for arguments and accounts.
-- Admin/moderator tools to review reports, hide content, suspend accounts, and resolve disputed Courts.
+- Admin/moderator tools to review task claims and reports, hide/remove/restore reported content, restrict or suspend accounts, and resolve disputed Courts.
+- Notification events for Court arguments, replies, reactions, verdicts, wallet credits, referrals, and task rewards.
 - Rate limits and anti-spam protections for submissions and reactions.
 - A clear audit trail for moderation and wallet adjustments.
 
@@ -81,6 +85,13 @@ Also deliver Telegram-based identity, onboarding, user profile, club selection, 
 - Wallet and settlement operations must be performed and validated server-side. Do not trust client-submitted balances, outcomes, or reward amounts.
 - Use migrations, environment-specific configuration, input validation, authentication/authorization checks, and automated tests for critical flows.
 
+## External configuration still required
+
+- Set the Monetag main Rewarded Interstitial zone ID as `MONETAG_ZONE_ID` and a private `MONETAG_POSTBACK_SECRET` as Worker secrets. Configure Monetag postbacks to `/api/ads/monetag/postback` with its documented macros, including `ymid`, `reward_event_type`, `zone_id`, `request_var`, and `telegram_id`. The SDK and server-side reward handler are implemented; ad playback remains disabled until those values are configured and tested inside Telegram.
+- Add the official Telegram channel, Facebook page, and WhatsApp community URLs to the matching `task_catalog.destination_url` records. The referral endpoint resolves the bot username through Telegram `getMe` when it is not explicitly configured.
+- Telegram channel membership can be automatically checked only when the channel is public and the bot has the required administrator access; Facebook and WhatsApp claims remain moderator-reviewed.
+- Production currently has no registered Telegram users or settled Court records, so rankings, reward settlement, referrals, and ad rewards must be exercised with real Telegram members before public launch.
+
 ## Build sequence
 
 1. **Product and design foundation:** finalize the Phase One scope, design tokens, navigation, shared components, and the complete Courts home screen.
@@ -94,13 +105,15 @@ Also deliver Telegram-based identity, onboarding, user profile, club selection, 
 ## Phase One acceptance checklist
 
 - A new user can register or authenticate, complete onboarding, and reach Courts.
-- A user can discover a Court, understand its rules, enter, choose a side, submit an argument, reply, and react.
+- A user can discover a Court, understand its rules, enter, choose a side, submit an argument, reply, react, and report inappropriate content.
 - A user can see their active and completed Courts in My Courts.
 - A Court can be closed, reviewed, settled, and displayed with its verdict and outcome history.
 - Tasks and rankings show real server-backed data, not decorative placeholder numbers.
+- Social task claims are reviewed before credits; referral milestones are attributed and rewarded once.
+- Monetag rewards are credited only from a unique, valued server postback and respect the shared cooldown and daily cap.
 - CT and SETHIS balances are backed by an auditable server-side ledger.
 - Moderators can review reports and take basic action.
-- Core screens work on small mobile displays and in Telegram's in-app browser as well as a normal browser.
+- Core screens work on small mobile displays and in Telegram's in-app browser; browser access remains for development, visual inspection, and the private Admin Portal.
 - Critical flows have automated tests and deployment/build checks pass.
 
 ## Explicitly deferred
