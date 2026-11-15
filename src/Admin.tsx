@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import BrandMark from "./BrandMark";
 
-type AdminCourt={id:string;title:string;category:string;home_team?:string|null;away_team?:string|null;side_a_label:string;side_b_label:string;status:string;closes_at?:string|null;entry_ct:number;winner_reward_sethis:number;side_a_count:number;side_b_count:number;winner_side?:string|null;verdict?:string|null;reserve_status:string;reserve_reference?:string|null;reserved_at?:string|null};
-type AdminPool={id:string;title:string;prize_amount:number;minimum_stake_ct:number;duration_days:number;status:string;closes_at:string|null;side_a_label:string;side_b_label:string;side_a_stake:number;side_b_stake:number;side_a_count:number;side_b_count:number;winner_side?:string|null;verdict?:string|null};
+type AdminCourt={id:string;title:string;category:string;home_team?:string|null;away_team?:string|null;side_a_label:string;side_b_label:string;status:string;closes_at?:string|null;entry_ct:number;winner_reward_sethis:number;side_a_count:number;side_b_count:number;winner_side?:string|null;verdict?:string|null};
+type AdminPool={id:string;title:string;prize_amount:number;minimum_stake_ct:number;duration_days:number;status:string;closes_at:string|null;side_a_label:string;side_b_label:string;side_a_stake:number;side_b_stake:number;side_a_count:number;side_b_count:number;winner_side?:string|null;verdict?:string|null;reserve_status:string;reserve_reference?:string|null;reserved_at?:string|null};
 type Suggestion = {
  id:string;title:string;court_kind:string;category:string;status:string;competition?:string|null;
  home_team?:string|null;away_team?:string|null;incident_context:string;evidence_summary:string;
