@@ -19,7 +19,7 @@ test("rejects non-HTTPS and executable URL schemes", () => {
 });
 
 test("rejects empty, non-string and malformed URL inputs", () => {
-  for (const value of [null, undefined, 123, {}, "", "   ", "https://", "not a URL"]) {
+  for (const value of [null, undefined, 123, {}, "", "   ", "https://", "https://user:password@example.com/path", "not a URL"]) {
     assert.equal(secureUrl(value), null);
   }
 });
