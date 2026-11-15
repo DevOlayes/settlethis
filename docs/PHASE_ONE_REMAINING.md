@@ -19,7 +19,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Wallet and reward integrity
 - [ ] Verify every CT/SETHIS mutation is atomic with ledger and idempotency reference.
-- [ ] Exercise wallet integrity audit against seeded scenarios and correct false positives/omissions.
+- [x] Expanded the production wallet integrity audit to 28 checks, including orphaned Court/Pool CT debits, ineligible Court rewards, proportional Pool prize bounds, and agreement between Court outcome fields and immutable adjudication records.
+- [ ] Exercise the 28-check wallet integrity audit against seeded scenarios and correct any false positives/omissions.
 - [ ] Verify welcome gift, Admin grant, Court entry/debit, Court reward, Pool stake/prize/refund, task/referral/ad credits.
 - [ ] Confirm balances cannot be changed through client-supplied values or unauthenticated requests.
 
