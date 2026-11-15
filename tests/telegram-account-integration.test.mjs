@@ -436,6 +436,15 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(restoredMember.response.status, 200);
   assert.equal(env.testDb.prepare("SELECT status FROM user_restrictions WHERE user_id=?").get(String(secondUser.id)).status, "active");
 
+  const healthResponse = await worker.fetch(new Request("https://settlethis.test/api/health"), env);
+  assert.equal(healthResponse.headers.get("x-content-type-options"), "nosniff");
+  assert.equal(healthResponse.headers.get("x-frame-options"), "DENY");
+  assert.equal(healthResponse.headers.get("referrer-policy"), "strict-origin-when-cross-origin");
+  assert.match(healthResponse.headers.get("strict-transport-security"), /max-age=31536000/);
+  const assetResponse = await worker.fetch(new Request("https://settlethis.test/"), env);
+  assert.equal(assetResponse.headers.get("x-content-type-options"), "nosniff");
+  assert.equal(assetResponse.headers.get("x-frame-options"), "DENY");
+
   const walletAudit = await adminApi(env, "/api/admin/wallet-audit", adminToken);
   assert.equal(walletAudit.response.status, 200);
   assert.equal(walletAudit.data.checks.length, 36);
