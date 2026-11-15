@@ -4,6 +4,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Courts and settlement
 - [x] Fixed argument reactions missing `closes_at` in their Court lookup; reactions now enforce the Court deadline. (Further participation audit remains.)
+- [x] Guarded Regular Court reward wallet/ledger credits against a conflicting duplicate verdict by requiring the recorded adjudication's winning side to match the payout side.
 - [ ] Audit Admin editorial verdict flow, immutable adjudication record, winner reward idempotency, and participant outcome history.
 - [ ] Audit Pool Court lifecycle: scheduled/open/locked/settled/cancelled, reserve attestation, entry/stake debit, minimum stake, side totals, close deadline.
 - [ ] Audit proportional Pool Court distribution, rounding/remainder handling, losing-side outcome, and duplicate settlement protection.
@@ -22,7 +23,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Test referral deep link attribution, self-referral/duplicate prevention, onboarding+gift qualification, 3-referral milestone and exactly-once 500 SETHIS.
 - [x] Installed Monetag SDK main zone `12269852` in `index.html`; retained the existing React SDK path and server-only valued-event rewards. (Production secrets/postback URL and live ad verification still require dashboard setup.)
 - [x] Improved rewarded-ad confirmation UX and wallet/status refresh retries after SDK confirmation.
-- [ ] Configure Monetag postback URL + private secret; test valued events, unique IDs, shared 20-minute cooldown, Lagos daily cap 30 and placements (100 CT Home / 150 SETHIS Tasks).
+- [ ] Complete Monetag postback verification: owner has entered the app postback URL; private secret/macros and a live valued-event credit test still need confirmation. Verify unique IDs, shared 20-minute cooldown, Lagos daily cap 30 and placements (100 CT Home / 150 SETHIS Tasks).
 - [ ] Add official Telegram/Facebook/WhatsApp destinations when supplied.
 
 ## Community and account
