@@ -1239,3 +1239,33 @@
     opacity:.41!important;
   }
 }
+
+
+/* Keep the pitch watermark in the open right-hand side of the Home hero */
+.hero-condensed .football-pitch-art{
+  left:53%!important;
+  top:-7px!important;
+  width:88%!important;
+  height:205px!important;
+  opacity:.34!important;
+  transform:rotate(-22deg)!important;
+}
+@media(max-width:600px){
+  .hero-condensed .football-pitch-art{
+    left:53%!important;
+    top:-5px!important;
+    width:91%!important;
+    height:194px!important;
+    opacity:.34!important;
+    transform:rotate(-22deg)!important;
+  }
+}
+@media(max-width:370px){
+  .hero-condensed .football-pitch-art{
+    left:55%!important;
+    top:-2px!important;
+    width:94%!important;
+    height:185px!important;
+    opacity:.32!important;
+  }
+}
