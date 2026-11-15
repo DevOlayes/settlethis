@@ -45,6 +45,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Add official Telegram/Facebook/WhatsApp destinations when supplied.
 
 ## Phase One scope cleanup
+- [x] Cancelled the generic production Pool Court placeholder after confirming it had no attested reserve, positions, adjudication or wallet ledger entries; no fake pool remains open or scheduled for members.
 - [x] Removed the unfinished sample football quiz from the Phase One Tasks page; quizzes remain a later-phase feature rather than a non-functional placeholder.
 - [x] Hide social task rows until their official destination URLs are configured, instead of displaying dead-end buttons or setup notices.
 
