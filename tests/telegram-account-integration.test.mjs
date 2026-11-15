@@ -485,6 +485,16 @@ test("Telegram accounts persist independently through onboarding, profile, check
   }
   const throttledLogin = await adminApi(env, "/api/admin/login", adminToken, "POST", { email: "unknown@example.invalid", password: "incorrect" });
   assert.equal(throttledLogin.response.status, 429);
+
+  env.testDb.prepare("INSERT INTO pool_courts(id,title,prize_amount,minimum_stake_ct,duration_days,status,opens_at,closes_at,reserve_status) VALUES(?,?,?,?,?,'open',datetime('now','-1 minute'),datetime('now','+1 day'),'secured')").run("pool-invite-rate-test","Invite rate test",10000,500,7);
+  env.testDb.prepare("INSERT INTO pool_positions(id,pool_id,user_id,side,stake_ct,status) VALUES(?,?,?,?,?,'active')").run("pool-invite-position","pool-invite-rate-test",String(firstUser.id),"A",500);
+  for (let invite = 0; invite < 5; invite++) {
+    const createdInvite = await api(env, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
+    assert.equal(createdInvite.response.status, 200);
+  }
+  const sixthInvite = await api(env, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
+  assert.equal(sixthInvite.response.status, 429);
+  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invites WHERE pool_id=? AND inviter_user_id=?").get("pool-invite-rate-test", String(firstUser.id)).n, 5);
 });
 
 
