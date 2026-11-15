@@ -1,6 +1,7 @@
 import { allocatePoolPrize } from "./settlement";
 import { checkinSummary, lagosDate } from "./checkin";
 import { verifyTelegramInitData } from "./telegram-auth";
+import { secureUrl } from "./url-validation";
 interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }
 interface D1Database { prepare(query: string): D1Statement; batch(statements: D1Statement[]): Promise<unknown[]>; }
 interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: D1Database; TELEGRAM_BOT_TOKEN?: string; TELEGRAM_BOT_USERNAME?: string; MONETAG_POSTBACK_SECRET?: string; MONETAG_ZONE_ID?: string; ADMIN_SETUP_SECRET?: string; EDITORIAL_ADMIN_IDS?: string; }
@@ -23,7 +24,6 @@ function sameOrigin(request:Request){const origin=request.headers.get("origin");
 async function createAdminSession(env:Env,adminId:number){const random=new Uint8Array(32);crypto.getRandomValues(random);const token=bytesHex(random),tokenHash=await sha256Hex(token),expires=new Date(Date.now()+7*24*60*60*1000).toISOString();await env.DB.prepare("INSERT INTO admin_sessions (token_hash,admin_id,expires_at) VALUES (?,?,?)").bind(tokenHash,adminId,expires).run();return token;}
 async function editorialAdmin(request:Request,env:Env):Promise<string|null>{const token=cookieValue(request,"st_admin");if(!token||token.length!==64)return null;try{const tokenHash=await sha256Hex(token);const session=await env.DB.prepare("SELECT s.admin_id FROM admin_sessions s JOIN admin_users a ON a.id=s.admin_id WHERE s.token_hash=? AND julianday(s.expires_at)>julianday('now')").bind(tokenHash).first<{admin_id:number}>();return session?String(session.admin_id):null;}catch{return null;}}
 const textField=(v:unknown,max:number)=>typeof v==='string'?v.trim().slice(0,max):'';
-const secureUrl=(v:unknown)=>{if(typeof v!=='string'||!v.trim())return null;try{const u=new URL(v);return u.protocol==='https:'?u.toString():null;}catch{return null;}};
 async function qualifyReferral(telegramId:string,env:Env){
  await env.DB.prepare("UPDATE referrals SET qualified_at=CURRENT_TIMESTAMP WHERE invitee_user_id=? AND qualified_at IS NULL AND EXISTS(SELECT 1 FROM telegram_users WHERE telegram_user_id=? AND onboarding_step>=7 AND welcome_gift_claimed_at IS NOT NULL)").bind(telegramId,telegramId).run();
  const referral=await env.DB.prepare("SELECT inviter_user_id,COUNT(*) AS qualified FROM referrals WHERE inviter_user_id=(SELECT inviter_user_id FROM referrals WHERE invitee_user_id=?) AND qualified_at IS NOT NULL GROUP BY inviter_user_id").bind(telegramId).first<{inviter_user_id:string;qualified:number}>();
