@@ -684,3 +684,37 @@
 .wallet-balances-refined .ct-card p{grid-row:2}
 .home-balance-panel button,.home-ad-card button{cursor:pointer}
 @media(max-width:370px){.home-balance-panel{padding:14px 12px}.home-balance-main>strong{font-size:37px}.home-balance-stats{gap:4px}.home-balance-stats small{font-size:5px}.home-balance-stats b{font-size:10px}.home-ad-card{padding:11px;gap:9px}}
+
+/* Matchday hero: compact balance integrated into the football identity */
+.hero-condensed{min-height:0;padding-bottom:0;display:grid;grid-template-columns:minmax(0,1fr) 39%;grid-template-rows:auto auto}
+.hero-condensed .hero-copy{width:auto;padding:20px 22px 15px;grid-column:1;grid-row:1}
+.hero-condensed .hero h1{font-size:clamp(34px,5vw,47px);margin:9px 0 7px}
+.hero-condensed .hero-copy p{font-size:10px;margin-bottom:12px}
+.hero-condensed .hero-art{grid-column:2;grid-row:1;position:absolute;right:2%;top:5px;width:38%;height:155px;opacity:.75}
+.hero-balance{position:relative;z-index:3;grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3px 12px;padding:11px 17px 12px;border-top:1px solid #ffffff20;background:linear-gradient(90deg,#091724c9,#102d3bc9 65%,#142d3a)}
+.hero-balance-label{display:flex;align-items:center;gap:9px;grid-column:1/-1}
+.hero-balance-label span{font-size:7px;font-weight:900;letter-spacing:.16em;color:#c0cfda}
+.hero-balance-label b{font-size:7px;letter-spacing:.12em;color:#e9c777}
+.hero-balance-amount{display:flex;align-items:center;justify-content:space-between;grid-column:1/-1;gap:10px}
+.hero-balance-amount>strong{font:800 32px/.98 'Barlow Condensed',sans-serif;color:#fff;font-variant-numeric:tabular-nums}
+.hero-coin{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;border:2px solid #f4d98e;background:radial-gradient(circle at 30% 25%,#fff0bd,#d6a83f 55%,#8b5d1e);box-shadow:0 2px 8px #0006}
+.hero-coin .brand-emblem{width:16px;height:13px;filter:none}
+.hero-balance-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;grid-column:1/-1;padding-top:8px;border-top:1px solid #ffffff1c}
+.hero-balance-stats span{display:grid;gap:3px}
+.hero-balance-stats small{font-size:6px;letter-spacing:.1em;color:#9fb6c6}
+.hero-balance-stats b{font-size:9px;color:#f7fafc}
+.hero-foot{display:none!important}
+.balance-pill .ct-gem{width:16px;height:16px;display:grid;place-items:center}
+.balance-pill .ct-gem svg{width:16px;height:16px;fill:none;stroke:#27d7f2;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.ct-balance-modal h2{font:700 25px 'Barlow Condensed';margin:7px 0 12px}
+.ct-balance-number{display:block;font:800 42px 'Barlow Condensed';color:#27d7f2;font-variant-numeric:tabular-nums}
+.ct-balance-number i{font:800 17px 'Barlow Condensed';font-style:normal;color:#f2d58d}
+.ct-balance-modal>p{font-size:10px;line-height:1.6;color:#bfccd6}
+.ct-balance-info{display:grid;gap:5px;margin:15px 0;padding:13px;border:1px solid #866a39;border-radius:9px;background:#332c20}
+.ct-balance-info b{font-size:10px;color:#f4d58e}
+.ct-balance-info span{font-size:9px;line-height:1.5;color:#d7c9a9}
+.task-ad-reward{border-color:#816331!important;background:linear-gradient(110deg,#342b1b,#19283a 75%)!important}
+.task-ad-reward>strong{color:#f3d58e;font-size:12px;white-space:nowrap}
+.empty-ball svg{width:25px;height:25px;stroke:currentColor;fill:none}
+@media(max-width:600px){.hero-condensed{grid-template-columns:minmax(0,1fr) 35%}.hero-condensed .hero-copy{padding:17px 13px 13px;width:auto}.hero-condensed .hero h1{font-size:38px}.hero-condensed .hero-art{right:-8%;width:42%;height:135px}.hero-balance{padding:10px 13px}.hero-balance-amount>strong{font-size:29px}.hero-balance-stats small{font-size:5px}.hero-balance-stats b{font-size:8px}}
+@media(max-width:370px){.hero-condensed .hero h1{font-size:34px}.hero-condensed .hero-art{opacity:.48}.hero-balance-stats{gap:4px}}
