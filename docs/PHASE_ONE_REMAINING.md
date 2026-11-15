@@ -36,7 +36,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Add the owner-supplied social destinations; those rows remain hidden until valid HTTPS links are configured.
 - [x] Improved task-claim duplicate handling so already-pending and already-approved tasks return accurate conflict responses instead of reporting a false new submission.
 - [x] Require a configured official destination and an HTTPS proof link before accepting manual social-task claims; the Admin review queue displays the submitted evidence link.
-- [ ] Test social task submission, admin review, approved credit, rejected resubmission and duplicate prevention end-to-end.
+- [x] Verified staging social-task claim submission, duplicate pending-claim preservation and rejected-claim resubmission with fresh HTTPS evidence.
+- [ ] Test authenticated Admin review, approved reward credit and rejected-task workflow end-to-end.
 - [x] Made referral qualification retry-safe: repeat welcome-gift confirmation now rechecks an eligible invitee and can complete a missed qualification/milestone after a partial failure, without double-crediting the inviter.
 - [x] Verified the onboarding+welcome-gift qualification condition and exactly-once 500 SETHIS milestone using three separate synthetic invitee identities in staging D1.
 - [ ] Test real Telegram referral deep-link attribution, self-referral/duplicate prevention and the milestone with multiple Telegram accounts.
@@ -61,6 +62,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Verified the exact Monetag wallet-credit SQL only updates the balance once when the same valued event is replayed; the staging D1 test records one ledger event and one 100 CT credit. The real provider callback test remains pending.
 - [ ] Test onboarding resume/completion, account profile persistence and check-in persistence with real Telegram accounts.
 - [ ] Test notifications for argument/reply/reaction/verdict/wallet/referral/task events and read states.
+- [x] Verified staging moderation-report uniqueness: duplicate open reports are rejected and a new report can be submitted after dismissal.
 - [ ] Test reports for users/Courts/arguments/replies; moderation queue, hide/restore, restriction/suspension, audit log and enforcement.
 - [x] Added server-side community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per user; identical argument/reply submissions within two minutes are rejected, and restricted users cannot react.
 - [x] Enforced Court visibility/moderation status in join, argument, reply and reaction paths so hidden/removed Courts cannot be modified through direct API requests.
@@ -80,13 +82,13 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Added SQLite-backed tests against migration `0023_admin_setup_guard.sql` for unauthorized first-admin creation, successful short-lived authorization consumption and expired authorization rejection. Production D1 already contains one administrator record, so first-admin registration is currently closed.
 - [x] Rate-limited first-admin setup attempts to five per IP hash per 15 minutes using the same atomic limiter as Admin sign-in.
 - [x] Require same-origin requests for all Admin and editorial write endpoints, in addition to the HttpOnly, Secure, SameSite=Strict session cookie.
-- [x] Added the `ADMIN_SETUP_SECRET` secret binding, `admin_setup_authorizations` table and a D1 trigger that rejects first-admin inserts without a short-lived authorization row. The new Worker creates that row and the admin record in one atomic batch. The currently deployed Worker is still on the older revision until the deployment credential is configured and the new code is deployed.
+- [x] Added the `ADMIN_SETUP_SECRET` secret binding, `admin_setup_authorizations` table and a D1 trigger that rejects first-admin inserts without a short-lived authorization row. The new Worker creates that row and the admin record in one atomic batch. Production still runs an older Worker revision; the Cloudflare build pipeline is currently held at a verification-only no-op deploy until Phase One is ready.
 - [x] Added server-side failed-login throttling: five attempts per IP hash within 15 minutes, reserved atomically so concurrent requests cannot bypass the limit, generic credential errors, successful-login reset, and automatic cleanup of expired attempt records.
 - [x] Added migration `0022_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
 
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
-- [x] Confirmed Cloudflare Workers Builds is configured for the `main` branch with `npm run build` and `npx wrangler deploy`; GitHub Actions is kept focused on tests/build verification so a missing GitHub Actions API token cannot appear as a successful production deployment.
+- [x] Confirmed Cloudflare Workers Builds is configured for `main`; its build step now runs `npm test && npm run build`. Its production deploy command is temporarily a verification-only no-op and must be restored to `npx wrangler deploy` after Phase One is complete. GitHub Actions is kept focused on verification.
 - [x] Verified the full Cloudflare Workers Build for source revision `4eff39b9314106641bca56825fd3f18299fef6ee`: all 26 automated tests passed, TypeScript/Vite production build passed, and the deployment command was deliberately held at a no-op so this verification did not change production.
 - [ ] Add D1-backed automated tests and/or safe staging fixtures for critical transaction paths.
 - [ ] Verify a Cloudflare Workers Build for the latest `main` commit completes and the resulting Worker version receives 100% traffic; the live Worker is currently on an older source revision.
