@@ -13,6 +13,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Audit Admin editorial verdict flow, immutable adjudication record, winner reward idempotency, and participant outcome history.
 - [ ] Audit Pool Court lifecycle: scheduled/open/locked/settled/cancelled, reserve attestation, entry/stake debit, minimum stake, side totals, close deadline.
 - [x] Preserved proportional Pool Court distribution with deterministic largest-remainder allocation; the adjudication now records the count of participants who actually receive a positive SETHIS credit, keeping zero-value rounding outcomes from falsely failing the ledger audit.
+- [x] Guard Pool Court adjudication, prize credits, position settlement and verdict notifications so they can only run against the matching locked-to-settled adjudication; guarded Regular Court verdict notifications against cancelled/unsuccessful settlement races. (Real concurrent D1 transaction tests remain outstanding.)
 - [ ] Audit Pool Court losing-side outcome and duplicate settlement protection end-to-end.
 - [ ] Audit cancellation/refunds and reserve release consistency.
 - [x] Added Node built-in unit tests for proportional Pool Court allocation, deterministic remainder distribution, zero-value outcomes and invalid input; the four allocation tests pass under Node 22.16.
@@ -59,7 +60,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
-- [ ] Confirm the new GitHub Actions workflow actually runs and passes; the repository currently reports no workflow runs.
+- [x] Confirmed GitHub Actions workflow runs successfully on commit `2ce3760fbcf4469188b0b388e5a78e8fad385099`: settlement unit tests and application/Worker build passed. Re-run after subsequent commits.
 - [ ] Add D1-backed automated tests and/or safe staging fixtures for critical transaction paths.
 - [ ] Run Telegram multi-user test: onboarding, join, argue/reply/react, verdict, reward, wallet, rankings, report.
 - [ ] Check mobile errors/loading/empty states and production logs.
