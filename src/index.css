@@ -713,6 +713,21 @@
 .ct-balance-info{display:grid;gap:5px;margin:15px 0;padding:13px;border:1px solid #866a39;border-radius:9px;background:#332c20}
 .ct-balance-info b{font-size:10px;color:#f4d58e}
 .ct-balance-info span{font-size:9px;line-height:1.5;color:#d7c9a9}
+.ct-balance-ad-card{display:grid;gap:12px;margin:15px 0;padding:14px;border:1px solid #28516a;border-radius:13px;background:linear-gradient(145deg,#14283b,#101b2b 78%);box-shadow:inset 0 1px #ffffff0a}
+.ct-balance-ad-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ct-balance-ad-head>div{display:grid;gap:3px}
+.ct-balance-ad-head b{font-size:12px;color:#f8fafc}
+.ct-balance-ad-head small{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:#9fb6c6}
+.ct-balance-ad-head>strong{padding:6px 9px;border-radius:8px;background:#123246;color:#27d7f2;font:800 14px 'Barlow Condensed';white-space:nowrap}
+.ct-balance-ad-card>p{margin:0;color:#c4d2de;font-size:9px;line-height:1.6}
+.ct-ad-progress{display:grid;gap:7px}
+.ct-ad-progress>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#a9bdcc;font-size:8px}
+.ct-ad-progress>div:first-child b{color:#f8fafc;font-variant-numeric:tabular-nums}
+.ct-ad-progress-track{height:6px;overflow:hidden;border-radius:20px;background:#26384a}
+.ct-ad-progress-track span{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#27d7f2,#72e6f4);transition:width .25s ease}
+.ct-ad-status{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#c1d1dc;font-size:8px;line-height:1.4}
+.ct-ad-status button{flex-shrink:0;border:0;background:transparent;color:#27d7f2;font-size:8px;font-weight:800;letter-spacing:.08em;padding:4px}
+.ct-balance-modal .primary-wide:disabled{opacity:.55;cursor:not-allowed;filter:saturate(.6)}
 .task-ad-reward{border-color:#816331!important;background:linear-gradient(110deg,#342b1b,#19283a 75%)!important}
 .task-ad-reward>strong{color:#f3d58e;font-size:12px;white-space:nowrap}
 .empty-ball svg{width:25px;height:25px;stroke:currentColor;fill:none}
