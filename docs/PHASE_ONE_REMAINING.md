@@ -62,6 +62,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Verified duplicate daily check-in insertion is constrained to one row per Telegram user/date in staging D1.
 - [x] Verified the exact Monetag wallet-credit SQL only updates the balance once when the same valued event is replayed; the staging D1 test records one ledger event and one 100 CT credit. The real provider callback test remains pending.
 - [x] Verified sequential onboarding progress through all seven steps, completion timestamp and profile fields persist in staging D1.
+- [x] Added Worker-level integration coverage using two independently signed synthetic Telegram identities against an isolated SQLite database: sign-in persistence, profile isolation/validation, ordered seven-step onboarding, exactly-once welcome gift, duplicate daily check-in, notification read state, referral attribution and qualification. Real Telegram account testing remains pending.
 - [x] Verified notification event-key deduplication and read-state transition in staging D1.
 - [ ] Test onboarding resume/completion, profile and check-in persistence, and notification event creation with real Telegram accounts.
 - [x] Verified in-app notification event creation for arguments, replies and reactions in staging D1; wallet, referral, task, Regular Court and Pool Court verdict notifications are covered by staging checks or automated transaction tests. Notification event-key deduplication and read-state transitions were also verified in staging.
