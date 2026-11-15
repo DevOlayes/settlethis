@@ -2,7 +2,7 @@ import { allocatePoolPrize } from "./settlement";
 import { checkinSummary, lagosDate } from "./checkin";
 import { verifyTelegramInitData } from "./telegram-auth";
 import { secureUrl } from "./url-validation";
-import { monetagWalletCreditSql } from "./monetag";
+import { monetagWalletCreditSql, parseMonetagPostback } from "./monetag";
 import { taskApprovalStatements } from "./task-review";
 import { RANKINGS_SQL } from "./rankings";
 interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }
@@ -122,14 +122,9 @@ env.DB.prepare("SELECT COUNT(*) AS n FROM wallet_ledger l WHERE l.transaction_ty
   if(!safeEqual(supplied,env.MONETAG_POSTBACK_SECRET))return json({error:"Unauthorized postback."},401);
   try{
    const body=request.method==="POST"?await request.json() as Record<string,unknown>:Object.fromEntries(url.searchParams.entries());
-   const eventId=textField(body.ymid,180),eventType=textField(body.reward_event_type,40),userId=textField(body.telegram_id,32),zone=textField(body.zone_id,80),requestVar=textField(body.request_var,40);
-   if(!eventId||!/^[A-Za-z0-9._-]{1,180}$/.test(eventId)||!/^[0-9]{5,24}$/.test(userId)||eventType!=="valued")return json({accepted:false,reason:"Only valued events with a valid unique event ID are eligible."});
-   if(!env.MONETAG_ZONE_ID||zone!==env.MONETAG_ZONE_ID)return json({accepted:false,reason:"Unrecognised main ad zone."});
-   let placement:"home_ct"|"tasks_sethis"|null=null;
-   if(requestVar==="home_ct")placement="home_ct";
-   if(requestVar==="tasks_sethis")placement="tasks_sethis";
-   if(!placement)return json({accepted:false,reason:"Unrecognised reward placement."});
-   const token=placement==="home_ct"?"CT":"SETHIS",amount=placement==="home_ct"?100:150,key="monetag:"+eventId,field=token==="CT"?"ct_balance":"sethis_balance";
+   const parsed=parseMonetagPostback(body,env.MONETAG_ZONE_ID||"");
+   if(!parsed.ok)return json({accepted:false,reason:parsed.reason});
+   const {eventId,userId,zoneId:zone,placement,token,amount,idempotencyKey:key,balanceField:field}=parsed.value;
    const prior=await env.DB.prepare("SELECT id FROM ad_reward_events WHERE provider_event_id=?").bind(eventId).first();
    if(prior)return json({accepted:true,duplicate:true});
    const user=await env.DB.prepare("SELECT telegram_user_id FROM telegram_users WHERE telegram_user_id=?").bind(userId).first();
