@@ -68,6 +68,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
+- [x] Added a production deployment job that runs only after verification succeeds and rebuilds the static assets before `wrangler deploy`.
 - [x] Confirmed GitHub Actions workflow runs successfully on commit `2ce3760fbcf4469188b0b388e5a78e8fad385099`: settlement unit tests and application/Worker build passed. Re-run after subsequent commits.
 - [ ] Add D1-backed automated tests and/or safe staging fixtures for critical transaction paths.
 - [ ] Run Telegram multi-user test: onboarding, join, argue/reply/react, verdict, reward, wallet, rankings, report.
