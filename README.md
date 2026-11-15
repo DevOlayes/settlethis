@@ -14,7 +14,8 @@ The full scope, acceptance checklist, delivery sequence, and deferred features a
 - Cloudflare Workers for backend services and web delivery
 - Cloudflare D1 for persistent application data
 - Cloudflare R2 for media storage when required
-- Telegram Mini App integration plus a browser-accessible web app
+- Telegram Mini App as the user-facing platform
+- Browser-only private admin console and development/visual inspection access
 
 ## Local development
 
