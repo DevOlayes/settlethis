@@ -444,6 +444,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const assetResponse = await worker.fetch(new Request("https://settlethis.test/"), env);
   assert.equal(assetResponse.headers.get("x-content-type-options"), "nosniff");
   assert.equal(assetResponse.headers.get("x-frame-options"), "DENY");
+  assert.match(assetResponse.headers.get("content-security-policy-report-only"), /script-src 'self'.*https:\/\/yoszi\.com/);
 
   const walletAudit = await adminApi(env, "/api/admin/wallet-audit", adminToken);
   assert.equal(walletAudit.response.status, 200);
