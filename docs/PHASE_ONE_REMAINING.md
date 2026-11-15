@@ -47,6 +47,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Standardized on the React `monetag-tg-sdk` package as the sole SDK loader; removed the duplicate HTML SDK script tag.
 - [x] Improved rewarded-ad confirmation UX: distinguish valued, non-valued and pending server postback outcomes; removed stale Wallet copy that always claimed setup was pending.
 - [x] Implemented server-side reward validation for `valued` events only, main-zone validation, placement validation, unique `ymid` idempotency, one reward per user per 20 minutes, Lagos daily cap 30, and 100 CT Home / 150 SETHIS Tasks rewards.
+- [x] Added Worker-route integration coverage for Monetag postbacks using the isolated migrated SQLite test database: rejects missing/wrong secrets, non-valued events, wrong zones/placements and unknown Telegram users; verifies Home 100 CT and Tasks 150 SETHIS mapping, duplicate callback idempotency, shared cross-placement cooldown, exact 30th/31st daily-cap boundary, matching wallet ledger/balance updates and exactly-once reward notifications. Full GitHub verification run `43741963493` passed: 44/44 automated tests and the TypeScript/Vite production build.
 - [x] Owner confirmed the complete Monetag SSP main-zone Postback URL has been entered. The external Monetag dashboard configuration cannot be independently inspected from the connected Cloudflare account.
 - [ ] Run the real valued-ad credit test inside Telegram and confirm exactly one wallet credit; owner plans to do this after the build is ready.
 
