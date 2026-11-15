@@ -473,6 +473,18 @@ test("Telegram accounts persist independently through onboarding, profile, check
   });
   assert.equal(clearedDestinations.response.status, 200);
   assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM task_catalog WHERE task_key IN ('telegram_channel','facebook_follow','whatsapp_community') AND destination_url IS NOT NULL").get().n, 0);
+
+  const crossOriginAdminWrite = await worker.fetch(new Request("https://settlethis.test/api/admin/task-destinations", {
+    method: "POST", headers: { cookie: "st_admin=" + adminToken, origin: "https://attacker.test", "content-type": "application/json" },
+    body: JSON.stringify({ destinations: { telegram_channel: "https://t.me/attacker" } })
+  }), env);
+  assert.equal(crossOriginAdminWrite.status, 403);
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const failedLogin = await adminApi(env, "/api/admin/login", adminToken, "POST", { email: "unknown@example.invalid", password: "incorrect" });
+    assert.equal(failedLogin.response.status, 401);
+  }
+  const throttledLogin = await adminApi(env, "/api/admin/login", adminToken, "POST", { email: "unknown@example.invalid", password: "incorrect" });
+  assert.equal(throttledLogin.response.status, 429);
 });
 
 
