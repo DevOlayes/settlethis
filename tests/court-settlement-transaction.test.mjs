@@ -79,7 +79,8 @@ test("settles a Regular Court once, credits only the winning side and records bo
   const db = setup();
   settle(db, "A", "adjudication-1");
   const court = db.prepare("SELECT status,winner_side FROM courts WHERE id='court-1'").get();
-  assert.deepEqual(court, { status: "settled", winner_side: "A" });
+  assert.equal(court.status, "settled");
+  assert.equal(court.winner_side, "A");
   assert.equal(db.prepare("SELECT sethis_balance FROM wallets WHERE user_id='user-a'").get().sethis_balance, 1550);
   assert.equal(db.prepare("SELECT sethis_balance FROM wallets WHERE user_id='user-b'").get().sethis_balance, 0);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM wallet_ledger WHERE transaction_type='court_reward'").get().n, 1);
@@ -93,7 +94,9 @@ test("makes repeated or conflicting verdict requests unable to pay twice or chan
   settle(db, "A", "adjudication-1");
   settle(db, "A", "adjudication-replay");
   settle(db, "B", "adjudication-conflict");
-  assert.deepEqual(db.prepare("SELECT status,winner_side FROM courts WHERE id='court-1'").get(), { status: "settled", winner_side: "A" });
+  const finalCourt = db.prepare("SELECT status,winner_side FROM courts WHERE id='court-1'").get();
+  assert.equal(finalCourt.status, "settled");
+  assert.equal(finalCourt.winner_side, "A");
   assert.equal(db.prepare("SELECT sethis_balance FROM wallets WHERE user_id='user-a'").get().sethis_balance, 1550);
   assert.equal(db.prepare("SELECT sethis_balance FROM wallets WHERE user_id='user-b'").get().sethis_balance, 0);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM court_adjudications WHERE court_id='court-1'").get().n, 1);
