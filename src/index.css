@@ -231,3 +231,22 @@
   letter-spacing:.015em;
   text-shadow:0 1px 12px #f5d58e35;
 }
+
+/* Live crowd-position presentation */
+.market-split{margin:11px 0 12px;padding:10px 11px;border:1px solid #29485d;border-radius:8px;background:#0d1b2b}
+.market-split-head,.market-split-values{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.market-split-head{margin-bottom:8px}
+.market-split-head b{font-size:7px;letter-spacing:.12em;color:#e8f4f8}
+.market-split-head span{font-size:7px;color:#a9bfce}
+.market-split-bar{height:8px;display:flex;overflow:hidden;border-radius:99px;background:#d97757}
+.market-split-bar span{display:block;height:100%;background:#27d7f2}
+.market-split-bar i{display:block;height:100%;background:#d97757}
+.market-split-values{margin-top:7px}
+.market-split-values b{font-size:8px;color:#d8e6ed}
+.market-split-values b:first-child strong{color:#27d7f2}
+.market-split-values b:last-child strong{color:#ef9a7d}
+.market-empty{padding:8px 0 2px;font-size:8px;color:#b7c7d2}
+.empty-courts{display:flex;flex-direction:column;gap:6px;padding:22px 16px;border:1px dashed #38566a;border-radius:10px;background:#111f30}
+.empty-courts b{font:800 17px 'Barlow Condensed';color:#fff}
+.empty-courts span{font-size:9px;line-height:1.5;color:#c3d1dc}
+.view-court:disabled{opacity:.45;cursor:not-allowed}
