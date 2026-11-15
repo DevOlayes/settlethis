@@ -10,23 +10,23 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Moved Regular and Pool Court entry deadline checks into the same database statements that create the CT debit, closing a race where a late request could pass an earlier status check.
 - [x] Added safe cancellation for scheduled Pool Courts; pending reserves need no release attestation, while secured reserves require a release reference and explicit confirmation.
 - [x] Exposed Pool Court reserve-attestation state in the member UI so a scheduled pool with an unconfirmed reserve is labelled as a proposed prize and cannot be mistaken for an open, funded pool.
-- [ ] Audit Admin editorial verdict flow, immutable adjudication record, winner reward idempotency, and participant outcome history.
-- [ ] Audit Pool Court lifecycle: scheduled/open/locked/settled/cancelled, reserve attestation, entry/stake debit, minimum stake, side totals, close deadline.
+- [x] Audited Admin editorial verdict flow: immutable one-per-Court adjudication, matching-side settlement, idempotent fixed winner reward, participant status/history and verdict notifications. Concurrent transaction tests remain outstanding.
+- [x] Audited Pool Court scheduled/open/locked/settled/cancelled lifecycle, reserve attestation, open/close windows, minimum stake, side totals and locked-before-verdict rules. Stake transaction now independently requires a secured reserve; future opening times are labelled scheduled in the member feed.
 - [x] Preserved proportional Pool Court distribution with deterministic largest-remainder allocation; the adjudication now records the count of participants who actually receive a positive SETHIS credit, keeping zero-value rounding outcomes from falsely failing the ledger audit.
 - [x] Guard Pool Court adjudication, prize credits, position settlement and verdict notifications so they can only run against the matching locked-to-settled adjudication; guarded Regular Court verdict notifications against cancelled/unsuccessful settlement races. (Real concurrent D1 transaction tests remain outstanding.)
-- [ ] Audit Pool Court losing-side outcome and duplicate settlement protection end-to-end.
-- [ ] Audit cancellation/refunds and reserve release consistency.
+- [x] Audited losing-side settlement and duplicate protection: all positions settle, only positive winning allocations are credited, adjudication is unique and wallet credits require the matching settled winner. Concurrent transaction tests remain outstanding.
+- [x] Audited Regular and Pool cancellation/refund batches: cancellation state gates credits, idempotency keys prevent repeat refunds, participant/position state changes require the refund ledger, and secured Pool reserves require a recorded release reference. End-to-end refund scenarios remain to be exercised.
 - [x] Added Node built-in unit tests for proportional Pool Court allocation, deterministic remainder distribution, zero-value outcomes and invalid input; the four allocation tests pass under Node 22.16.
 - [x] Validated the revised Regular/Pool settlement SQL statements against production D1 using read-only EXPLAIN queries; no production rows were changed.
 - [ ] Add D1-backed automated tests for critical Court and settlement transactions, including concurrent/duplicate requests.
 
 ## Wallet and reward integrity
-- [ ] Verify every CT/SETHIS mutation is atomic with ledger and idempotency reference.
+- [x] Source-audited every Worker wallet balance mutation: welcome gift, admin grant, task/referral/ad reward, Court entry/reward/refund and Pool stake/prize/refund are batched with ledger/idempotency checks.
 - [x] Expanded the production wallet integrity audit to 32 checks, including orphaned Court/Pool CT debits and refunds, ineligible Court/Pool prize recipients, proportional Pool prize bounds, orphaned task/referral credits, and agreement between Court outcome fields and immutable adjudication records.
 - [x] Executed all 32 wallet integrity SQL checks against the current production D1 schema/data; all returned zero issues. This is only a clean-baseline check: the database currently has no wallet entries, Regular Court participants, Pool positions, task claims or referrals to exercise transaction scenarios.
 - [ ] Exercise the 32-check wallet integrity audit against representative seeded scenarios and correct any false positives/omissions.
 - [ ] Verify welcome gift, Admin grant, Court entry/debit, Court reward, Pool stake/prize/refund, task/referral/ad credits.
-- [ ] Confirm balances cannot be changed through client-supplied values or unauthenticated requests.
+- [x] Confirmed there is no client balance-setting API; wallet mutations require verified Telegram identity, an authenticated Admin session or the secret-verified Monetag postback, with server-side amounts and transaction checks.
 
 ## Tasks, referrals, ads
 - [ ] Verify task catalog/UI rewards match actual claim/review/credit logic, including the owner-supplied social destinations.
