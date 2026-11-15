@@ -424,3 +424,39 @@
 .court-reply-compose button{padding:0 12px;border:0;border-radius:6px;background:#27d7f2;color:#06131b;font-size:8px;font-weight:950}
 .court-reply-compose button:disabled{opacity:.5}
 @media(min-width:760px){.court-room-overlay{align-items:center;padding:24px}.court-room-modal{max-height:calc(100dvh - 48px);padding:22px}.court-room-modal>h2{font-size:32px}}
+
+
+/* My Courts: participation history and honest outcome states */
+.my-courts-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.my-courts-summary>div{display:flex;flex-direction:column;gap:4px;padding:11px;border:1px solid #ffffff18;border-radius:9px;background:linear-gradient(145deg,#172a40,#111e30)}
+.my-courts-summary strong{font:800 24px 'Barlow Condensed';color:#fff}
+.my-courts-summary span{font-size:7px;font-weight:900;letter-spacing:.1em;color:#9fb4c2}
+.my-courts-filters{display:flex;gap:6px;overflow:auto;margin:14px 0;padding-bottom:3px}
+.my-courts-filters button{white-space:nowrap;padding:8px 11px;border:1px solid #ffffff1b;border-radius:7px;background:#121f31;color:#aebdca;font-size:8px;font-weight:900}
+.my-courts-filters button.active{border-color:#278da2;background:#15394a;color:#eaffff}
+.my-courts-list{display:grid;gap:10px}
+.my-court-row{padding:14px;border:1px solid #2b465c;border-radius:11px;background:linear-gradient(145deg,#17283c,#111d2e);box-shadow:0 8px 24px #0002}
+.my-court-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.my-court-top>span{font-size:7px;font-weight:900;letter-spacing:.12em;color:#27d7f2}
+.my-court-status{padding:5px 7px;border-radius:5px;background:#19394a;color:#9ceeff;font-size:7px;letter-spacing:.08em}
+.my-court-status.settled{background:#3b3220;color:#f5d58e}
+.my-court-row h3{margin:10px 0;font:750 21px/1.08 'Barlow Condensed';color:#fff}
+.my-court-match{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px;background:#0c1928;border:1px solid #ffffff12;border-radius:7px}
+.my-court-match>span{display:flex;align-items:center;gap:6px;min-width:0;font-size:8px;color:#e8f0f5}
+.my-court-match img{width:20px;height:20px;object-fit:contain;background:#fff;border-radius:50%}
+.my-court-match strong{flex:0 0 auto;font-size:9px;color:#f5d58e}
+.my-court-incident{margin-top:8px;color:#d7b66e;font-size:7px;font-weight:900;letter-spacing:.1em}
+.my-court-position{display:grid;gap:5px;margin:10px 0;padding:10px;border:1px solid #ffffff15;border-radius:7px;background:#142438}
+.my-court-position>span,.my-court-details small{font-size:7px;font-weight:900;letter-spacing:.1em;color:#9eb2c0}
+.my-court-position strong{font-size:11px;line-height:1.4;color:#fff}
+.my-court-position .side-a{color:#6de2f2}.my-court-position .side-b{color:#f3cf7b}
+.my-court-details{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:8px 0}
+.my-court-details>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.my-court-details b{font-size:9px;color:#fff;overflow-wrap:anywhere}
+.my-court-outcome{display:grid;gap:4px;margin-top:8px;padding:10px;border-left:2px solid #d9b15b;background:#302919}
+.my-court-outcome.pending{border-color:#27d7f2;background:#102c3b}
+.my-court-outcome b{font-size:8px;letter-spacing:.1em;color:#f4d28c}
+.my-court-outcome.pending b{color:#8beafa}
+.my-court-outcome span{font-size:8px;line-height:1.5;color:#e2e8ec}
+.my-court-evidence{display:inline-block;margin-top:10px;color:#27d7f2;font-size:8px;font-weight:900;letter-spacing:.08em}
+@media(max-width:430px){.my-court-details{grid-template-columns:repeat(2,1fr)}.my-court-match>span b{font-size:7px}.my-courts-summary>div{padding:9px}}
