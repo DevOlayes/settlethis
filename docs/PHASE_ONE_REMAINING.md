@@ -89,6 +89,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Rate-limited first-admin setup attempts to five per IP hash per 15 minutes using the same atomic limiter as Admin sign-in.
 - [x] Require same-origin requests for all Admin and editorial write endpoints, in addition to the HttpOnly, Secure, SameSite=Strict session cookie.
 - [x] Added the `ADMIN_SETUP_SECRET` secret binding, `admin_setup_authorizations` table and a D1 trigger that rejects first-admin inserts without a short-lived authorization row. The new Worker creates that row and the admin record in one atomic batch. The latest main revision has now been deployed to production through Cloudflare Workers Builds; deployment version `9e45c60f-c9c0-4934-88d5-c4763bc2fd2d` is receiving 100% traffic.
+- [x] Added an authenticated, read-only Admin audit-history API and a dedicated Admin Portal screen showing recent task-review, moderation, content-action and member-restriction records; live Admin-session UI verification remains pending below.
 - [x] Added server-side failed-login throttling: five attempts per IP hash within 15 minutes, reserved atomically so concurrent requests cannot bypass the limit, generic credential errors, successful-login reset, and automatic cleanup of expired attempt records.
 - [x] Added migration `0022_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
 
