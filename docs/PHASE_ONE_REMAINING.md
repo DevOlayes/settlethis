@@ -59,6 +59,10 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Verify rankings metric/formula, tie-breaks, resolved-entry counts, win rate, SETHIS earned and user identity against representative seeded records.
 - [ ] Test Rankings and My Courts using representative seeded records and real Telegram participants.
 
+## Admin Portal security
+- [x] Added server-side failed-login throttling: five attempts per IP hash within 15 minutes, generic credential errors, successful-login reset, and automatic cleanup of expired attempt records.
+- [x] Added migration `0021_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
+
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
 - [x] Confirmed GitHub Actions workflow runs successfully on commit `2ce3760fbcf4469188b0b388e5a78e8fad385099`: settlement unit tests and application/Worker build passed. Re-run after subsequent commits.
