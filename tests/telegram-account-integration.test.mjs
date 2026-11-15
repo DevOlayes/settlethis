@@ -440,6 +440,30 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(walletAudit.response.status, 200);
   assert.equal(walletAudit.data.checks.length, 36);
   assert.equal(walletAudit.data.healthy, true, JSON.stringify(walletAudit.data.checks.filter(item => item.issues > 0)));
+
+  const unauthenticatedDestinations = await adminApi(env, "/api/admin/task-destinations", "b".repeat(64));
+  assert.equal(unauthenticatedDestinations.response.status, 401);
+  const initialDestinations = await adminApi(env, "/api/admin/task-destinations", adminToken);
+  assert.equal(initialDestinations.response.status, 200);
+  assert.equal(initialDestinations.data.destinations.length, 3);
+  const wrongPlatform = await adminApi(env, "/api/admin/task-destinations", adminToken, "POST", {
+    destinations: { telegram_channel: "https://www.facebook.com/not-a-telegram-link" }
+  });
+  assert.equal(wrongPlatform.response.status, 400);
+  const savedDestinations = await adminApi(env, "/api/admin/task-destinations", adminToken, "POST", {
+    destinations: {
+      telegram_channel: "https://t.me/settlethis_test",
+      facebook_follow: "https://www.facebook.com/settlethis_test",
+      whatsapp_community: "https://chat.whatsapp.com/AbCdEf123456"
+    }
+  });
+  assert.equal(savedDestinations.response.status, 200);
+  assert.equal(env.testDb.prepare("SELECT destination_url FROM task_catalog WHERE task_key='telegram_channel'").get().destination_url, "https://t.me/settlethis_test");
+  const clearedDestinations = await adminApi(env, "/api/admin/task-destinations", adminToken, "POST", {
+    destinations: { telegram_channel: "", facebook_follow: "", whatsapp_community: "" }
+  });
+  assert.equal(clearedDestinations.response.status, 200);
+  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM task_catalog WHERE task_key IN ('telegram_channel','facebook_follow','whatsapp_community') AND destination_url IS NOT NULL").get().n, 0);
 });
 
 
