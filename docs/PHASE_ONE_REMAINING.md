@@ -9,6 +9,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Extended the wallet integrity audit to detect Regular and Pool Court outcome fields that disagree with their immutable adjudication records.
 - [x] Moved Regular and Pool Court entry deadline checks into the same database statements that create the CT debit, closing a race where a late request could pass an earlier status check.
 - [x] Added safe cancellation for scheduled Pool Courts; pending reserves need no release attestation, while secured reserves require a release reference and explicit confirmation.
+- [x] Exposed Pool Court reserve-attestation state in the member UI so a scheduled pool with an unconfirmed reserve is labelled as a proposed prize and cannot be mistaken for an open, funded pool.
 - [ ] Audit Admin editorial verdict flow, immutable adjudication record, winner reward idempotency, and participant outcome history.
 - [ ] Audit Pool Court lifecycle: scheduled/open/locked/settled/cancelled, reserve attestation, entry/stake debit, minimum stake, side totals, close deadline.
 - [x] Preserved proportional Pool Court distribution with deterministic largest-remainder allocation; the adjudication now records the count of participants who actually receive a positive SETHIS credit, keeping zero-value rounding outcomes from falsely failing the ledger audit.
