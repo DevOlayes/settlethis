@@ -63,6 +63,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Test onboarding resume/completion, account profile persistence and check-in persistence with real Telegram accounts.
 - [ ] Test notifications for argument/reply/reaction/verdict/wallet/referral/task events and read states.
 - [x] Verified staging moderation-report uniqueness: duplicate open reports are rejected and a new report can be submitted after dismissal.
+- [x] Verified the member reply query excludes replies whenever the parent argument or its Court is hidden.
 - [ ] Test reports for users/Courts/arguments/replies; moderation queue, hide/restore, restriction/suspension, audit log and enforcement.
 - [x] Added server-side community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per user; identical argument/reply submissions within two minutes are rejected, and restricted users cannot react.
 - [x] Enforced Court visibility/moderation status in join, argument, reply and reaction paths so hidden/removed Courts cannot be modified through direct API requests.
