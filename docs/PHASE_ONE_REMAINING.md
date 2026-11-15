@@ -45,7 +45,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 ## Community and account
 - [x] Corrected the check-in calendar to show the trailing six days plus today, matching its rolling seven-day history label rather than displaying future dates.
 - [x] Extracted Lagos check-in date/streak logic and added automated tests for the 23:00 UTC date boundary, current streaks, yesterday fallback and seven-day calendar window.
-- [ ] Test Telegram initData verification, onboarding resume/completion and account profile persistence; test check-in duplicate prevention and real Telegram account persistence.
+- [x] Extracted Telegram initData verification and added automated tests for valid HMAC signatures, tampering, expiry, future timestamps and invalid identity payloads.
+- [ ] Test onboarding resume/completion and account profile persistence; test check-in duplicate prevention and real Telegram account persistence.
 - [ ] Test notifications for argument/reply/reaction/verdict/wallet/referral/task events and read states.
 - [ ] Test reports for users/Courts/arguments/replies; moderation queue, hide/restore, restriction/suspension, audit log and enforcement.
 - [x] Added server-side community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per user; identical argument/reply submissions within two minutes are rejected, and restricted users cannot react.
