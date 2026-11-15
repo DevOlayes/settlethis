@@ -49,7 +49,9 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Test Rankings and My Courts using representative seeded records and real Telegram participants.
 
 ## Launch validation
-- [ ] Add repeatable automated tests and/or safe staging fixtures for critical paths.
+- [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
+- [ ] Confirm the new GitHub Actions workflow actually runs and passes; the repository currently reports no workflow runs.
+- [ ] Add D1-backed automated tests and/or safe staging fixtures for critical transaction paths.
 - [ ] Run Telegram multi-user test: onboarding, join, argue/reply/react, verdict, reward, wallet, rankings, report.
 - [ ] Check mobile errors/loading/empty states and production logs.
 - [ ] Complete security review and beta readiness checklist.
