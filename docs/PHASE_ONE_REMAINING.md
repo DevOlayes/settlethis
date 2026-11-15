@@ -42,6 +42,10 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Run the real valued-ad credit test inside Telegram and confirm exactly one wallet credit; owner plans to do this after the build is ready.
 - [ ] Add official Telegram/Facebook/WhatsApp destinations when supplied.
 
+## Phase One scope cleanup
+- [x] Removed the unfinished sample football quiz from the Phase One Tasks page; quizzes remain a later-phase feature rather than a non-functional placeholder.
+- [x] Hide social task rows until their official destination URLs are configured, instead of displaying dead-end buttons or setup notices.
+
 ## Community and account
 - [x] Corrected the check-in calendar to show the trailing six days plus today, matching its rolling seven-day history label rather than displaying future dates.
 - [x] Extracted Lagos check-in date/streak logic and added automated tests for the 23:00 UTC date boundary, current streaks, yesterday fallback and seven-day calendar window.
