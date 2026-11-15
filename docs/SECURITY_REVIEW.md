@@ -40,6 +40,7 @@ Review scope: Telegram Mini App, Cloudflare Worker/D1, browser Admin portal, wal
 ## Remaining release checks
 
 - A strict Content Security Policy is not yet enforced. The Monetag npm SDK dynamically injects its ad script using a publisher-configured host; confirm the exact production host and all required connection/frame origins before enforcing a CSP, so rewarded ads and Telegram WebView are not broken.
+- The repository does not yet contain a committed package-lock.json. The CI dependency audit passes, but dependency resolution is not fully reproducible; generate and commit a lockfile before the production release.
 - Run the final real Telegram multi-account journeys only after implementation is complete, including onboarding, profile, check-in, reports/moderation, Court/Pool actions, notifications, referrals and wallet history.
 - Run one real Monetag valued-event callback inside Telegram and confirm exactly one ledger credit.
 - Verify the Admin portal in a real authenticated browser session, including moderation, task review, social destination editing and audit history.
