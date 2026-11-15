@@ -514,3 +514,63 @@
 .admin-danger{width:100%;padding:13px;border:1px solid #fb923c88;border-radius:8px;background:#4a2718;color:#ffedd5;font-size:10px;font-weight:900;letter-spacing:.06em}
 .admin-danger:disabled{opacity:.4;cursor:not-allowed}
 .admin-refund-form{border:1px solid #fb923c55;border-radius:10px;padding:16px;background:#201b1a}
+
+
+/* SETHIS identity: a standalone custom letterform, never boxed or captioned */
+.brand-emblem,.admin-emblem{color:#27D7F2;filter:drop-shadow(0 0 10px #27d7f222)}
+.site-footer .brand-emblem{width:30px;height:34px;flex:0 0 30px}
+.onboarding-premium{width:min(520px,100%);padding:20px 18px 18px;border-color:#34536a;background:radial-gradient(ellipse at 50% 0%,#1c3a50 0,#17283c 42%,#101b2c 100%);overflow:hidden}
+.onboarding-progress{display:flex;gap:5px;margin:0 0 16px}
+.onboarding-progress span{height:3px;flex:1;border-radius:4px;background:#34485b}
+.onboarding-progress span.done{background:#27d7f2;box-shadow:0 0 10px #27d7f255}
+.onboarding-football-art{position:relative;height:132px;display:grid;place-items:center;overflow:hidden;margin:0 0 16px;border:1px solid #ffffff14;border-radius:10px;background:linear-gradient(130deg,#0d2636,#142b3b 52%,#101d2d)}
+.onboarding-pitch{position:absolute;inset:0;opacity:.6;background:repeating-linear-gradient(90deg,transparent 0 24%,#b4e5ee0a 24.2% 24.5%,transparent 24.7% 49.5%),linear-gradient(90deg,transparent 49.7%,#c3edf022 50%,transparent 50.3%)}
+.onboarding-pitch:before{content:"";position:absolute;left:50%;top:50%;width:76px;height:76px;border:1px solid #b9eaf322;border-radius:50%;transform:translate(-50%,-50%)}
+.onboarding-pitch span{position:absolute;left:0;top:28%;width:15%;height:44%;border:1px solid #b9eaf322;border-left:0}
+.onboarding-pitch i{position:absolute;right:0;top:28%;width:15%;height:44%;border:1px solid #b9eaf322;border-right:0}
+.onboarding-pitch b{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:#f5b942;box-shadow:0 0 16px #f5b942;transform:translate(-50%,-50%)}
+.onboarding-story-mark{position:relative;z-index:1;width:42px;height:48px;color:#27d7f2;filter:drop-shadow(0 4px 12px #0009)}
+.onboarding-football-art>small{position:absolute;bottom:9px;left:11px;color:#9fb8c8;font-size:7px;font-weight:900;letter-spacing:.14em}
+.onboarding-premium>.eyebrow{display:block;color:#79e9f7;font-size:8px;letter-spacing:.12em}
+.onboarding-premium h2{margin:10px 0 9px;font:750 29px/1.04 'Barlow Condensed';color:#fff}
+.onboarding-premium>p,.welcome-gift-stage>p{font-size:11px;line-height:1.7;color:#d5e2eb}
+.onboarding-story-note{display:grid;gap:5px;margin:15px 0;padding:12px;border-left:2px solid #27d7f2;background:#10283a}
+.onboarding-story-note b{font-size:8px;letter-spacing:.12em;color:#72e8f7}
+.onboarding-story-note span{font-size:9px;line-height:1.55;color:#d9e5eb}
+.onboarding-bottom{display:flex;align-items:center;gap:12px;margin-top:16px}
+.onboarding-bottom>span{flex:0 0 auto;font-size:8px;font-weight:900;letter-spacing:.1em;color:#a9bdca}
+.onboarding-bottom .primary-wide{flex:1}
+.welcome-gift-stage{text-align:center;position:relative;padding:8px 2px 2px}
+.welcome-gift-stage>.eyebrow{display:block;color:#f4d18a;font-size:8px;letter-spacing:.14em}
+.welcome-gift-stage h2{margin:10px 0;font:800 31px/1 'Barlow Condensed';color:#fff}
+.gift-box-wrap{height:165px;position:relative;display:grid;place-items:center;margin:6px 0}
+.gift-glow{position:absolute;width:155px;height:135px;border-radius:50%;background:#27d7f21c;filter:blur(20px);animation:giftPulse 2s ease-in-out infinite}
+.gift-box{position:relative;width:116px;height:86px;margin-top:31px;border:2px solid #f7d889;border-radius:7px 7px 10px 10px;background:linear-gradient(135deg,#167f9b,#0c4058 65%,#092d43);box-shadow:0 14px 25px #0007,inset 0 0 18px #ffffff18;animation:giftFloat 2.2s ease-in-out infinite}
+.gift-box:before{content:"";position:absolute;left:-9px;right:-9px;top:-14px;height:20px;border:2px solid #ffe4a0;border-radius:5px;background:linear-gradient(100deg,#f9d982,#bd852d 48%,#f5d27e);box-shadow:0 4px 9px #0005}
+.gift-lid{position:absolute;z-index:2;left:-9px;right:-9px;top:-22px;height:13px;border:2px solid #ffe7aa;border-radius:7px;background:linear-gradient(90deg,#f5d47e,#b97b28,#f5d47e);transform-origin:left bottom;animation:giftLid 2.2s ease-in-out infinite}
+.gift-lid i{position:absolute;left:50%;top:-15px;width:28px;height:19px;border:5px solid #f5d47e;border-radius:80% 80% 15% 80%;transform:translateX(-50%) rotate(-12deg)}
+.gift-ribbon-v{position:absolute;left:50%;top:-12px;bottom:0;width:17px;transform:translateX(-50%);background:linear-gradient(90deg,#f6d88c,#fff0b7,#d7a448)}
+.gift-ribbon-h{position:absolute;left:0;right:0;top:34px;height:13px;background:linear-gradient(90deg,#f6d88c,#fff0b7,#d7a448)}
+.gift-bow{position:absolute;z-index:3;top:-37px;left:50%;width:42px;height:25px;transform:translateX(-50%)}
+.gift-bow i,.gift-bow b{position:absolute;width:22px;height:18px;border:4px solid #f5d47e;border-radius:80% 80% 20% 80%}
+.gift-bow i{left:0;transform:rotate(22deg)}
+.gift-bow b{right:0;transform:scaleX(-1) rotate(22deg)}
+.gift-box-shadow{position:absolute;bottom:10px;width:130px;height:13px;border-radius:50%;background:#0007;filter:blur(7px)}
+.gift-amount{margin:0 0 13px;font:850 37px 'Barlow Condensed';letter-spacing:.02em;color:#fff;text-shadow:0 3px 16px #f2c76633}
+.gift-amount span{color:#27d7f2;font-size:20px}
+.gift-claim-button{min-height:46px;background:linear-gradient(100deg,#27d7f2,#8beaf5);box-shadow:0 8px 25px #27d7f226}
+.gift-claim-button:disabled{opacity:.65}
+.gift-once-note{display:block;margin-top:10px;color:#a9bdca;font-size:8px}
+.gift-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.gift-confetti i{position:absolute;top:4%;left:calc((var(--confetti-i)*37)%100*1%);width:6px;height:11px;border-radius:2px;background:hsl(calc(var(--confetti-i)*47),85%,65%);animation:confettiFall 1.8s ease-out forwards;animation-delay:calc(var(--confetti-i)*.025s)}
+.welcome-gold-coin{width:94px;height:94px;margin:14px auto 9px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#fff0b0,#e7b84e 42%,#a96c1c 78%,#f5d47e);border:5px double #ffedb1;box-shadow:0 0 0 5px #c28d3222,0 12px 28px #0008,inset 0 0 0 2px #936019}
+.welcome-gold-coin .brand-emblem{width:44px;height:52px;color:#087f9c;filter:drop-shadow(0 1px 1px #fff7)}
+.gift-revealed{color:#f7d989;font-size:43px}
+.gift-success-copy{margin:0 auto 15px;max-width:290px}
+.onboarding-error{padding:9px;border:1px solid #a85a42;border-radius:7px;background:#3c211e;color:#ffd9ce;font-size:9px}
+.onboarding-loading-mark{width:38px;height:44px;margin:0 auto 16px;color:#27d7f2}
+@keyframes giftFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes giftPulse{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes giftLid{0%,75%,100%{transform:rotate(0)}82%,92%{transform:rotate(-13deg) translateY(-8px)}}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(190px) rotate(520deg);opacity:0}}
+@media(max-width:420px){.onboarding-premium{padding:16px 14px}.onboarding-premium h2{font-size:26px}.onboarding-football-art{height:112px}.gift-box-wrap{height:145px}}
