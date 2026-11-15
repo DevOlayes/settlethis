@@ -6,7 +6,7 @@ Settle This! is a football entertainment platform built around structured debate
 
 The first release focuses on the complete core journey: discover a Court, enter a side, argue and engage, receive a verdict, and review outcomes and rewards. It includes Courts, My Courts, Tasks, Rankings, Wallet, profiles, notifications, moderation basics, and a server-backed CT/SETHIS ledger.
 
-The full scope, acceptance checklist, delivery sequence, and deferred features are documented in **[Phase One Delivery Plan](docs/PHASE_ONE.md)**.
+The full scope, acceptance checklist, delivery sequence, and deferred features are documented in **[Phase One Delivery Plan](docs/PHASE_ONE.md)**. The next development stage is tracked in the **[Phase Two Development Plan](docs/PHASE_TWO.md)**.
 
 ## Stack
 
