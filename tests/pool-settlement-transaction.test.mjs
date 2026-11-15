@@ -65,8 +65,8 @@ function settle(db, side, adjudicationId, positionSnapshot = null) {
       statements.push(["INSERT OR IGNORE INTO wallets(user_id,ct_balance,sethis_balance) VALUES(?,0,0)",[p.user_id]]);
       statements.push(["UPDATE wallets SET sethis_balance=sethis_balance+?,updated_at=CURRENT_TIMESTAMP WHERE user_id=? AND NOT EXISTS(SELECT 1 FROM wallet_ledger WHERE idempotency_key=?) AND EXISTS(SELECT 1 FROM pool_courts c JOIN pool_adjudications a ON a.pool_id=c.id WHERE c.id=? AND c.status='settled' AND a.winner_side=?)",
         [p.amount,p.user_id,"pool-prize:"+poolId+":"+p.user_id,poolId,side]]);
-      statements.push(["INSERT INTO wallet_ledger(id,user_id,token,amount,transaction_type,reference_id,idempotency_key) SELECT ?,?,'SETHIS',?,'pool_prize',?,? WHERE EXISTS(SELECT 1 FROM pool_courts c JOIN pool_adjudications a ON a.pool_id=c.id WHERE c.id=? AND c.status='settled' AND a.winner_side=?)",
-        ["ledger-"+p.user_id,p.user_id,p.amount,poolId,"pool-prize:"+poolId+":"+p.user_id,poolId,side]]);
+      statements.push(["INSERT INTO wallet_ledger(id,user_id,token,amount,transaction_type,reference_id,idempotency_key) SELECT ?,?,'SETHIS',?,'pool_prize',?,? WHERE EXISTS(SELECT 1 FROM pool_courts c JOIN pool_adjudications a ON a.pool_id=c.id WHERE c.id=? AND c.status='settled' AND a.winner_side=?) AND NOT EXISTS(SELECT 1 FROM wallet_ledger WHERE idempotency_key=?)",
+        ["ledger-"+p.user_id,p.user_id,p.amount,poolId,"pool-prize:"+poolId+":"+p.user_id,poolId,side,"pool-prize:"+poolId+":"+p.user_id]]);
     }
     statements.push(["UPDATE pool_positions SET status='settled' WHERE id=? AND status='active' AND EXISTS(SELECT 1 FROM pool_courts c JOIN pool_adjudications a ON a.pool_id=c.id WHERE c.id=pool_positions.pool_id AND c.status='settled' AND a.winner_side=?)",
       [p.id,side]]);
@@ -105,7 +105,7 @@ test("prevents repeated or conflicting Pool verdicts from changing the winner or
   const winnersA = db.prepare("SELECT id,user_id,stake_ct FROM pool_positions WHERE pool_id='pool-1' AND side='A' AND status='active' ORDER BY created_at,id").all();
   const winnersB = db.prepare("SELECT id,user_id,stake_ct FROM pool_positions WHERE pool_id='pool-1' AND side='B' AND status='active' ORDER BY created_at,id").all();
   settle(db, "A", "pool-adjudication-1", winnersA);
-  assert.throws(() => settle(db, "A", "pool-adjudication-replay", winnersA), /UNIQUE constraint failed/);
+  settle(db, "A", "pool-adjudication-replay", winnersA);
   settle(db, "B", "pool-adjudication-conflict", winnersB);
   const pool = db.prepare("SELECT status,winner_side FROM pool_courts WHERE id='pool-1'").get();
   assert.equal(pool.status, "settled");
