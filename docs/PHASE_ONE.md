@@ -4,7 +4,7 @@
 
 Deliver the first genuinely usable version of Settle This!: a football entertainment platform where people discover structured football debates ("Courts"), take a side, make arguments, engage with the other side, and see a community verdict with a transparent result history.
 
-Phase One is not just a visual prototype. It includes the core user journey, persistent data, moderation basics, and a working reward ledger. The interface must be mobile-first and support both a browser experience and Telegram Mini App launch.
+Phase One is not just a visual prototype. It includes the core user journey, persistent data, moderation basics, and a working reward ledger. The interface must be mobile-first and built for use inside the Telegram Mini App. Browser access remains available for development, visual inspection and the private administrator console; it is not a separate public product or browser-account experience.
 
 ## Product principles
 
@@ -25,7 +25,7 @@ Phase One is not just a visual prototype. It includes the core user journey, per
 4. Rankings — participant standings and winners.
 5. Wallet — Court Tokens (CT), SETHIS rewards, and transaction history.
 
-Also deliver registration/sign-in, onboarding, user profile, club selection, notifications, and basic account settings. Support Telegram identity when launched inside Telegram, with a browser account path as well.
+Also deliver Telegram-based identity, onboarding, user profile, club selection, notifications, and basic account settings. The Telegram identity is the user account identity; do not add a separate public browser registration/login flow in Phase One.
 
 ### B. Courts discovery
 
