@@ -23,9 +23,11 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Verify task catalog/UI rewards match actual claim/review/credit logic.
 - [ ] Test social task submission, admin review, approved credit, rejected resubmission and duplicate prevention.
 - [ ] Test referral deep link attribution, self-referral/duplicate prevention, onboarding+gift qualification, 3-referral milestone and exactly-once 500 SETHIS.
-- [x] Installed Monetag SDK main zone `12269852` in `index.html`; retained the existing React SDK path and server-only valued-event rewards. (Production secrets/postback URL and live ad verification still require dashboard setup.)
-- [x] Improved rewarded-ad confirmation UX and wallet/status refresh retries after SDK confirmation.
-- [ ] Complete Monetag postback verification: owner has entered the app postback URL; private secret/macros and a live valued-event credit test still need confirmation. Verify unique IDs, shared 20-minute cooldown, Lagos daily cap 30 and placements (100 CT Home / 150 SETHIS Tasks).
+- [x] Configured the Monetag main zone `12269852` and private postback secret as Cloudflare Worker secrets; confirmed both secret bindings exist on the production Worker (values are not readable through Cloudflare secret metadata).
+- [x] Standardized on the React `monetag-tg-sdk` package as the sole SDK loader; removed the duplicate HTML SDK script tag.
+- [x] Improved rewarded-ad confirmation UX: distinguish valued, non-valued and pending server postback outcomes; removed stale Wallet copy that always claimed setup was pending.
+- [x] Implemented server-side reward validation for `valued` events only, main-zone validation, placement validation, unique `ymid` idempotency, one reward per user per 20 minutes, Lagos daily cap 30, and 100 CT Home / 150 SETHIS Tasks rewards.
+- [ ] Confirm Monetag SSP main-zone Postback URL includes `secret`, `{ymid}`, `{zone_id}`, `{event_type}`, `{reward_event_type}`, `{estimated_price}`, `{request_var}`, and `{telegram_id}`; then test a real valued ad event inside Telegram and confirm exactly one wallet credit. Monetag sends postbacks independently of the frontend callback and retries failed deliveries.
 - [ ] Add official Telegram/Facebook/WhatsApp destinations when supplied.
 
 ## Community and account
