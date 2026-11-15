@@ -1092,3 +1092,49 @@
   .hero-condensed .hero-copy p{font-size:7px;max-width:205px}
   .hero-condensed .hero-art{right:-8%;width:65%;height:150px;opacity:.53}
 }
+
+
+/* Diagonal full-card football-pitch watermark */
+.hero-condensed .hero-art{
+  left:-8%;
+  right:auto;
+  top:-62px;
+  width:118%;
+  height:282px;
+  z-index:1;
+  opacity:.34;
+  transform:rotate(-24deg);
+  transform-origin:50% 50%;
+  overflow:visible;
+}
+.hero-condensed .football-pitch-art{
+  width:100%;
+  height:100%;
+  max-width:none;
+  opacity:1;
+  transform:none;
+  filter:drop-shadow(0 0 15px #27d7f233);
+}
+.hero-condensed .hero-copy{z-index:2}
+.hero-condensed .hero-balance{z-index:3}
+@media(max-width:600px){
+  .hero-condensed .hero-art{
+    left:-10%;
+    right:auto;
+    top:-61px;
+    width:122%;
+    height:264px;
+    opacity:.33;
+    transform:rotate(-24deg);
+  }
+  .hero-condensed .football-pitch-art{width:100%;height:100%;transform:none}
+}
+@media(max-width:370px){
+  .hero-condensed .hero-art{
+    left:-13%;
+    top:-57px;
+    width:126%;
+    height:250px;
+    opacity:.31;
+  }
+}
