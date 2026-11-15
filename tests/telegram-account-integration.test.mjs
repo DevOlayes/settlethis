@@ -322,6 +322,10 @@ test("Telegram accounts persist independently through onboarding, profile, check
     target_type: "argument", target_id: argumentId, reason: "Misleading content", details: "Duplicate synthetic report."
   });
   assert.equal(duplicateReport.response.status, 409);
+  const replyReport = await api(env, "/api/reports", firstInit, "POST", { target_type: "reply", target_id: reply.data.reply_id, reason: "Abusive reply" });
+  assert.equal(replyReport.response.status, 201);
+  const courtReport = await api(env, "/api/reports", firstInit, "POST", { target_type: "court", target_id: courtId, reason: "Misleading Court context" });
+  assert.equal(courtReport.response.status, 201);
 
   const immediateFirstNotifications = await api(env, "/api/notifications", firstInit);
   assert.ok(immediateFirstNotifications.data.notifications.some(item => item.type === "reaction" && item.reference_id === argumentId));
@@ -416,7 +420,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(env.testDb.prepare("SELECT moderation_status FROM court_arguments WHERE id=?").get(argumentId).moderation_status, "visible");
 
   const userReport = await api(env, "/api/reports", firstInit, "POST", {
-    target_type: "user", target_id: String(secondUser.id), reason: "Abusive conduct", details: "A report against this member for moderator review."
+    target_type: "user", target_id: "@arsenal_fan", reason: "Abusive conduct", details: "A report against this member for moderator review."
   });
   assert.equal(userReport.response.status, 201);
   const suspendedMember = await adminApi(env, "/api/admin/users/" + secondUser.id + "/restriction", adminToken, "POST", {
