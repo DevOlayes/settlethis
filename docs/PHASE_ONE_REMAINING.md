@@ -36,7 +36,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Standardized on the React `monetag-tg-sdk` package as the sole SDK loader; removed the duplicate HTML SDK script tag.
 - [x] Improved rewarded-ad confirmation UX: distinguish valued, non-valued and pending server postback outcomes; removed stale Wallet copy that always claimed setup was pending.
 - [x] Implemented server-side reward validation for `valued` events only, main-zone validation, placement validation, unique `ymid` idempotency, one reward per user per 20 minutes, Lagos daily cap 30, and 100 CT Home / 150 SETHIS Tasks rewards.
-- [ ] Confirm Monetag SSP main-zone Postback URL includes `secret`, `{ymid}`, `{zone_id}`, `{event_type}`, `{reward_event_type}`, `{estimated_price}`, `{request_var}`, and `{telegram_id}`; then test a real valued ad event inside Telegram and confirm exactly one wallet credit. Monetag sends postbacks independently of the frontend callback and retries failed deliveries.
+- [x] Owner confirmed the complete Monetag SSP main-zone Postback URL has been entered. The external Monetag dashboard configuration cannot be independently inspected from the connected Cloudflare account.
+- [ ] Run the real valued-ad credit test inside Telegram and confirm exactly one wallet credit; owner plans to do this after the build is ready.
 - [ ] Add official Telegram/Facebook/WhatsApp destinations when supplied.
 
 ## Community and account
@@ -66,6 +67,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## External configuration / owner inputs
 - [x] Monetag main Zone ID and private postback secret are configured as production Worker secret bindings.
-- [ ] Verify the complete Monetag SSP postback URL and run the real valued-ad credit test.
+- [x] Owner confirmed the complete Monetag SSP postback URL has been entered.
+- [ ] Run the real valued-ad credit test later, after the Phase One build is ready.
 - [ ] Official Telegram channel, Facebook page and WhatsApp community URLs.
 - [ ] Telegram BotFather Menu Button and bot avatar confirmation.
