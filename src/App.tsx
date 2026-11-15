@@ -186,7 +186,7 @@ function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser
             <button className="view-court pool-open-button" disabled={!poolMarket || poolMarket.status!=="open" || (!!poolMarket.opens_at&&Date.parse(poolMarket.opens_at)>Date.now())} onClick={() => setPoolOpen(true)}>JOIN POOL COURT <span>→</span></button>
           </article>
         </section>
-        <button className="quiz-promo quiz-promo-button" onClick={() => setQuizOpen(true)}><div className="quiz-art"><span className="quiz-ball">⚽</span><span className="quiz-art-mark">?</span></div><div><span className="eyebrow">SETTLE THIS! · FOOTBALL QUIZ</span><h3>How well do you know football?</h3><p>Test your memory. Pick the right answer. Prove your knowledge.</p><div className="quiz-meta"><span>QUICK-FIRE QUESTIONS</span><span>▶ START QUIZ</span></div></div><span className="quiz-chevron">↗</span></button>
+        
       </>}
       {tab === "Tasks" && <section className="inner-page"><span className="eyebrow">EARN & ENGAGE</span><h1>Make every visit count.</h1><p className="page-intro">Complete community tasks, invite football friends and earn SETHIS.</p><div className="task-list">
         <article className="task-row task-ad-reward"><span className="task-symbol gold-symbol task-play-icon">▶</span><div className="task-ad-copy"><b>Watch ads</b><small>Complete a rewarded ad</small><small className="task-ad-count">20-minute cooldown · Up to 30 ads daily</small></div><button className="task-reward-button" onClick={()=>void watchAd("tasks_sethis")}>150 SETHIS <span>▶</span></button></article>
