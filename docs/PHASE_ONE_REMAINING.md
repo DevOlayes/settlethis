@@ -122,7 +122,10 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Confirmed production deployment version `9e45c60f-c9c0-4934-88d5-c4763bc2fd2d` is receiving 100% traffic.
 - [ ] Run Telegram multi-user test: onboarding, join, argue/reply/react, verdict, reward, wallet, rankings, report.
 - [ ] Check mobile errors/loading/empty states and production logs.
-- [ ] Complete security review and beta readiness checklist.
+- [x] Completed a code-level security review and documented controls/findings in docs/SECURITY_REVIEW.md; the draft PR includes HSTS, nosniff, frame denial, referrer and permissions headers, stronger identity/input validation, Admin CSRF/rate-limit protections, and abuse limits.
+- [ ] Confirm the exact production Monetag SDK host and enforce a tested Content Security Policy without breaking Telegram WebView or rewarded ads.
+- [ ] Generate and commit package-lock.json before release so dependency resolution is reproducible; npm audit currently passes at high severity.
+- [ ] Complete the final security and beta-readiness checklist after real Telegram and Admin UI testing.
 
 ## External configuration / owner inputs
 - [x] Monetag main Zone ID and private postback secret are configured as production Worker secret bindings.
