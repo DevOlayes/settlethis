@@ -33,7 +33,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Tasks, referrals, ads
 - [x] Compared production task catalog with member UI and server rewards: Telegram 150, Facebook 100, WhatsApp 70, invite-three milestone 500 SETHIS; ad placements remain 100 CT Home / 150 SETHIS Tasks. Referral milestone is server-settled rather than a manual claim.
-- [ ] Add the owner-supplied social destinations; those rows remain hidden until valid HTTPS links are configured.
+- [ ] Add authenticated Admin controls to edit the official Telegram, Facebook and WhatsApp task destinations; member rows currently remain visible with generic platform fallbacks until official HTTPS links are configured.
 - [x] Improved task-claim duplicate handling so already-pending and already-approved tasks return accurate conflict responses instead of reporting a false new submission.
 - [x] Require a configured official destination and an HTTPS proof link before accepting manual social-task claims; the Admin review queue displays the submitted evidence link.
 - [x] Verified staging social-task claim submission, duplicate pending-claim preservation and rejected-claim resubmission with fresh HTTPS evidence.
@@ -54,7 +54,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 ## Phase One scope cleanup
 - [x] Cancelled the generic production Pool Court placeholder after confirming it had no attested reserve, positions, adjudication or wallet ledger entries; no fake pool remains open or scheduled for members.
 - [x] Removed the unfinished sample football quiz from the Phase One Tasks page; quizzes remain a later-phase feature rather than a non-functional placeholder.
-- [x] Hide social task rows until their official destination URLs are configured, instead of displaying dead-end buttons or setup notices.
+- [x] Keep Telegram, Facebook and WhatsApp task rows visible in Earn & Engage using generic platform destinations when official owner-configured links are not yet available.
 
 ## Community and account
 - [x] Corrected the check-in calendar to show the trailing six days plus today, matching its rolling seven-day history label rather than displaying future dates.
@@ -67,6 +67,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Completed the member-facing UI wiring review: onboarding progress resumes from the server and welcome-gift claiming is idempotent; profile save/load, check-in, notification read states, referrals, Court join/argument/reply/report and argument/reply reactions are connected to their Worker routes. Added visible Telegram authentication loading/failure/retry states, notification-load/read failure feedback, and check-in status retry. Reply reads remain intentionally public; reply reactions use the authenticated reaction endpoint. GitHub verification passes with 43/43 tests and the TypeScript/Vite production build.
 - [x] Expanded the member profile into a verified activity and achievements view: Telegram photo/name/username presentation, one supported Clubhouse selection, country and bio editing, Court entries, arguments, replies, wins, SETHIS earned and community rank are sourced from the signed-in member's own records. Added earned/progress states for First Position, Case Builder, Community Voice and Verdict Winner; no XP or reputation currency is introduced. Added account-connected/privacy explanation, profile loading/retry states, save feedback that preserves unsaved edits on failure, and character-limit feedback. Profile API tests cover identity isolation, unauthenticated denial, one-club validation, bio length limits, activity metrics and achievement eligibility. GitHub verification run `43742727996` passed: 44/44 tests and the TypeScript/Vite production build.
 - [x] Verified notification event-key deduplication and read-state transition in staging D1.
+- [x] Routed wallet-credit notifications to Wallet, referral milestones to Tasks, and Court/community activity to My Courts; notification navigation waits for a successful read acknowledgement.
+- [x] Added automated cross-account notification-read isolation coverage: one member cannot mark another member's notification as read. Both GitHub verification runs for the navigation and test changes passed.
 - [ ] Test onboarding resume/completion, profile and check-in persistence, and notification event creation with real Telegram accounts.
 - [ ] Verify the member profile and account settings inside Telegram with real accounts, including edit/save/resume behavior and displayed activity/achievement data.
 - [x] Verified in-app notification event creation for arguments, replies and reactions in staging D1; wallet, referral, task, Regular Court and Pool Court verdict notifications are covered by staging checks or automated transaction tests. Notification event-key deduplication and read-state transitions were also verified in staging.
