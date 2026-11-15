@@ -60,7 +60,9 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Extracted Telegram initData verification and added automated tests for valid HMAC signatures, tampering, expiry, future timestamps and invalid identity payloads.
 - [x] Verified duplicate daily check-in insertion is constrained to one row per Telegram user/date in staging D1.
 - [x] Verified the exact Monetag wallet-credit SQL only updates the balance once when the same valued event is replayed; the staging D1 test records one ledger event and one 100 CT credit. The real provider callback test remains pending.
-- [ ] Test onboarding resume/completion, account profile persistence and check-in persistence with real Telegram accounts.
+- [x] Verified sequential onboarding progress through all seven steps, completion timestamp and profile fields persist in staging D1.
+- [x] Verified notification event-key deduplication and read-state transition in staging D1.
+- [ ] Test onboarding resume/completion, profile and check-in persistence, and notification event creation with real Telegram accounts.
 - [ ] Test notifications for argument/reply/reaction/verdict/wallet/referral/task events and read states.
 - [x] Verified staging moderation-report uniqueness: duplicate open reports are rejected and a new report can be submitted after dismissal.
 - [x] Verified the member reply query excludes replies whenever the parent argument or its Court is hidden.
