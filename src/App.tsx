@@ -13,7 +13,8 @@ function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser
   const [courtFeed,setCourtFeed]=useState<CourtFeedItem[]>([]);
   const [selectedCourt,setSelectedCourt]=useState<CourtFeedItem|null>(null);
   const [poolMarket,setPoolMarket]=useState<PoolMarketData|null>(null);
-  const refreshPool=()=>fetch("/api/pool-court").then(r=>r.ok?r.json():null).then(d=>setPoolMarket(d?.pool||null)).catch(()=>{});\n  useEffect(()=>{fetch("/api/courts").then(r=>r.ok?r.json():null).then(d=>setCourtFeed(Array.isArray(d?.courts)?d.courts:[])).catch(()=>{});refreshPool();if(new URLSearchParams(window.location.search).get("pool"))setPoolOpen(true);},[]);
+  const refreshPool=()=>fetch("/api/pool-court").then(r=>r.ok?r.json():null).then(d=>setPoolMarket(d?.pool||null)).catch(()=>{});
+  useEffect(()=>{fetch("/api/courts").then(r=>r.ok?r.json():null).then(d=>setCourtFeed(Array.isArray(d?.courts)?d.courts:[])).catch(()=>{});refreshPool();},[]);
   const [walletBalances,setWalletBalances]=useState({ct:0,sethis:0});
   const [walletTransactions,setWalletTransactions]=useState<Array<{token:string;amount:number;transaction_type:string;created_at:string}>>([]);
   useEffect(()=>{const initData=window.Telegram?.WebApp?.initData;if(!telegramUser||!initData)return;fetch("/api/wallet",{headers:{"x-telegram-init-data":initData}}).then(r=>r.ok?r.json():null).then(data=>{if(data?.wallet){setWalletBalances({ct:Number(data.wallet.ct_balance)||0,sethis:Number(data.wallet.sethis_balance)||0});setWalletTransactions(data.transactions||[]);}}).catch(()=>{});},[telegramUser]);
@@ -22,6 +23,7 @@ function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser
   const [courtSide, setCourtSide] = useState<"A" | "B" | "">("");
   const [courtArgument, setCourtArgument] = useState("");
   const [poolOpen, setPoolOpen] = useState(false);
+  useEffect(()=>{if(new URLSearchParams(window.location.search).get("pool"))setPoolOpen(true);},[]);
   const [quizOpen, setQuizOpen] = useState(false);
   const [quizChoice, setQuizChoice] = useState("");
   const [infoPage, setInfoPage] = useState<"How it works" | "Customer support" | "Terms & conditions" | null>(null);
