@@ -562,7 +562,7 @@
 .gift-claim-button:disabled{opacity:.65}
 .gift-once-note{display:block;margin-top:10px;color:#a9bdca;font-size:8px}
 .gift-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.gift-confetti i{position:absolute;top:4%;left:calc((var(--confetti-i)*37)%100*1%);width:6px;height:11px;border-radius:2px;background:hsl(calc(var(--confetti-i)*47),85%,65%);animation:confettiFall 1.8s ease-out forwards;animation-delay:calc(var(--confetti-i)*.025s)}
+.gift-confetti i{position:absolute;top:4%;left:calc(var(--confetti-i)*4.16%);width:6px;height:11px;border-radius:2px;background:hsl(calc(var(--confetti-i)*47),85%,65%);animation:confettiFall 1.8s ease-out forwards;animation-delay:calc(var(--confetti-i)*.025s)}
 .welcome-gold-coin{width:94px;height:94px;margin:14px auto 9px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#fff0b0,#e7b84e 42%,#a96c1c 78%,#f5d47e);border:5px double #ffedb1;box-shadow:0 0 0 5px #c28d3222,0 12px 28px #0008,inset 0 0 0 2px #936019}
 .welcome-gold-coin .brand-emblem{width:44px;height:52px;color:#087f9c;filter:drop-shadow(0 1px 1px #fff7)}
 .gift-revealed{color:#f7d989;font-size:43px}
