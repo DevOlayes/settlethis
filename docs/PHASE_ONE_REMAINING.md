@@ -29,7 +29,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Confirmed there is no client balance-setting API; wallet mutations require verified Telegram identity, an authenticated Admin session or the secret-verified Monetag postback, with server-side amounts and transaction checks.
 
 ## Tasks, referrals, ads
-- [ ] Verify task catalog/UI rewards match actual claim/review/credit logic, including the owner-supplied social destinations.
+- [x] Compared production task catalog with member UI and server rewards: Telegram 150, Facebook 100, WhatsApp 70, invite-three milestone 500 SETHIS; ad placements remain 100 CT Home / 150 SETHIS Tasks. Referral milestone is server-settled rather than a manual claim.
+- [ ] Add the owner-supplied social destinations; those rows remain hidden until valid HTTPS links are configured.
 - [x] Improved task-claim duplicate handling so already-pending and already-approved tasks return accurate conflict responses instead of reporting a false new submission.
 - [x] Require a configured official destination and an HTTPS proof link before accepting manual social-task claims; the Admin review queue displays the submitted evidence link.
 - [ ] Test social task submission, admin review, approved credit, rejected resubmission and duplicate prevention end-to-end.
