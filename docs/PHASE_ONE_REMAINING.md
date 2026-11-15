@@ -95,9 +95,9 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
 - [x] Confirmed Cloudflare Workers Builds is configured for `main`; its build step now runs `npm test && npm run build`. The production deploy command has been restored to `npx wrangler deploy`; the latest main revision built and deployed successfully. GitHub Actions is kept focused on verification.
-- [x] Verified the full Cloudflare Workers Build for source revision `70b60e3075eba7873583c6d28eec1e5ae3b5d413`: all 38 automated tests passed, TypeScript/Vite production build passed, and the deployment command was deliberately held at a no-op so this verification did not change production.
+- [x] Verified the full Cloudflare Workers Build for latest main source revision `59f2172f92e4c6e999f3e56308bb994e1ce8c679`: all 38 automated tests passed, TypeScript/Vite production build passed, and Wrangler deployed the Worker successfully.
 - [x] Created and used the separate `sethis-phase-one-test` D1 database for synthetic staging fixtures covering wallet credits, referral qualification, Court/Pool entries, Pool refunds, task claims/rewards, moderation reports, hidden-content filtering, onboarding, notifications and check-ins. Automated SQLite transaction tests cover settlement and race conditions.
-- [ ] Verify a Cloudflare Workers Build for the latest `main` commit completes and the resulting Worker version receives 100% traffic; the live Worker is currently on an older source revision.
+- [x] Confirmed production deployment version `9e45c60f-c9c0-4934-88d5-c4763bc2fd2d` is receiving 100% traffic.
 - [ ] Run Telegram multi-user test: onboarding, join, argue/reply/react, verdict, reward, wallet, rankings, report.
 - [ ] Check mobile errors/loading/empty states and production logs.
 - [ ] Complete security review and beta readiness checklist.
