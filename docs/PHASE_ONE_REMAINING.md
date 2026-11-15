@@ -39,7 +39,10 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Test Telegram initData verification, onboarding resume/completion and account profile persistence.
 - [ ] Test notifications for argument/reply/reaction/verdict/wallet/referral/task events and read states.
 - [ ] Test reports for users/Courts/arguments/replies; moderation queue, hide/restore, restriction/suspension, audit log and enforcement.
-- [ ] Audit spam/rate limiting and duplicate reaction/submission controls.
+- [x] Added server-side community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per user; identical argument/reply submissions within two minutes are rejected, and restricted users cannot react.
+- [x] Enforced Court visibility/moderation status in join, argument, reply and reaction paths so hidden/removed Courts cannot be modified through direct API requests.
+- [x] Added supporting rate-limit indexes in migration `0020_community_rate_limits.sql` and applied those indexes to production D1; validated the three guarded INSERT statements with read-only SQL EXPLAIN.
+- [ ] Complete real Telegram multi-user tests for the new limits, duplicate handling and moderation enforcement.
 
 ## Rankings and history
 - [ ] Verify rankings metric/formula, tie-breaks, resolved-entry counts, win rate, SETHIS earned and user identity.
