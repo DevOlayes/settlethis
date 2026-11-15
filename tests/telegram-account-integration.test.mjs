@@ -195,8 +195,11 @@ test("Telegram accounts persist independently through onboarding, profile, check
   }
 
   const firstReferralSummary = await api(env, "/api/referrals", firstInit);
-  assert.equal(firstReferralSummary.data.total, 1);
-  assert.equal(firstReferralSummary.data.qualified, 1);
+  assert.equal(firstReferralSummary.data.total, 3);
+  assert.equal(firstReferralSummary.data.qualified, 3);
+  assert.equal(firstReferralSummary.data.reward, 500);
+  const inviterWallet = await api(env, "/api/wallet", firstInit);
+  assert.equal(inviterWallet.data.wallet.sethis_balance, 500);
 
   const firstProfileAfterSecondSignIn = await api(env, "/api/profile", firstInit);
   assert.equal(firstProfileAfterSecondSignIn.data.profile.club, "Chelsea");
