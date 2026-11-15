@@ -1191,3 +1191,51 @@
     opacity:.44!important;
   }
 }
+
+
+/* Position the actual pitch SVG against the hero card, not its zero-width wrapper */
+.hero-condensed .hero-art{
+  position:static!important;
+  display:contents!important;
+  width:auto!important;
+  height:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  opacity:1!important;
+  transform:none!important;
+}
+.hero-condensed .football-pitch-art{
+  position:absolute!important;
+  left:-20%!important;
+  top:-14px!important;
+  width:140%!important;
+  height:250px!important;
+  max-width:none!important;
+  z-index:1!important;
+  opacity:.42!important;
+  display:block!important;
+  transform:rotate(-23deg)!important;
+  transform-origin:50% 50%!important;
+  pointer-events:none!important;
+  filter:drop-shadow(0 0 15px #27d7f255)!important;
+}
+@media(max-width:600px){
+  .hero-condensed .football-pitch-art{
+    left:-20%!important;
+    top:-12px!important;
+    width:140%!important;
+    height:244px!important;
+    opacity:.43!important;
+  }
+}
+@media(max-width:370px){
+  .hero-condensed .football-pitch-art{
+    left:-23%!important;
+    top:-10px!important;
+    width:146%!important;
+    height:236px!important;
+    opacity:.41!important;
+  }
+}
