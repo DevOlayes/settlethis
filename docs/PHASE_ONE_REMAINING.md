@@ -92,7 +92,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
 - [x] Confirmed Cloudflare Workers Builds is configured for `main`; its build step now runs `npm test && npm run build`. Its production deploy command is temporarily a verification-only no-op and must be restored to `npx wrangler deploy` after Phase One is complete. GitHub Actions is kept focused on verification.
-- [x] Verified the full Cloudflare Workers Build for source revision `7b162578d4543cef9fd0a1692dfb610c10da268e`: all 30 automated tests passed, TypeScript/Vite production build passed, and the deployment command was deliberately held at a no-op so this verification did not change production.
+- [x] Verified the full Cloudflare Workers Build for source revision `0544303b9ea21233e70c33049c0a7746958a8166`: all 34 automated tests passed, TypeScript/Vite production build passed, and the deployment command was deliberately held at a no-op so this verification did not change production.
 - [ ] Add D1-backed automated tests and/or safe staging fixtures for critical transaction paths.
 - [ ] Verify a Cloudflare Workers Build for the latest `main` commit completes and the resulting Worker version receives 100% traffic; the live Worker is currently on an older source revision.
 - [ ] Run Telegram multi-user test: onboarding, join, argue/reply/react, verdict, reward, wallet, rankings, report.
