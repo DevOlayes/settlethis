@@ -5,7 +5,7 @@ const crest = (id: number) => `https://media.api-sports.io/football/teams/${id}.
 function Brand() { return <a className="brand" href="#" aria-label="Settle This home"><span className="brand-mark">ST<span>!</span></span><span className="brand-name">SETTLE<span>THIS</span><i>!</i></span></a>; }
 function Team({ id, name }: { id: number; name: string }) { return <span className="team"><span className="crest"><img src={crest(id)} alt="" /></span><b>{name}</b></span>; }
 type CourtFeedItem = { id:string; title:string; category:string; competition?:string|null; home_team?:string|null; away_team?:string|null; home_team_crest?:string|null; away_team_crest?:string|null; match_status?:string|null; live_minute?:number|null; home_score?:number|null; away_score?:number|null; lineup_status?:string|null; home_lineup_json?:string|null; away_lineup_json?:string|null; hero_image_url?:string|null; image_alt?:string|null; incident_minute?:number|null; incident_context:string; side_a_label:string; side_b_label:string; entry_ct:number; winner_reward_sethis:number; status:string; closes_at?:string|null; side_a_count: number; side_b_count: number };
-type PoolMarketData = { id:string; title:string; prize_amount:number; minimum_stake_ct:number; duration_days:number; status:string; side_a_stake:number; side_b_stake:number; side_a_count: number; side_b_count: number };
+type PoolMarketData = { id:string; title:string; prize_amount:number; minimum_stake_ct:number; duration_days:number; status:string; side_a_label?:string; side_b_label?:string; side_a_stake:number; side_b_stake:number; side_a_count: number; side_b_count: number };
 function lineupNames(raw?:string|null){if(!raw)return [];try{const data=JSON.parse(raw);return Array.isArray(data)?data.map((p:unknown)=>typeof p==="string"?p:typeof p==="object"&&p!==null&&"name" in p?String((p as {name:unknown}).name):"").filter(Boolean):[];}catch{return [];}}
 function MarketSplit({a,b,unit="people",aLabel="SIDE A",bLabel="SIDE B"}:{a:number;b:number;unit?:string;aLabel?:string;bLabel?:string}) { const total=a+b; const pa=total?Math.round(a/total*100):0; const pb=total?100-pa:0; return <div className="market-split"><div className="market-split-head"><b>CROWD POSITION</b><span>{total?total.toLocaleString()+" "+unit:"No positions yet"}</span></div>{total>0?<><div className="market-split-bar"><span style={{width:pa+"%"}}/><i style={{width:pb+"%"}}/></div><div className="market-split-values"><b>{aLabel} <strong>{pa}%</strong></b><b>{bLabel} <strong>{pb}%</strong></b></div></>:<div className="market-empty">Be the first to take a position.</div>}</div>; }
 function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser | null }) {
@@ -13,7 +13,7 @@ function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser
   const [courtFeed,setCourtFeed]=useState<CourtFeedItem[]>([]);
   const [selectedCourt,setSelectedCourt]=useState<CourtFeedItem|null>(null);
   const [poolMarket,setPoolMarket]=useState<PoolMarketData|null>(null);
-  useEffect(()=>{fetch("/api/courts").then(r=>r.ok?r.json():null).then(d=>setCourtFeed(Array.isArray(d?.courts)?d.courts:[])).catch(()=>{});fetch("/api/pool-court").then(r=>r.ok?r.json():null).then(d=>setPoolMarket(d?.pool||null)).catch(()=>{});},[]);
+  const refreshPool=()=>fetch("/api/pool-court").then(r=>r.ok?r.json():null).then(d=>setPoolMarket(d?.pool||null)).catch(()=>{});\n  useEffect(()=>{fetch("/api/courts").then(r=>r.ok?r.json():null).then(d=>setCourtFeed(Array.isArray(d?.courts)?d.courts:[])).catch(()=>{});refreshPool();if(new URLSearchParams(window.location.search).get("pool"))setPoolOpen(true);},[]);
   const [walletBalances,setWalletBalances]=useState({ct:0,sethis:0});
   const [walletTransactions,setWalletTransactions]=useState<Array<{token:string;amount:number;transaction_type:string;created_at:string}>>([]);
   useEffect(()=>{const initData=window.Telegram?.WebApp?.initData;if(!telegramUser||!initData)return;fetch("/api/wallet",{headers:{"x-telegram-init-data":initData}}).then(r=>r.ok?r.json():null).then(data=>{if(data?.wallet){setWalletBalances({ct:Number(data.wallet.ct_balance)||0,sethis:Number(data.wallet.sethis_balance)||0});setWalletTransactions(data.transactions||[]);}}).catch(()=>{});},[telegramUser]);
@@ -72,7 +72,7 @@ function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser
     </main>
     <nav className="bottom-nav">{(["Courts","My Courts","Tasks","Rankings","Wallet"] as Tab[]).map((n,i)=><button key={n} className={tab===n?"selected":""} onClick={() => nav(n)}><span>{["▦","▤","✦","♜","◈"][i]}</span>{n}</button>)}</nav>
     {walletOpen && <div className="overlay" onClick={() => setWalletOpen(false)}><section className="modal wallet-modal" onClick={e => e.stopPropagation()}><button className="modal-close" onClick={() => setWalletOpen(false)}>×</button><WalletContent showNotice={showNotice} balances={walletBalances} transactions={walletTransactions}/></section></div>}
-    {poolOpen && <PoolCourtModal onClose={() => setPoolOpen(false)} showNotice={showNotice}/>}
+    {poolOpen && <PoolCourtModal pool={poolMarket} telegramUser={telegramUser} balances={walletBalances} setBalances={setWalletBalances} onJoined={refreshPool} onClose={() => setPoolOpen(false)} showNotice={showNotice}/>}
     {courtOpen && <div className="overlay" onClick={() => setCourtOpen(false)}><section className="modal court-modal" onClick={e => e.stopPropagation()}><button className="modal-close" onClick={() => setCourtOpen(false)}>×</button><span className="eyebrow">{selectedCourt?.category?.replaceAll("_"," ").toUpperCase()||"FOOTBALL COURT"}</span><h2>{selectedCourt?.title||"Choose your Court position"}</h2><p className="modal-context">{[selectedCourt?.home_team,selectedCourt?.away_team].filter(Boolean).join(" vs ")} {selectedCourt?.incident_minute ? "· "+selectedCourt.incident_minute+"th minute" : ""} {selectedCourt?.match_status==="live"?"· LIVE "+(selectedCourt.live_minute??"")+"′":""}</p>{selectedCourt?.lineup_status==="confirmed"&&(lineupNames(selectedCourt.home_lineup_json).length>0||lineupNames(selectedCourt.away_lineup_json).length>0)&&<details className="lineup-panel"><summary>CONFIRMED STARTING LINEUPS</summary><div className="lineup-columns"><div><b>{selectedCourt.home_team}</b>{lineupNames(selectedCourt.home_lineup_json).map((name,i)=><span key={"h"+i}>{name}</span>)}</div><div><b>{selectedCourt.away_team}</b>{lineupNames(selectedCourt.away_lineup_json).map((name,i)=><span key={"a"+i}>{name}</span>)}</div></div></details>}<div className="court-sides"><button className={courtSide==="A"?"chosen":""} onClick={() => setCourtSide("A")}><b>A</b><span>{selectedCourt?.side_a_label||"Take position A"}</span></button><button className={courtSide==="B"?"chosen":""} onClick={() => setCourtSide("B")}><b>B</b><span>{selectedCourt?.side_b_label||"Take position B"}</span></button></div><div className="entry-preview"><div><span>ENTRY TO JOIN</span><b>{Number(selectedCourt?.entry_ct||0).toLocaleString()} CT</b></div><div className="modal-reward"><span>WIN</span><b>{Number(selectedCourt?.winner_reward_sethis||0).toLocaleString()} SETHIS</b></div></div><textarea className="court-argument-input" value={courtArgument} onChange={e=>setCourtArgument(e.target.value)} placeholder="Add your argument (optional)..." rows={3}/><button className="primary-wide" disabled={!courtSide || selectedCourt?.status!=="open"} onClick={joinSelectedCourt}>JOIN COURT · {Number(selectedCourt?.entry_ct||0).toLocaleString()} CT</button></section></div>}
     {infoPage && <div className="overlay" onClick={() => setInfoPage(null)}><section className="modal info-modal" onClick={e => e.stopPropagation()}><button className="modal-close" onClick={() => setInfoPage(null)}>×</button><span className="eyebrow">SETTLE THIS! · HELP CENTRE</span><h2>{infoPage}</h2>{infoPage === "How it works" ? <div className="info-steps"><p><b>01 · Discover a moment</b> Read the match context and review the evidence attached to a Court.</p><p><b>02 · Choose your position</b> Select the side you agree with and register your opinion using the displayed CT entry.</p><p><b>03 · Make your argument</b> Explain why your position is right and engage respectfully with the other side.</p><p><b>04 · Follow the verdict</b> See the community outcome and any eligible rewards after a Court is settled.</p></div> : infoPage === "Customer support" ? <p className="modal-context">Need help with your account, wallet, Court entry or a reported issue? Customer support contact options will be published here before launch.</p> : <p className="modal-context">The full Terms &amp; Conditions, eligibility rules, reward rules, privacy information and community standards will be available here before public launch.</p>}</section></div>}
     {onboardingOpen && <div className="overlay onboarding-overlay"><section className="modal onboarding-modal"><div className="onboarding-progress">{[0,1,2].map(i => <span key={i} className={i<=onboardingStep?"done":""}/>)}</div><button className="onboarding-skip" onClick={closeOnboarding}>SKIP</button><div className="onboarding-art"><div className="onboarding-ball">⚽</div><span>SETTLE THIS!</span></div><span className="eyebrow">WELCOME TO THE FOOTBALL COURTROOM</span><h2>{["Football moments worth debating.","Take a position. Make your case.","Know the entry. See the reward."][onboardingStep]}</h2><p>{["Explore carefully selected match moments, decisions and arguments from the football world.","Choose your position, explain your reasoning and engage with other fans.","Every regular Court displays its fixed SETHIS reward before you join. Pool Courts have a separate CT stake and shared-pool reward."][onboardingStep]}</p><div className="onboarding-bottom"><span>{onboardingStep+1} / 3</span><button className="primary-wide" onClick={() => onboardingStep<2?setOnboardingStep(s=>s+1):closeOnboarding()}>{onboardingStep<2?"NEXT":"LETS GO"} →</button></div></section></div>}
@@ -82,39 +82,58 @@ function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser
   </div>;
 }
 
-function PoolCourtModal({ onClose, showNotice }: { onClose: () => void; showNotice: (message: string) => void }) {
-  const [side, setSide] = useState<"A" | "B" | "">("");
-  const [stake, setStake] = useState("500");
-  const amount = Number(stake);
-  const validStake = Number.isInteger(amount) && amount >= 500;
-  const inviteUrl = side ? `${window.location.origin}/#pool-court-001?side=${side}` : `${window.location.origin}/#pool-court-001`;
-  const invite = async () => {
-    const text = `Join my side in Settle This! Pool Court: ${inviteUrl}`;
-    try {
-      if (navigator.share) await navigator.share({ title: "Join my Pool Court", text, url: inviteUrl });
-      else { await navigator.clipboard.writeText(text); showNotice("Pool Court invitation copied."); }
-    } catch { showNotice("Invitation sharing was cancelled."); }
+function PoolCourtModal({ pool, telegramUser, balances, setBalances, onJoined, onClose, showNotice }: { pool:PoolMarketData|null; telegramUser:import("./telegram").TelegramUser|null; balances:{ct:number;sethis:number}; setBalances:(v:{ct:number;sethis:number})=>void; onJoined:()=>void; onClose:()=>void; showNotice:(message:string)=>void }) {
+  const params=new URLSearchParams(window.location.search);
+  const [side,setSide]=useState<"A"|"B"| "">((params.get("side")==="A"||params.get("side")==="B")?params.get("side") as "A"|"B":"");
+  const [stake,setStake]=useState(String(pool?.minimum_stake_ct||500));
+  const [busy,setBusy]=useState(false);
+  const amount=Number(stake);
+  const validStake=Number.isSafeInteger(amount)&&amount>=Number(pool?.minimum_stake_ct||500);
+  const invite=async()=>{
+    const initData=window.Telegram?.WebApp?.initData;
+    if(!telegramUser||!initData||!pool||!side){showNotice("Open Settle This! inside Telegram and join a side before inviting friends.");return;}
+    try{
+      const response=await fetch("/api/pool-court/"+encodeURIComponent(pool.id)+"/invites",{method:"POST",headers:{"content-type":"application/json","x-telegram-init-data":initData},body:JSON.stringify({side})});
+      const data=await response.json();
+      if(!response.ok){showNotice(data.error||"Invitation could not be created.");return;}
+      const inviteUrl=window.location.origin+"/?pool="+encodeURIComponent(pool.id)+"&side="+side+"&invite="+encodeURIComponent(data.invite_code);
+      const shareText="Join my SIDE "+side+" position in Settle This! Pool Court: "+inviteUrl;
+      if(navigator.share)await navigator.share({title:"Join my Pool Court side",text:shareText,url:inviteUrl});
+      else{await navigator.clipboard.writeText(shareText);showNotice("Your side-specific Pool Court invitation was copied.");}
+    }catch{showNotice("Invitation sharing was cancelled or unavailable.");}
   };
-  return <div className="overlay" onClick={onClose}><section className="modal pool-modal" onClick={e => e.stopPropagation()}>
+  const join=async()=>{
+    const initData=window.Telegram?.WebApp?.initData;
+    if(!telegramUser||!initData||!pool||!side||!validStake){showNotice("Open Settle This! inside Telegram and check your stake.");return;}
+    setBusy(true);
+    try{
+      const response=await fetch("/api/pool-court/"+encodeURIComponent(pool.id)+"/join",{method:"POST",headers:{"content-type":"application/json","x-telegram-init-data":initData},body:JSON.stringify({side,stake_ct:amount})});
+      const data=await response.json();
+      if(!response.ok){showNotice(data.error||"Pool Court entry could not be completed.");return;}
+      if(data.wallet)setBalances({ct:Number(data.wallet.ct_balance)||0,sethis:Number(data.wallet.sethis_balance)||0});
+      onJoined();onClose();showNotice("Your Pool Court position has been recorded.");
+    }catch{showNotice("Pool Court entry could not be completed. Please try again.");}
+    finally{setBusy(false);}
+  };
+  return <div className="overlay" onClick={onClose}><section className="modal pool-modal" onClick={e=>e.stopPropagation()}>
     <button className="modal-close" onClick={onClose}>×</button>
     <span className="eyebrow">SETTLE THIS! · POOL COURT</span>
-    <div className="pool-modal-prize"><div><small>SHARED PRIZE POOL</small><strong>150,000 <i>SETHIS</i></strong></div><span>7 DAYS</span></div>
-    <h2>Take your position</h2>
-    <p className="modal-context">Choose a side and set your CT stake. You can invite friends to join your side.</p>
+    <div className="pool-modal-prize"><div><small>SHARED PRIZE POOL</small><strong>{Number(pool?.prize_amount||0).toLocaleString()} <i>SETHIS</i></strong></div><span>{pool?.duration_days||7} DAYS</span></div>
+    <h2>{pool?.title||"Pool Court"}</h2>
+    <p className="modal-context">Choose a side and set your CT stake. Friends you invite can choose their own stake on the side you share.</p>
     <div className="pool-side-options">
-      <button className={side==="A"?"chosen":""} onClick={()=>setSide("A")}><b>A</b><span><strong>Side A</strong><small>Take this position</small></span><i>{side==="A"?"✓":"+"}</i></button>
-      <button className={side==="B"?"chosen":""} onClick={()=>setSide("B")}><b>B</b><span><strong>Side B</strong><small>Take the opposing position</small></span><i>{side==="B"?"✓":"+"}</i></button>
+      <button className={side==="A"?"chosen":""} onClick={()=>setSide("A")}><b>A</b><span><strong>{pool?.side_a_label||"Side A"}</strong><small>Take this position</small></span><i>{side==="A"?"✓":"+"}</i></button>
+      <button className={side==="B"?"chosen":""} onClick={()=>setSide("B")}><b>B</b><span><strong>{pool?.side_b_label||"Side B"}</strong><small>Take the opposing position</small></span><i>{side==="B"?"✓":"+"}</i></button>
     </div>
-    <label className="pool-stake-label" htmlFor="pool-stake">YOUR CT STAKE <span>MINIMUM 500 CT</span></label>
-    <div className="pool-stake-input"><input id="pool-stake" type="number" min="500" step="1" value={stake} onChange={e=>setStake(e.target.value)} /><b>CT</b></div>
-    {!validStake && <small className="pool-validation">Enter a whole-number stake of at least 500 CT.</small>}
-    <div className="pool-calculation"><div><span>Your selected side</span><b>{side ? `SIDE ${side}` : "Not selected"}</b></div><div><span>Your stake</span><b>{validStake ? amount.toLocaleString() : "—"} CT</b></div><p>Final SETHIS share = (your CT stake ÷ total CT staked on the winning side) × 150,000. Your exact share can only be calculated when the Court closes and the winning-side total is known.</p></div>
-    <button className="primary-wide" disabled={!side || !validStake} onClick={()=>showNotice("Wallet transactions are not enabled yet. Your CT has not been deducted and no position has been placed.")}>JOIN POOL COURT</button>
-    <button className="pool-invite-button" disabled={!side} onClick={invite}>INVITE FRIENDS TO SIDE {side || "—"} ↗</button>
-    <small className="pool-wallet-note">Your wallet balance and stake will be verified before a live position can be confirmed.</small>
+    <label className="pool-stake-label" htmlFor="pool-stake">YOUR CT STAKE <span>MINIMUM {Number(pool?.minimum_stake_ct||500).toLocaleString()} CT</span></label>
+    <div className="pool-stake-input"><input id="pool-stake" type="number" min={pool?.minimum_stake_ct||500} step="1" value={stake} onChange={e=>setStake(e.target.value)}/><b>CT</b></div>
+    {!validStake&&<small className="pool-validation">Enter a whole-number stake of at least {Number(pool?.minimum_stake_ct||500).toLocaleString()} CT.</small>}
+    <div className="pool-calculation"><div><span>Your selected side</span><b>{side?"SIDE "+side:"Not selected"}</b></div><div><span>Your stake</span><b>{validStake?amount.toLocaleString():"—"} CT</b></div><div><span>Available balance</span><b>{balances.ct.toLocaleString()} CT</b></div><p>Estimated share = (your CT stake ÷ total CT staked on the winning side) × {Number(pool?.prize_amount||0).toLocaleString()} SETHIS. The final share is calculated when the Court closes. Your stake is not the reward.</p></div>
+    <button className="primary-wide" disabled={!side||!validStake||busy||!pool||pool.status!=="open"} onClick={join}>{busy?"RECORDING POSITION…":"JOIN POOL COURT"}</button>
+    <button className="pool-invite-button" disabled={!side} onClick={invite}>INVITE FRIENDS TO SIDE {side||"—"} ↗</button>
+    <small className="pool-wallet-note">{pool?.status==="open"?"Your CT stake will be checked and deducted only when your position is successfully recorded.":"This Pool Court is not open for staking yet."}</small>
   </section></div>;
 }
-
 function WalletContent({ showNotice,balances,transactions }: { showNotice: (message: string) => void; balances:{ct:number;sethis:number}; transactions:Array<{token:string;amount:number;transaction_type:string;created_at:string}> }) {
   return <><span className="eyebrow">SETTLE THIS WALLET</span><h2 className="wallet-title">Your balances</h2><div className="wallet-balances"><div className="balance-card ct-card"><small>COURT TOKENS</small><strong>{balances.ct.toLocaleString()} <i>CT</i></strong><p>Used to enter eligible Courts</p></div><div className="balance-card sethis-card"><small>MAIN REWARD TOKEN</small><strong>{balances.sethis.toLocaleString()} <i>SETHIS</i></strong><p>Earned through wins and activities</p></div></div><section className="fund-card"><div><span className="eyebrow">FUND YOUR COURT ENTRIES</span><h3>Get 100 CT per completed ad.</h3><p>Watch a designated rewarded advertisement to add CT to your Court balance.</p></div><div className="ad-reward"><b>+100</b><small>CT / AD</small></div><button className="primary-wide" onClick={() => showNotice("Rewarded-ad provider is not connected yet. No CT has been added.")}>WATCH AD · EARN 100 CT <span>→</span></button><small className="integration-note">Ad integration pending · CT is not credited in this preview.</small></section><section className="wallet-separation"><b>Two tokens. Two different purposes.</b><p><strong>CT</strong> is funded through designated CT ads and used for eligible Court entry. <strong>SETHIS</strong> is earned separately through qualifying Court wins, check-ins, SETHIS ads, community tasks, quizzes and successful referrals.</p></section><div className="wallet-history"><span className="eyebrow">RECENT ACTIVITY</span>{transactions.length===0?<p>No transactions yet. Your verified credits and debits will appear here.</p>:<div className="ledger-list">{transactions.map((tx,i)=><div className="ledger-row" key={i}><span><b>{tx.transaction_type.replace(/_/g," ")}</b><small>{new Date(tx.created_at+"Z").toLocaleString()}</small></span><strong className={tx.amount>0?"credit":"debit"}>{tx.amount>0?"+":""}{tx.amount.toLocaleString()} {tx.token}</strong></div>)}</div>}</div><div className="wallet-future">Crypto funding is not available in this version.</div></>;
 }
