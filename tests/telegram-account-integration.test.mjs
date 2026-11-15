@@ -179,4 +179,77 @@ test("Telegram accounts persist independently through onboarding, profile, check
 
   const firstProfileAfterSecondSignIn = await api(env, "/api/profile", firstInit);
   assert.equal(firstProfileAfterSecondSignIn.data.profile.club, "Chelsea");
+
+  const thirdUser = { id: 700003, first_name: "Guest", username: "guest_fan" };
+  const thirdInit = signedInitData(thirdUser);
+  const thirdSignIn = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ initData: thirdInit })
+  }), env);
+  assert.equal(thirdSignIn.status, 200);
+
+  const courtId = "court-community-integration";
+  env.DB.prepare("INSERT INTO courts (id,title,category,incident_context,side_a_label,side_a_argument,side_b_label,side_b_argument,status,closes_at) VALUES (?,?,?,?,?,?,?,?,?,?)")
+    .bind(courtId, "Community integration test", "match_debate", "Synthetic test Court.", "Side A", "Case for A.", "Side B", "Case for B.", "open", new Date(Date.now() + 3600000).toISOString())
+    .run();
+
+  const outsiderArgument = await api(env, "/api/courts/" + courtId + "/arguments", thirdInit, "POST", { body: "I have not joined this Court." });
+  assert.equal(outsiderArgument.response.status, 403);
+
+  const firstJoin = await api(env, "/api/courts/" + courtId + "/join", firstInit, "POST", { side: "A" });
+  assert.equal(firstJoin.response.status, 200);
+  assert.equal(firstJoin.data.participant.side, "A");
+  assert.equal(firstJoin.data.wallet.ct_balance, 3000);
+
+  const secondJoin = await api(env, "/api/courts/" + courtId + "/join", secondInit, "POST", { side: "B" });
+  assert.equal(secondJoin.response.status, 200);
+  assert.equal(secondJoin.data.participant.side, "B");
+  assert.equal(secondJoin.data.wallet.ct_balance, 3000);
+
+  const duplicateJoin = await api(env, "/api/courts/" + courtId + "/join", firstInit, "POST", { side: "B" });
+  assert.equal(duplicateJoin.response.status, 409);
+
+  const argument = await api(env, "/api/courts/" + courtId + "/arguments", firstInit, "POST", {
+    body: "The evidence supports Side A because the decision was consistent with the published rules."
+  });
+  assert.equal(argument.response.status, 201);
+  const argumentId = argument.data.argument_id;
+
+  const duplicateArgument = await api(env, "/api/courts/" + courtId + "/arguments", firstInit, "POST", {
+    body: "The evidence supports Side A because the decision was consistent with the published rules."
+  });
+  assert.equal(duplicateArgument.response.status, 409);
+
+  const reply = await api(env, "/api/arguments/" + argumentId + "/replies", secondInit, "POST", {
+    body: "I disagree: the same evidence can be interpreted differently."
+  });
+  assert.equal(reply.response.status, 201);
+
+  const reaction = await api(env, "/api/reactions", secondInit, "POST", {
+    target_type: "argument", target_id: argumentId, reaction: "agree"
+  });
+  assert.equal(reaction.response.status, 200);
+  const repeatedReaction = await api(env, "/api/reactions", secondInit, "POST", {
+    target_type: "argument", target_id: argumentId, reaction: "agree"
+  });
+  assert.equal(repeatedReaction.response.status, 200);
+  const reactionCount = env.DB.prepare("SELECT COUNT(*) AS count FROM court_reactions WHERE target_type='argument' AND target_id=? AND telegram_user_id=?")
+    .bind(argumentId, String(secondUser.id)).first();
+  assert.equal(Number(reactionCount.count), 1);
+
+  const report = await api(env, "/api/reports", secondInit, "POST", {
+    target_type: "argument", target_id: argumentId, reason: "Misleading content", details: "This is a synthetic integration report."
+  });
+  assert.equal(report.response.status, 201);
+  const duplicateReport = await api(env, "/api/reports", secondInit, "POST", {
+    target_type: "argument", target_id: argumentId, reason: "Misleading content", details: "Duplicate synthetic report."
+  });
+  assert.equal(duplicateReport.response.status, 409);
+
+  const firstNotifications = await api(env, "/api/notifications", firstInit);
+  assert.ok(firstNotifications.data.notifications.some(item => item.type === "new_reply" && item.reference_id === argumentId));
+  assert.ok(firstNotifications.data.notifications.some(item => item.type === "reaction" && item.reference_id === argumentId));
+  const secondNotifications = await api(env, "/api/notifications", secondInit);
+  assert.ok(secondNotifications.data.notifications.some(item => item.type === "new_argument" && item.reference_id === courtId));
 });
