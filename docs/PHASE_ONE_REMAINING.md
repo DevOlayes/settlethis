@@ -59,6 +59,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Removed the unfinished sample football quiz from the Phase One Tasks page; quizzes remain a later-phase feature rather than a non-functional placeholder.
 - [x] Keep Telegram, Facebook and WhatsApp task rows visible in Earn & Engage using generic platform destinations when official owner-configured links are not yet available.
 - [x] Mark generic social task destinations clearly: members can open the platform homepage, but proof submission remains disabled until the official destination is configured in Admin, avoiding a misleading failed claim.
+- [x] Added defense-in-depth validation on claim submission so a social task only accepts a configured HTTPS destination on its matching platform host; integration tests cover mismatched stored destinations and a valid proof submission after Admin configuration.
 
 ## Community and account
 - [x] Corrected the check-in calendar to show the trailing six days plus today, matching its rolling seven-day history label rather than displaying future dates.
@@ -106,13 +107,18 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Added an authenticated, read-only Admin audit-history API and a dedicated Admin Portal screen showing recent task-review, moderation, content-action and member-restriction records; live Admin-session UI verification remains pending below.
 - [x] Exposed task-claim reviewer/time metadata and moderation review notes/timestamps in the Admin queues; successful review and moderation actions now refresh the audit history. Automated build verification passed in draft PR #1; real authenticated Admin-session UI verification remains pending.
 - [x] Added server-side failed-login throttling: five attempts per IP hash within 15 minutes, reserved atomically so concurrent requests cannot bypass the limit, generic credential errors, successful-login reset, and automatic cleanup of expired attempt records.
+- [x] Hardened Admin login against email enumeration with a dummy PBKDF2 work path for unknown email addresses, bounded stored work factors and input lengths; HMAC-peppered rate-limit IP identifiers.
+- [x] Added baseline security headers to API and static asset responses, removed internal setup-stage details from setup failures, rejected credential-bearing HTTPS URLs and validated Telegram bot usernames before building invite links.
+- [x] Added automated checks for Admin same-origin write protection, failed-login throttling, security headers, fractional Telegram auth timestamps, invalid bot usernames and five-per-hour Pool invite creation.
 - [x] Added migration `0022_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
 
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
+- [x] Added a high-severity npm dependency audit to the pull-request verification workflow; the latest successful run passed dependency audit, automated tests and the TypeScript/Vite build.
 - [x] Confirmed Cloudflare Workers Builds is configured for `main`; its build step now runs `npm test && npm run build`. The production deploy command has been restored to `npx wrangler deploy`; the latest main revision built and deployed successfully. GitHub Actions is kept focused on verification.
 - [x] Verified the full Cloudflare Workers Build for latest main source revision `59f2172f92e4c6e999f3e56308bb994e1ce8c679`: all 38 automated tests passed, TypeScript/Vite production build passed, and Wrangler deployed the Worker successfully.
 - [x] Created and used the separate `sethis-phase-one-test` D1 database for synthetic staging fixtures covering wallet credits, referral qualification, Court/Pool entries, Pool refunds, task claims/rewards, moderation reports, hidden-content filtering, onboarding, notifications and check-ins. Automated SQLite transaction tests cover settlement and race conditions.
+- [x] Applied migration `0024_pool_invite_rate_limit.sql` to staging D1 and verified the five-per-hour invite-count query uses the new covering index with read-only EXPLAIN QUERY PLAN; production D1 was not changed.
 - [x] Confirmed production deployment version `9e45c60f-c9c0-4934-88d5-c4763bc2fd2d` is receiving 100% traffic.
 - [ ] Run Telegram multi-user test: onboarding, join, argue/reply/react, verdict, reward, wallet, rankings, report.
 - [ ] Check mobile errors/loading/empty states and production logs.
