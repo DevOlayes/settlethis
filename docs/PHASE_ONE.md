@@ -81,7 +81,7 @@ Also deliver Telegram-based identity, onboarding, user profile, club selection, 
 - Database: Cloudflare D1.
 - Media storage: Cloudflare R2 when user-uploaded media is introduced.
 - Telegram Mini App: Telegram Web App integration with server-verified identity.
-- Browser web app: same core services and account model.
+- Browser access is retained for development, visual inspection, and the private Admin Portal; the user-facing product is the Telegram Mini App.
 - Wallet and settlement operations must be performed and validated server-side. Do not trust client-submitted balances, outcomes, or reward amounts.
 - Use migrations, environment-specific configuration, input validation, authentication/authorization checks, and automated tests for critical flows.
 
