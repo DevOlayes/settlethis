@@ -22,7 +22,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Validated the revised Regular/Pool settlement SQL statements against production D1 using read-only EXPLAIN queries; no production rows were changed.
 - [x] Exercised critical transaction SQL against the separate `sethis-phase-one-test` D1 database: welcome gift credits exactly once, check-in uniqueness holds, referral qualification reaches three and credits exactly 500 SETHIS once, Pool staking is blocked while reserve is pending, duplicate Pool stake rolls back without a second debit, and cancellation returns CT/releases the reserve exactly once. No production rows were changed.
 - [x] Issued simultaneous duplicate settlement batches against staging D1 for Regular Court and Pool Court: both requests completed, only one adjudication was stored, winner rewards were credited once, losing-side balances stayed unchanged, and notifications were deduplicated.
-- [ ] Convert the remaining manual staging scenarios into repeatable automated D1 tests; automated SQLite transaction tests already cover Court/Pool settlement and task-review races.
+- [x] Converted the remaining manual staging scenarios into repeatable automated coverage: isolated SQLite integration now exercises onboarding/welcome/check-in/referral, Court/Pool invite creation and start_param acceptance/replay, social task claims, notifications, reporting/moderation, login limits and wallet reconciliation; dedicated transaction tests cover Court/Pool settlement, reserve/refund and task-review races. The real Telegram and Monetag checks remain intentionally deferred to final end-to-end testing.
 
 ## Wallet and reward integrity
 - [x] Source-audited every Worker wallet balance mutation: welcome gift, admin grant, task/referral/ad reward, Court entry/reward/refund and Pool stake/prize/refund are batched with ledger/idempotency checks.
@@ -110,6 +110,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Hardened Admin login against email enumeration with a dummy PBKDF2 work path for unknown email addresses, bounded stored work factors and input lengths; HMAC-peppered rate-limit IP identifiers.
 - [x] Added baseline security headers to API and static asset responses, removed internal setup-stage details from setup failures, rejected credential-bearing HTTPS URLs and validated Telegram bot usernames before building invite links.
 - [x] Added automated checks for Admin same-origin write protection, failed-login throttling, security headers, fractional Telegram auth timestamps, invalid bot usernames and five-per-hour Pool invite creation.
+- [x] Tested Pool Court start_param acceptance with a third synthetic Telegram identity, case-insensitive legacy invite-code lookup, replay-safe acceptance insertion and rejection of self-invites. This caught and fixed the prior lowercase/uppercase invite-code mismatch; verification run 43758675617 passed dependency audit, tests and build.
 - [x] Added migration `0022_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
 
 ## Launch validation
