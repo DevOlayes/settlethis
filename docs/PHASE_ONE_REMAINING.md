@@ -31,6 +31,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 ## Tasks, referrals, ads
 - [ ] Verify task catalog/UI rewards match actual claim/review/credit logic, including the owner-supplied social destinations.
 - [x] Improved task-claim duplicate handling so already-pending and already-approved tasks return accurate conflict responses instead of reporting a false new submission.
+- [x] Require a configured official destination and an HTTPS proof link before accepting manual social-task claims; the Admin review queue displays the submitted evidence link.
 - [ ] Test social task submission, admin review, approved credit, rejected resubmission and duplicate prevention end-to-end.
 - [x] Made referral qualification retry-safe: repeat welcome-gift confirmation now rechecks an eligible invitee and can complete a missed qualification/milestone after a partial failure, without double-crediting the inviter.
 - [ ] Test referral deep link attribution, self-referral/duplicate prevention, onboarding+gift qualification, 3-referral milestone and exactly-once 500 SETHIS with multiple Telegram accounts.
