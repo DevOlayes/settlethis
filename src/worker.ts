@@ -2,6 +2,7 @@ import { allocatePoolPrize } from "./settlement";
 import { checkinSummary, lagosDate } from "./checkin";
 import { verifyTelegramInitData } from "./telegram-auth";
 import { secureUrl } from "./url-validation";
+import { monetagWalletCreditSql } from "./monetag";
 interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }
 interface D1Database { prepare(query: string): D1Statement; batch(statements: D1Statement[]): Promise<unknown[]>; }
 interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: D1Database; TELEGRAM_BOT_TOKEN?: string; TELEGRAM_BOT_USERNAME?: string; MONETAG_POSTBACK_SECRET?: string; MONETAG_ZONE_ID?: string; ADMIN_SETUP_SECRET?: string; EDITORIAL_ADMIN_IDS?: string; }
@@ -134,7 +135,7 @@ env.DB.prepare("SELECT COUNT(*) AS n FROM wallet_ledger l WHERE l.transaction_ty
    await env.DB.batch([
     env.DB.prepare("INSERT OR IGNORE INTO wallets(user_id,ct_balance,sethis_balance) VALUES(?,0,0)").bind(userId),
     env.DB.prepare("INSERT OR IGNORE INTO wallet_ledger(id,user_id,token,amount,transaction_type,reference_id,idempotency_key) SELECT ?,?,?,?,'ad_reward',?,? WHERE EXISTS(SELECT 1 FROM telegram_users WHERE telegram_user_id=?) AND NOT EXISTS(SELECT 1 FROM ad_reward_events WHERE telegram_user_id=? AND created_at>=datetime('now','-20 minutes')) AND (SELECT COUNT(*) FROM ad_reward_events WHERE telegram_user_id=? AND date(datetime(created_at,'+1 hour'))=date('now','+1 hour'))<30").bind(id(),userId,token,amount,eventId,key,userId,userId,userId),
-    env.DB.prepare("UPDATE wallets SET "+field+"="+field+"+?,updated_at=CURRENT_TIMESTAMP WHERE user_id=? AND EXISTS(SELECT 1 FROM wallet_ledger WHERE idempotency_key=? AND user_id=? AND token=? AND amount=?) AND NOT EXISTS(SELECT 1 FROM ad_reward_events WHERE provider_event_id=?)").bind(amount,userId,key,userId,token,amount,eventId),
+    env.DB.prepare(monetagWalletCreditSql(field)).bind(amount,userId,key,userId,token,amount,eventId),
     env.DB.prepare("INSERT OR IGNORE INTO ad_reward_events(id,provider,provider_event_id,telegram_user_id,placement,reward_token,reward_amount,event_type,zone_id,estimated_price) SELECT ?,'monetag',?,?,?,?,?,'valued',?,? WHERE EXISTS(SELECT 1 FROM wallet_ledger WHERE idempotency_key=? AND user_id=? AND token=? AND amount=?)").bind(id(),eventId,userId,placement,token,amount,zone,textField(body.estimated_price,40),key,userId,token,amount),
     env.DB.prepare("INSERT OR IGNORE INTO notifications(id,user_id,type,title,body,reference_id,event_key) SELECT ?,?,'wallet_credit','Ad reward credited',?,?,? WHERE EXISTS(SELECT 1 FROM ad_reward_events WHERE provider_event_id=? AND telegram_user_id=?)").bind(id(),userId,amount+" "+token+" has been added to your wallet.",eventId,"monetag:"+eventId,eventId,userId)
    ]);
