@@ -4,10 +4,8 @@ import { verifyTelegramInitData } from "./telegram-auth";
 interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }
 interface D1Database { prepare(query: string): D1Statement; batch(statements: D1Statement[]): Promise<unknown[]>; }
 interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: D1Database; TELEGRAM_BOT_TOKEN?: string; TELEGRAM_BOT_USERNAME?: string; MONETAG_POSTBACK_SECRET?: string; MONETAG_ZONE_ID?: string; EDITORIAL_ADMIN_IDS?: string; }
-type TelegramIdentity = { id: number; first_name: string; [key: string]: unknown };
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
 const encoder=new TextEncoder();
-const hex=(bytes:ArrayBuffer)=>Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,"0")).join("");
 function safeEqual(a:string,b:string){if(a.length!==b.length)return false;let diff=0;for(let i=0;i<a.length;i++)diff|=a.charCodeAt(i)^b.charCodeAt(i);return diff===0;}
 async function authenticatedUser(request:Request,env:Env):Promise<string|null>{
  if(!env.TELEGRAM_BOT_TOKEN)return null;
