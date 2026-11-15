@@ -992,3 +992,103 @@
  .task-ad-reward .task-action-button,.social-task-row .task-action-button,.task-invite-row .task-action-button{width:78px;min-width:78px;padding:0 5px;font-size:7px}
  .task-ad-count{font-size:6.5px!important}
 }
+
+
+/* Home hero redesign: compact editorial copy with a large football-pitch watermark */
+.hero-condensed{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto;
+  min-height:0;
+  padding:0;
+  overflow:hidden;
+  isolation:isolate;
+}
+.hero-condensed .hero-copy{
+  grid-column:1;
+  grid-row:1;
+  width:66%;
+  max-width:560px;
+  padding:12px 15px 10px;
+  z-index:2;
+}
+.hero-condensed .hero-kicker{
+  display:block;
+  font-size:7px;
+  line-height:1.2;
+  letter-spacing:.15em;
+  margin-bottom:3px;
+}
+.hero-condensed .hero h1{
+  font-size:clamp(27px,3.5vw,34px);
+  line-height:.86;
+  letter-spacing:-.025em;
+  margin:3px 0 5px;
+}
+.hero-condensed .hero-copy p{
+  max-width:285px;
+  font-size:8px;
+  line-height:1.28;
+  margin:0 0 7px;
+}
+.hero-condensed .hero-cta{
+  height:25px;
+  padding:0 9px;
+  font-size:7px;
+}
+.hero-condensed .hero-cta span{font-size:11px;margin-left:8px}
+.hero-condensed .hero-art{
+  position:absolute;
+  z-index:1;
+  right:-3%;
+  top:-7px;
+  width:64%;
+  height:174px;
+  display:grid;
+  place-items:center;
+  opacity:.58;
+  pointer-events:none;
+}
+.hero-condensed .hero-art:after{display:none!important}
+.hero-condensed .football-pitch-art{
+  display:block;
+  width:150%;
+  height:150%;
+  max-width:none;
+  opacity:1;
+  transform:rotate(-13deg) scale(1.06);
+  transform-origin:center;
+  filter:drop-shadow(0 0 13px #27d7f244);
+}
+.hero-condensed .hero-balance{
+  grid-column:1;
+  grid-row:2;
+  position:relative;
+  z-index:3;
+  padding:6px 11px 7px;
+  background:linear-gradient(90deg,#091724f2,#102d3be8 72%,#142d3bdc);
+  border-top:1px solid #ffffff16;
+}
+.hero-condensed .hero-balance-label{gap:7px}
+.hero-condensed .hero-balance-amount>strong{font-size:23px}
+.hero-condensed .hero-balance-stats{padding-top:4px;gap:5px}
+.hero-condensed .hero-balance-stats small{font-size:5px}
+.hero-condensed .hero-balance-stats b{font-size:7px}
+@media(max-width:600px){
+  .hero-condensed .hero-copy{width:69%;padding:10px 11px 8px}
+  .hero-condensed .hero-kicker{font-size:6.5px;letter-spacing:.12em}
+  .hero-condensed .hero h1{font-size:30px;line-height:.86;margin:3px 0 5px}
+  .hero-condensed .hero-copy p{max-width:225px;font-size:7.5px;line-height:1.25;margin-bottom:6px}
+  .hero-condensed .hero-cta{height:24px;padding:0 8px;font-size:6.5px}
+  .hero-condensed .hero-art{right:-5%;top:-3px;width:67%;height:158px;opacity:.57}
+  .hero-condensed .football-pitch-art{width:158%;height:158%;transform:rotate(-13deg) scale(1.06)}
+  .hero-condensed .hero-balance{padding:5px 9px 6px}
+  .hero-condensed .hero-balance-amount>strong{font-size:21px}
+}
+@media(max-width:370px){
+  .hero-condensed .hero-copy{width:72%;padding:9px 9px 7px}
+  .hero-condensed .hero h1{font-size:27px}
+  .hero-condensed .hero-copy p{font-size:7px;max-width:205px}
+  .hero-condensed .hero-art{right:-8%;width:65%;height:150px;opacity:.53}
+}
