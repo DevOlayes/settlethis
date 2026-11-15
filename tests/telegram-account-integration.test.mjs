@@ -4,7 +4,15 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
-import worker from "../src/worker.ts";
+import { createServer } from "vite";
+
+let worker;
+let vite;
+test.before(async () => {
+  vite = await createServer({ configFile: false, server: { middlewareMode: true }, appType: "custom" });
+  worker = (await vite.ssrLoadModule("/src/worker.ts")).default;
+});
+test.after(async () => { await vite?.close(); });
 
 const botToken = "123456:integration-test-token";
 
