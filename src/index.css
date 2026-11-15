@@ -785,3 +785,48 @@
  .home-ad-card>button.ad-play-button{min-width:65px;padding:3px 5px}
  .task-social-links{margin-left:0;flex-wrap:wrap}
 }
+
+/* Stronger, cropped foreground pitch and denser vertical rhythm */
+.hero-condensed{min-height:0;isolation:isolate}
+.hero-condensed .hero-copy{padding:11px 15px 8px;width:66%}
+.hero-condensed .hero-kicker{font-size:7px;letter-spacing:.16em}
+.hero-condensed .hero h1{font-size:clamp(29px,4vw,37px);line-height:.88;margin:5px 0 5px}
+.hero-condensed .hero-copy p{font-size:8px;line-height:1.35;margin-bottom:7px;max-width:280px}
+.hero-condensed .hero-cta{height:27px;padding:0 9px;font-size:7px}
+.hero-condensed .hero-art{z-index:1;right:-7%;top:-17px;width:57%;height:190px;opacity:.72;pointer-events:none}
+.hero-condensed .hero-art:after{content:"";position:absolute;inset:-8px;background:linear-gradient(90deg,#102237 0%,#10223720 35%,transparent 72%);pointer-events:none}
+.football-pitch-art{width:145%;height:145%;max-width:none;transform:rotate(-16deg) scale(1.08);transform-origin:center;filter:drop-shadow(0 0 12px #27d7f233)}
+.hero-condensed .hero-stamp{display:none}
+.hero-condensed .hero-balance{position:relative;z-index:3;padding:6px 11px 7px;background:#0a1725c9;border-top:1px solid #ffffff12}
+.hero-condensed .hero-balance-label{font-size:6px}
+.hero-condensed .hero-balance-amount>strong{font-size:23px}
+.hero-condensed .hero-balance-stats{padding-top:4px}
+.hero-condensed .hero-balance-stats small{font-size:5px}
+.hero-condensed .hero-balance-stats b{font-size:7px}
+.checkin-card{padding:9px 10px;margin:8px 0 10px}
+.checkin-card-head h2{font-size:18px}
+.checkin-card-head p{font-size:7px;line-height:1.35}
+.checkin-week{margin:7px 0}
+.checkin-day{min-height:41px}
+.home-ad-card{margin:8px 0 11px;padding:8px 10px}
+.section-block{margin-top:12px}
+.section-heading{margin-bottom:9px}
+.featured-court{margin-top:8px}
+.featured-court .court-visual{min-height:115px}
+.social-task-row{min-height:0}
+.social-task-row .task-action-button{min-height:29px;padding:0 8px;font-size:7px}
+.task-list{gap:6px}
+.task-row{padding:8px 9px}
+.task-symbol{width:27px;height:27px;flex-basis:27px}
+.task-row b{font-size:8px}
+.task-row small{font-size:6.5px}
+.task-reward-button,.task-action-button{min-height:29px}
+@media(max-width:420px){
+ .hero-condensed .hero-copy{padding:10px 9px 7px;width:68%}
+ .hero-condensed .hero h1{font-size:30px}
+ .hero-condensed .hero-art{right:-12%;top:-10px;width:60%;height:155px}
+ .football-pitch-art{width:155%;height:155%;transform:rotate(-16deg) scale(1.08)}
+ .hero-condensed .hero-balance{padding:5px 9px 6px}
+ .checkin-card{padding:8px}
+ .checkin-day{min-height:38px}
+}
