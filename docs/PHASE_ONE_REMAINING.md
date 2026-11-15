@@ -14,7 +14,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Preserved proportional Pool Court distribution with deterministic largest-remainder allocation; the adjudication now records the count of participants who actually receive a positive SETHIS credit, keeping zero-value rounding outcomes from falsely failing the ledger audit.
 - [ ] Audit Pool Court losing-side outcome and duplicate settlement protection end-to-end.
 - [ ] Audit cancellation/refunds and reserve release consistency.
-- [ ] Add automated tests for critical Court and settlement paths.
+- [x] Added Node built-in unit tests for proportional Pool Court allocation, deterministic remainder distribution, zero-value outcomes and invalid input; the four allocation tests pass under Node 22.16.
+- [ ] Add D1-backed automated tests for critical Court and settlement transactions, including concurrent/duplicate requests.
 
 ## Wallet and reward integrity
 - [ ] Verify every CT/SETHIS mutation is atomic with ledger and idempotency reference.
