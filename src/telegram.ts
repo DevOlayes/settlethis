@@ -17,6 +17,7 @@ interface TelegramWebApp {
   setHeaderColor?(color: string): void;
   setBackgroundColor?(color: string): void;
   disableVerticalSwipes?(): void;
+  openTelegramLink?(url: string): void;
   BackButton?: { show(): void; hide(): void; onClick(callback: () => void): void; offClick(callback: () => void): void };
 }
 declare global {
