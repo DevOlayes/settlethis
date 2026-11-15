@@ -20,7 +20,9 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Verify task catalog/UI rewards match actual claim/review/credit logic.
 - [ ] Test social task submission, admin review, approved credit, rejected resubmission and duplicate prevention.
 - [ ] Test referral deep link attribution, self-referral/duplicate prevention, onboarding+gift qualification, 3-referral milestone and exactly-once 500 SETHIS.
-- [ ] Configure Monetag zone and secret; test only valued postbacks, unique event IDs, shared 20-minute cooldown, Lagos daily cap 30 and placements (100 CT Home / 150 SETHIS Tasks).
+- [x] Installed Monetag SDK main zone `12269852` in `index.html`; retained the existing React SDK path and server-only valued-event rewards. (Production secrets/postback URL and live ad verification still require dashboard setup.)
+- [x] Improved rewarded-ad confirmation UX and wallet/status refresh retries after SDK confirmation.
+- [ ] Configure Monetag postback URL + private secret; test valued events, unique IDs, shared 20-minute cooldown, Lagos daily cap 30 and placements (100 CT Home / 150 SETHIS Tasks).
 - [ ] Add official Telegram/Facebook/WhatsApp destinations when supplied.
 
 ## Community and account
