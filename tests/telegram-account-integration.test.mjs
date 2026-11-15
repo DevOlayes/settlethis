@@ -252,4 +252,33 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.ok(firstNotifications.data.notifications.some(item => item.type === "reaction" && item.reference_id === argumentId));
   const secondNotifications = await api(env, "/api/notifications", secondInit);
   assert.ok(secondNotifications.data.notifications.some(item => item.type === "new_argument" && item.reference_id === courtId));
+
+  env.DB.prepare("INSERT INTO admin_users (id,email,password_salt,password_hash,password_iterations) VALUES (1,?,?,?,?)")
+    .bind("admin@settlethis.test", "0123456789abcdef0123456789abcdef", "test-hash", 100000)
+    .run();
+  env.DB.prepare("INSERT INTO user_restrictions (user_id,status,reason,updated_by) VALUES (?,?,?,?)")
+    .bind(String(secondUser.id), "restricted", "Repeated abusive posting in this integration test.", 1)
+    .run();
+
+  const blockedReply = await api(env, "/api/arguments/" + argumentId + "/replies", secondInit, "POST", {
+    body: "This reply must be blocked while the account is restricted."
+  });
+  assert.equal(blockedReply.response.status, 403);
+  const blockedReaction = await api(env, "/api/reactions", secondInit, "POST", {
+    target_type: "argument", target_id: argumentId, reaction: "fire"
+  });
+  assert.equal(blockedReaction.response.status, 403);
+
+  env.DB.prepare("UPDATE court_arguments SET moderation_status='hidden' WHERE id=?").bind(argumentId).run();
+  const hiddenReplies = await api(env, "/api/arguments/" + argumentId + "/replies", firstInit);
+  assert.equal(hiddenReplies.response.status, 200);
+  assert.equal(hiddenReplies.data.replies.length, 0);
+  const hiddenReaction = await api(env, "/api/reactions", firstInit, "POST", {
+    target_type: "argument", target_id: argumentId, reaction: "insightful"
+  });
+  assert.equal(hiddenReaction.response.status, 404);
+  const hiddenReport = await api(env, "/api/reports", secondInit, "POST", {
+    target_type: "argument", target_id: argumentId, reason: "Hidden content", details: "A hidden argument should no longer accept a new report."
+  });
+  assert.equal(hiddenReport.response.status, 404);
 });
