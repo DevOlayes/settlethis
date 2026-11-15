@@ -574,3 +574,13 @@
 @keyframes giftLid{0%,75%,100%{transform:rotate(0)}82%,92%{transform:rotate(-13deg) translateY(-8px)}}
 @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(190px) rotate(520deg);opacity:0}}
 @media(max-width:420px){.onboarding-premium{padding:16px 14px}.onboarding-premium h2{font-size:26px}.onboarding-football-art{height:112px}.gift-box-wrap{height:145px}}
+
+
+.admin-wallet-grants{display:grid;gap:16px}
+.admin-grant-history{display:grid;gap:9px;margin-top:5px}
+.admin-grant-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px;border:1px solid #ffffff18;border-radius:9px;background:#121d2e}
+.admin-grant-row>div{display:grid;gap:5px;min-width:0}
+.admin-grant-row b{font-size:11px;color:#fff}
+.admin-grant-row small{font-size:8px;line-height:1.5;color:#aebdca;overflow-wrap:anywhere}
+.admin-grant-row p{margin:2px 0;font-size:9px;line-height:1.5;color:#dce7ef}
+.admin-grant-row>strong{flex:0 0 auto;font-size:15px;color:#72e8f7;white-space:nowrap}
