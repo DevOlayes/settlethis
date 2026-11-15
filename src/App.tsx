@@ -110,6 +110,26 @@ function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser
   const [notifications,setNotifications]=useState<AppNotification[]>([]);
   const [notificationOpen,setNotificationOpen]=useState(false);
   const [notificationUnread,setNotificationUnread]=useState(0);
+  useEffect(()=>{
+    const backButton=window.Telegram?.WebApp?.BackButton;
+    if(!backButton)return;
+    const shouldShow=!onboardingOpen&&(notificationOpen||profileOpen||courtOpen||poolOpen||quizOpen||infoPage!==null||ctBalanceOpen||selectedCourt!==null||searchOpen||tab!=="Courts");
+    const handleBack=()=>{
+      if(onboardingOpen)return;
+      if(notificationOpen){setNotificationOpen(false);return;}
+      if(profileOpen){setProfileOpen(false);return;}
+      if(courtOpen){setCourtOpen(false);return;}
+      if(poolOpen){setPoolOpen(false);return;}
+      if(quizOpen){setQuizOpen(false);return;}
+      if(infoPage!==null){setInfoPage(null);return;}
+      if(ctBalanceOpen){setCtBalanceOpen(false);return;}
+      if(selectedCourt){setSelectedCourt(null);return;}
+      if(searchOpen){setSearchOpen(false);setSearch("");return;}
+      if(tab!=="Courts")setTab("Courts");
+    };
+    if(shouldShow){backButton.show();backButton.onClick(handleBack);}else backButton.hide();
+    return()=>{backButton.offClick(handleBack);};
+  },[onboardingOpen,notificationOpen,profileOpen,courtOpen,poolOpen,quizOpen,infoPage,ctBalanceOpen,selectedCourt,searchOpen,tab]);
   const [rankings,setRankings]=useState<LeaderboardEntry[]>([]);
   const [homeStats,setHomeStats]=useState<{sethisEarned:number;rank:number|null}>({sethisEarned:0,rank:null});
   const [rankingLoading,setRankingLoading]=useState(false);
