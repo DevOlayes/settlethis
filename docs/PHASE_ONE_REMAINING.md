@@ -38,7 +38,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Improved task-claim duplicate handling so already-pending and already-approved tasks return accurate conflict responses instead of reporting a false new submission.
 - [x] Require a configured official destination and an HTTPS proof link before accepting manual social-task claims; the Admin review queue displays the submitted evidence link.
 - [x] Verified staging social-task claim submission, duplicate pending-claim preservation and rejected-claim resubmission with fresh HTTPS evidence.
-- [ ] Test authenticated Admin review, approved reward credit and rejected-task workflow end-to-end.
+- [x] Tested server-side task approve/reject transitions, reward ledger idempotency and stale-review races with automated SQLite tests and staging D1.
+- [ ] Test the full Admin task-review UI, audit trail and post-review member state using the authenticated production Admin session.
 - [x] Made referral qualification retry-safe: repeat welcome-gift confirmation now rechecks an eligible invitee and can complete a missed qualification/milestone after a partial failure, without double-crediting the inviter.
 - [x] Verified the onboarding+welcome-gift qualification condition and exactly-once 500 SETHIS milestone using three separate synthetic invitee identities in staging D1.
 - [x] Verified staging first-login referral attribution, self-referral rejection and immutable first-inviter attribution on subsequent logins; the three-invitee milestone was separately verified.
