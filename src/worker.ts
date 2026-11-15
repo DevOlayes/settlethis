@@ -1,4 +1,5 @@
 import { allocatePoolPrize } from "./settlement";
+import { checkinSummary, lagosDate } from "./checkin";
 interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }
 interface D1Database { prepare(query: string): D1Statement; batch(statements: D1Statement[]): Promise<unknown[]>; }
 interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: D1Database; TELEGRAM_BOT_TOKEN?: string; TELEGRAM_BOT_USERNAME?: string; MONETAG_POSTBACK_SECRET?: string; MONETAG_ZONE_ID?: string; EDITORIAL_ADMIN_IDS?: string; }
@@ -25,8 +26,6 @@ async function authenticatedUser(request:Request,env:Env):Promise<string|null>{
  return user?String(user.id):null;
 }
 const id=()=>crypto.randomUUID();
-function lagosDate(date=new Date()){const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Lagos",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(date);const value=(type:string)=>parts.find(p=>p.type===type)?.value||"00";return value("year")+"-"+value("month")+"-"+value("day");}
-function checkinSummary(dates:string[],today:string){const set=new Set(dates);let cursor=set.has(today)?today:new Date(Date.parse(today+"T00:00:00Z")-86400000).toISOString().slice(0,10);let streak=0;while(set.has(cursor)){streak++;cursor=new Date(Date.parse(cursor+"T00:00:00Z")-86400000).toISOString().slice(0,10);}const days=Array.from({length:7},(_,i)=>{const date=new Date(Date.parse(today+"T00:00:00Z")+(i-6)*86400000).toISOString().slice(0,10);return {date,checked_in:set.has(date)};});return {today,days,streak,total_checkins:dates.length,checked_in_today:set.has(today)};}
 
 const bytesHex=(bytes:Uint8Array)=>Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
 async function sha256Hex(value:string){return bytesHex(new Uint8Array(await crypto.subtle.digest("SHA-256",encoder.encode(value))));}
