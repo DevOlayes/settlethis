@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS idx_moderation_report_open_unique ON moderation_reports(reporter_user_id,target_type,target_id) WHERE status IN ('open','reviewing');
