@@ -460,3 +460,18 @@
 .my-court-outcome span{font-size:8px;line-height:1.5;color:#e2e8ec}
 .my-court-evidence{display:inline-block;margin-top:10px;color:#27d7f2;font-size:8px;font-weight:900;letter-spacing:.08em}
 @media(max-width:430px){.my-court-details{grid-template-columns:repeat(2,1fr)}.my-court-match>span b{font-size:7px}.my-courts-summary>div{padding:9px}}
+
+.brand-emblem{display:block;width:40px;height:40px;flex:0 0 40px;filter:drop-shadow(0 4px 12px #0005)}
+.admin-emblem{width:42px;height:42px;display:block;flex:0 0 42px}
+.admin-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#f8fafc;font-weight:900;letter-spacing:.06em}
+.admin-brand>i{font-style:normal;color:#27D7F2;font-size:9px}
+.admin-tabs{display:flex;gap:8px;margin:16px 0}
+.admin-tabs button{padding:10px 13px;border:1px solid #ffffff20;border-radius:7px;background:#121D2E;color:#b7c6d2;font-size:9px;font-weight:900;letter-spacing:.07em}
+.admin-tabs button.active{background:#123246;border-color:#27D7F2;color:#eaffff}
+.admin-resolution-layout{display:grid;grid-template-columns:minmax(220px,290px) minmax(0,1fr);gap:14px}
+.admin-resolution-form{display:grid;gap:12px;padding:16px;border:1px solid #ffffff1a;border-radius:10px;background:#101e30}
+.admin-resolution-form h3{margin:0;color:#27D7F2;font-size:12px;letter-spacing:.12em}
+.admin-resolution-form label{display:grid;gap:6px;color:#cbd8e1;font-size:9px;font-weight:900;letter-spacing:.06em}
+.admin-resolution-form input,.admin-resolution-form select,.admin-resolution-form textarea{width:100%;padding:10px;border:1px solid #ffffff26;border-radius:7px;background:#0b1625;color:#f8fafc;font:500 12px Inter,Arial,sans-serif}
+.admin-resolution-form textarea{min-height:85px;resize:vertical}
+@media(max-width:720px){.admin-resolution-layout{grid-template-columns:1fr}.admin-tabs{overflow:auto}.admin-tabs button{white-space:nowrap}.brand-emblem{width:37px;height:37px;flex-basis:37px}}
