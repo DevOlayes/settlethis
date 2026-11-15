@@ -1359,3 +1359,31 @@
 @media(max-width:600px){.admin-task-actions{width:100%;flex-direction:row;flex-wrap:wrap}.admin-task-actions button{flex:1}.admin-grant-row{align-items:flex-start}}
 
 .report-content-button{border:0;background:transparent;color:#9eb2c2;font-size:7px;font-weight:900;letter-spacing:.1em;padding:6px 2px;cursor:pointer}.report-content-button:hover{color:#f4c979}
+
+/* Final right-side-only pitch watermark: keep the entire headline clear */
+.hero-condensed .football-pitch-art{
+  left:70%!important;
+  top:2px!important;
+  width:62%!important;
+  height:188px!important;
+  opacity:.25!important;
+  transform:rotate(-22deg)!important;
+}
+@media(max-width:600px){
+  .hero-condensed .football-pitch-art{
+    left:70%!important;
+    top:4px!important;
+    width:64%!important;
+    height:180px!important;
+    opacity:.25!important;
+  }
+}
+@media(max-width:370px){
+  .hero-condensed .football-pitch-art{
+    left:72%!important;
+    top:6px!important;
+    width:65%!important;
+    height:172px!important;
+    opacity:.23!important;
+  }
+}
