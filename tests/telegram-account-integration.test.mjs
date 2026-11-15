@@ -500,6 +500,31 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const sixthInvite = await api(env, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
   assert.equal(sixthInvite.response.status, 429);
   assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invites WHERE pool_id=? AND inviter_user_id=?").get("pool-invite-rate-test", String(firstUser.id)).n, 5);
+
+  const poolInviteCode = env.testDb.prepare("SELECT invite_code FROM pool_invites WHERE pool_id=? AND inviter_user_id=? ORDER BY created_at LIMIT 1").get("pool-invite-rate-test", String(firstUser.id)).invite_code;
+  env.testDb.prepare("UPDATE pool_invites SET invite_code=lower(invite_code) WHERE invite_code=?").run(poolInviteCode);
+  const thirdUser = { id: 700003, first_name: "Liverpool", username: "liverpool_fan" };
+  const thirdPoolInit = signedInitData(thirdUser, { start_param: "pool_" + poolInviteCode });
+  const thirdAuthResponse = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: thirdPoolInit })
+  }), env);
+  const thirdAuth = await thirdAuthResponse.json();
+  assert.equal(thirdAuthResponse.status, 200);
+  assert.equal(thirdAuth.pool_invite.pool_id, "pool-invite-rate-test");
+  assert.equal(thirdAuth.pool_invite.side, "A");
+  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invite_acceptances WHERE invite_id=(SELECT id FROM pool_invites WHERE invite_code=lower(?)) AND invitee_user_id=?").get(poolInviteCode, String(thirdUser.id)).n, 1);
+  const replayedPoolAuth = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: thirdPoolInit })
+  }), env);
+  assert.equal(replayedPoolAuth.status, 200);
+  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invite_acceptances WHERE invite_id=(SELECT id FROM pool_invites WHERE invite_code=lower(?)) AND invitee_user_id=?").get(poolInviteCode, String(thirdUser.id)).n, 1);
+  const selfPoolInit = signedInitData(firstUser, { start_param: "pool_" + poolInviteCode });
+  const selfPoolResponse = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: selfPoolInit })
+  }), env);
+  const selfPoolAuth = await selfPoolResponse.json();
+  assert.equal(selfPoolResponse.status, 200);
+  assert.equal(selfPoolAuth.pool_invite, null);
   const invalidBotEnv = { ...env, TELEGRAM_BOT_USERNAME: "attacker.example/path" };
   const invalidBotReferral = await api(invalidBotEnv, "/api/referrals", firstInit);
   assert.equal(invalidBotReferral.response.status, 200);
