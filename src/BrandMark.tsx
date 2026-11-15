@@ -1,12 +1,8 @@
 import React from "react";
 export default function BrandMark({className=""}:{className?:string}) {
- return <svg className={className} viewBox="0 0 64 64" role="img" aria-label="Settle This emblem" xmlns="http://www.w3.org/2000/svg">
- <defs><linearGradient id="st-shell" x1="8" y1="5" x2="56" y2="60"><stop stopColor="#1A2940"/><stop offset="1" stopColor="#0B1220"/></linearGradient><linearGradient id="st-cyan" x1="13" y1="10" x2="49" y2="53"><stop stopColor="#55ECFA"/><stop offset="1" stopColor="#27D7F2"/></linearGradient></defs>
- <path d="M32 3.5 57 17.8v28.4L32 60.5 7 46.2V17.8L32 3.5Z" fill="url(#st-shell)" stroke="#31566B" strokeWidth="1.5"/>
- <path d="M32 9.5 51.5 20.7v22.6L32 54.5 12.5 43.3V20.7L32 9.5Z" fill="none" stroke="#27D7F2" strokeOpacity=".23"/>
- <path d="M43.5 18.2H28.2c-6.8 0-11.2 3.8-11.2 9.2 0 4.9 3.4 7.4 10.3 9.1l7.1 1.8c2.5.6 3.7 1.4 3.7 2.8 0 1.8-1.8 2.8-4.8 2.8H17.3v6.1h16.8c7.7 0 12.5-3.7 12.5-9.5 0-4.7-3.2-7.4-10.1-9.1l-7.3-1.8c-2.5-.6-3.7-1.3-3.7-2.7 0-1.6 1.6-2.6 4.2-2.6h13.8v-5.9Z" fill="url(#st-cyan)"/>
- <path d="m32 23.5 7.4 5.4-2.8 8.7h-9.2l-2.8-8.7 7.4-5.4Z" fill="#0B1220" stroke="#F5B942" strokeWidth="1.8" strokeLinejoin="round"/>
- <path d="m24.6 28.9-5.3 3.8 2 6.2 6.1-1.3m12-8.7 5.3 3.8-2 6.2-6.1-1.3" fill="none" stroke="#F5B942" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
- <path d="m32 23.5 0 5.6m-4.6 8.5L32 40.2l4.6-2.6" fill="none" stroke="#F5B942" strokeWidth="1.4" strokeLinecap="round"/>
+ return <svg className={className} viewBox="0 0 100 100" role="img" aria-label="SETHIS" xmlns="http://www.w3.org/2000/svg">
+  <path d="M88 13H40C17 13 5 26 5 45c0 17 11 27 34 33l19 5c7 2 10 4 10 8 0 4-4 6-11 6H7V78h43c-2-1-5-2-9-3l-7-2C11 67 0 57 0 42 0 20 16 5 40 5h48v8Z" fill="currentColor"/>
+  <path d="M95 22H51c-7 0-11 2-11 6 0 3 3 5 9 7l18 5c21 6 30 16 30 31 0 18-14 29-37 29H7v-8h53c18 0 28-7 28-21 0-11-7-18-24-23l-18-5C34 39 27 33 27 25 27 14 37 7 53 7h42v15Z" fill="currentColor" opacity=".0"/>
+  <path d="M88 13H43c-10 0-16 4-16 11 0 5 5 8 14 10l19 5c24 6 35 17 35 34 0 18-14 29-38 29H7V84h50c14 0 21-4 21-12 0-6-5-10-16-13l-19-5C21 48 5 40 5 24 5 9 19 1 41 1h47v12Z" fill="currentColor"/>
  </svg>;
 }
