@@ -4,6 +4,7 @@ export type TaskApprovalInput = {
   userId: string;
   token: TaskRewardToken;
   amount: number;
+  taskKey: string;
   taskTitle: string;
   adminId: string;
   note: string;
@@ -19,7 +20,7 @@ export function taskApprovalStatements(input: TaskApprovalInput): Array<{sql:str
     throw new Error("Task reward amount must be a positive safe integer.");
   }
   const field = input.token === "CT" ? "ct_balance" : "sethis_balance";
-  const key = "task-reward:" + input.userId + ":" + input.taskTitle;
+  const key = "task-reward:" + input.userId + ":" + input.taskKey;
   return [
     {
       sql: "INSERT OR IGNORE INTO wallets(user_id,ct_balance,sethis_balance) VALUES(?,0,0)",
