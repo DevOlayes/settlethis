@@ -16,7 +16,7 @@ type Suggestion = {
 type Source={id:string;source_url:string;source_label:string;source_type:string};
 type Scores={trending_score:number;disagreement_score:number;evidence_score:number;clarity_score:number;timeliness_score:number};
 type WalletAudit={healthy:boolean;issue_count:number;checks:Array<{label:string;issues:number}>;summary:{wallets:number;ledger_entries:number;settled_courts:number;settled_pools:number;court_entries:number;pool_positions:number};checked_at:string};
-type WalletGrant={id:string;telegram_user_id:string;username?:string|null;first_name?:string|null;amount:number;reason:string;administrator?:string|null;transaction_reference:string;created_at:string};
+type WalletGrant={id:string;telegram_user_id:string;username?:string|null;first_name?:string|null;amount:number;reason:string;admin_id?:string|null;administrator?:string|null;transaction_reference:string;created_at:string};
 const emptyScores:Scores={trending_score:15,disagreement_score:12,evidence_score:15,clarity_score:15,timeliness_score:10};
 async function api(path:string,init?:RequestInit){const r=await fetch(path,{...init,cache:"no-store",credentials:"same-origin",headers:{"content-type":"application/json",...(init?.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"The request could not be completed.");return d;}
 export default function AdminPortal(){
