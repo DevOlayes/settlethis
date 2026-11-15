@@ -25,7 +25,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Confirm balances cannot be changed through client-supplied values or unauthenticated requests.
 
 ## Tasks, referrals, ads
-- [ ] Verify task catalog/UI rewards match actual claim/review/credit logic.
+- [ ] Verify task catalog/UI rewards match actual claim/review/credit logic, including the owner-supplied social destinations.
 - [ ] Test social task submission, admin review, approved credit, rejected resubmission and duplicate prevention.
 - [ ] Test referral deep link attribution, self-referral/duplicate prevention, onboarding+gift qualification, 3-referral milestone and exactly-once 500 SETHIS.
 - [x] Configured the Monetag main zone `12269852` and private postback secret as Cloudflare Worker secrets; confirmed both secret bindings exist on the production Worker (values are not readable through Cloudflare secret metadata).
