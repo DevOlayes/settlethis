@@ -1,31 +1,13 @@
 import React from "react";
 
 /**
- * Settle This! — approved Option C monogram.
- * Bespoke, solid S silhouette with the long upper terminal and
- * sweeping lower return from the selected reference.
+ * Settle This! — master monogram traced from the approved SETHIS coin artwork.
+ * Both cyan ribbon sections are preserved as one consistent vector mark.
+ * Use this component everywhere the brand symbol appears.
  */
 export default function BrandMark({className=""}:{className?:string}) {
-  return <svg className={className} viewBox="0 0 400 300" role="img" aria-label="Settle This" xmlns="http://www.w3.org/2000/svg">
-    <path fill="currentColor" d="
-      M 390 12
-      L 344 68
-      H 177
-      C 145 68 126 82 126 103
-      C 126 120 138 132 164 145
-      L 265 196
-      C 288 208 300 222 300 240
-      C 300 270 276 288 232 288
-      H 12
-      L 58 230
-      H 211
-      C 234 230 247 220 247 204
-      C 247 190 237 180 216 169
-      L 116 119
-      C 83 102 65 82 65 55
-      C 65 22 91 0 137 0
-      H 400
-      Z
-    "/>
+  return <svg className={className} viewBox="0 0 580 460" role="img" aria-label="Settle This" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M 27 428 L 383 429 L 406 427 L 428 422 L 452 413 L 479 397 L 495 384 L 513 364 L 529 337 L 536 315 L 538 283 L 535 266 L 522 237 L 498 208 L 472 188 L 431 166 L 401 158 L 226 157 L 225 158 L 254 175 L 377 242 L 410 262 L 421 275 L 427 292 L 426 306 L 417 324 L 400 337 L 381 341 L 105 341 Z"/>
+    <path d="M 64 119 L 56 136 L 52 153 L 52 176 L 56 192 L 62 205 L 75 223 L 92 239 L 124 260 L 166 281 L 191 289 L 366 291 L 335 273 L 223 217 L 184 195 L 170 179 L 166 166 L 167 149 L 173 136 L 193 117 L 210 109 L 230 104 L 446 105 L 521 24 L 521 22 L 239 21 L 208 24 L 165 37 L 130 54 L 98 78 L 77 100 Z"/>
   </svg>;
 }
