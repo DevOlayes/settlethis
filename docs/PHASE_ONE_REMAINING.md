@@ -40,7 +40,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Test authenticated Admin review, approved reward credit and rejected-task workflow end-to-end.
 - [x] Made referral qualification retry-safe: repeat welcome-gift confirmation now rechecks an eligible invitee and can complete a missed qualification/milestone after a partial failure, without double-crediting the inviter.
 - [x] Verified the onboarding+welcome-gift qualification condition and exactly-once 500 SETHIS milestone using three separate synthetic invitee identities in staging D1.
-- [ ] Test real Telegram referral deep-link attribution, self-referral/duplicate prevention and the milestone with multiple Telegram accounts.
+- [x] Verified staging first-login referral attribution, self-referral rejection and immutable first-inviter attribution on subsequent logins; the three-invitee milestone was separately verified.
+- [ ] Test real Telegram `start_param` referral deep links and qualification with multiple Telegram accounts.
 - [x] Configured the Monetag main zone `12269852` and private postback secret as Cloudflare Worker secrets; confirmed both secret bindings exist on the production Worker (values are not readable through Cloudflare secret metadata).
 - [x] Standardized on the React `monetag-tg-sdk` package as the sole SDK loader; removed the duplicate HTML SDK script tag.
 - [x] Improved rewarded-ad confirmation UX: distinguish valued, non-valued and pending server postback outcomes; removed stale Wallet copy that always claimed setup was pending.
