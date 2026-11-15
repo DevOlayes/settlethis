@@ -49,9 +49,9 @@ function setup() {
   return db;
 }
 
-function settle(db, side, adjudicationId) {
+function settle(db, side, adjudicationId, positionSnapshot = null) {
   const poolId = "pool-1", prize = 1000;
-  const winners = db.prepare("SELECT id,user_id,stake_ct FROM pool_positions WHERE pool_id=? AND side=? AND status='active' ORDER BY created_at,id").all(poolId, side);
+  const winners = positionSnapshot ?? db.prepare("SELECT id,user_id,stake_ct FROM pool_positions WHERE pool_id=? AND side=? AND status='active' ORDER BY created_at,id").all(poolId, side);
   const allocation = allocatePoolPrize(prize, winners);
   const creditedWinnerCount = allocation.payouts.filter(p => p.amount > 0).length;
   const statements = [
@@ -102,9 +102,11 @@ test("settles a Pool Court proportionally and records every participant outcome"
 
 test("prevents repeated or conflicting Pool verdicts from changing the winner or paying twice", () => {
   const db = setup();
-  settle(db, "A", "pool-adjudication-1");
-  assert.throws(() => settle(db, "A", "pool-adjudication-replay"), /UNIQUE constraint failed/);
-  settle(db, "B", "pool-adjudication-conflict");
+  const winnersA = db.prepare("SELECT id,user_id,stake_ct FROM pool_positions WHERE pool_id='pool-1' AND side='A' AND status='active' ORDER BY created_at,id").all();
+  const winnersB = db.prepare("SELECT id,user_id,stake_ct FROM pool_positions WHERE pool_id='pool-1' AND side='B' AND status='active' ORDER BY created_at,id").all();
+  settle(db, "A", "pool-adjudication-1", winnersA);
+  assert.throws(() => settle(db, "A", "pool-adjudication-replay", winnersA), /UNIQUE constraint failed/);
+  settle(db, "B", "pool-adjudication-conflict", winnersB);
   const pool = db.prepare("SELECT status,winner_side FROM pool_courts WHERE id='pool-1'").get();
   assert.equal(pool.status, "settled");
   assert.equal(pool.winner_side, "A");
