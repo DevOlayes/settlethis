@@ -1,5 +1,5 @@
-interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }
-interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: { prepare(query: string): D1Statement }; TELEGRAM_BOT_TOKEN?: string; }
+interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }\ninterface D1Database { prepare(query: string): D1Statement; batch(statements: D1Statement[]): Promise<unknown[]>; }
+interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: D1Database; TELEGRAM_BOT_TOKEN?: string; }
 type TelegramIdentity = { id: number; first_name: string; [key: string]: unknown };
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
 const encoder=new TextEncoder();
