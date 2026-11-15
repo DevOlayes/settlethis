@@ -68,6 +68,9 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Test Rankings and My Courts using representative seeded records and real Telegram participants.
 
 ## Admin Portal security
+- [x] Locked first-admin creation behind the owner-only `ADMIN_SETUP_SECRET`, compared in constant time; the Admin Portal asks for the one-time key and refuses setup when the Worker binding is absent.
+- [x] Rate-limited first-admin setup attempts to five per IP hash per 15 minutes using the same atomic limiter as Admin sign-in.
+- [x] Added the `ADMIN_SETUP_SECRET` secret binding to the production Worker. The currently deployed Worker is still on the older revision until the deployment credential is configured and the new code is deployed.
 - [x] Added server-side failed-login throttling: five attempts per IP hash within 15 minutes, reserved atomically so concurrent requests cannot bypass the limit, generic credential errors, successful-login reset, and automatic cleanup of expired attempt records.
 - [x] Added migration `0022_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
 
