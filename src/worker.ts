@@ -48,7 +48,7 @@ async function telegramBotUsername(env:Env):Promise<string>{
  if(!username&&env.TELEGRAM_BOT_TOKEN){
   try{const response=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/getMe");const data=await response.json() as {ok?:boolean;result?:{username?:string}};if(data.ok&&data.result?.username)username=data.result.username;}catch{}
  }
- return username.replace(/^@/,"");
+ const normalized=username.replace(/^@/,"");return /^[A-Za-z0-9_]{5,32}$/.test(normalized)?normalized:"";
 }
 
 
