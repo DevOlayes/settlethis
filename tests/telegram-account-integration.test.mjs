@@ -173,6 +173,27 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(secondGift.response.status, 200);
   assert.equal(secondGift.data.wallet.ct_balance, 3500);
 
+  for (const invitedUser of [
+    { id: 700004, first_name: "Liverpool", username: "liverpool_fan" },
+    { id: 700005, first_name: "City", username: "city_fan" }
+  ]) {
+    const invitedInit = signedInitData(invitedUser, { start_param: "ref_" + referralCode.data.code });
+    const invitedSignIn = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ initData: invitedInit })
+    }), env);
+    assert.equal(invitedSignIn.status, 200);
+    for (let step = 1; step <= 7; step++) {
+      const saved = await api(env, "/api/onboarding/progress", invitedInit, "POST", { step });
+      assert.equal(saved.response.status, 200);
+    }
+    assert.equal((await api(env, "/api/onboarding/complete", invitedInit, "POST", {})).response.status, 200);
+    const invitedGift = await api(env, "/api/welcome-gift/claim", invitedInit, "POST", {});
+    assert.equal(invitedGift.response.status, 200);
+    assert.equal(invitedGift.data.wallet.ct_balance, 3500);
+  }
+
   const firstReferralSummary = await api(env, "/api/referrals", firstInit);
   assert.equal(firstReferralSummary.data.total, 1);
   assert.equal(firstReferralSummary.data.qualified, 1);
