@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import BrandMark from "./BrandMark";
 
 type Tab = "Courts" | "My Courts" | "Tasks" | "Rankings" | "Wallet" | "Editorial";
 const crest = (id: number) => `https://media.api-sports.io/football/teams/${id}.png`;
-function Brand() { return <a className="brand" href="#" aria-label="Settle This home"><span className="brand-mark">ST<span>!</span></span><span className="brand-name">SETTLE<span>THIS</span><i>!</i></span></a>; }
+function Brand() { return <a className="brand" href="#" aria-label="Settle This home"><BrandMark className="brand-emblem"/></a>; }
 function Team({ id, name }: { id: number; name: string }) { return <span className="team"><span className="crest"><img src={crest(id)} alt="" /></span><b>{name}</b></span>; }
 type CourtFeedItem = { id:string; title:string; category:string; competition?:string|null; home_team?:string|null; away_team?:string|null; home_team_crest?:string|null; away_team_crest?:string|null; match_status?:string|null; live_minute?:number|null; home_score?:number|null; away_score?:number|null; lineup_status?:string|null; home_lineup_json?:string|null; away_lineup_json?:string|null; hero_image_url?:string|null; image_alt?:string|null; evidence_url?:string|null; incident_minute?:number|null; incident_context:string; side_a_label:string; side_b_label:string; entry_ct:number; winner_reward_sethis:number; status:string; closes_at?:string|null; side_a_count: number; side_b_count: number };
 type MyCourtItem = { id:string; title:string; category:string; competition?:string|null; home_team?:string|null; away_team?:string|null; home_team_crest?:string|null; away_team_crest?:string|null; match_date?:string|null; incident_minute?:number|null; incident_context?:string; evidence_url?:string|null; home_score?:number|null; away_score?:number|null; side_a_label:string; side_b_label:string; status:string; closes_at?:string|null; side:"A"|"B"; entry_ct:number; winner_reward_sethis:number; participation_status:string; joined_at:string };
