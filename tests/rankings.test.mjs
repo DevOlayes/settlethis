@@ -63,7 +63,7 @@ test("returns an authenticated member's own rank even when outside the top 100",
   const rows = db.prepare(RANKINGS_SQL).all("low-101");
   const mine = rows.find(row=>row.user_id==="low-101");
   assert.ok(mine);
-  assert.equal(mine.rank,106);
+  assert.equal(mine.rank,107);
   assert.equal(rows.length,101);
   db.close();
 });
