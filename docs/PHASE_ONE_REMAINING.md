@@ -74,6 +74,9 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Verified in-app notification event creation for arguments, replies and reactions in staging D1; wallet, referral, task, Regular Court and Pool Court verdict notifications are covered by staging checks or automated transaction tests. Notification event-key deduplication and read-state transitions were also verified in staging.
 - [ ] Confirm notification visibility and read-state behavior with real Telegram accounts.
 - [x] Verified staging moderation-report uniqueness: duplicate open reports are rejected and a new report can be submitted after dismissal.
+- [x] Added member-facing reporting for Courts, arguments, replies and other members. Members can report a public username without exposing Telegram numeric IDs; the Worker resolves the username to the internal account record and rejects self-reports.
+- [x] Hardened moderation report lifecycle: actioned/dismissed reports cannot be reopened, content hide/remove/restore and member restrictions update the associated report, and closed reports expose only restoration actions where appropriate.
+- [x] Added automated Worker integration coverage for Court/reply/member reports, username resolution, content hide/restore, terminal report transitions, and member suspend/restore. The latest GitHub verification run `43755882020` passed all automated tests and the TypeScript/Vite production build.
 - [x] Verified the member reply query excludes replies whenever the parent argument or its Court is hidden.
 - [x] Verified staging Admin moderation actions across all report target types: Court, argument and reply content was hidden/restored; user restriction was saved; reports were actioned; and audit-log entries were recorded.
 - [ ] Test the Admin moderation queue and report target variants (users/Courts/arguments/replies) in the UI, then verify restrictions are enforced during real Telegram actions.
