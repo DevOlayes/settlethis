@@ -1138,3 +1138,56 @@
     opacity:.31;
   }
 }
+
+
+/* Final visible watermark geometry: force a full-width diagonal pitch layer */
+.hero-condensed .hero-art{
+  display:grid!important;
+  position:absolute!important;
+  left:-24%!important;
+  right:auto!important;
+  top:-12px!important;
+  bottom:auto!important;
+  width:148%!important;
+  height:260px!important;
+  min-width:0!important;
+  max-width:none!important;
+  z-index:1!important;
+  opacity:.48!important;
+  overflow:visible!important;
+  transform:rotate(-23deg)!important;
+  transform-origin:50% 50%!important;
+  pointer-events:none!important;
+}
+.hero-condensed .football-pitch-art{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  opacity:1!important;
+  transform:none!important;
+  object-fit:fill;
+  filter:drop-shadow(0 0 15px #27d7f244)!important;
+}
+.hero-condensed .hero-copy{position:relative;z-index:2!important}
+.hero-condensed .hero-balance{position:relative;z-index:3!important}
+@media(max-width:600px){
+  .hero-condensed .hero-art{
+    left:-24%!important;
+    top:-10px!important;
+    width:148%!important;
+    height:252px!important;
+    opacity:.46!important;
+    transform:rotate(-23deg)!important;
+  }
+}
+@media(max-width:370px){
+  .hero-condensed .hero-art{
+    left:-27%!important;
+    top:-8px!important;
+    width:154%!important;
+    height:244px!important;
+    opacity:.44!important;
+  }
+}
