@@ -88,6 +88,35 @@ env.DB.prepare("SELECT COUNT(*) AS n FROM wallet_ledger l LEFT JOIN telegram_use
  if(path==="/api/my-suggestions"&&request.method==="GET"){const user=await authenticatedUser(request,env);if(!user)return json({error:"A valid Telegram Mini App session is required."},401);try{const rows=await env.DB.prepare("SELECT id,title,court_kind,category,status,created_at,updated_at FROM court_suggestions WHERE submitted_by=? ORDER BY created_at DESC LIMIT 50").bind(user).all();return json({suggestions:rows.results});}catch{return json({error:"Your suggestions are temporarily unavailable."},503);}}
  const repliesMatch=path.match(/^\/api\/arguments\/([^/]+)\/replies$/);
   if(repliesMatch&&request.method==="GET"){try{const rows=await env.DB.prepare("SELECT r.id,r.body,r.created_at,u.username,u.first_name,(SELECT COUNT(*) FROM court_reactions x WHERE x.target_type='reply' AND x.target_id=r.id AND x.reaction='agree') AS agree_count,(SELECT COUNT(*) FROM court_reactions x WHERE x.target_type='reply' AND x.target_id=r.id AND x.reaction='disagree') AS disagree_count,(SELECT COUNT(*) FROM court_reactions x WHERE x.target_type='reply' AND x.target_id=r.id AND x.reaction='fire') AS fire_count,(SELECT COUNT(*) FROM court_reactions x WHERE x.target_type='reply' AND x.target_id=r.id AND x.reaction='insightful') AS insightful_count FROM court_replies r JOIN telegram_users u ON u.telegram_user_id=r.telegram_user_id WHERE r.argument_id=? ORDER BY r.created_at ASC").bind(repliesMatch[1]).all();return json({replies:rows.results});}catch{return json({error:"Replies are temporarily unavailable."},503);}}
+ if(path==="/api/ads/monetag/postback"&&(request.method==="GET"||request.method==="POST")){
+  if(!env.MONETAG_POSTBACK_SECRET)return json({error:"Ad rewards are not configured."},503);
+  const supplied=url.searchParams.get("secret")||request.headers.get("x-monetag-secret")||"";
+  if(!safeEqual(supplied,env.MONETAG_POSTBACK_SECRET))return json({error:"Unauthorized postback."},401);
+  try{
+   const body=request.method==="POST"?await request.json() as Record<string,unknown>:Object.fromEntries(url.searchParams.entries());
+   const eventId=textField(body.ymid||body.event_id,180),eventType=textField(body.reward_event_type||body.event_type,40),userId=textField(body.telegram_id||body.user_id,32),zone=textField(body.zone_id,80);
+   if(!eventId||!/^\d{5,24}$/.test(userId)||eventType!=="valued")return json({accepted:false,reason:"Only valued events are eligible."});
+   let placement:"home_ct"|"tasks_sethis"|null=null;
+   if(env.MONETAG_HOME_ZONE_ID&&zone===env.MONETAG_HOME_ZONE_ID)placement="home_ct";
+   if(env.MONETAG_TASKS_ZONE_ID&&zone===env.MONETAG_TASKS_ZONE_ID)placement="tasks_sethis";
+   if(!placement)return json({accepted:false,reason:"Unrecognised ad zone."});
+   const token=placement==="home_ct"?"CT":"SETHIS",amount=placement==="home_ct"?100:150,key="monetag:"+eventId,field=token==="CT"?"ct_balance":"sethis_balance";
+   const prior=await env.DB.prepare("SELECT id FROM ad_reward_events WHERE provider_event_id=?").bind(eventId).first();
+   if(prior)return json({accepted:true,duplicate:true});
+   const user=await env.DB.prepare("SELECT telegram_user_id FROM telegram_users WHERE telegram_user_id=?").bind(userId).first();
+   if(!user)return json({accepted:false,reason:"Telegram user not found."});
+   await env.DB.batch([
+    env.DB.prepare("INSERT OR IGNORE INTO wallets(user_id,ct_balance,sethis_balance) VALUES(?,0,0)").bind(userId),
+    env.DB.prepare("INSERT OR IGNORE INTO wallet_ledger(id,user_id,token,amount,transaction_type,reference_id,idempotency_key) SELECT ?,?,?,?,'ad_reward',?,? WHERE EXISTS(SELECT 1 FROM telegram_users WHERE telegram_user_id=?) AND NOT EXISTS(SELECT 1 FROM ad_reward_events WHERE telegram_user_id=? AND created_at>=datetime('now','-20 minutes')) AND (SELECT COUNT(*) FROM ad_reward_events WHERE telegram_user_id=? AND date(datetime(created_at,'+1 hour'))=date('now','+1 hour'))<30").bind(id(),userId,token,amount,eventId,key,userId,userId,userId),
+    env.DB.prepare("UPDATE wallets SET "+field+"="+field+"+?,updated_at=CURRENT_TIMESTAMP WHERE user_id=? AND EXISTS(SELECT 1 FROM wallet_ledger WHERE idempotency_key=?) AND NOT EXISTS(SELECT 1 FROM ad_reward_events WHERE provider_event_id=?)").bind(amount,userId,key,eventId),
+    env.DB.prepare("INSERT OR IGNORE INTO ad_reward_events(id,provider,provider_event_id,telegram_user_id,placement,reward_token,reward_amount,event_type,zone_id,estimated_price) SELECT ?,'monetag',?,?,?,?,?,'valued',?,? WHERE EXISTS(SELECT 1 FROM wallet_ledger WHERE idempotency_key=?)").bind(id(),eventId,userId,placement,token,amount,zone,textField(body.estimated_price,40),key),
+    env.DB.prepare("INSERT OR IGNORE INTO notifications(id,user_id,type,title,body,reference_id,event_key) SELECT ?,?,'wallet_credit','Ad reward credited',?,?,? WHERE EXISTS(SELECT 1 FROM ad_reward_events WHERE provider_event_id=?)").bind(id(),userId,amount+" "+token+" has been added to your wallet.",eventId,"monetag:"+eventId,eventId)
+   ]);
+   const accepted=await env.DB.prepare("SELECT id FROM ad_reward_events WHERE provider_event_id=?").bind(eventId).first();
+   if(!accepted)return json({accepted:false,reason:"Cooldown or daily ad limit has not cleared."});
+   return json({accepted:true,placement,reward:{token,amount}});
+  }catch(error){console.error("Monetag postback failed",error);return json({error:"Postback could not be processed."},503);}
+ }
  if(path.startsWith("/api/")&&request.method!=="GET"){
   const adminMutation=/^\/api\/(editorial\/suggestions\/[^/]+\/(review|publish)|admin\/(courts|pools)\/[^/]+\/(lock|resolve|refund)|admin\/wallet-grants)$/.test(path);const telegramId=adminMutation?await editorialAdmin(request,env):await authenticatedUser(request,env);if(!telegramId)return json({error:adminMutation?"A valid browser administrator session is required.":"A valid Telegram Mini App session is required."},401);
   if(path==="/api/profile"&&request.method==="PUT"){try{const body=await request.json();const club=textField(body.club,60),country=textField(body.country,80),bio=textField(body.bio,160);if(club&&!["Arsenal","Chelsea","Manchester United","Manchester City"].includes(club))return json({error:"Choose one supported clubhouse."},400);await env.DB.prepare("UPDATE telegram_users SET club=?,country=?,bio=? WHERE telegram_user_id=?").bind(club||null,country||null,bio||null,telegramId).run();return json({saved:true});}catch{return json({error:"Profile could not be saved."},503);}}
