@@ -46,6 +46,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Test reports for users/Courts/arguments/replies; moderation queue, hide/restore, restriction/suspension, audit log and enforcement.
 - [x] Added server-side community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per user; identical argument/reply submissions within two minutes are rejected, and restricted users cannot react.
 - [x] Enforced Court visibility/moderation status in join, argument, reply and reaction paths so hidden/removed Courts cannot be modified through direct API requests.
+- [x] Enforced parent/target moderation visibility for replies and reactions, and excluded hidden replies from member reply lists and visible reply counts.
 - [x] Added supporting rate-limit indexes in migration `0020_community_rate_limits.sql` and applied those indexes to production D1; validated the three guarded INSERT statements with read-only SQL EXPLAIN.
 - [ ] Complete real Telegram multi-user tests for the new limits, duplicate handling and moderation enforcement.
 
