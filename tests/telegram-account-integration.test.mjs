@@ -271,6 +271,11 @@ test("Telegram accounts persist independently through onboarding, profile, check
   });
   assert.equal(duplicateReport.response.status, 409);
 
+  const immediateFirstNotifications = await api(env, "/api/notifications", firstInit);
+  assert.ok(immediateFirstNotifications.data.notifications.some(item => item.type === "reaction" && item.reference_id === argumentId));
+  const immediateSecondNotifications = await api(env, "/api/notifications", secondInit);
+  assert.ok(immediateSecondNotifications.data.notifications.some(item => item.type === "new_argument" && item.reference_id === courtId));
+
   const additionalArgumentIds = [];
   for (let number = 2; number <= 20; number++) {
     const created = await api(env, "/api/courts/" + courtId + "/arguments", firstInit, "POST", {
@@ -308,9 +313,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
 
   const firstNotifications = await api(env, "/api/notifications", firstInit);
   assert.ok(firstNotifications.data.notifications.some(item => item.type === "new_reply" && item.reference_id === argumentId));
-  assert.ok(firstNotifications.data.notifications.some(item => item.type === "reaction" && item.reference_id === argumentId));
   const secondNotifications = await api(env, "/api/notifications", secondInit);
-  assert.ok(secondNotifications.data.notifications.some(item => item.type === "new_argument" && item.reference_id === courtId));
 
   env.DB.prepare("INSERT INTO admin_setup_authorizations (id,expires_at) VALUES (1,datetime('now','+10 minutes'))").run();
   env.DB.prepare("INSERT INTO admin_users (id,email,password_salt,password_hash,password_iterations) VALUES (1,?,?,?,?)")
