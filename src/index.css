@@ -586,3 +586,4 @@
 .admin-grant-row>strong{flex:0 0 auto;font-size:15px;color:#72e8f7;white-space:nowrap}
 
 .onboarding-story-coin{width:82px;height:82px;margin:0 auto;box-shadow:0 0 0 4px #c28d3222,0 8px 20px #0008,inset 0 0 0 2px #936019}.onboarding-story-coin .brand-emblem{width:38px;height:44px;color:#087f9c;filter:drop-shadow(0 1px 1px #fff7)}.admin-brand{gap:0}.admin-emblem{width:42px;height:48px}
+.gift-box.opened .gift-lid{transform:rotate(-38deg) translate(-13px,-15px);transition:transform .55s cubic-bezier(.2,.8,.2,1)}.gift-opened .gift-box{animation:giftReveal .65s ease-out both}@keyframes giftReveal{0%{transform:scale(.88) translateY(10px)}65%{transform:scale(1.08) translateY(-4px)}100%{transform:scale(1) translateY(0)}}
