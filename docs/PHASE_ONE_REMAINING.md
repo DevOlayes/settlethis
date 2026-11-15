@@ -45,7 +45,9 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Complete real Telegram multi-user tests for the new limits, duplicate handling and moderation enforcement.
 
 ## Rankings and history
-- [ ] Verify rankings metric/formula, tie-breaks, resolved-entry counts, win rate, SETHIS earned and user identity.
+- [x] Implemented rankings with the documented wins → win rate → SETHIS earned → entries tie-break order, a stable row-number rank, and an authenticated member's own rank even when outside the top 100.
+- [x] Connected homepage SETHIS earned and member rank figures to ledger-backed and settled-outcome data instead of fixed placeholder dashes.
+- [ ] Verify rankings metric/formula, tie-breaks, resolved-entry counts, win rate, SETHIS earned and user identity against representative seeded records.
 - [ ] Test Rankings and My Courts using representative seeded records and real Telegram participants.
 
 ## Launch validation
