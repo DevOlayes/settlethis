@@ -643,3 +643,44 @@
 .checkin-card-foot button:disabled{background:#1d4352;color:#b8d5df;cursor:default}.checkin-card-foot button b{margin-left:7px;font-size:11px}
 .bottom-nav button span{display:grid;place-items:center;width:25px;height:23px}.bottom-nav button svg{width:22px;height:22px;display:block}
 @media(max-width:370px){.checkin-card{padding:11px}.checkin-week{gap:3px}.checkin-day{min-height:59px}.checkin-card-foot>span{font-size:6px}.checkin-card-foot button{padding:0 7px;font-size:6px}}
+
+
+/* Premium member balance panel and homepage CT ad-discovery card */
+.home-balance-panel{position:relative;isolation:isolate;overflow:hidden;margin:17px 0 20px;padding:17px 16px 13px;border:1px solid #36566a;border-radius:17px;background:linear-gradient(145deg,#182f43 0%,#102235 54%,#0d1b2c 100%);box-shadow:0 15px 34px #0005,inset 0 1px 0 #ffffff16}
+.home-balance-panel:before{content:"";position:absolute;z-index:-1;right:-48px;top:-75px;width:210px;height:210px;border:1px solid #27d7f21c;border-radius:50%;box-shadow:0 0 0 18px #27d7f209,0 0 0 38px #27d7f206}
+.home-balance-panel:after{content:"";position:absolute;z-index:-1;right:18px;bottom:43px;width:105px;height:45px;border-top:1px solid #d6aa432b;border-bottom:1px solid #d6aa4318;transform:skewX(-28deg)}
+.home-balance-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.home-balance-top span{font-size:7px;font-weight:900;letter-spacing:.16em;color:#79e6f4}
+.home-balance-top i{font-style:normal;font-size:8px;font-weight:900;letter-spacing:.13em;color:#c1ced8}
+.home-balance-main{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 15px}
+.home-balance-main>strong{font:800 clamp(38px,11vw,52px)/1 'Barlow Condensed',sans-serif;letter-spacing:.015em;color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 5px 20px #0005}
+.home-token{display:flex;align-items:center;gap:7px;color:#f3d58e;font-size:11px;letter-spacing:.1em;white-space:nowrap}
+.home-coin{width:31px;height:31px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 32% 24%,#fff0b7,#e3b449 47%,#9b641d 100%);border:2px solid #f6dfa0;box-shadow:0 3px 10px #0005}
+.home-coin .brand-emblem{width:20px;height:16px;flex:0 0 20px;filter:none}
+.home-balance-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:12px 0 10px;border-top:1px solid #ffffff20}
+.home-balance-stats>div{display:grid;gap:5px;min-width:0}
+.home-balance-stats small{font-size:6px;line-height:1.3;font-weight:900;letter-spacing:.08em;color:#9fb4c4}
+.home-balance-stats b{font-size:11px;color:#f8fafc;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.home-balance-stats b i{font-style:normal;color:#27d7f2;font-size:8px}
+.home-balance-link{display:flex;align-items:center;justify-content:space-between;width:100%;padding:9px 0 0;border:0;border-top:1px solid #ffffff12;background:transparent;color:#27d7f2;font-size:7px;font-weight:900;letter-spacing:.12em}
+.home-balance-link span{font-size:13px}
+.home-ad-card{display:grid;grid-template-columns:42px minmax(0,1fr);gap:11px;margin:18px 0 23px;padding:14px;border:1px solid #31586b;border-radius:14px;background:linear-gradient(125deg,#132c3e,#102033 75%);box-shadow:0 10px 24px #0003}
+.home-ad-icon{position:relative;width:40px;height:40px;display:grid;place-items:center;border:1px solid #3d8795;border-radius:11px;background:linear-gradient(145deg,#17475a,#102b3d);color:#8cecf5;font:900 13px 'Barlow Condensed'}
+.home-ad-icon i{position:absolute;right:-5px;top:-6px;width:17px;height:17px;display:grid;place-items:center;border-radius:50%;background:#d8ad51;color:#172334;font-style:normal;font-size:12px}
+.home-ad-copy{min-width:0}
+.home-ad-copy>.eyebrow{font-size:7px;color:#79e6f4}
+.home-ad-copy h3{margin:4px 0 5px;font:700 20px/1.05 'Barlow Condensed';color:#fff}
+.home-ad-copy p{margin:0;color:#bdcbd5;font-size:8px;line-height:1.6}
+.home-ad-status{display:inline-flex;align-items:center;gap:6px;margin-top:9px;color:#f1d18a;font-size:6px;font-weight:900;letter-spacing:.1em}
+.home-ad-status i{width:6px;height:6px;border-radius:50%;background:#e6b54f;box-shadow:0 0 8px #e6b54f55}
+.home-ad-card>button{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;min-height:35px;padding:0 11px;border:1px solid #27d7f277;border-radius:7px;background:#123246;color:#b9f5fc;font-size:7px;font-weight:900;letter-spacing:.09em}
+.home-ad-card>button span{font-size:13px}
+.wallet-balances-refined{grid-template-columns:1fr}
+.wallet-balances-refined .sethis-card{padding:18px 16px;border-color:#9a7b43;background:radial-gradient(ellipse at 90% 0%,#62502a 0,#332d22 43%,#1c2833 100%);box-shadow:inset 0 1px 0 #fff2,0 8px 22px #0003}
+.wallet-balances-refined .sethis-card strong{font-size:36px}
+.wallet-balances-refined .ct-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;background:linear-gradient(120deg,#14394a,#112638);border-color:#2d6879}
+.wallet-balances-refined .ct-card small,.wallet-balances-refined .ct-card p{grid-column:1}
+.wallet-balances-refined .ct-card strong{grid-column:2;grid-row:1/3;margin:0;font-size:23px}
+.wallet-balances-refined .ct-card p{grid-row:2}
+.home-balance-panel button,.home-ad-card button{cursor:pointer}
+@media(max-width:370px){.home-balance-panel{padding:14px 12px}.home-balance-main>strong{font-size:37px}.home-balance-stats{gap:4px}.home-balance-stats small{font-size:5px}.home-balance-stats b{font-size:10px}.home-ad-card{padding:11px;gap:9px}}
