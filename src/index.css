@@ -830,3 +830,46 @@
  .checkin-card{padding:8px}
  .checkin-day{min-height:38px}
 }
+
+/* Design correction: restore original task-card proportions and use full brand marks */
+.task-list{gap:8px}
+.task-row{gap:12px;padding:13px;border-radius:9px}
+.task-symbol{width:34px;height:34px;flex:0 0 34px;border-radius:9px;font-size:16px}
+.task-row>div{gap:4px}
+.task-row b{font-size:10px}
+.task-row small{font-size:8px;line-height:1.5}
+.social-task-row{min-height:0}
+.brand-task-symbol{display:grid;place-items:center;background:#0c1928;border:1px solid #ffffff18}
+.brand-task-symbol img{display:block;width:23px;height:23px;object-fit:contain}
+.invite-people-icon svg{width:23px;height:23px;fill:none;stroke:#f3d58e;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.task-action-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex:0 0 auto;min-width:78px}
+.task-action-stack>strong{font-size:9px;line-height:1;color:#f3d58e;white-space:nowrap;letter-spacing:.02em}
+.task-action-button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:78px;min-height:34px;padding:0 10px;border:1px solid #f2d28a;border-radius:7px;background:linear-gradient(145deg,#f6dfa3 0%,#e3b85f 48%,#bd842f 100%);box-shadow:inset 0 1px 0 #fff8,0 3px 9px #0004;color:#172333;font-size:8px;font-weight:950;letter-spacing:.05em}
+.task-action-button span{font-size:11px;color:#172333}
+.task-action-button:active{transform:translateY(1px)}
+.hero-condensed .hero-copy{padding:11px 15px 8px;width:68%}
+.hero-condensed .hero h1{font-size:clamp(29px,4vw,37px);line-height:.9}
+.hero-condensed .hero-art{z-index:1;right:-5%;top:-9px;width:66%;height:166px;opacity:1;pointer-events:none}
+.hero-condensed .hero-art:after{display:none}
+.football-pitch-art{display:block;width:125%;height:125%;max-width:none;transform:rotate(-17deg) scale(1.08);transform-origin:center;filter:drop-shadow(0 8px 17px #27d7f255)}
+.hero-condensed .hero-balance{padding:6px 11px 7px}
+@media(max-width:600px){
+ .hero-condensed .hero-copy{padding:11px 12px 8px;width:70%}
+ .hero-condensed .hero h1{font-size:32px}
+ .hero-condensed .hero-art{right:-8%;top:-7px;width:67%;height:150px}
+ .football-pitch-art{width:130%;height:130%;transform:rotate(-17deg) scale(1.08)}
+ .task-row{gap:10px;padding:12px}
+ .task-symbol{width:32px;height:32px;flex-basis:32px}
+ .task-action-stack{min-width:74px}
+ .task-action-button{min-width:74px;min-height:33px}
+}
+@media(max-width:370px){
+ .task-row{gap:8px;padding:11px 9px}
+ .task-row b{font-size:9px}
+ .task-row small{font-size:7px}
+ .task-symbol{width:29px;height:29px;flex-basis:29px}
+ .task-action-stack{min-width:68px}
+ .task-action-stack>strong{font-size:8px}
+ .task-action-button{min-width:68px;padding:0 7px;font-size:7px}
+ .hero-condensed .hero h1{font-size:29px}
+}
