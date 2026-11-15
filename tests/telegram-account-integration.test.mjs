@@ -250,6 +250,14 @@ test("Telegram accounts persist independently through onboarding, profile, check
   });
   assert.equal(reply.response.status, 201);
 
+  const replyReaction = await api(env, "/api/reactions", firstInit, "POST", {
+    target_type: "reply", target_id: reply.data.reply_id, reaction: "insightful"
+  });
+  assert.equal(replyReaction.response.status, 200);
+  const replyReactionCount = env.DB.prepare("SELECT COUNT(*) AS count FROM court_reactions WHERE target_type='reply' AND target_id=? AND telegram_user_id=?")
+    .bind(reply.data.reply_id, String(firstUser.id)).first();
+  assert.equal(Number(replyReactionCount.count), 1);
+
   const reaction = await api(env, "/api/reactions", secondInit, "POST", {
     target_type: "argument", target_id: argumentId, reaction: "agree"
   });
