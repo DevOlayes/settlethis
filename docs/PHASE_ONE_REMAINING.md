@@ -20,8 +20,9 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Wallet and reward integrity
 - [ ] Verify every CT/SETHIS mutation is atomic with ledger and idempotency reference.
-- [x] Expanded the production wallet integrity audit to 28 checks, including orphaned Court/Pool CT debits and refunds, ineligible Court/Pool prize recipients, proportional Pool prize bounds, orphaned task/referral credits, and agreement between Court outcome fields and immutable adjudication records.
-- [ ] Exercise the 28-check wallet integrity audit against seeded scenarios and correct any false positives/omissions.
+- [x] Expanded the production wallet integrity audit to 32 checks, including orphaned Court/Pool CT debits and refunds, ineligible Court/Pool prize recipients, proportional Pool prize bounds, orphaned task/referral credits, and agreement between Court outcome fields and immutable adjudication records.
+- [x] Executed all 32 wallet integrity SQL checks against the current production D1 schema/data; all returned zero issues. This is only a clean-baseline check: the database currently has no wallet entries, Regular Court participants, Pool positions, task claims or referrals to exercise transaction scenarios.
+- [ ] Exercise the 32-check wallet integrity audit against representative seeded scenarios and correct any false positives/omissions.
 - [ ] Verify welcome gift, Admin grant, Court entry/debit, Court reward, Pool stake/prize/refund, task/referral/ad credits.
 - [ ] Confirm balances cannot be changed through client-supplied values or unauthenticated requests.
 
@@ -38,7 +39,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Add official Telegram/Facebook/WhatsApp destinations when supplied.
 
 ## Community and account
-- [ ] Test Telegram initData verification, onboarding resume/completion and account profile persistence.
+- [x] Corrected the check-in calendar to show the trailing six days plus today, matching its rolling seven-day history label rather than displaying future dates.
+- [ ] Test Telegram initData verification, onboarding resume/completion and account profile persistence; test check-in Lagos midnight boundary, duplicate prevention and streak calculation.
 - [ ] Test notifications for argument/reply/reaction/verdict/wallet/referral/task events and read states.
 - [ ] Test reports for users/Courts/arguments/replies; moderation queue, hide/restore, restriction/suspension, audit log and enforcement.
 - [x] Added server-side community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per user; identical argument/reply submissions within two minutes are rejected, and restricted users cannot react.
@@ -61,6 +63,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Complete security review and beta readiness checklist.
 
 ## External configuration / owner inputs
-- [ ] Monetag Zone ID + configured private postback secret.
+- [x] Monetag main Zone ID and private postback secret are configured as production Worker secret bindings.
+- [ ] Verify the complete Monetag SSP postback URL and run the real valued-ad credit test.
 - [ ] Official Telegram channel, Facebook page and WhatsApp community URLs.
 - [ ] Telegram BotFather Menu Button and bot avatar confirmation.
