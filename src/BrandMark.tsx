@@ -1,12 +1,31 @@
 import React from "react";
 
 /**
- * Settle This! monogram — the C-direction concept.
- * A single, custom-drawn S silhouette with confident horizontal terminals
- * and a decisive diagonal waist. Designed to stay legible on the gold coin.
+ * Settle This! — approved Option C monogram.
+ * Bespoke, solid S silhouette with the long upper terminal and
+ * sweeping lower return from the selected reference.
  */
 export default function BrandMark({className=""}:{className?:string}) {
-  return <svg className={className} viewBox="0 0 100 100" role="img" aria-label="Settle This" xmlns="http://www.w3.org/2000/svg">
-    <path d="M87 10 76 26H43C32 26 27 30 27 37c0 6 4 10 15 15l20 9c17 8 25 17 25 31 0 18-14 28-36 28H8l11-16h32c11 0 17-4 17-11 0-6-4-10-15-15l-20-9C16 61 8 52 8 38 8 20 22 10 44 10h43Z" transform="translate(0 -8) scale(1 0.82)" fill="currentColor"/>
+  return <svg className={className} viewBox="0 0 400 300" role="img" aria-label="Settle This" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="
+      M 390 12
+      L 344 68
+      H 177
+      C 145 68 126 82 126 103
+      C 126 120 138 132 164 145
+      L 265 196
+      C 288 208 300 222 300 240
+      C 300 270 276 288 232 288
+      H 12
+      L 58 230
+      H 211
+      C 234 230 247 220 247 204
+      C 247 190 237 180 216 169
+      L 116 119
+      C 83 102 65 82 65 55
+      C 65 22 91 0 137 0
+      H 400
+      Z
+    "/>
   </svg>;
 }
