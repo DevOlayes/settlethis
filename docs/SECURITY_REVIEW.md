@@ -43,7 +43,8 @@ Review scope: Telegram Mini App, Cloudflare Worker/D1, browser Admin portal, wal
 - Run the final real Telegram multi-account journeys only after implementation is complete, including onboarding, profile, check-in, reports/moderation, Court/Pool actions, notifications, referrals and wallet history.
 - Run one real Monetag valued-event callback inside Telegram and confirm exactly one ledger credit.
 - Verify the Admin portal in a real authenticated browser session, including moderation, task review, social destination editing and audit history.
-- Apply migration 0024_pool_invite_rate_limit.sql to the staging D1 database, verify the index/query plan, and apply it to production only as part of an explicitly approved release.
+- Migration 0024_pool_invite_rate_limit.sql has been applied to staging D1 and its covering-index query plan verified. Apply it to production only as part of an explicitly approved release.
+- The pull-request verification workflow now runs npm audit at high severity; the latest successful run passed dependency audit, automated tests and the TypeScript/Vite build.
 - Do not merge or deploy this draft branch without the owner's explicit approval.
 
 ## Verification notes
