@@ -564,7 +564,7 @@
 .gift-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .gift-confetti i{position:absolute;top:4%;left:calc(var(--confetti-i)*4.16%);width:6px;height:11px;border-radius:2px;background:hsl(calc(var(--confetti-i)*47),85%,65%);animation:confettiFall 1.8s ease-out forwards;animation-delay:calc(var(--confetti-i)*.025s)}
 .welcome-gold-coin{width:94px;height:94px;margin:14px auto 9px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#fff0b0,#e7b84e 42%,#a96c1c 78%,#f5d47e);border:5px double #ffedb1;box-shadow:0 0 0 5px #c28d3222,0 12px 28px #0008,inset 0 0 0 2px #936019}
-.welcome-gold-coin .brand-emblem{width:44px;height:52px;color:#087f9c;filter:drop-shadow(0 1px 1px #fff7)}
+.welcome-gold-coin .brand-emblem{width:44px;height:52px;color:#27D7F2;filter:drop-shadow(0 1px 2px #06202a99)}
 .gift-revealed{color:#f7d989;font-size:43px}
 .gift-success-copy{margin:0 auto 15px;max-width:290px}
 .onboarding-error{padding:9px;border:1px solid #a85a42;border-radius:7px;background:#3c211e;color:#ffd9ce;font-size:9px}
@@ -585,7 +585,7 @@
 .admin-grant-row p{margin:2px 0;font-size:9px;line-height:1.5;color:#dce7ef}
 .admin-grant-row>strong{flex:0 0 auto;font-size:15px;color:#72e8f7;white-space:nowrap}
 
-.onboarding-story-coin{width:82px;height:82px;margin:0 auto;box-shadow:0 0 0 4px #c28d3222,0 8px 20px #0008,inset 0 0 0 2px #936019}.onboarding-story-coin .brand-emblem{width:38px;height:44px;color:#087f9c;filter:drop-shadow(0 1px 1px #fff7)}.admin-brand{gap:0}.admin-emblem{width:42px;height:48px}
+.onboarding-story-coin{width:82px;height:82px;margin:0 auto;box-shadow:0 0 0 4px #c28d3222,0 8px 20px #0008,inset 0 0 0 2px #936019}.onboarding-story-coin .brand-emblem{width:38px;height:44px;color:#27D7F2;filter:drop-shadow(0 1px 2px #06202a99)}.admin-brand{gap:0}.admin-emblem{width:42px;height:48px}
 .gift-box.opened .gift-lid{animation:giftLidOpen .65s cubic-bezier(.2,.8,.2,1) forwards}.gift-opened .gift-box{animation:giftReveal .65s ease-out both}@keyframes giftLidOpen{to{transform:rotate(-38deg) translate(-13px,-15px)}}@keyframes giftReveal{0%{transform:scale(.88) translateY(10px)}65%{transform:scale(1.08) translateY(-4px)}100%{transform:scale(1) translateY(0)}}
 .admin-grant-confirm{display:flex;grid-template-columns:none;flex-direction:row;align-items:flex-start;gap:9px;color:#f2dba8;font-size:9px;line-height:1.5}.admin-grant-confirm input{width:auto;flex:0 0 auto;accent-color:#27d7f2}
 
