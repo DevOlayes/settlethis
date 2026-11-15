@@ -6,6 +6,7 @@ export interface TelegramUser {
   photo_url?: string;
   language_code?: string;
   is_premium?: boolean;
+  pool_invite?: { pool_id:string; side:"A"|"B"; invite_code:string } | null;
 }
 interface TelegramWebApp {
   initData: string;
@@ -43,7 +44,7 @@ export async function authenticateTelegram(initData: string): Promise<TelegramUs
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ initData }),
   });
-  const payload = await response.json() as { user?: TelegramUser; error?: string };
+  const payload = await response.json() as { user?: TelegramUser; pool_invite?: TelegramUser["pool_invite"]; error?: string };
   if (!response.ok || !payload.user) throw new Error(payload.error || "Telegram authentication failed.");
-  return payload.user;
+  return { ...payload.user, pool_invite: payload.pool_invite ?? null };
 }
