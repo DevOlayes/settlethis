@@ -69,7 +69,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Admin Portal security
 - [x] Added server-side failed-login throttling: five attempts per IP hash within 15 minutes, reserved atomically so concurrent requests cannot bypass the limit, generic credential errors, successful-login reset, and automatic cleanup of expired attempt records.
-- [x] Added migration `0021_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
+- [x] Added migration `0022_admin_login_rate_limits.sql` and applied the table/index to production D1; validated the login rate-limit SQL with read-only EXPLAIN checks.
 
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
