@@ -3,7 +3,7 @@
 This file is the live checklist for completing Phase One. Preserve the approved UI; implement missing behavior and fix defects behind it.
 
 ## Courts and settlement
-- [x] Fixed argument reactions missing `closes_at` in their Court lookup; reactions now enforce the Court deadline. (Further participation audit remains.)
+- [x] Fixed argument reactions missing `closes_at` in their Court lookup; reactions now enforce the Court deadline. Audited join, argument, reply and reaction paths for active membership, Court deadline, content visibility, duplicate submission and rate-limit checks.
 - [x] Guarded Regular Court reward wallet/ledger credits against a conflicting duplicate verdict by requiring the recorded adjudication's winning side to match the payout side.
 - [x] Guarded the Regular Court status/outcome update and API confirmation against a conflicting concurrent verdict; the displayed Court outcome must now match the immutable adjudication record.
 - [x] Extended the wallet integrity audit to detect Regular and Pool Court outcome fields that disagree with their immutable adjudication records.
