@@ -435,6 +435,11 @@ test("Telegram accounts persist independently through onboarding, profile, check
   });
   assert.equal(restoredMember.response.status, 200);
   assert.equal(env.testDb.prepare("SELECT status FROM user_restrictions WHERE user_id=?").get(String(secondUser.id)).status, "active");
+
+  const walletAudit = await adminApi(env, "/api/admin/wallet-audit", adminToken);
+  assert.equal(walletAudit.response.status, 200);
+  assert.equal(walletAudit.data.checks.length, 36);
+  assert.equal(walletAudit.data.healthy, true, JSON.stringify(walletAudit.data.checks.filter(item => item.issues > 0)));
 });
 
 
