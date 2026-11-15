@@ -64,7 +64,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Verified sequential onboarding progress through all seven steps, completion timestamp and profile fields persist in staging D1.
 - [x] Verified notification event-key deduplication and read-state transition in staging D1.
 - [ ] Test onboarding resume/completion, profile and check-in persistence, and notification event creation with real Telegram accounts.
-- [ ] Test notifications for argument/reply/reaction/verdict/wallet/referral/task events and read states.
+- [x] Verified in-app notification event creation for arguments, replies and reactions in staging D1; wallet, referral, task, Regular Court and Pool Court verdict notifications are covered by staging checks or automated transaction tests. Notification event-key deduplication and read-state transitions were also verified in staging.
+- [ ] Confirm notification visibility and read-state behavior with real Telegram accounts.
 - [x] Verified staging moderation-report uniqueness: duplicate open reports are rejected and a new report can be submitted after dismissal.
 - [x] Verified the member reply query excludes replies whenever the parent argument or its Court is hidden.
 - [ ] Test reports for users/Courts/arguments/replies; moderation queue, hide/restore, restriction/suspension, audit log and enforcement.
