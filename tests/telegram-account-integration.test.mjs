@@ -247,6 +247,41 @@ test("Telegram accounts persist independently through onboarding, profile, check
   });
   assert.equal(duplicateReport.response.status, 409);
 
+  const additionalArgumentIds = [];
+  for (let number = 2; number <= 20; number++) {
+    const created = await api(env, "/api/courts/" + courtId + "/arguments", firstInit, "POST", {
+      body: "Distinct integration argument number " + number + " supporting Side A with its own evidence reference."
+    });
+    assert.equal(created.response.status, 201);
+    additionalArgumentIds.push(created.data.argument_id);
+  }
+  const argumentLimit = await api(env, "/api/courts/" + courtId + "/arguments", firstInit, "POST", {
+    body: "The twenty-first argument must be rate limited for this member."
+  });
+  assert.equal(argumentLimit.response.status, 429);
+
+  for (let number = 2; number <= 60; number++) {
+    const createdReply = await api(env, "/api/arguments/" + argumentId + "/replies", secondInit, "POST", {
+      body: "Distinct integration reply number " + number + " with a separate contribution."
+    });
+    assert.equal(createdReply.response.status, 201);
+  }
+  const replyLimit = await api(env, "/api/arguments/" + argumentId + "/replies", secondInit, "POST", {
+    body: "The sixty-first reply must be rate limited."
+  });
+  assert.equal(replyLimit.response.status, 429);
+
+  for (let number = 0; number < 9; number++) {
+    const createdReport = await api(env, "/api/reports", secondInit, "POST", {
+      target_type: "argument", target_id: additionalArgumentIds[number], reason: "Independent review", details: "Synthetic rate-limit coverage."
+    });
+    assert.equal(createdReport.response.status, 201);
+  }
+  const reportLimit = await api(env, "/api/reports", secondInit, "POST", {
+    target_type: "court", target_id: courtId, reason: "Independent review", details: "The eleventh report must be rate limited."
+  });
+  assert.equal(reportLimit.response.status, 429);
+
   const firstNotifications = await api(env, "/api/notifications", firstInit);
   assert.ok(firstNotifications.data.notifications.some(item => item.type === "new_reply" && item.reference_id === argumentId));
   assert.ok(firstNotifications.data.notifications.some(item => item.type === "reaction" && item.reference_id === argumentId));
