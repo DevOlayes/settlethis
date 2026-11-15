@@ -1,7 +1,31 @@
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
-import { monetagWalletCreditSql } from "../src/monetag.ts";
+import { monetagWalletCreditSql, parseMonetagPostback } from "../src/monetag.ts";
+
+test("maps the Home valued event to 100 CT", () => {
+  const result = parseMonetagPostback({ymid:"home-event-1",reward_event_type:"valued",telegram_id:"123456789",zone_id:"12269852",request_var:"home_ct"},"12269852");
+  assert.equal(result.ok,true);
+  if(result.ok) assert.deepEqual(result.value,{eventId:"home-event-1",userId:"123456789",zoneId:"12269852",placement:"home_ct",token:"CT",amount:100,balanceField:"ct_balance",idempotencyKey:"monetag:home-event-1"});
+});
+
+test("maps the Tasks valued event to 150 SETHIS", () => {
+  const result = parseMonetagPostback({ymid:"tasks-event-1",reward_event_type:"valued",telegram_id:"123456789",zone_id:"12269852",request_var:"tasks_sethis"},"12269852");
+  assert.equal(result.ok,true);
+  if(result.ok) assert.deepEqual(result.value,{eventId:"tasks-event-1",userId:"123456789",zoneId:"12269852",placement:"tasks_sethis",token:"SETHIS",amount:150,balanceField:"sethis_balance",idempotencyKey:"monetag:tasks-event-1"});
+});
+
+test("rejects non-valued events and malformed event or Telegram IDs", () => {
+  assert.equal(parseMonetagPostback({ymid:"event-1",reward_event_type:"non_valued",telegram_id:"123456789",zone_id:"12269852",request_var:"home_ct"},"12269852").ok,false);
+  assert.equal(parseMonetagPostback({ymid:"bad id",reward_event_type:"valued",telegram_id:"123456789",zone_id:"12269852",request_var:"home_ct"},"12269852").ok,false);
+  assert.equal(parseMonetagPostback({ymid:"event-1",reward_event_type:"valued",telegram_id:"123",zone_id:"12269852",request_var:"home_ct"},"12269852").ok,false);
+});
+
+test("rejects an unrecognised or missing main zone and unknown placement", () => {
+  assert.equal(parseMonetagPostback({ymid:"event-1",reward_event_type:"valued",telegram_id:"123456789",zone_id:"other",request_var:"home_ct"},"12269852").ok,false);
+  assert.equal(parseMonetagPostback({ymid:"event-1",reward_event_type:"valued",telegram_id:"123456789",zone_id:"12269852",request_var:"other"},"12269852").ok,false);
+  assert.equal(parseMonetagPostback({ymid:"event-1",reward_event_type:"valued",telegram_id:"123456789",zone_id:"12269852",request_var:"home_ct"},"").ok,false);
+});
 
 test("credits a valued Monetag event once even when the same callback races or replays", () => {
   const db = new DatabaseSync(":memory:");
