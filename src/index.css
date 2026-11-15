@@ -590,3 +590,25 @@
 .admin-grant-confirm{display:flex;grid-template-columns:none;flex-direction:row;align-items:flex-start;gap:9px;color:#f2dba8;font-size:9px;line-height:1.5}.admin-grant-confirm input{width:auto;flex:0 0 auto;accent-color:#27d7f2}
 
 .onboarding-back{flex:0 0 auto;min-height:39px;padding:0 10px;border:1px solid #3c647a;border-radius:7px;background:#12283a;color:#c7dbe5;font-size:8px;font-weight:900;letter-spacing:.08em}
+
+
+/* Settle This! identity lockup — replaces the old boxed-letter treatment. */
+.brand{gap:10px;min-width:0}
+.brand-emblem{display:block;width:35px;height:35px;flex:0 0 35px;color:var(--cyan);filter:drop-shadow(0 2px 8px #27d7f222)}
+.brand-wordmark{display:flex;align-items:baseline;gap:4px;white-space:nowrap;font-family:"Barlow Condensed",Impact,sans-serif;font-size:18px;line-height:1;font-weight:900;letter-spacing:.055em}
+.brand-wordmark b{color:#F8FAFC;font-weight:900}
+.brand-wordmark i{color:var(--cyan);font-style:normal;font-weight:900;letter-spacing:.015em}
+.admin-brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:#F8FAFC}
+.admin-emblem{width:38px;height:38px;flex:0 0 38px;color:var(--cyan)}
+.admin-wordmark{display:grid;grid-template-columns:auto auto;align-items:baseline;column-gap:4px;font-family:"Barlow Condensed",Impact,sans-serif;font-size:19px;font-weight:900;letter-spacing:.06em;line-height:1}
+.admin-wordmark b{color:#F8FAFC}
+.admin-wordmark i{font-style:normal;color:var(--cyan)}
+.admin-wordmark small{grid-column:1 / -1;margin-top:4px;color:#9eb3c4;font:700 7px/1 Inter,Arial,sans-serif;letter-spacing:.22em}
+.site-footer .brand-emblem{width:29px;height:29px;flex:0 0 29px}
+.site-footer .brand-wordmark{font-size:14px}
+@media(max-width:600px){
+ .brand{gap:8px}
+ .brand-emblem{width:32px;height:32px;flex-basis:32px}
+ .brand-wordmark{font-size:16px;letter-spacing:.035em}
+ .admin-emblem{width:34px;height:34px;flex-basis:34px}
+}
