@@ -1357,3 +1357,5 @@
 .admin-grant-row textarea{width:100%;min-height:54px;margin-top:8px;padding:8px;border:1px solid #ffffff20;border-radius:6px;background:#0d1a2a;color:#fff;font:inherit;font-size:9px}
 .admin-grant-row a{color:var(--cyan);font-size:9px}
 @media(max-width:600px){.admin-task-actions{width:100%;flex-direction:row;flex-wrap:wrap}.admin-task-actions button{flex:1}.admin-grant-row{align-items:flex-start}}
+
+.report-content-button{border:0;background:transparent;color:#9eb2c2;font-size:7px;font-weight:900;letter-spacing:.1em;padding:6px 2px;cursor:pointer}.report-content-button:hover{color:#f4c979}
