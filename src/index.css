@@ -1298,3 +1298,30 @@
   opacity:1!important;
   drop-shadow:none!important;
 }
+
+
+/* Homepage balance coin: deliberately subdued dark gold so the cyan S reads first */
+.hero-balance .hero-coin{
+  width:27px!important;
+  height:27px!important;
+  min-width:27px!important;
+  border-radius:50%!important;
+  background:#493313!important;
+  background-image:linear-gradient(145deg,#68491c 0%,#493313 52%,#30210e 100%)!important;
+  border:1px solid #80602f!important;
+  box-shadow:inset 0 1px 1px #b58b4a55,inset 0 -2px 3px #160e05,0 1px 3px #0008!important;
+  filter:none!important;
+}
+.hero-balance .hero-coin::before,
+.hero-balance .hero-coin::after{
+  content:none!important;
+  display:none!important;
+}
+.hero-balance .hero-coin .brand-emblem{
+  width:19px!important;
+  height:16px!important;
+  flex:0 0 19px!important;
+  color:#27D7F2!important;
+  filter:none!important;
+  opacity:1!important;
+}
