@@ -3,7 +3,7 @@
 This file is the live checklist for completing Phase One. Preserve the approved UI; implement missing behavior and fix defects behind it.
 
 ## Courts and settlement
-- [ ] Audit Regular Court participation debit, side selection, deadlines, duplicate prevention, argument/reply/reaction permissions.
+- [x] Fixed argument reactions missing `closes_at` in their Court lookup; reactions now enforce the Court deadline. (Further participation audit remains.)
 - [ ] Audit Admin editorial verdict flow, immutable adjudication record, winner reward idempotency, and participant outcome history.
 - [ ] Audit Pool Court lifecycle: scheduled/open/locked/settled/cancelled, reserve attestation, entry/stake debit, minimum stake, side totals, close deadline.
 - [ ] Audit proportional Pool Court distribution, rounding/remainder handling, losing-side outcome, and duplicate settlement protection.
