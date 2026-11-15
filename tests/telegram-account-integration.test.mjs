@@ -503,6 +503,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
 
   const poolInviteCode = env.testDb.prepare("SELECT invite_code FROM pool_invites WHERE pool_id=? AND inviter_user_id=? ORDER BY created_at LIMIT 1").get("pool-invite-rate-test", String(firstUser.id)).invite_code;
   env.testDb.prepare("UPDATE pool_invites SET invite_code=lower(invite_code) WHERE invite_code=?").run(poolInviteCode);
+  // Use a fresh identity, separate from the three referral-qualification fixtures.
   const poolInviteUser = { id: 700004, first_name: "Liverpool", username: "liverpool_pool_fan" };
   const thirdPoolInit = signedInitData(poolInviteUser, { start_param: "pool_" + poolInviteCode });
   const thirdAuthResponse = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
