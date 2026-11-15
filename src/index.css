@@ -957,3 +957,38 @@
   .hero-condensed .hero h1{font-size:27px}
   .hero-condensed .hero-art{width:58%;height:53%}
 }
+
+
+/* Tasks: put every reward amount above a consistently aligned action button */
+.task-ad-reward .task-ad-action-stack,
+.social-task-row .task-action-stack,
+.task-invite-row .task-action-stack{
+  width:92px;min-width:92px;flex:0 0 92px;align-items:stretch;justify-content:center;
+}
+.task-ad-reward .task-action-stack>strong,
+.social-task-row .task-action-stack>strong,
+.task-invite-row .task-action-stack>strong{
+  display:block;text-align:center;min-height:11px;line-height:1.1;font-size:9px;
+}
+.task-ad-reward .task-action-button,
+.social-task-row .task-action-button,
+.task-invite-row .task-action-button{
+  box-sizing:border-box;width:92px;min-width:92px;height:32px;min-height:32px;
+  padding:0 7px;display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid #a7803e;border-radius:7px;
+  background:linear-gradient(120deg,#f3d58e,#c58d34);color:#1d2630;
+  box-shadow:none;font-size:8px;font-weight:900;white-space:nowrap;
+}
+.task-ad-reward .task-action-button span,
+.social-task-row .task-action-button span,
+.task-invite-row .task-action-button span{color:#1d2630}
+.task-ad-count{color:#f3d58e!important;font-weight:800;font-size:7.5px!important;letter-spacing:.01em}
+@media(max-width:600px){
+ .task-ad-reward .task-action-stack,.social-task-row .task-action-stack,.task-invite-row .task-action-stack{width:86px;min-width:86px;flex-basis:86px}
+ .task-ad-reward .task-action-button,.social-task-row .task-action-button,.task-invite-row .task-action-button{width:86px;min-width:86px}
+}
+@media(max-width:370px){
+ .task-ad-reward .task-action-stack,.social-task-row .task-action-stack,.task-invite-row .task-action-stack{width:78px;min-width:78px;flex-basis:78px}
+ .task-ad-reward .task-action-button,.social-task-row .task-action-button,.task-invite-row .task-action-button{width:78px;min-width:78px;padding:0 5px;font-size:7px}
+ .task-ad-count{font-size:6.5px!important}
+}
