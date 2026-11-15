@@ -207,6 +207,24 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const firstProfileAfterSecondSignIn = await api(env, "/api/profile", firstInit);
   assert.equal(firstProfileAfterSecondSignIn.data.profile.club, "Chelsea");
 
+  const secondProfileSaved = await api(env, "/api/profile", secondInit, "PUT", {
+    club: "Arsenal", country: "Ghana", bio: "North London."
+  });
+  assert.equal(secondProfileSaved.response.status, 200);
+  const firstProfileStillIsolated = await api(env, "/api/profile", firstInit);
+  assert.equal(firstProfileStillIsolated.data.profile.club, "Chelsea");
+  assert.equal(firstProfileStillIsolated.data.profile.country, "Nigeria");
+
+  const longBioSave = await api(env, "/api/profile", firstInit, "PUT", {
+    club: "Chelsea", country: "Nigeria", bio: "A".repeat(200)
+  });
+  assert.equal(longBioSave.response.status, 200);
+  const boundedBio = await api(env, "/api/profile", firstInit);
+  assert.equal(boundedBio.data.profile.bio.length, 160);
+
+  const unauthenticatedProfile = await worker.fetch(new Request("https://settlethis.test/api/profile"), env);
+  assert.equal(unauthenticatedProfile.status, 401);
+
   const thirdUser = { id: 700003, first_name: "Guest", username: "guest_fan" };
   const thirdInit = signedInitData(thirdUser);
   const thirdSignIn = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
