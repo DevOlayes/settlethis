@@ -18,7 +18,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Audited Regular and Pool cancellation/refund batches: cancellation state gates credits, idempotency keys prevent repeat refunds, participant/position state changes require the refund ledger, and secured Pool reserves require a recorded release reference. End-to-end refund scenarios remain to be exercised.
 - [x] Added Node built-in unit tests for proportional Pool Court allocation, deterministic remainder distribution, zero-value outcomes, tie-breaking, prize conservation across uneven stakes, safe-integer arithmetic and invalid input; the seven allocation tests were executed locally under Node 22; the main-branch verification workflow also runs the complete test suite.
 - [x] Expanded Telegram initData tests for missing tokens, oversized payloads and the exact 24-hour expiry boundary.
-- [x] Extracted HTTPS-only URL validation used by editorial evidence, social-task destinations/proof and image/source links; added tests for accepted HTTPS URLs and rejected schemes/invalid input (10 settlement + URL tests pass locally under Node 22).
+- [x] Extracted HTTPS-only URL validation used by editorial evidence, social-task destinations/proof and image/source links; added tests for accepted HTTPS URLs and rejected schemes/invalid input (20 Pool Court, URL-validation, Telegram-authentication and Lagos check-in tests pass locally under Node 22).
 - [x] Validated the revised Regular/Pool settlement SQL statements against production D1 using read-only EXPLAIN queries; no production rows were changed.
 - [ ] Add D1-backed automated tests for critical Court and settlement transactions, including concurrent/duplicate requests.
 
