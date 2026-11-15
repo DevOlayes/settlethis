@@ -357,6 +357,12 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const firstNotifications = await api(env, "/api/notifications", firstInit);
   assert.ok(firstNotifications.data.notifications.some(item => item.type === "new_reply" && item.reference_id === argumentId));
   const secondNotifications = await api(env, "/api/notifications", secondInit);
+  const secondUserNotification = secondNotifications.data.notifications.find(item => item.type === "new_argument" && item.reference_id === courtId);
+  assert.ok(secondUserNotification);
+  const crossAccountRead = await api(env, "/api/notifications/" + secondUserNotification.id + "/read", firstInit, "POST", {});
+  assert.equal(crossAccountRead.response.status, 200);
+  const secondNotificationsAfterCrossAccountRead = await api(env, "/api/notifications", secondInit);
+  assert.equal(secondNotificationsAfterCrossAccountRead.data.notifications.find(item => item.id === secondUserNotification.id).read_at, null);
 
   env.DB.prepare("INSERT INTO admin_setup_authorizations (id,expires_at) VALUES (1,datetime('now','+10 minutes'))").run();
   env.DB.prepare("INSERT INTO admin_users (id,email,password_salt,password_hash,password_iterations) VALUES (1,?,?,?,?)")
