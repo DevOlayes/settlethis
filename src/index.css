@@ -612,3 +612,11 @@
  .brand-wordmark{font-size:16px;letter-spacing:.035em}
  .admin-emblem{width:34px;height:34px;flex-basis:34px}
 }
+
+/* Approved coin monogram proportions: preserve the wide, horizontal S silhouette. */
+.brand-emblem{width:40px;height:32px;flex:0 0 40px;object-fit:contain}
+.admin-emblem{width:44px;height:35px;flex:0 0 44px}
+.site-footer .brand-emblem{width:32px;height:26px;flex:0 0 32px}
+.welcome-gold-coin .brand-emblem{width:58px;height:46px}
+.onboarding-story-coin .brand-emblem{width:48px;height:38px}
+@media(max-width:600px){.brand-emblem{width:36px;height:29px;flex-basis:36px}.admin-emblem{width:39px;height:31px;flex-basis:39px}}
