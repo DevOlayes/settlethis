@@ -81,10 +81,10 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
-- [x] Added a production deployment job that runs only after verification succeeds and rebuilds the static assets before `wrangler deploy`.
+- [x] Confirmed Cloudflare Workers Builds is configured for the `main` branch with `npm run build` and `npx wrangler deploy`; GitHub Actions is kept focused on tests/build verification so a missing GitHub Actions API token cannot appear as a successful production deployment.
 - [x] Confirmed GitHub Actions tests and production build pass on the latest verified source revision `d27db2d3349c553688e3ab4500bfd4d64f26d20d` (run `43730501807`).
 - [ ] Add D1-backed automated tests and/or safe staging fixtures for critical transaction paths.
-- [ ] Configure GitHub Actions repository secret `CLOUDFLARE_API_TOKEN`; the gated deployment job currently skips because this secret is absent, so the latest source is not yet deployed. Then verify the new Worker version receives 100% traffic.
+- [ ] Verify a Cloudflare Workers Build for the latest `main` commit completes and the resulting Worker version receives 100% traffic; the live Worker is currently on an older source revision.
 - [ ] Run Telegram multi-user test: onboarding, join, argue/reply/react, verdict, reward, wallet, rankings, report.
 - [ ] Check mobile errors/loading/empty states and production logs.
 - [ ] Complete security review and beta readiness checklist.
