@@ -52,3 +52,15 @@ test("rejects missing fields, malformed hashes and invalid user identities", asy
   const badUser = signedInitData({ ...validFields(), user: JSON.stringify({ id: 0, first_name: " " }) });
   assert.equal(await verifyTelegramInitData(badUser, token, now), null);
 });
+
+test("rejects missing bot token and oversized initData before cryptographic work", async () => {
+  assert.equal(await verifyTelegramInitData(signedInitData(validFields()), "", now), null);
+  assert.equal(await verifyTelegramInitData("x".repeat(8193), token, now), null);
+});
+
+test("accepts the exact 24-hour boundary and rejects one second beyond it", async () => {
+  const boundary = signedInitData({ ...validFields(), auth_date: String(now - 86400) });
+  const expired = signedInitData({ ...validFields(), auth_date: String(now - 86401) });
+  assert.equal((await verifyTelegramInitData(boundary, token, now))?.id, 123456789);
+  assert.equal(await verifyTelegramInitData(expired, token, now), null);
+});
