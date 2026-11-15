@@ -68,7 +68,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [ ] Confirm notification visibility and read-state behavior with real Telegram accounts.
 - [x] Verified staging moderation-report uniqueness: duplicate open reports are rejected and a new report can be submitted after dismissal.
 - [x] Verified the member reply query excludes replies whenever the parent argument or its Court is hidden.
-- [x] Verified staging Admin moderation actions: report status moved to actioned, Court content was hidden and restored, a member restriction was saved, and all three actions produced audit-log entries.
+- [x] Verified staging Admin moderation actions across all report target types: Court, argument and reply content was hidden/restored; user restriction was saved; reports were actioned; and audit-log entries were recorded.
 - [ ] Test the Admin moderation queue and report target variants (users/Courts/arguments/replies) in the UI, then verify restrictions are enforced during real Telegram actions.
 - [x] Added server-side community limits: 20 arguments/hour, 60 replies/hour and 10 reports/hour per user; identical argument/reply submissions within two minutes are rejected, and restricted users cannot react.
 - [x] Enforced Court visibility/moderation status in join, argument, reply and reaction paths so hidden/removed Courts cannot be modified through direct API requests.
