@@ -620,3 +620,26 @@
 .welcome-gold-coin .brand-emblem{width:58px;height:46px}
 .onboarding-story-coin .brand-emblem{width:48px;height:38px}
 @media(max-width:600px){.brand-emblem{width:36px;height:29px;flex-basis:36px}.admin-emblem{width:39px;height:31px;flex-basis:39px}}
+
+/* Home daily check-in — rolling seven-day attendance, not a seven-day programme */
+.checkin-card{margin:17px 0 24px;padding:15px;border:1px solid #294b60;border-radius:13px;background:linear-gradient(125deg,#13283b 0%,#102235 68%,#123449 100%);box-shadow:0 12px 28px #0002}
+.checkin-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.checkin-card-head h2{font:700 23px 'Barlow Condensed';margin:4px 0 2px;color:#F8FAFC}
+.checkin-card-head p{font-size:9px;line-height:1.5;color:#B9C8D5;margin:0}
+.checkin-streak{min-width:67px;padding:7px 10px;border:1px solid #92733a;border-radius:9px;background:#3b301d;text-align:center}
+.checkin-streak strong{display:block;font:800 25px 'Barlow Condensed';color:#F5B942;line-height:1}
+.checkin-streak span{font-size:6px;font-weight:900;letter-spacing:.12em;color:#f5dca7}
+.checkin-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:14px 0 12px}
+.checkin-day{min-width:0;min-height:65px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1px solid #ffffff13;border-radius:8px;background:#0c1b2b;color:#aebdca}
+.checkin-day>span{font-size:7px;font-weight:800;text-transform:uppercase}
+.checkin-day>b{font:700 17px 'Barlow Condensed';color:#F8FAFC}
+.checkin-day>small{height:8px;font-size:5px;font-weight:900;letter-spacing:.06em;color:#8fa3b3}
+.checkin-day.completed{border-color:#236a60;background:#12352f}.checkin-day.completed>b{color:#67e0b0}
+.checkin-day.current{border-color:#27D7F2;background:#123246;box-shadow:inset 0 0 0 1px #27D7F244}
+.checkin-day.current>span,.checkin-day.current>small{color:#27D7F2}
+.checkin-card-foot{display:flex;align-items:center;justify-content:space-between;gap:9px}
+.checkin-card-foot>span{font-size:7px;color:#AAB8C8}
+.checkin-card-foot button{min-height:32px;padding:0 11px;border:0;border-radius:6px;background:#27D7F2;color:#06131B;font-size:7px;font-weight:900;letter-spacing:.06em;white-space:nowrap}
+.checkin-card-foot button:disabled{background:#1d4352;color:#b8d5df;cursor:default}.checkin-card-foot button b{margin-left:7px;font-size:11px}
+.bottom-nav button span{display:grid;place-items:center;width:25px;height:23px}.bottom-nav button svg{width:22px;height:22px;display:block}
+@media(max-width:370px){.checkin-card{padding:11px}.checkin-week{gap:3px}.checkin-day{min-height:59px}.checkin-card-foot>span{font-size:6px}.checkin-card-foot button{padding:0 7px;font-size:6px}}
