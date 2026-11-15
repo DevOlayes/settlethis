@@ -5,7 +5,10 @@ const crest = (id: number) => `https://media.api-sports.io/football/teams/${id}.
 function Brand() { return <a className="brand" href="#" aria-label="Settle This home"><span className="brand-mark">ST<span>!</span></span><span className="brand-name">SETTLE<span>THIS</span><i>!</i></span></a>; }
 function Team({ id, name }: { id: number; name: string }) { return <span className="team"><span className="crest"><img src={crest(id)} alt="" /></span><b>{name}</b></span>; }
 function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser | null }) {
-  const [tab, setTab] = useState<Tab>("Courts");\n  const [walletBalances,setWalletBalances]=useState({ct:0,sethis:0});\n  const [walletTransactions,setWalletTransactions]=useState<Array<{token:string;amount:number;transaction_type:string;created_at:string}>>([]);\n  useEffect(()=>{const initData=window.Telegram?.WebApp?.initData;if(!telegramUser||!initData)return;fetch("/api/wallet",{headers:{"x-telegram-init-data":initData}}).then(r=>r.ok?r.json():null).then(data=>{if(data?.wallet){setWalletBalances({ct:Number(data.wallet.ct_balance)||0,sethis:Number(data.wallet.sethis_balance)||0});setWalletTransactions(data.transactions||[]);}}).catch(()=>{});},[telegramUser]);
+  const [tab, setTab] = useState<Tab>("Courts");
+  const [walletBalances,setWalletBalances]=useState({ct:0,sethis:0});
+  const [walletTransactions,setWalletTransactions]=useState<Array<{token:string;amount:number;transaction_type:string;created_at:string}>>([]);
+  useEffect(()=>{const initData=window.Telegram?.WebApp?.initData;if(!telegramUser||!initData)return;fetch("/api/wallet",{headers:{"x-telegram-init-data":initData}}).then(r=>r.ok?r.json():null).then(data=>{if(data?.wallet){setWalletBalances({ct:Number(data.wallet.ct_balance)||0,sethis:Number(data.wallet.sethis_balance)||0});setWalletTransactions(data.transactions||[]);}}).catch(()=>{});},[telegramUser]);
     const [walletOpen, setWalletOpen] = useState(false);
   const [courtOpen, setCourtOpen] = useState(false);
   const [courtSide, setCourtSide] = useState<"A" | "B" | "">("");
