@@ -27,7 +27,7 @@ function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser
       {searchOpen && <input className="search-input" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search Courts, clubs..." autoFocus />}
       <button className="icon-button" aria-label="Search" onClick={() => { setSearchOpen(v => !v); setSearch(""); }}>⌕</button>
       <button className="balance-pill" onClick={() => setWalletOpen(true)}><span className="ct-gem">◆</span><b>3,500</b><small>CT</small><span className="plus">＋</span></button>
-      <button className="profile-dot" title={telegramUser ? (telegramUser.username ? `@${telegramUser.username}` : telegramUser.first_name) : "Guest"} onClick={() => showNotice(telegramUser ? `Signed in as ${telegramUser.first_name}.` : "Your football profile is coming together.")}>{telegramUser?.first_name?.slice(0, 1).toUpperCase() || "G"}</button>
+      <button className="profile-dot" title={telegramUser ? (telegramUser.username ? `@${telegramUser.username}` : telegramUser.first_name) : "Guest"} aria-label="Open profile" onClick={() => showNotice(telegramUser ? `Signed in as ${telegramUser.first_name}.` : "Your football profile is coming together.")}>{telegramUser?.photo_url ? <img className="telegram-avatar" src={telegramUser.photo_url} alt="" referrerPolicy="no-referrer" /> : <span>{telegramUser?.first_name?.slice(0, 1).toUpperCase() || "G"}</span>}</button>
     </div></header>
     <main className="main-content">
       {tab === "Courts" && <>
