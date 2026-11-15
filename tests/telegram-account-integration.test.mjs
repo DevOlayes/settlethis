@@ -495,6 +495,12 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const sixthInvite = await api(env, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
   assert.equal(sixthInvite.response.status, 429);
   assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invites WHERE pool_id=? AND inviter_user_id=?").get("pool-invite-rate-test", String(firstUser.id)).n, 5);
+  const invalidBotEnv = { ...env, TELEGRAM_BOT_USERNAME: "attacker.example/path" };
+  const invalidBotReferral = await api(invalidBotEnv, "/api/referrals", firstInit);
+  assert.equal(invalidBotReferral.response.status, 200);
+  assert.equal(invalidBotReferral.data.invite_link, null);
+  const invalidBotPoolInvite = await api(invalidBotEnv, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
+  assert.equal(invalidBotPoolInvite.response.status, 503);
 });
 
 
