@@ -18,7 +18,7 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Audited Regular and Pool cancellation/refund batches: cancellation state gates credits, idempotency keys prevent repeat refunds, participant/position state changes require the refund ledger, and secured Pool reserves require a recorded release reference. End-to-end refund scenarios remain to be exercised.
 - [x] Added Node built-in unit tests for proportional Pool Court allocation, deterministic remainder distribution, zero-value outcomes, tie-breaking, prize conservation across uneven stakes, safe-integer arithmetic and invalid input; the seven allocation tests were executed locally under Node 22; the main-branch verification workflow also runs the complete test suite.
 - [x] Expanded Telegram initData tests for missing tokens, oversized payloads and the exact 24-hour expiry boundary.
-- [x] Extracted HTTPS-only URL validation used by editorial evidence, social-task destinations/proof and image/source links; added tests for accepted HTTPS URLs and rejected schemes/invalid input (34 automated tests now cover Pool allocation/settlement, Regular Court settlement, task-review race safety, URL validation, Telegram authentication, Lagos check-in, Monetag idempotency and Admin setup guard; the last full Cloudflare build passed under Node 22.23.5).
+- [x] Extracted HTTPS-only URL validation used by editorial evidence, social-task destinations/proof and image/source links; added tests for accepted HTTPS URLs and rejected schemes/invalid input (36 automated tests now cover Pool allocation/settlement, Regular Court settlement, task-review race safety, rankings, URL validation, Telegram authentication, Lagos check-in, Monetag idempotency and Admin setup guard; the latest full Cloudflare build passed under Node 22.23.5).
 - [x] Validated the revised Regular/Pool settlement SQL statements against production D1 using read-only EXPLAIN queries; no production rows were changed.
 - [x] Exercised critical transaction SQL against the separate `sethis-phase-one-test` D1 database: welcome gift credits exactly once, check-in uniqueness holds, referral qualification reaches three and credits exactly 500 SETHIS once, Pool staking is blocked while reserve is pending, duplicate Pool stake rolls back without a second debit, and cancellation returns CT/releases the reserve exactly once. No production rows were changed.
 - [ ] Convert these staging scenarios into repeatable automated D1 tests and add true concurrent-request coverage for Court and Pool settlement.
@@ -79,8 +79,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 - [x] Implemented rankings with the documented wins → win rate → SETHIS earned → entries tie-break order, a stable row-number rank, and an authenticated member's own rank even when outside the top 100.
 - [x] Connected homepage SETHIS earned and member rank figures to ledger-backed and settled-outcome data instead of fixed placeholder dashes.
 - [x] Validated the rankings SQL and wallet/reward/refund/check-in transaction statements against production D1 with read-only EXPLAIN checks; no fixture rows were written.
-- [ ] Verify rankings metric/formula, tie-breaks, resolved-entry counts, win rate, SETHIS earned and user identity against representative seeded records.
-- [ ] Test Rankings and My Courts using representative seeded records and real Telegram participants.
+- [x] Added automated SQLite tests using the actual extracted rankings SQL and representative Court/Pool records; verifies combined wins, win rate, SETHIS earned, entry counts, deterministic user-ID tie-breaks, exclusion of unresolved-only users and authenticated own-rank visibility outside the top 100.
+- [ ] Test the Rankings and My Courts screens with real Telegram participants and verify the displayed data against their actual histories.
 
 ## Admin Portal security
 - [x] Locked first-admin creation behind the owner-only `ADMIN_SETUP_SECRET`, compared in constant time; the Admin Portal asks for the one-time key and refuses setup when the Worker binding is absent.
@@ -94,8 +94,8 @@ This file is the live checklist for completing Phase One. Preserve the approved 
 ## Launch validation
 - [x] Added a GitHub Actions verification workflow to run `npm test` and `npm run build` on pushes to `main` and pull requests.
 - [x] Confirmed Cloudflare Workers Builds is configured for `main`; its build step now runs `npm test && npm run build`. Its production deploy command is temporarily a verification-only no-op and must be restored to `npx wrangler deploy` after Phase One is complete. GitHub Actions is kept focused on verification.
-- [x] Verified the full Cloudflare Workers Build for source revision `0544303b9ea21233e70c33049c0a7746958a8166`: all 34 automated tests passed, TypeScript/Vite production build passed, and the deployment command was deliberately held at a no-op so this verification did not change production.
-- [ ] Add D1-backed automated tests and/or safe staging fixtures for critical transaction paths.
+- [x] Verified the full Cloudflare Workers Build for source revision `6d3d04ad77f15d24b7f1c5c9af31299211fc9dc4`: all 36 automated tests passed, TypeScript/Vite production build passed, and the deployment command was deliberately held at a no-op so this verification did not change production.
+- [x] Created and used the separate `sethis-phase-one-test` D1 database for synthetic staging fixtures covering wallet credits, referral qualification, Court/Pool entries, Pool refunds, task claims/rewards, moderation reports, hidden-content filtering, onboarding, notifications and check-ins. Automated SQLite transaction tests cover settlement and race conditions.
 - [ ] Verify a Cloudflare Workers Build for the latest `main` commit completes and the resulting Worker version receives 100% traffic; the live Worker is currently on an older source revision.
 - [ ] Run Telegram multi-user test: onboarding, join, argue/reply/react, verdict, reward, wallet, rankings, report.
 - [ ] Check mobile errors/loading/empty states and production logs.
