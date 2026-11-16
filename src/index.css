@@ -1761,3 +1761,11 @@
 .debate-image-verify{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid #26364d;border-radius:10px;background:#121d2e;color:#f8fafc;font-size:12px;line-height:1.5}
 .debate-image-verify input{margin-top:3px;accent-color:#27d7f2}
 .debate-source-quote a{display:block;margin-top:8px;font-size:11px}
+
+.pool-other-courts{display:grid;gap:7px;margin-top:14px;padding-top:12px;border-top:1px solid #ffffff18}
+.pool-other-courts>b{font-size:9px;letter-spacing:.12em;color:#91a9bb}
+.pool-other-courts>button{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid #26364d;border-radius:9px;background:#121d2e;color:#f8fafc;text-align:left}
+.pool-other-courts>button span{display:grid;gap:4px;min-width:0}
+.pool-other-courts>button strong{font-size:12px;overflow-wrap:anywhere}
+.pool-other-courts>button small{font-size:9px;color:#9fb3c6}
+.pool-other-courts>button i{font-size:9px;font-style:normal;font-weight:800;color:#27d7f2;white-space:nowrap}
