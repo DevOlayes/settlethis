@@ -133,3 +133,20 @@ Implementation scope completed and deployed:
 - No checkout, payment collection, inventory management, affiliate-network integration or revenue attribution is included.
 
 Final production validation remains deferred until all planned Phase Three components are implemented. No live app journeys or automated test suites are run during feature development.
+
+
+## Component 4 implementation record — Settle the Argument
+
+Implementation scope completed and deployed:
+- Added an editorially managed episode catalogue linked to existing visible, published Courts. An episode never creates a duplicate Court or changes entry costs, reward rules, voting eligibility or adjudication.
+- Supported repeatable editorial formats: Football Controversy, Hot Take, Match Moment and Football Cuts.
+- Each episode has an editorial label and a 20–500 character introduction to frame the football question and invite consideration of both sides.
+- Admin can publish an existing Court as an episode, feature/unfeature it in the member experience, and review the episode catalogue.
+- Admin-only publishing uses the existing authenticated editorial administrator session, same-origin protection and audit log.
+- Member discovery includes a dedicated Settle This! Originals / Settle the Argument showcase with format, episode label, context, opposing positions and participation count.
+- Episode entry opens the underlying existing Court, retaining its existing participation, moderation, wallet, notification and official verdict rules.
+- Public episode feed includes only featured episodes linked to visible Courts; no unrestricted member publishing, creator payouts or creator popularity ranking.
+- Crowd position counts and reactions are descriptive participation signals only; they do not replace editorial adjudication.
+- No new CT spending, reward or token mechanics were introduced.
+
+Final production validation remains deferred until all planned Phase Three components are implemented. No live app journeys or automated test suites are run during feature development.
