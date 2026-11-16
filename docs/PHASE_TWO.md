@@ -5,7 +5,7 @@
 ## Current implementation status — 16 November 2026
 
 - Member profiles show outcome-backed performance metrics, win rate, decided losses, quiz participation and average score, CT committed and SETHIS earned, plus recent Court/Pool positions, arguments, replies, quiz attempts and wallet transactions. Metrics derive from stored participation, adjudication, quiz and ledger records. Deployed in Worker version `56ebeee8-49c4-40bd-83a9-d88ca8004558`.
-- Controlled Host/Editor workflow deployed in Worker version `f3e69f08-9484-437d-971c-3699a793604a`: Admin-assigned and suspendable Telegram staff roles, Host poll proposals requiring Admin approval before scheduling, Editor recommendations recorded separately from Admin decisions, and staff actions visible in Admin audit history. No staff role can publish content, settle Courts or issue rewards.
+- Controlled Host/Editor workflow deployed in Worker version `aafffba2-c947-4f7c-b3e3-9db67d18a30d`: Admin-assigned and suspendable Telegram staff roles, Host poll proposals requiring Admin approval before scheduling, Editor recommendations recorded separately from Admin decisions, and staff actions visible in Admin audit history. No staff role can publish content, settle Courts or issue rewards.
 
 Completed and deployed:
 - Admin-managed fixture catalogue and fixture-to-Match-Court linking.
@@ -37,7 +37,7 @@ Integration and verification notes:
 - Server-side quiz scoring and reward settlement: Worker validates the full answer set and current quiz window, calculates score, applies the configured pass mark, records attempts/answers and credits SETHIS through an idempotent `quiz_reward` ledger entry with a member notification.
 - Quiz rewards are included in wallet integrity checks, member SETHIS-earned totals and leaderboard earnings.
 - Competition discovery and match archive UI/API deployed on 16 November 2026 (Worker version `c51a968c-5c87-4a42-a072-c02ca8f8e5f5`). The production build passed. No live app tests or test suites were run; final verification remains deferred until all phases are complete.
-- Member Statistics & History and Controlled Host/Editor workflow deployed on 16 November 2026. Latest combined deployment includes Worker version `f3e69f08-9484-437d-971c-3699a793604a`. No live app tests, external-service checks or test suites were run; final verification remains deferred until all phases are complete.
+- Member Statistics & History and Controlled Host/Editor workflow deployed on 16 November 2026. Latest combined deployment includes Worker version `aafffba2-c947-4f7c-b3e3-9db67d18a30d`. No live app tests, external-service checks or test suites were run; final verification remains deferred until all phases are complete.
 - The archive is derived from fixtures marked `full_time` and linked to a visible Match Court. There is no separate archived fixture status; Admin remains responsible for recording full-time status and final scores.
 
 
