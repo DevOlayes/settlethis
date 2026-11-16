@@ -2,6 +2,21 @@
 
 ## Goal
 
+## Current implementation status — 16 November 2026
+
+Completed and deployed:
+- Admin-managed fixture catalogue and fixture-to-Match-Court linking.
+- Fixture-aware Match Court publishing with kick-off-based opening.
+- Admin-controlled match lifecycle transitions: scheduled → live → half-time → live → full-time, with postponement/cancellation handling.
+- Manual score and match-minute updates synchronised to linked Match Courts and recorded in the administrator audit log.
+- Member-facing scheduled kick-off information and pre-kick-off join restrictions.
+- New fixtures are required to start in the scheduled state.
+
+Not yet connected:
+- Automatic live score/status ingestion from a trusted football-data provider. No provider credentials or feed are configured, so the platform does not invent match events or change a match to live merely because its scheduled kick-off time has arrived.
+- Automated poll and notification workflows, which are part of the next matchday workstream.
+
+
 Expand Settle This! from its core Court experience into a richer football-entertainment destination that gives members more reasons to return around live football, play football knowledge games, and explore their history.
 
 Phase Two builds on the Phase One Court, identity, moderation, notification and wallet foundations. It does not replace the existing product model or turn Settle This! into a generic forum, betting app, fantasy game or open creator platform.
