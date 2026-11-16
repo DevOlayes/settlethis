@@ -167,3 +167,21 @@ Implementation scope:
 The new participation price is a fixed 100 CT for one decorative, side-neutral Court effect. The interaction is optional; core Court access, argument posting, reactions and voting rules remain unchanged.
 
 Final production validation remains deferred until all planned Phase Three components are implemented. No live member journeys or automated test suites are run during feature development.
+
+
+## Component 6 implementation record — Competition and regional expansion
+
+Implementation scope completed:
+- Added a structured competition catalogue keyed by competition, country/association and season, with region, editorial language code, enabled/disabled status, discovery order and an optional coverage note.
+- Added an Admin Competition Coverage workspace to register new competition seasons, assign regions, set the editorial language code, control member visibility and adjust discovery ordering.
+- Existing fixture seasons are backfilled into the catalogue by migration. Newly created or reclassified fixtures are automatically registered by database triggers without overwriting an Admin's existing region or visibility choices.
+- Member Competition Discovery now groups its available competition seasons by region and provides region-level filtering across fixture discovery and completed Match Court archives.
+- Fixture, team and country filters are scoped to the selected region. Disabled competition seasons are excluded from public discovery and archive results.
+- Competition entries may be registered before fixtures exist, allowing the editorial team to prepare coverage without inventing fixtures, scores or live status.
+- Coverage language is stored as editorial metadata only. This component does not claim to translate the interface or provide localized editorial content.
+- Fixture creation and match lifecycle remain manually managed. No external live-data provider, automatic fixture ingestion, score feed or scheduler was introduced.
+- Existing Courts, CT/SETHIS accounting, moderation and adjudication are unchanged.
+
+Supported region groups: Africa, Europe, Asia, North America, South America, Oceania and Global / Unassigned. Admin must assign each competition to the appropriate region; unclassified existing catalogue entries remain Global / Unassigned until reviewed.
+
+Final production validation remains deferred until all planned Phase Three components are implemented. No live member journeys, external-provider tests, authenticated Admin browser tests or automated test suites are run during feature development.
