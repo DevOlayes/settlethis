@@ -115,3 +115,21 @@ Build the controlled foundations for direct commercial partnerships.
 - Which additional competitions, countries and languages should be prioritised.
 
 These decisions must be explicit before a related member-facing feature is enabled.
+
+
+## Component 3 implementation record — Affiliate commerce
+
+Implementation scope completed and deployed:
+- Admin-managed affiliate catalogue with controlled football categories: shirts and kits, boots and equipment, books and media, fan experiences, and football services.
+- Draft-first creation, editing, scheduling, activation, pause, resume, end and archive controls.
+- HTTPS-only destination and optional image validation; no credentials or non-standard ports accepted.
+- Required disclosure text containing explicit affiliate or commission wording.
+- Approved placement selection reuses the existing commercial placement catalogue and respects disabled placements.
+- Member-facing recommendation cards appear only for eligible active items and never leave empty placeholders.
+- Clear affiliate disclosure appears before the outbound action.
+- Outbound click events are server-validated, deduplicated by temporary session/item/placement/day, and rate-limited using the existing short-lived privacy-preserving IP digest mechanism.
+- Outbound URLs are used as supplied by Admin; no member identity, Telegram ID, session key or other member data is appended or forwarded. Referrer information is suppressed.
+- Admin catalogue shows item status, placements, schedule and measured outbound click totals; changes are recorded in the Admin audit log.
+- No checkout, payment collection, inventory management, affiliate-network integration or revenue attribution is included.
+
+Final production validation remains deferred until all planned Phase Three components are implemented. No live app journeys or automated test suites are run during feature development.
