@@ -7,7 +7,7 @@ import { taskApprovalStatements } from "./task-review";
 import { RANKINGS_SQL } from "./rankings";
 interface D1Statement { bind(...values: unknown[]): D1Statement; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }>; run(): Promise<unknown>; }
 interface D1Database { prepare(query: string): D1Statement; batch(statements: D1Statement[]): Promise<unknown[]>; }
-interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: D1Database; TELEGRAM_BOT_TOKEN?: string; TELEGRAM_BOT_USERNAME?: string; MONETAG_POSTBACK_SECRET?: string; MONETAG_ZONE_ID?: string; ADMIN_SETUP_SECRET?: string; EDITORIAL_ADMIN_IDS?: string; }
+interface Env { ASSETS: { fetch(request: Request): Promise<Response> }; DB: D1Database; TELEGRAM_BOT_TOKEN?: string; TELEGRAM_BOT_USERNAME?: string; FOOTBALL_DATA_API_TOKEN?: string; MONETAG_POSTBACK_SECRET?: string; MONETAG_ZONE_ID?: string; ADMIN_SETUP_SECRET?: string; EDITORIAL_ADMIN_IDS?: string; }
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","x-frame-options":"DENY","referrer-policy":"strict-origin-when-cross-origin","permissions-policy":"camera=(), microphone=(), geolocation=()","strict-transport-security":"max-age=31536000","x-permitted-cross-domain-policies":"none"}});
 const encoder=new TextEncoder();
 function safeEqual(a:string,b:string){if(a.length!==b.length)return false;let diff=0;for(let i=0;i<a.length;i++)diff|=a.charCodeAt(i)^b.charCodeAt(i);return diff===0;}
