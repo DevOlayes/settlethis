@@ -10,8 +10,10 @@ function Root(){
   const [authStatus,setAuthStatus]=useState<"checking"|"ready"|"outside"|"failed">("checking");
   const [authError,setAuthError]=useState("");
   const [retry,setRetry]=useState(0);
-  const isAdmin=window.location.pathname==="/admin"||window.location.pathname.startsWith("/admin/");
+  const isSupportDesk=window.location.pathname==="/support-desk";
+  const isAdmin=window.location.pathname==="/admin"||window.location.pathname.startsWith("/admin/")||isSupportDesk;
 
+  useEffect(()=>{if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(()=>{});}},[]);
   useEffect(()=>{
     if(isAdmin)return;
     let active=true;
