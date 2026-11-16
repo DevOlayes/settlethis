@@ -1,0 +1,117 @@
+# Settle This! — Phase Three Expansion & Monetisation Plan
+
+## Goal
+
+Grow Settle This! from its core Court and matchday experience into a distinctive football-entertainment destination with sustainable revenue, stronger repeat engagement and wider football coverage.
+
+Phase Three must strengthen the existing product rather than turn it into a generic social network, betting product, open creator marketplace or ad-wall app.
+
+## Product decisions carried forward
+
+- Telegram Mini App remains the primary member experience.
+- Preserve the Midnight Navy, Deep Slate, Raised Slate, Electric Cyan, white and restrained Stadium Gold visual system.
+- CT remains the Court/activity currency. SETHIS remains the main reward token. Their balances, ledger entries and purposes must remain distinct.
+- Monetag rewarded ads remain a bounded optional reward channel, not the central product or the only monetisation strategy.
+- No guaranteed cash value, exchange value, deposits, withdrawals or trading claims for SETHIS.
+- No NFTs, generic XP, generic reputation points or artificial engagement counters.
+- No unrestricted public creator publishing. Admin retains commercial, editorial, moderation and reward controls.
+- Any commercial placement must be clearly identified as sponsored or affiliate content. Editorial verdicts and community outcomes must never be purchasable.
+- Keep the product football-first, mobile-first, compact and useful even when no sponsor or affiliate campaign is active.
+
+## Phase Three workstreams
+
+### 1. Commercial foundations and sponsorship
+
+Build the controlled foundations for direct commercial partnerships.
+
+- Define sponsor inventory around relevant football surfaces: selected competitions, matchday experiences, branded debate/Court series and clearly separated sponsor placements.
+- Give Admin control to create, schedule, pause and end campaigns, set placement and dates, and review delivery.
+- Clearly label sponsored content. Keep sponsor messaging separate from Court questions, arguments, votes, verdicts and editorial decisions.
+- Record eligible impressions and clicks using server-side event validation, deduplication and basic abuse controls.
+- Provide campaign-level reporting that distinguishes delivery from clicks and does not present unverified events as revenue.
+- Do not invent sponsor contracts, prices, campaign commitments or partner integrations. External partner onboarding and billing require explicit owner approval.
+
+### 2. Affiliate commerce
+
+- Support carefully selected football-relevant affiliate recommendations and links.
+- Admin controls the catalogue, destination URL, campaign dates, disclosure text and placement.
+- Validate HTTPS destinations and record outbound clicks without exposing member identity to affiliate destinations.
+- Clearly disclose affiliate relationships before a member follows a link.
+- Keep recommendations useful and editorially independent; affiliate commission must not influence Court outcomes or football verdicts.
+- Do not add checkout, payment collection or product inventory management unless separately approved.
+
+### 3. Distinctive football-entertainment formats
+
+- Explore a recurring “Settle the Argument” / football-court entertainment format built around a strong football question, opposing cases and a community-wide verdict.
+- Create repeatable editorial formats such as football controversies, hot takes, match moments and “football cuts” that can be produced by the platform's editorial team.
+- Make participation and the community verdict the centre of the experience, not individual creator popularity.
+- Keep the existing Court model and moderation safeguards. Do not introduce unrestricted user-created Courts or creator monetisation.
+- Validate the format through editorially managed content before adding more complex mechanics.
+
+### 4. Community participation and supporter identity
+
+- Explore optional CT-powered participation effects or reactions that add visible value to a Court without buying influence over its verdict.
+- If a paid/CT-powered action is introduced, disclose its cost and effect before confirmation, enforce server-side eligibility and limits, and record it in the ledger.
+- Community votes and editorial outcomes must remain one-member/one-eligible-vote where applicable; spending CT must never increase a member's voting weight.
+- Introduce supporter identity markers or club-supporter insignias only where they are earned, verified or clearly cosmetic. They must not become NFTs, transferable assets or a generic XP system.
+- Any new CT sink must be modelled against earning rates, balances, abuse risks and accessibility before release.
+
+### 5. Competition and regional expansion
+
+- Expand supported competitions, countries, teams and seasons through the existing structured catalogue.
+- Keep fixture creation and lifecycle management reliable when no external data provider is configured.
+- Add languages or regional experiences only with a clear content and moderation plan.
+- Do not claim live coverage or automatic data ingestion until a trusted provider is selected, configured and validated.
+
+### 6. Token and reward ecosystem — future-gated
+
+- Preserve the CT / SETHIS distinction and existing ledger integrity.
+- Explore additional ways to earn or use SETHIS only where there is a clear product purpose, transparent eligibility and abuse prevention.
+- Any crypto, tokenization, airdrop, wallet-connect, exchange or cash-conversion feature is explicitly outside this implementation plan until separately researched and approved by the owner.
+- Never imply that SETHIS has guaranteed monetary value.
+
+## Recommended implementation order
+
+1. **Commercial inventory and Admin controls:** define campaign and placement records, disclosure rules, scheduling, pause/end controls and audit history. Start with the data model and Admin workflow; do not expose empty sponsor slots to members.
+2. **Measurement foundation:** add deduplicated, privacy-conscious impression/click events and Admin reporting. Keep delivery metrics distinct from confirmed commercial revenue.
+3. **Affiliate catalogue:** Admin-managed football-relevant links, disclosures, destination validation and click reporting.
+4. **Settle the Argument editorial format:** create reusable, platform-managed football-entertainment formats using the existing Court and moderation foundations.
+5. **Supporter identity and CT participation:** only after the mechanics, costs, fairness rules and ledger impact have been reviewed and approved.
+6. **Competition/region expansion:** extend the existing catalogue and editorial operations without implying unsupported live-data coverage.
+7. **Future token ecosystem research:** discovery only until the owner explicitly approves a separate scope.
+
+## Phase Three acceptance criteria
+
+- Admin can manage commercial campaigns and placements without editing source code.
+- Sponsored content is visibly disclosed and cannot alter editorial decisions, member votes, Court verdicts or rewards.
+- Campaign metrics are deduplicated, auditable and clearly labelled as measured activity rather than revenue.
+- Affiliate links are Admin-controlled, HTTPS-validated and clearly disclosed; member identity is not appended to outbound URLs.
+- Commercial features remain absent from member surfaces when no active campaign or approved content exists.
+- New football-entertainment formats reuse the existing Court, moderation, notification and audit foundations.
+- CT-powered interactions, if approved, cannot buy voting power or editorial influence and must use the existing server-side ledger.
+- Supporter identity markers do not introduce NFTs, XP or generic reputation.
+- Competition expansion reuses the existing fixture/competition catalogue and does not fabricate live match data.
+- Every feature is committed directly to main and deployed through Cloudflare Workers Builds. Production builds may be run during development.
+- No live app tests, external-provider tests, authenticated production UI tests or automated test suites are run until all planned phases are complete.
+
+## Explicitly out of scope unless separately approved
+
+- Betting, odds, sportsbook or gambling mechanics.
+- Guaranteed monetary value, exchange listings, token trading, deposits or withdrawals.
+- NFT collectibles or transferable tokenized badges.
+- Open creator publishing, creator payouts or unrestricted public Courts.
+- Selling votes, verdicts, rankings or editorial influence.
+- Ad-first experiences, forced ad viewing or paywalls that block the core Court experience.
+- Unverified live-score or fixture-data integrations.
+- Sponsor billing, payment processing or contractual pricing assumptions.
+
+## Phase Three decisions to confirm during implementation
+
+- Which sponsor placements are acceptable and which member screens must remain sponsor-free.
+- Initial affiliate categories and the disclosure wording.
+- The first “Settle the Argument” editorial format and publishing cadence.
+- Whether supporter insignias are earned, verified or purely cosmetic.
+- Whether any CT-powered participation effect is worth introducing after fairness and ledger analysis.
+- Which additional competitions, countries and languages should be prioritised.
+
+These decisions must be explicit before a related member-facing feature is enabled.
