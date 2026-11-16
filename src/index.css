@@ -1728,3 +1728,9 @@
 .debate-candidate>h3{font-size:14px;line-height:1.35;color:#f8fafc;margin:0}.debate-candidate-summary{font-size:10px;line-height:1.5;color:#b7c9d8;margin:0}.debate-source-link{font-size:8px;font-weight:900;color:#27d7f2;text-decoration:none}
 .debate-candidate form{display:grid;gap:10px}.debate-wide{grid-column:1/-1}.debate-candidate-actions{display:flex;gap:8px;flex-wrap:wrap}.debate-candidate-actions button{flex:1}
 @media(max-width:480px){.debate-source-status{align-items:flex-start;flex-direction:column}.debate-source-status button{width:100%}.debate-candidate{padding:10px}.debate-candidate-actions button{min-width:100%}}
+
+
+.referral-community-achievements{display:grid;gap:6px;margin-top:12px;padding:10px;border:1px solid #2b806d55;border-radius:8px;background:#0b2925}
+.referral-community-achievements>b{font-size:8px;letter-spacing:.08em;color:#8de8cf}
+.referral-community-achievements>span{font-size:8px;line-height:1.4;color:#c8e8dc}
+.referral-community-achievements>small{font-size:8px;color:#91a8b9}
