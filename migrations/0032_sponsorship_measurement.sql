@@ -17,3 +17,13 @@ CREATE INDEX IF NOT EXISTS idx_sponsor_events_day_campaign
 
 CREATE INDEX IF NOT EXISTS idx_sponsor_events_campaign_day
   ON sponsor_events(campaign_id, event_day);
+
+-- Short-lived, daily-rotated HMAC IP digests provide a coarse abuse ceiling.
+-- Raw IP addresses are never stored; old digests are expired by the event route.
+CREATE TABLE IF NOT EXISTS sponsor_event_rate_limits (
+  ip_hash TEXT NOT NULL,
+  event_day TEXT NOT NULL,
+  event_count INTEGER NOT NULL DEFAULT 0 CHECK (event_count BETWEEN 0 AND 180),
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (ip_hash, event_day)
+);
