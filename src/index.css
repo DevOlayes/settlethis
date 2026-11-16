@@ -1685,3 +1685,20 @@
 .referral-community-reward b{font-size:8px;letter-spacing:.1em;color:#f4d58e}
 .referral-community-reward span,.referral-community-error{font-size:9px;line-height:1.5;color:#b9cad6}
 @media(max-width:390px){.referral-next-card{padding:12px;gap:7px}.referral-next-copy h2{font-size:20px}.referral-next-reward strong{font-size:25px}.referral-milestone-list>article{grid-template-columns:26px minmax(0,1fr) auto;gap:7px;padding:8px 7px}.referral-milestone-number{width:25px;height:25px;font-size:9px}.referral-milestone-prize strong{font-size:15px}.referral-community-stats{gap:5px}.referral-community-stats article{padding:8px 6px}.referral-community-stats strong{font-size:19px}.referral-community-stats small{font-size:6px}}
+
+
+/* Admin referral programme controls */
+.referral-admin{display:grid;gap:12px}
+.referral-admin-list{display:grid;gap:10px}
+.referral-admin-row{display:grid;gap:10px;padding:13px;border:1px solid #ffffff1b;border-radius:9px;background:#111f31}
+.referral-admin-row.community{border-color:#27d7f233}
+.referral-admin-row-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.referral-admin-row-head>b{font-size:10px;letter-spacing:.1em;color:#27d7f2}
+.referral-admin-toggle{display:flex;align-items:center;gap:6px;color:#b8c9d6;font-size:8px;font-weight:900;letter-spacing:.06em}
+.referral-admin-toggle input{accent-color:#27d7f2}
+.referral-admin-row .admin-form-grid{margin:0}
+.referral-admin-row .admin-form-grid label{min-width:0}
+.referral-admin-wide{grid-column:1/-1}
+.referral-admin-row textarea{width:100%;box-sizing:border-box;border:1px solid #38566a;border-radius:6px;background:#0b1726;color:#f8fafc;padding:9px;font:inherit;font-size:11px}
+.referral-admin-row .admin-primary{justify-self:start;min-width:155px}
+@media(max-width:560px){.referral-admin-row .admin-form-grid{grid-template-columns:1fr 1fr}.referral-admin-wide{grid-column:1/-1}.referral-admin-row .admin-primary{width:100%}}
