@@ -18,6 +18,8 @@ Completed and deployed:
 - Match archive API and member UI: completed (`full_time`) fixtures with visible linked Match Courts, final scores, match context and participant counts; archive results are paginated. Full-time Match Courts are read-only and the Worker rejects new entries.
 - Competition discovery and archives reuse the Admin-managed fixture catalogue; no new competition or fixture source is fabricated.
 - New fixtures are required to start in the scheduled state.
+- Member Statistics & History: profile metrics distinguish decided results from unresolved positions; recent Court and Pool participation, visible arguments/replies, quiz attempts and wallet ledger records are shown from database history.
+- Controlled Host/Editor workflow: Admin can assign/reassign/suspend trusted Telegram accounts by ID or username. Hosts can submit fixture-linked matchday poll proposals, capped at ten pending proposals each; Admin reviews and approves/rejects them, and approval creates a scheduled poll rather than immediately publishing a live vote. Editors can review community Court submissions, open their evidence sources, and record one recommendation per submission; their recommendation does not change submission status or publish content. Admin retains final approval, publishing, fixture, deadline, moderation and reward control. Staff actions are included in Admin audit history.
 
 - Match poll database foundation: fixture-/Court-linked half-time and match-moment polls, normalized options, and a database-enforced one-vote-per-member constraint.
 - Secured Admin APIs to schedule polls, enforce valid voting windows, close/cancel polls and record poll-management audit events.
@@ -32,6 +34,7 @@ Integration and verification notes:
 - Server-side quiz scoring and reward settlement: Worker validates the full answer set and current quiz window, calculates score, applies the configured pass mark, records attempts/answers and credits SETHIS through an idempotent `quiz_reward` ledger entry with a member notification.
 - Quiz rewards are included in wallet integrity checks, member SETHIS-earned totals and leaderboard earnings.
 - Competition discovery and match archive UI/API deployed on 16 November 2026 (Worker version `c51a968c-5c87-4a42-a072-c02ca8f8e5f5`). The production build passed. No live app tests or test suites were run; final verification remains deferred until all phases are complete.
+- Member Statistics & History and Controlled Host/Editor workflow deployed on 16 November 2026. Latest combined deployment includes Worker version `f3e69f08-9484-437d-971c-3699a793604a`. No live app tests, external-service checks or test suites were run; final verification remains deferred until all phases are complete.
 - The archive is derived from fixtures marked `full_time` and linked to a visible Match Court. There is no separate archived fixture status; Admin remains responsible for recording full-time status and final scores.
 
 
@@ -92,9 +95,9 @@ Phase Two builds on the Phase One Court, identity, moderation, notification and 
 2. Match Court lifecycle and member-facing match discovery/detail.
 3. Half-time/match-moment polls, vote integrity and notifications. (Implemented and deployed.)
 4. Quiz data model, Admin question management, member quiz flow and server-side scoring. (Implemented and deployed.)
-5. Expanded competition discovery and historical archives. (Implemented; final build/deployment sign-off pending.)
-6. Member statistics/history improvements.
-7. Permissioned host/editor workflow, only after the moderation model is complete.
+5. Expanded competition discovery and historical archives. (Implemented and deployed.)
+6. Member statistics/history improvements. (Implemented and deployed.)
+7. Permissioned host/editor workflow under Admin moderation. (Implemented and deployed; final real-world verification deferred.)
 
 ## Phase Two acceptance criteria
 
@@ -105,6 +108,10 @@ Phase Two builds on the Phase One Court, identity, moderation, notification and 
 - Admin can create, schedule, publish and close quizzes and manage question/answer content.
 - Quiz scores are calculated server-side; attempts and reward credits are idempotent and auditable.
 - Member history and statistics are sourced from actual records and clearly distinguish pending from settled outcomes.
+- Admin can assign and suspend Hosts and Editors; every role is checked server-side against Telegram identity.
+- Hosts can only submit matchday proposals; no poll becomes scheduled until Admin approval.
+- Editors can only submit editorial recommendations; only Admin can approve/publish a Court, manage fixtures, set rewards or adjudicate outcomes.
+- Host proposals, Editor recommendations, role changes and Admin decisions are auditable.
 - All new member-facing features use the existing Telegram identity, authorization, moderation, notification and wallet foundations.
 - Production builds and deployments occur throughout development. No live app, external-service or end-to-end testing and no test suites are run until all planned phases are complete.
 
