@@ -150,3 +150,20 @@ Implementation scope completed and deployed:
 - No new CT spending, reward or token mechanics were introduced.
 
 Final production validation remains deferred until all planned Phase Three components are implemented. No live app journeys or automated test suites are run during feature development.
+
+
+## Component 5 implementation record — Supporter identity and CT participation
+
+Implementation scope:
+- Added a compact supporter identity treatment to the member profile. A member's selected clubhouse is displayed as a self-declared supporter affiliation, never as an officially verified club relationship.
+- Added earned, non-transferable identity markers based on visible platform activity: Court Regular (5 Court entries), Case Maker (3 visible arguments), and Verdict Winner (at least one settled Court win). These are descriptive milestones, not XP, a spendable balance, a ranking score or a reward multiplier.
+- Added the optional Stadium Roar Court interaction. An active participant may send one Stadium Roar per open Court for 100 CT.
+- The Stadium Roar is deliberately side-neutral and only contributes to a shared Court atmosphere count. It does not promote a member's argument, increase reactions, add votes, alter vote weight, change rankings, affect adjudication or earn SETHIS.
+- Cost and effect are disclosed before confirmation. Server-side checks require an authenticated Telegram member, active participation, a visible open Court within its published time window, at least 100 CT and no previous roar by that member on that Court.
+- The one-per-member-per-Court rule is enforced by a database uniqueness constraint. CT debit uses a unique wallet-ledger idempotency key and the existing wallet ledger; the wallet integrity audit recognises the new court_roar CT debit type.
+- CT and SETHIS remain separate. No SETHIS is spent or awarded by this feature.
+- No NFTs, transferable badges, creator influence, vote buying or additional token conversion mechanics are introduced.
+
+The new participation price is a fixed 100 CT for one decorative, side-neutral Court effect. The interaction is optional; core Court access, argument posting, reactions and voting rules remain unchanged.
+
+Final production validation remains deferred until all planned Phase Three components are implemented. No live member journeys or automated test suites are run during feature development.
