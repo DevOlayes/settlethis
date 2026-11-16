@@ -19,7 +19,11 @@ Completed and deployed:
 Not yet connected:
 - Automatic live score/status ingestion from a trusted football-data provider. No provider credentials or feed are configured, so the platform does not invent match events or change a match to live merely because its scheduled kick-off time has arrived.
 - Poll-opening notifications are now generated in the existing member notification inbox for active participants in the linked Match Court. Notification event keys are idempotent per poll/member, and the inbox refreshes periodically while the Mini App is open. Poll windows still transition when the Worker processes a poll or notification request; there is no background scheduler or Telegram push message. Half-time events are not automatically inferred from manually maintained fixture status.
-- Football quiz foundation in progress: D1 tables for daily/fixture quizzes, questions, answer options, single-attempt records and answer history have been added and applied. Admin quiz authoring/publishing and member quiz APIs/UI are being implemented; rewards are intended to be scored server-side and recorded as auditable SETHIS ledger credits.
+- Football quiz data model: daily and fixture-linked quizzes, multiple-choice and true/false questions, scheduled windows, configurable SETHIS reward/pass mark, one attempt per member and stored answer history.
+- Admin quiz management: create and review drafts, inspect answer keys, publish, close and archive quizzes; unpublished drafts can be deleted. Publishing validates question count, option count and exactly one correct answer per question.
+- Member quiz hub in Tasks: upcoming/live/closed/completed quiz states, answer selection, one-attempt submission, score and explanation review.
+- Server-side quiz scoring and reward settlement: Worker validates the full answer set and current quiz window, calculates score, applies the configured pass mark, records attempts/answers and credits SETHIS through an idempotent `quiz_reward` ledger entry with a member notification.
+- Quiz rewards are included in wallet integrity checks, member SETHIS-earned totals and leaderboard earnings.
 
 
 Expand Settle This! from its core Court experience into a richer football-entertainment destination that gives members more reasons to return around live football, play football knowledge games, and explore their history.
