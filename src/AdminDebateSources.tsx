@@ -1,5 +1,5 @@
 import { useCallback,useEffect,useState,type FormEvent } from "react";
-type Candidate={id:string;headline:string;summary:string;source_url:string;published_at:string|null;category:string;status:string;created_at:string;source_name:string;competition?:string|null;home_team?:string|null;away_team?:string|null;match_date?:string|null;data_provider?:string|null};
+type Candidate={id:string;headline:string;summary:string;source_url:string;published_at:string|null;category:string;status:string;created_at:string;source_name:string;review_note?:string|null;competition?:string|null;home_team?:string|null;away_team?:string|null;match_date?:string|null;data_provider?:string|null};
 type Feed={id:string;source_name:string;feed_url:string;source_type:string;enabled:number;last_fetched_at:string|null;last_error:string|null;items_seen:number;items_added:number};
 type Draft={title:string;category:string;incident_context:string;evidence_summary:string;side_a_label:string;side_a_argument:string;side_b_label:string;side_b_argument:string;resolution_method:string;resolution_source:string;closes_at:string;pool_prize_amount:string;pool_minimum_stake_ct:string;pool_duration_days:string;pool_side_a_label:string;pool_side_b_label:string};
 const plus24=()=>{const d=new Date(Date.now()+86400000);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)};
