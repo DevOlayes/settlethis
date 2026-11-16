@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 type ReferralRecord = { attributed_at: string; qualified_at: string | null; username: string | null; first_name: string | null };
 type ReferralReward = { milestone: number; amount: number; created_at: string };
 type ReferralMilestone = { milestone: number; threshold: number; reward: number; title: string; description: string; earned: boolean };
-type ReferralData = { code: string | null; invite_link: string | null; total: number; qualified: number; pending: number; target: number; reward: number; token: string; milestones: ReferralMilestone[]; next_milestone: ReferralMilestone | null; referrals: ReferralRecord[]; rewards: ReferralReward[] };
+type ReferralData = { telegram_verified?: boolean; code: string | null; invite_link: string | null; total: number; qualified: number; pending: number; target: number; reward: number; token: string; milestones: ReferralMilestone[]; next_milestone: ReferralMilestone | null; referrals: ReferralRecord[]; rewards: ReferralReward[] };
 type CommunityData = { invited: number; qualified: number; contributors: number; member_qualified: number; targets: Array<{number:number;threshold:number;title:string;reward_title:string;reward_description:string;achieved:boolean}>; achieved: number[]; next_target: number | null; progress_target: number; progress_percent: number; eligibility: boolean; eligibility_rule: string; reward_status: string; leaderboard?: Array<{rank:number;name:string;qualified:number;is_you:boolean}>; achievements?:Array<{number:number;threshold:number;title:string;achieved_at:string}> };
 
 const number = (value: number) => (Number(value) || 0).toLocaleString();
