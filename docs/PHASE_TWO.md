@@ -19,11 +19,12 @@ Completed and deployed:
 Not yet connected:
 - Automatic live score/status ingestion from a trusted football-data provider. No provider credentials or feed are configured, so the platform does not invent match events or change a match to live merely because its scheduled kick-off time has arrived.
 - Poll-opening notifications are now generated in the existing member notification inbox for active participants in the linked Match Court. Notification event keys are idempotent per poll/member, and the inbox refreshes periodically while the Mini App is open. Poll windows still transition when the Worker processes a poll or notification request; there is no background scheduler or Telegram push message. Half-time events are not automatically inferred from manually maintained fixture status.
-- Football quiz data model: daily and fixture-linked quizzes, multiple-choice and true/false questions, scheduled windows, configurable SETHIS reward/pass mark, one attempt per member and stored answer history.
+- Football quiz data model: daily and fixture-linked quizzes, multiple-choice and true/false questions, scheduled windows, configurable SETHIS reward/pass mark, one attempt per member and stored answer history. Migration 0029 is applied to production D1.
 - Admin quiz management: create and review drafts, inspect answer keys, publish, close and archive quizzes; unpublished drafts can be deleted. Publishing validates question count, option count and exactly one correct answer per question.
 - Member quiz hub in Tasks: upcoming/live/closed/completed quiz states, answer selection, one-attempt submission, score and explanation review.
 - Server-side quiz scoring and reward settlement: Worker validates the full answer set and current quiz window, calculates score, applies the configured pass mark, records attempts/answers and credits SETHIS through an idempotent `quiz_reward` ledger entry with a member notification.
 - Quiz rewards are included in wallet integrity checks, member SETHIS-earned totals and leaderboard earnings.
+- Production build and Worker deployment completed on 16 November 2026 (Worker version `73fe583f-6d0e-438a-8f59-d4f36f9d9b18`). No live app tests or test suites were run; final verification remains deferred until all phases are complete.
 
 
 Expand Settle This! from its core Court experience into a richer football-entertainment destination that gives members more reasons to return around live football, play football knowledge games, and explore their history.
@@ -81,8 +82,8 @@ Phase Two builds on the Phase One Court, identity, moderation, notification and 
 
 1. Matchday data model and Admin-managed fixture management.
 2. Match Court lifecycle and member-facing match discovery/detail.
-3. Half-time/match-moment polls, vote integrity and notifications.
-4. Quiz data model, Admin question management, member quiz flow and server-side scoring.
+3. Half-time/match-moment polls, vote integrity and notifications. (Implemented and deployed.)
+4. Quiz data model, Admin question management, member quiz flow and server-side scoring. (Implemented and deployed.)
 5. Expanded competition discovery and historical archives.
 6. Member statistics/history improvements.
 7. Permissioned host/editor workflow, only after the moderation model is complete.
