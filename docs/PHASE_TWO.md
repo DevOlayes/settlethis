@@ -10,7 +10,11 @@ Completed and deployed:
 - Admin-controlled match lifecycle transitions: scheduled → live → half-time → live → full-time, with postponement/cancellation handling.
 - Manual score and match-minute updates synchronised to linked Match Courts and recorded in the administrator audit log.
 - Member-facing scheduled kick-off information and pre-kick-off join restrictions.
-- Competition discovery APIs and member UI: competition/country/season catalogue, team and season filters, fixture status filters, search and linked Match Court entry points.
+- Competition discovery APIs and member UI: competition/country/season catalogue, country, team and season filters, fixture status filters, search and linked Match Court entry points.
+- Member competition catalogue cards show fixture totals, live/upcoming/completed counts, and allow one-tap filtering by competition, country and season.
+- Archive filtering is server-side and paginated by competition, country, team, season and text search.
+- Archived Match Court summaries include final score, recorded Court verdict, participant and argument counts, and poll/vote totals. Reopening a Match Court returns members to its full historical discussion and poll results; archived Courts reject new entries.
+- Admin fixture management includes competition, country, status and text filters. Archive records are automatically derived from full-time fixtures with visible linked Match Courts; administrators manage archive eligibility through the existing audited fixture lifecycle and moderation controls.
 - Match archive API and member UI: completed (`full_time`) fixtures with visible linked Match Courts, final scores, match context and participant counts; archive results are paginated. Full-time Match Courts are read-only and the Worker rejects new entries.
 - Competition discovery and archives reuse the Admin-managed fixture catalogue; no new competition or fixture source is fabricated.
 - New fixtures are required to start in the scheduled state.
@@ -88,7 +92,7 @@ Phase Two builds on the Phase One Court, identity, moderation, notification and 
 2. Match Court lifecycle and member-facing match discovery/detail.
 3. Half-time/match-moment polls, vote integrity and notifications. (Implemented and deployed.)
 4. Quiz data model, Admin question management, member quiz flow and server-side scoring. (Implemented and deployed.)
-5. Expanded competition discovery and historical archives.
+5. Expanded competition discovery and historical archives. (Implemented; final build/deployment sign-off pending.)
 6. Member statistics/history improvements.
 7. Permissioned host/editor workflow, only after the moderation model is complete.
 
@@ -102,7 +106,7 @@ Phase Two builds on the Phase One Court, identity, moderation, notification and 
 - Quiz scores are calculated server-side; attempts and reward credits are idempotent and auditable.
 - Member history and statistics are sourced from actual records and clearly distinguish pending from settled outcomes.
 - All new member-facing features use the existing Telegram identity, authorization, moderation, notification and wallet foundations.
-- No production deployment or external live-service testing occurs during development. Final real-world testing is reserved until all planned phases are complete.
+- Production builds and deployments occur throughout development. No live app, external-service or end-to-end testing and no test suites are run until all planned phases are complete.
 
 ## Explicitly not part of Phase Two
 
