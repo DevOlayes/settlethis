@@ -52,3 +52,13 @@ Review scope: Telegram Mini App, Cloudflare Worker/D1, browser Admin portal, wal
 ## Verification notes
 
 The GitHub pull request is draft-only. Automated tests and builds run through the pull-request workflow. No real Telegram accounts or phone-based end-to-end tests have been used during this implementation pass.
+
+
+## CSP review — development-stage decision (2026-11-16)
+
+- The deployed static response currently uses a **report-only** policy; it does not block resources. This is intentional while the Telegram Mini App and Monetag SDK have not undergone final real-device/browser integration testing.
+- Source review confirms the HTML loads Telegram Web Apps from `https://telegram.org/js/telegram-web-app.js`; the React Monetag integration is provided by `monetag-tg-sdk` and the previously observed SDK script host is `https://yoszi.com`.
+- The current report-only baseline allows same-origin scripts plus Telegram and yoszi.com, inline styles, Google Fonts, HTTPS images/connections/frames, and data/blob media. It denies objects, restricts base/form targets, sets frame ancestors to none, and upgrades insecure requests.
+- **Do not convert this to an enforcing CSP during feature development.** We have no verified browser CSP violation report from the real Telegram/Monetag runtime. Broad HTTPS connection/frame allowances are deliberately temporary and are not a claim of least-privilege CSP.
+- Final CSP work: capture report-only violations on supported Telegram clients and the Admin browser; identify each required script/connect/frame origin; remove unnecessary broad HTTPS allowances; confirm SDK behavior; then enforce and re-check the full user journey in the final testing phase.
+- Lockfile remains outstanding: `package-lock.json` is absent. Generate it with npm in a network-enabled Node 22 environment, commit it to `main`, and confirm a clean reproducible install/build. The current connected GitHub/Cloudflare actions do not provide a package-lock generation operation; do not fabricate dependency resolution data.
