@@ -10,21 +10,25 @@ Completed and deployed:
 - Admin-controlled match lifecycle transitions: scheduled → live → half-time → live → full-time, with postponement/cancellation handling.
 - Manual score and match-minute updates synchronised to linked Match Courts and recorded in the administrator audit log.
 - Member-facing scheduled kick-off information and pre-kick-off join restrictions.
+- Competition discovery APIs and member UI: competition/country/season catalogue, team and season filters, fixture status filters, search and linked Match Court entry points.
+- Match archive API and member UI: completed (`full_time`) fixtures with visible linked Match Courts, final scores, match context and participant counts; archive results are paginated.
+- Competition discovery and archives reuse the Admin-managed fixture catalogue; no new competition or fixture source is fabricated.
 - New fixtures are required to start in the scheduled state.
 
 - Match poll database foundation: fixture-/Court-linked half-time and match-moment polls, normalized options, and a database-enforced one-vote-per-member constraint.
 - Secured Admin APIs to schedule polls, enforce valid voting windows, close/cancel polls and record poll-management audit events.
 - Member Match Court poll interface with eligibility checks, vote submission and aggregate results. Scheduled polls transition to open/closed when their configured time windows are reached and a poll feed is requested.
 
-Not yet connected:
-- Automatic live score/status ingestion from a trusted football-data provider. No provider credentials or feed are configured, so the platform does not invent match events or change a match to live merely because its scheduled kick-off time has arrived.
+Integration and verification notes:
+- Automatic live score/status ingestion from a trusted football-data provider is not connected. No provider credentials or feed are configured, so the platform does not invent match events or change a match to live merely because its scheduled kick-off time has arrived.
 - Poll-opening notifications are now generated in the existing member notification inbox for active participants in the linked Match Court. Notification event keys are idempotent per poll/member, and the inbox refreshes periodically while the Mini App is open. Poll windows still transition when the Worker processes a poll or notification request; there is no background scheduler or Telegram push message. Half-time events are not automatically inferred from manually maintained fixture status.
 - Football quiz data model: daily and fixture-linked quizzes, multiple-choice and true/false questions, scheduled windows, configurable SETHIS reward/pass mark, one attempt per member and stored answer history. Migration 0029 is applied to production D1.
 - Admin quiz management: create and review drafts, inspect answer keys, publish, close and archive quizzes; unpublished drafts can be deleted. Publishing validates question count, option count and exactly one correct answer per question.
 - Member quiz hub in Tasks: upcoming/live/closed/completed quiz states, answer selection, one-attempt submission, score and explanation review.
 - Server-side quiz scoring and reward settlement: Worker validates the full answer set and current quiz window, calculates score, applies the configured pass mark, records attempts/answers and credits SETHIS through an idempotent `quiz_reward` ledger entry with a member notification.
 - Quiz rewards are included in wallet integrity checks, member SETHIS-earned totals and leaderboard earnings.
-- Production build and Worker deployment completed on 16 November 2026 (Worker version `73fe583f-6d0e-438a-8f59-d4f36f9d9b18`). No live app tests or test suites were run; final verification remains deferred until all phases are complete.
+- Competition discovery and match archive UI/API deployed on 16 November 2026 (Worker version `c51a968c-5c87-4a42-a072-c02ca8f8e5f5`). The production build passed. No live app tests or test suites were run; final verification remains deferred until all phases are complete.
+- The archive is derived from fixtures marked `full_time` and linked to a visible Match Court. There is no separate archived fixture status; Admin remains responsible for recording full-time status and final scores.
 
 
 Expand Settle This! from its core Court experience into a richer football-entertainment destination that gives members more reasons to return around live football, play football knowledge games, and explore their history.
