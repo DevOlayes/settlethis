@@ -10,7 +10,10 @@
       "database_id": "23504232-c4ea-464d-8ed0-a9aef4cad02f"
     }
   ],
-  "triggers": {\n    "crons": ["0 */6 * * *"]\n  },\n  "assets": {
+  "triggers": {
+    "crons": ["0 */6 * * *"]
+  },
+  "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
       "not_found_handling": "single-page-application"
