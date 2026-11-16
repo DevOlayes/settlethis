@@ -1734,3 +1734,7 @@
 .referral-community-achievements>b{font-size:8px;letter-spacing:.08em;color:#8de8cf}
 .referral-community-achievements>span{font-size:8px;line-height:1.4;color:#c8e8dc}
 .referral-community-achievements>small{font-size:8px;color:#91a8b9}
+
+
+.debate-provider-warning{font-size:8px;color:#f4d58e;line-height:1.4}
+.debate-match-context{padding:7px 9px;border:1px solid #27d7f233;border-radius:6px;background:#10283a;font-size:9px;font-weight:800;color:#27d7f2}
