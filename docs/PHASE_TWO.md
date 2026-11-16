@@ -2,7 +2,7 @@
 
 ## Goal
 
-## Current implementation status — 16 November 2026\n\nMember Statistics & History is now in implementation: profile performance metrics, recent Court and Pool outcomes, quiz attempts and wallet ledger history are being surfaced from recorded database activity.
+## Current implementation status — 16 November 2026\n\n- Member profile now reports resolved outcomes, win rate, losses, quiz participation and average score, CT committed and SETHIS earned, plus recent Court/Pool, quiz and wallet history. Metrics derive from stored participation, adjudication, quiz and ledger records. Deployed in Worker version `56ebeee8-49c4-40bd-83a9-d88ca8004558`.\n- Controlled staff workflow foundation: Admin-assigned Host/Editor roles, Telegram-authenticated Staff Desk APIs, host poll proposals requiring Admin approval, and editor recommendations that do not change publication status. Final UI integration and deployment are in progress.\n\nMember Statistics & History is now in implementation: profile performance metrics, recent Court and Pool outcomes, quiz attempts and wallet ledger history are being surfaced from recorded database activity.
 
 Completed and deployed:
 - Admin-managed fixture catalogue and fixture-to-Match-Court linking.
