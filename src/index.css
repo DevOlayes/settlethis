@@ -1715,3 +1715,16 @@
 .referral-community-leader>strong{font:800 12px 'Barlow Condensed',sans-serif;color:#27d7f2;white-space:nowrap}
 .referral-community-leader>strong small{font:800 6px sans-serif;color:#91a8b9}
 .referral-community-empty{font-size:9px;line-height:1.5;color:#9eb3c4;margin:8px 0 2px}
+
+
+.debate-source-admin{display:grid;gap:12px}
+.debate-source-status{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid #27d7f233;border-radius:9px;background:#10283a}
+.debate-source-status>div{display:grid;gap:4px}.debate-source-status b{font-size:10px;color:#27d7f2;letter-spacing:.08em}.debate-source-status span{font-size:9px;color:#b8c9d6}
+.debate-feed-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:9px 11px;border:1px solid #ffffff14;border-radius:7px;background:#0d1a29}
+.debate-feed-row>b{font-size:9px;color:#f8fafc}.debate-feed-row>a{font-size:8px;font-weight:900;color:#27d7f2;text-decoration:none}.debate-feed-row>small{grid-column:1/-1;font-size:8px;color:#91a8b9}
+.debate-source-empty{padding:20px;text-align:center;border:1px dashed #ffffff25;border-radius:9px}.debate-source-empty>b{font-size:12px;color:#f8fafc}.debate-source-empty>p{font-size:9px;color:#9eb3c4;line-height:1.5}
+.debate-candidate-list{display:grid;gap:12px}.debate-candidate{padding:13px;border:1px solid #ffffff18;border-radius:10px;background:#111f30;display:grid;gap:10px}
+.debate-candidate-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.debate-candidate-head>span{font-size:8px;color:#90a8ba}.debate-candidate-head>b{font-size:7px;color:#27d7f2;letter-spacing:.06em}
+.debate-candidate>h3{font-size:14px;line-height:1.35;color:#f8fafc;margin:0}.debate-candidate-summary{font-size:10px;line-height:1.5;color:#b7c9d8;margin:0}.debate-source-link{font-size:8px;font-weight:900;color:#27d7f2;text-decoration:none}
+.debate-candidate form{display:grid;gap:10px}.debate-wide{grid-column:1/-1}.debate-candidate-actions{display:flex;gap:8px;flex-wrap:wrap}.debate-candidate-actions button{flex:1}
+@media(max-width:480px){.debate-source-status{align-items:flex-start;flex-direction:column}.debate-source-status button{width:100%}.debate-candidate{padding:10px}.debate-candidate-actions button{min-width:100%}}
