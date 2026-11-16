@@ -2,7 +2,7 @@
 
 ## Goal
 
-## Current implementation status — 16 November 2026
+## Current implementation status — 16 November 2026\n\nMember Statistics & History is now in implementation: profile performance metrics, recent Court and Pool outcomes, quiz attempts and wallet ledger history are being surfaced from recorded database activity.
 
 Completed and deployed:
 - Admin-managed fixture catalogue and fixture-to-Match-Court linking.
