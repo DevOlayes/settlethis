@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CustomerCare from "./CustomerCare";
 import "./WalletHelpCentre.css";
 
 type ArticleKey = "how" | "terms" | "privacy" | "community";
@@ -13,10 +14,11 @@ const faqs = [
   {q:"How do I report abuse or a misleading post?",a:"Use the report or moderation option available on the relevant content where provided. Include the specific reason and any useful context. Do not publish another member's private information."}
 ];
 
-export default function WalletHelpCentre({onOpenSupport}:{onOpenSupport:()=>void}) {
+export default function WalletHelpCentre() {
   const [expanded,setExpanded]=useState<number|null>(null);
   const [article,setArticle]=useState<ArticleKey|null>(null);
   const [query,setQuery]=useState("");
+  const [supportOpen,setSupportOpen]=useState(false);
   const filtered=faqs.filter(item=>(item.q+" "+item.a).toLowerCase().includes(query.trim().toLowerCase()));
   const titles:Record<ArticleKey,string>={how:"How Settle This! works",terms:"Platform rules & terms",privacy:"Privacy & account information",community:"Community standards"};
   return <>
@@ -24,7 +26,7 @@ export default function WalletHelpCentre({onOpenSupport}:{onOpenSupport:()=>void
       <div className="wallet-help-heading"><div><span className="eyebrow">NEED A HAND?</span><h3>Help & information</h3><p>Find answers and understand how the courtroom works.</p></div><span className="wallet-help-mark">?</span></div>
       <div className="wallet-help-group-label">EXPLORE SETTLE THIS!</div>
       <div className="wallet-help-menu">
-        <button className="wallet-help-menu-row" onClick={onOpenSupport}><span className="wallet-help-icon">◉</span><span className="wallet-help-copy"><b>Contact Support</b><small>Get help with your account or a Court</small></span><span className="wallet-help-chevron">›</span></button>
+        <button className="wallet-help-menu-row" onClick={()=>setSupportOpen(true)}><span className="wallet-help-icon">◉</span><span className="wallet-help-copy"><b>Contact Support</b><small>Get help with your account or a Court</small></span><span className="wallet-help-chevron">›</span></button>
         <button className="wallet-help-menu-row" onClick={()=>setArticle("how")}><span className="wallet-help-icon">▤</span><span className="wallet-help-copy"><b>How It Works</b><small>Your guide to Courts, CT and SETHIS</small></span><span className="wallet-help-chevron">›</span></button>
         <button className="wallet-help-menu-row" onClick={()=>setArticle("terms")}><span className="wallet-help-icon">▧</span><span className="wallet-help-copy"><b>Platform Rules & Terms</b><small>Participation, rewards and fair play</small></span><span className="wallet-help-chevron">›</span></button>
         <button className="wallet-help-menu-row" onClick={()=>setArticle("privacy")}><span className="wallet-help-icon">◇</span><span className="wallet-help-copy"><b>Privacy & Account</b><small>What your account information is used for</small></span><span className="wallet-help-chevron">›</span></button>
@@ -44,5 +46,6 @@ export default function WalletHelpCentre({onOpenSupport}:{onOpenSupport:()=>void
       {article==="privacy"&&<><h3>Account identity</h3><p>Your Telegram identity is used to link your Mini App account and protect account-specific activity. Profile details such as your chosen clubhouse, country and bio are information you choose to provide.</p><h3>Platform records</h3><p>Settle This! maintains the activity, participation, moderation and wallet records needed to operate Courts, display history, resolve outcomes and prevent abuse.</p><h3>Keep your account safe</h3><p>Never share Telegram login codes, passwords or private credentials with anyone claiming to be support. Use the official Mini App and contact support through the in-app entry point.</p><h3>Your choices</h3><p>Only provide profile information you are comfortable sharing. The full privacy notice, retention details and applicable data-rights contact must be published before public launch.</p></>}
       {article==="community"&&<><h3>Debate the football, not the person</h3><p>Challenge ideas and evidence without harassment, threats, hate or personal attacks.</p><h3>Bring credible evidence</h3><p>Do not knowingly share fabricated scores, edited evidence presented as authentic, impersonation or misleading claims intended to manipulate a Court.</p><h3>Protect privacy</h3><p>Do not publish private contact details, account information or personal data belonging to another member.</p><h3>Respect moderation</h3><p>Use reporting tools responsibly. Do not spam, coordinate abuse, evade moderation or attempt to manipulate reactions and participation.</p><h3>Keep outcomes fair</h3><p>Never offer or accept payment to change a member's position, a crowd result or an official editorial verdict.</p></>}
     </div><button className="wallet-help-done" onClick={()=>setArticle(null)}>GOT IT</button></section></div>}
+    {supportOpen&&<CustomerCare onClose={()=>setSupportOpen(false)}/>}
   </>;
 }
