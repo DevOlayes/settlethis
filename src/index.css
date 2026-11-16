@@ -1467,3 +1467,60 @@
 /* Phase Three — curated competition and regional coverage */
 .discovery-region-filter{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:14px 0 12px;padding:10px;border:1px solid #ffffff16;border-radius:10px;background:#101d2d}.discovery-region-filter>span{width:100%;font-size:8px;font-weight:900;letter-spacing:.14em;color:#9eb3c4}.discovery-region-filter button{display:flex;align-items:center;gap:6px;border:1px solid #ffffff1c;border-radius:6px;background:#17263a;color:#c5d3df;padding:8px 10px;font-size:8px;font-weight:900;letter-spacing:.06em}.discovery-region-filter button.active{background:#123246;border-color:#27d7f2;color:#27d7f2}.discovery-region-filter button small{font-size:7px;color:inherit;opacity:.8}.coverage-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}.coverage-summary article{display:grid;gap:6px;padding:12px;border:1px solid #ffffff18;border-radius:8px;background:#142337}.coverage-summary small{font-size:8px;letter-spacing:.08em;color:#9eb3c4;font-weight:800}.coverage-summary strong{font:800 25px 'Barlow Condensed';color:#27d7f2}.coverage-list{display:grid;gap:8px;margin-top:10px}.coverage-list>article{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px;border:1px solid #ffffff17;border-radius:9px;background:#132237}.coverage-list-main{display:grid;gap:4px;min-width:0}.coverage-list-main>b{font-size:13px;color:#f8fafc}.coverage-list-main>span{font-size:10px;color:#d1dce5}.coverage-list-main>small{font-size:8px;color:#27d7f2;letter-spacing:.06em}.coverage-list-main>p{font-size:9px;line-height:1.45;color:#aab8c8;margin:2px 0 0}.coverage-list-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.coverage-list-controls select,.coverage-list-controls input{max-width:150px;min-width:95px;height:34px;border:1px solid #38566a;border-radius:6px;background:#0d1928;color:#f8fafc;padding:0 8px;font-size:9px}.coverage-list-controls input{width:72px;min-width:72px}.coverage-admin .admin-rule{margin:8px 0 13px}
 @media(max-width:560px){.coverage-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.coverage-list>article{align-items:flex-start;flex-direction:column}.coverage-list-controls{width:100%;justify-content:flex-start}.coverage-list-controls select{flex:1;max-width:none}.discovery-region-filter{gap:6px}.discovery-region-filter button{padding:8px 9px}}
+
+
+/* Referral hub and clearer home wallet figures */
+.referral-hub{margin:16px 0 18px;padding:17px;border:1px solid #27d7f24a;border-radius:15px;background:radial-gradient(circle at 100% 0%,#17475a88,transparent 42%),linear-gradient(145deg,#12283b,#0d1a2a 72%);box-shadow:0 12px 28px #0003}
+.referral-hub-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.referral-hub-top h2{margin:4px 0 5px;font:700 25px 'Barlow Condensed',sans-serif;color:#f8fafc}
+.referral-hub-top p{margin:0;max-width:440px;color:#c5d3df;font-size:12px;line-height:1.5}
+.referral-emblem{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;background:#123b4b;border:1px solid #27d7f266;color:#27d7f2;font-size:22px;font-weight:800}
+.referral-reward-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:15px 0 13px;padding:12px;border-radius:11px;background:#081725;border:1px solid #ffffff16}
+.referral-reward-banner>div:first-child{display:grid;gap:3px}
+.referral-reward-banner small,.referral-progress-head span,.referral-stats span{font-size:9px;font-weight:800;letter-spacing:.1em;color:#9fb6c6}
+.referral-reward-banner strong{font-size:16px;color:#f8fafc}
+.referral-reward-banner span{font-size:10px;color:#b8c9d6}
+.referral-reward-value{text-align:right;display:grid;gap:0}
+.referral-reward-value b{font:800 29px/.95 'Barlow Condensed',sans-serif;color:#27d7f2}
+.referral-reward-value small{color:#27d7f2}
+.referral-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.referral-progress-head b{font-size:10px;color:#f4d58e;letter-spacing:.06em}
+.referral-hub-track{height:9px;margin:8px 0 13px;background:#26384a;border-radius:99px;overflow:hidden}
+.referral-hub-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#27d7f2,#65e6d2);transition:width .25s ease}
+.referral-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.referral-stats>div{min-width:0;display:grid;gap:4px;padding:10px 8px;border-radius:9px;background:#ffffff08;border:1px solid #ffffff12}
+.referral-stats strong{font:800 23px/.95 'Barlow Condensed',sans-serif;color:#fff}
+.referral-stats span{font-size:8px;line-height:1.3}
+.referral-how{margin-top:13px;padding-top:11px;border-top:1px solid #ffffff18}
+.referral-how>b{font-size:9px;letter-spacing:.12em;color:#27d7f2}
+.referral-how p{margin:5px 0 0;font-size:11px;line-height:1.55;color:#c5d3df}
+.referral-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:14px}
+.referral-actions button{min-height:42px;border-radius:9px;font-size:10px;font-weight:900;letter-spacing:.06em}
+.referral-share-button{padding:0 14px;background:#27d7f2;color:#06131b;border:0}
+.referral-copy-button{padding:0 13px;background:#26364d;color:#f8fafc;border:1px solid #ffffff20}
+.referral-footnote{display:block;margin-top:10px;color:#91a8b9;font-size:9px;line-height:1.45}
+.hero-condensed .hero-balance{padding:13px 15px 14px;gap:5px 12px}
+.hero-condensed .hero-balance-amount>strong{font-size:38px;line-height:1.02}
+.hero-condensed .hero-balance-stats{padding-top:11px;gap:12px}
+.hero-condensed .hero-balance-stats span{gap:5px;min-width:0}
+.hero-condensed .hero-balance-stats small{font-size:8px;line-height:1.25;letter-spacing:.08em;color:#b8c9d6}
+.hero-condensed .hero-balance-stats b{font-size:12px;line-height:1.2;color:#fff;font-weight:800;overflow-wrap:anywhere}
+@media(max-width:600px){
+ .hero-condensed .hero-balance{padding:12px 13px 13px}
+ .hero-condensed .hero-balance-amount>strong{font-size:35px}
+ .hero-condensed .hero-balance-stats{padding-top:10px;gap:9px}
+ .hero-condensed .hero-balance-stats small{font-size:7px}
+ .hero-condensed .hero-balance-stats b{font-size:11px}
+ .referral-hub{padding:14px}
+}
+@media(max-width:370px){
+ .hero-condensed .hero-balance{padding:10px 10px 11px}
+ .hero-condensed .hero-balance-amount>strong{font-size:32px}
+ .hero-condensed .hero-balance-stats{gap:6px}
+ .hero-condensed .hero-balance-stats small{font-size:6px}
+ .hero-condensed .hero-balance-stats b{font-size:10px}
+ .referral-stats{gap:5px}
+ .referral-stats>div{padding:8px 6px}
+ .referral-stats span{font-size:7px}
+ .referral-actions{grid-template-columns:1fr}
+}
