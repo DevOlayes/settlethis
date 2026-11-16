@@ -262,6 +262,96 @@ if(path==="/api/admin/courts"&&request.method==="GET"){const admin=await editori
    return json({accepted:true,placement,reward:{token,amount}});
   }catch(error){console.error("Monetag postback failed",error);return json({error:"Postback could not be processed."},503);}
  }
+
+ // Customer Care: member-owned tickets and administrator-managed replies.
+ const memberTicketMatch=path.match(/^\\/api\\/support\\/tickets\\/([A-Za-z0-9-]+)$/);
+ const memberMessageMatch=path.match(/^\\/api\\/support\\/tickets\\/([A-Za-z0-9-]+)\\/messages$/);
+ if(path==="/api/support/tickets"||memberTicketMatch||memberMessageMatch){
+  const user=await authenticatedUser(request,env);if(!user)return json({error:"Open Settle This! in Telegram to access your support requests."},401);
+  try{
+   if(path==="/api/support/tickets"&&request.method==="GET"){
+    const rows=await env.DB.prepare("SELECT t.id,t.category,t.subject,t.status,t.created_at,t.updated_at,t.last_message_at,(SELECT body FROM support_messages m WHERE m.ticket_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS latest_message,(SELECT sender_type FROM support_messages m WHERE m.ticket_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS latest_sender FROM support_tickets t WHERE t.user_id=? ORDER BY t.last_message_at DESC LIMIT 30").bind(user).all();
+    return json({tickets:rows.results});
+   }
+   if(memberTicketMatch&&request.method==="GET"){
+    const ticket=await env.DB.prepare("SELECT id,category,subject,status,created_at,updated_at,last_message_at FROM support_tickets WHERE id=? AND user_id=?").bind(memberTicketMatch[1],user).first();
+    if(!ticket)return json({error:"Support request not found."},404);
+    const messages=await env.DB.prepare("SELECT id,sender_type,body,created_at FROM support_messages WHERE ticket_id=? ORDER BY created_at ASC LIMIT 100").bind(memberTicketMatch[1]).all();
+    return json({ticket,messages:messages.results});
+   }
+   if(path==="/api/support/tickets"&&request.method==="POST"){
+    const body=await request.json() as Record<string,unknown>,category=String(body.category||""),subject=textField(body.subject,120),message=textField(body.message,2000);
+    if(!["account","wallet","court","rewards","technical","safety","other"].includes(category)||subject.length<4||message.length<10)return json({error:"Choose a support category and provide a subject plus at least 10 characters describing the issue."},400);
+    const recent=await env.DB.prepare("SELECT COUNT(*) AS total FROM support_tickets WHERE user_id=? AND created_at>=datetime('now','-24 hours')").bind(user).first<{total:number}>();
+    const open=await env.DB.prepare("SELECT COUNT(*) AS total FROM support_tickets WHERE user_id=? AND status<>'resolved'").bind(user).first<{total:number}>();
+    if(Number(recent?.total)>=8||Number(open?.total)>=8)return json({error:"You have reached the current support request limit. Please continue an existing request or try again later."},429);
+    const ticketId=id(),messageId=id();
+    await env.DB.batch([
+     env.DB.prepare("INSERT INTO support_tickets(id,user_id,category,subject) VALUES(?,?,?,?)").bind(ticketId,user,category,subject),
+     env.DB.prepare("INSERT INTO support_messages(id,ticket_id,sender_type,sender_id,body) VALUES(?,?,'member',?,?)").bind(messageId,ticketId,user,message)
+    ]);
+    return json({created:true,ticket_id:ticketId,status:"open"},201);
+   }
+   if(memberMessageMatch&&request.method==="POST"){
+    const body=await request.json() as Record<string,unknown>,message=textField(body.message,2000);
+    if(message.length<2)return json({error:"Write a little more so our team can understand your reply."},400);
+    const ticket=await env.DB.prepare("SELECT id,status FROM support_tickets WHERE id=? AND user_id=?").bind(memberMessageMatch[1],user).first<{id:string;status:string}>();
+    if(!ticket)return json({error:"Support request not found."},404);
+    if(ticket.status==="resolved")return json({error:"This request is resolved. Open a new request if you still need help."},409);
+    await env.DB.batch([
+     env.DB.prepare("INSERT INTO support_messages(id,ticket_id,sender_type,sender_id,body) VALUES(?,?,'member',?,?)").bind(id(),ticket.id,user,message),
+     env.DB.prepare("UPDATE support_tickets SET status=CASE WHEN status='waiting_member' THEN 'open' ELSE status END,updated_at=CURRENT_TIMESTAMP,last_message_at=CURRENT_TIMESTAMP WHERE id=? AND user_id=?").bind(ticket.id,user)
+    ]);
+    return json({sent:true});
+   }
+  }catch(error){console.error("Customer support request failed",error);return json({error:"Customer Care is temporarily unavailable. Please try again."},503);}
+ }
+ const adminTicketMatch=path.match(/^\\/api\\/admin\\/support\\/tickets\\/([A-Za-z0-9-]+)$/);
+ const adminMessageMatch=path.match(/^\\/api\\/admin\\/support\\/tickets\\/([A-Za-z0-9-]+)\\/messages$/);
+ if(path==="/api/admin/support/tickets"||adminTicketMatch||adminMessageMatch){
+  if(request.method!=="GET"&&!sameOrigin(request))return json({error:"Request origin could not be verified."},403);
+  const admin=await editorialAdmin(request,env);if(!admin)return json({error:"A valid administrator session is required."},401);
+  try{
+   if(path==="/api/admin/support/tickets"&&request.method==="GET"){
+    const status=url.searchParams.get("status")||"all";
+    if(!["all","open","in_progress","waiting_member","resolved"].includes(status))return json({error:"Invalid support status filter."},400);
+    const rows=await env.DB.prepare("SELECT t.id,t.user_id,t.category,t.subject,t.status,t.created_at,t.updated_at,t.last_message_at,u.username,u.first_name,u.last_name,(SELECT body FROM support_messages m WHERE m.ticket_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS latest_message,(SELECT sender_type FROM support_messages m WHERE m.ticket_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS latest_sender,(SELECT COUNT(*) FROM support_messages m WHERE m.ticket_id=t.id) AS message_count FROM support_tickets t LEFT JOIN telegram_users u ON u.telegram_user_id=t.user_id WHERE (?='all' OR t.status=?) ORDER BY CASE t.status WHEN 'open' THEN 0 WHEN 'in_progress' THEN 1 WHEN 'waiting_member' THEN 2 ELSE 3 END,t.last_message_at DESC LIMIT 150").bind(status,status).all();
+    return json({tickets:rows.results});
+   }
+   const ticketId=adminTicketMatch?.[1]||adminMessageMatch?.[1];
+   if(ticketId&&request.method==="GET"){
+    const ticket=await env.DB.prepare("SELECT t.id,t.user_id,t.category,t.subject,t.status,t.created_at,t.updated_at,t.last_message_at,u.username,u.first_name,u.last_name FROM support_tickets t LEFT JOIN telegram_users u ON u.telegram_user_id=t.user_id WHERE t.id=?").bind(ticketId).first();
+    if(!ticket)return json({error:"Support request not found."},404);
+    const messages=await env.DB.prepare("SELECT id,sender_type,sender_id,body,created_at FROM support_messages WHERE ticket_id=? ORDER BY created_at ASC LIMIT 200").bind(ticketId).all();
+    return json({ticket,messages:messages.results});
+   }
+   if(adminMessageMatch&&request.method==="POST"){
+    const body=await request.json() as Record<string,unknown>,message=textField(body.message,2000);
+    if(message.length<2)return json({error:"Write a reply before sending."},400);
+    const ticket=await env.DB.prepare("SELECT id,status,user_id FROM support_tickets WHERE id=?").bind(adminMessageMatch[1]).first<{id:string;status:string;user_id:string}>();
+    if(!ticket)return json({error:"Support request not found."},404);
+    if(ticket.status==="resolved")return json({error:"Reopen this request before replying."},409);
+    await env.DB.batch([
+     env.DB.prepare("INSERT INTO support_messages(id,ticket_id,sender_type,sender_id,body) VALUES(?,?,'admin',?,?)").bind(id(),ticket.id,String(admin),message),
+     env.DB.prepare("UPDATE support_tickets SET status='waiting_member',updated_at=CURRENT_TIMESTAMP,last_message_at=CURRENT_TIMESTAMP WHERE id=?").bind(ticket.id),
+     env.DB.prepare("INSERT INTO admin_audit_log(id,admin_id,action,target_type,target_id,details) VALUES(?,?,?,?,?,?)").bind(id(),Number(admin),"support_ticket_replied","support_ticket",ticket.id,JSON.stringify({member_id:ticket.user_id}))
+    ]);
+    return json({sent:true,status:"waiting_member"});
+   }
+   if(adminTicketMatch&&request.method==="PATCH"){
+    const body=await request.json() as Record<string,unknown>,status=String(body.status||"");
+    if(!["open","in_progress","waiting_member","resolved"].includes(status))return json({error:"Choose a valid support status."},400);
+    const ticket=await env.DB.prepare("SELECT id,status FROM support_tickets WHERE id=?").bind(adminTicketMatch[1]).first<{id:string;status:string}>();
+    if(!ticket)return json({error:"Support request not found."},404);
+    await env.DB.batch([
+     env.DB.prepare("UPDATE support_tickets SET status=?,resolved_at=CASE WHEN ?='resolved' THEN CURRENT_TIMESTAMP WHEN ?<>'resolved' THEN NULL ELSE resolved_at END,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(status,status,status,ticket.id),
+     env.DB.prepare("INSERT INTO admin_audit_log(id,admin_id,action,target_type,target_id,details) VALUES(?,?,?,?,?,?)").bind(id(),Number(admin),"support_ticket_status_changed","support_ticket",ticket.id,JSON.stringify({from:ticket.status,to:status}))
+    ]);
+    return json({updated:true,status});
+   }
+  }catch(error){console.error("Admin Customer Care failed",error);return json({error:"Customer Care records could not be processed."},503);}
+ }
+
  if(path.startsWith("/api/")&&request.method!=="GET"){
   const adminMutation=path.startsWith("/api/admin/")||path.startsWith("/api/editorial/suggestions/");if(adminMutation&&!sameOrigin(request))return json({error:"Request origin could not be verified."},403);const telegramId=adminMutation?await editorialAdmin(request,env):await authenticatedUser(request,env);if(!telegramId)return json({error:adminMutation?"A valid browser administrator session is required.":"A valid Telegram Mini App session is required."},401);if(!adminMutation){const restriction=await env.DB.prepare("SELECT status,reason,expires_at FROM user_restrictions WHERE user_id=?").bind(telegramId).first<{status:string;reason:string;expires_at:string|null}>();if(restriction&&(!restriction.expires_at||Date.parse(restriction.expires_at)>Date.now())){if(restriction.status==="suspended"&&path!=="/api/reports")return json({error:"Your account is suspended. "+restriction.reason},403);if(restriction.status==="restricted"&&(path.includes("/arguments")||path.includes("/replies")||path.includes("/polls/")||path==="/api/reactions"))return json({error:"Your account is restricted from posting. "+restriction.reason},403);}}
      if(path==="/api/admin/sponsorship"&&request.method==="POST"){try{const body=await request.json() as Record<string,unknown>;const sponsor=textField(body.sponsor_name,120),name=textField(body.campaign_name,140),headline=textField(body.headline,160),description=textField(body.body,500),destination=textField(body.destination_url,1000),image=textField(body.creative_image_url,1000),notes=textField(body.internal_notes,2000);const starts=typeof body.starts_at==="string"?Date.parse(body.starts_at):NaN,ends=typeof body.ends_at==="string"?Date.parse(body.ends_at):NaN;const placements=Array.isArray(body.placements)?Array.from(new Set(body.placements.filter((v):v is string=>typeof v==="string"))):[];const validHttps=(value:string)=>{try{const u=new URL(value);return u.protocol==="https:"&&!u.username&&!u.password;}catch{return false;}};if(sponsor.length<2||name.length<3||headline.length<3||description.length<5||!validHttps(destination)||(image&&!validHttps(image))||!Number.isFinite(starts)||!Number.isFinite(ends)||ends<=starts||placements.length<1||placements.length>4)return json({error:"Complete the sponsor, creative, HTTPS destination, valid schedule and at least one placement."},400);const known=await env.DB.prepare("SELECT placement_key FROM sponsor_placement_catalog WHERE enabled=1").all();const allowed=new Set(known.results.map((row)=>String(row.placement_key)));if(placements.some((key)=>!allowed.has(key)))return json({error:"One or more selected placements are unavailable."},400);const campaignId=id(),adminId=Number(telegramId);const statements=[env.DB.prepare("INSERT INTO sponsor_campaigns(id,sponsor_name,campaign_name,headline,body,creative_image_url,destination_url,starts_at,ends_at,status,internal_notes,created_by,updated_by) VALUES(?,?,?,?,?,?,?,?,?,'draft',?,?,?)").bind(campaignId,sponsor,name,headline,description,image||null,destination,new Date(starts).toISOString(),new Date(ends).toISOString(),notes,adminId,adminId),...placements.map((key)=>env.DB.prepare("INSERT INTO sponsor_campaign_placements(campaign_id,placement_key) VALUES(?,?)").bind(campaignId,key)),env.DB.prepare("INSERT INTO admin_audit_log(id,admin_id,action,target_type,target_id,details) VALUES(?,?,?,?,?,?)").bind(id(),adminId,"sponsorship_campaign_created","sponsor_campaign",campaignId,JSON.stringify({sponsor_name:sponsor,campaign_name:name,placements,starts_at:new Date(starts).toISOString(),ends_at:new Date(ends).toISOString()}))];await env.DB.batch(statements);return json({created:true,campaign_id:campaignId,status:"draft"});}catch{return json({error:"Sponsorship campaign could not be created."},400);}}
