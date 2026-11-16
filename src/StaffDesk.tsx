@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 
 type Role="host"|"editor";
 type Fixture={id:string;competition:string;home_team:string;away_team:string;kickoff_at:string;status:string;match_court_id:string|null};
-type Proposal={id:string;title:string;category:string;court_kind:string;status:string;competition?:string|null;home_team?:string|null;away_team?:string|null;incident_context:string;evidence_summary:string;resolution_method:string;resolution_source:string;source_count:number;latest_score:number|null};
+type Proposal={id:string;title:string;category:string;court_kind:string;status:string;submitter_name?:string;submitter_username?:string|null;competition?:string|null;home_team?:string|null;away_team?:string|null;incident_context:string;evidence_summary:string;resolution_method:string;resolution_source:string;source_count:number;latest_score:number|null};
 type Scores={trending_score:number;disagreement_score:number;evidence_score:number;clarity_score:number;timeliness_score:number};
 const defaultScores:Scores={trending_score:15,disagreement_score:12,evidence_score:15,clarity_score:15,timeliness_score:10};
 async function request(path:string,init?:RequestInit){const initData=window.Telegram?.WebApp?.initData||"";const response=await fetch(path,{...init,cache:"no-store",credentials:"same-origin",headers:{"content-type":"application/json","x-telegram-init-data":initData,...(init?.headers||{})}});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"The request could not be completed.");return data;}
