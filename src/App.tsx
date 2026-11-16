@@ -129,7 +129,8 @@ const refreshTasks=()=>{const initData=window.Telegram?.WebApp?.initData;if(!tel
       if(notificationOpen){setNotificationOpen(false);return;}
       if(profileOpen){setProfileOpen(false);return;}
       if(courtOpen){setCourtOpen(false);return;}
-      if(poolOpen){setPoolOpen(false);return;}\n      if(quizDetail){setQuizDetail(null);return;}
+      if(poolOpen){setPoolOpen(false);return;}
+      if(quizDetail){setQuizDetail(null);return;}
       if(infoPage!==null){setInfoPage(null);return;}
       if(ctBalanceOpen){setCtBalanceOpen(false);return;}
       if(selectedCourt){setSelectedCourt(null);return;}
