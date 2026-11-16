@@ -12,9 +12,13 @@ Completed and deployed:
 - Member-facing scheduled kick-off information and pre-kick-off join restrictions.
 - New fixtures are required to start in the scheduled state.
 
+- Match poll database foundation: fixture-/Court-linked half-time and match-moment polls, normalized options, and a database-enforced one-vote-per-member constraint.
+- Secured Admin APIs to schedule polls, enforce valid voting windows, close/cancel polls and record poll-management audit events.
+- Member Match Court poll interface with eligibility checks, vote submission and aggregate results. Scheduled polls transition to open/closed when their configured time windows are reached and a poll feed is requested.
+
 Not yet connected:
 - Automatic live score/status ingestion from a trusted football-data provider. No provider credentials or feed are configured, so the platform does not invent match events or change a match to live merely because its scheduled kick-off time has arrived.
-- Automated poll and notification workflows, which are part of the next matchday workstream.
+- Poll notifications are not yet connected. Polls open and close from their configured time windows when the poll API is requested; half-time events are not automatically inferred from the manually maintained fixture status.
 
 
 Expand Settle This! from its core Court experience into a richer football-entertainment destination that gives members more reasons to return around live football, play football knowledge games, and explore their history.
