@@ -264,8 +264,8 @@ if(path==="/api/admin/courts"&&request.method==="GET"){const admin=await editori
  }
 
  // Customer Care: member-owned tickets and administrator-managed replies.
- const memberTicketMatch=path.match(/^\\/api\\/support\\/tickets\\/([A-Za-z0-9-]+)$/);
- const memberMessageMatch=path.match(/^\\/api\\/support\\/tickets\\/([A-Za-z0-9-]+)\\/messages$/);
+ const memberTicketMatch=path.match(/^\/api\/support\/tickets\/([A-Za-z0-9-]+)$/);
+ const memberMessageMatch=path.match(/^\/api\/support\/tickets\/([A-Za-z0-9-]+)\/messages$/);
  if(path==="/api/support/tickets"||memberTicketMatch||memberMessageMatch){
   const user=await authenticatedUser(request,env);if(!user)return json({error:"Open Settle This! in Telegram to access your support requests."},401);
   try{
@@ -306,8 +306,8 @@ if(path==="/api/admin/courts"&&request.method==="GET"){const admin=await editori
    }
   }catch(error){console.error("Customer support request failed",error);return json({error:"Customer Care is temporarily unavailable. Please try again."},503);}
  }
- const adminTicketMatch=path.match(/^\\/api\\/admin\\/support\\/tickets\\/([A-Za-z0-9-]+)$/);
- const adminMessageMatch=path.match(/^\\/api\\/admin\\/support\\/tickets\\/([A-Za-z0-9-]+)\\/messages$/);
+ const adminTicketMatch=path.match(/^\/api\/admin\/support\/tickets\/([A-Za-z0-9-]+)$/);
+ const adminMessageMatch=path.match(/^\/api\/admin\/support\/tickets\/([A-Za-z0-9-]+)\/messages$/);
  if(path==="/api/admin/support/tickets"||adminTicketMatch||adminMessageMatch){
   if(request.method!=="GET"&&!sameOrigin(request))return json({error:"Request origin could not be verified."},403);
   const admin=await editorialAdmin(request,env);if(!admin)return json({error:"A valid administrator session is required."},401);
