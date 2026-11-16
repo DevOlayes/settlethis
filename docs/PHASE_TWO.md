@@ -11,7 +11,7 @@ Completed and deployed:
 - Manual score and match-minute updates synchronised to linked Match Courts and recorded in the administrator audit log.
 - Member-facing scheduled kick-off information and pre-kick-off join restrictions.
 - Competition discovery APIs and member UI: competition/country/season catalogue, team and season filters, fixture status filters, search and linked Match Court entry points.
-- Match archive API and member UI: completed (`full_time`) fixtures with visible linked Match Courts, final scores, match context and participant counts; archive results are paginated.
+- Match archive API and member UI: completed (`full_time`) fixtures with visible linked Match Courts, final scores, match context and participant counts; archive results are paginated. Full-time Match Courts are read-only and the Worker rejects new entries.
 - Competition discovery and archives reuse the Admin-managed fixture catalogue; no new competition or fixture source is fabricated.
 - New fixtures are required to start in the scheduled state.
 
