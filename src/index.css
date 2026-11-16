@@ -1702,3 +1702,16 @@
 .referral-admin-row textarea{width:100%;box-sizing:border-box;border:1px solid #38566a;border-radius:6px;background:#0b1726;color:#f8fafc;padding:9px;font:inherit;font-size:11px}
 .referral-admin-row .admin-primary{justify-self:start;min-width:155px}
 @media(max-width:560px){.referral-admin-row .admin-form-grid{grid-template-columns:1fr 1fr}.referral-admin-wide{grid-column:1/-1}.referral-admin-row .admin-primary{width:100%}}
+
+
+.referral-community-leaders{margin-top:14px;padding:10px;border:1px solid #ffffff18;border-radius:9px;background:#07172566}
+.referral-community-leaders-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.referral-community-leaders-head>b{font-size:9px;letter-spacing:.09em;color:#f8fafc}
+.referral-community-leaders-head>small{font-size:7px;font-weight:900;letter-spacing:.06em;color:#8fa9bc}
+.referral-community-leader{display:grid;grid-template-columns:25px minmax(0,1fr) auto;align-items:center;gap:7px;padding:8px 5px;border-top:1px solid #ffffff12}
+.referral-community-leader.you{margin:0 -4px;padding:8px 9px;border-radius:6px;background:#123246}
+.referral-leader-rank{font:800 11px 'Barlow Condensed',sans-serif;color:#f4d58e;text-align:center}
+.referral-community-leader>b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;color:#dce8f1}
+.referral-community-leader>strong{font:800 12px 'Barlow Condensed',sans-serif;color:#27d7f2;white-space:nowrap}
+.referral-community-leader>strong small{font:800 6px sans-serif;color:#91a8b9}
+.referral-community-empty{font-size:9px;line-height:1.5;color:#9eb3c4;margin:8px 0 2px}
