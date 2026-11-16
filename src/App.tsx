@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import BrandMark from "./BrandMark";
+import CompetitionDiscovery from "./CompetitionDiscovery";
 import createAdHandler from "monetag-tg-sdk";
 
 type NavIconName = "courts" | "my-courts" | "tasks" | "rankings" | "wallet";
@@ -197,6 +198,7 @@ const refreshTasks=()=>{const initData=window.Telegram?.WebApp?.initData;if(!tel
             <MarketSplit a={Number(poolMarket?.side_a_stake)||0} b={Number(poolMarket?.side_b_stake)||0} unit="CT staked"/><p className="pool-share-note">{poolMarket?.status==="open"?"Your share is calculated from your CT stake compared with the total CT staked on the winning side. The final share is determined when the Court closes.":poolMarket?.status==="locked"?"Staking is closed. The editorial verdict determines the winning side, and eligible positions share the prize in proportion to their CT stakes.":poolMarket?.reserve_status==="secured"?"The prize reserve has been attested by the administrator. This Pool Court is scheduled and will accept stakes only after it is opened.":"This Pool Court is scheduled, but its prize reserve has not yet been attested. Staking is not available."}</p>
             <button className="view-court pool-open-button" disabled={!poolMarket || poolMarket.status!=="open" || (!!poolMarket.opens_at&&Date.parse(poolMarket.opens_at)>Date.now())} onClick={() => setPoolOpen(true)}>JOIN POOL COURT <span>→</span></button>
           </article>
+        <CompetitionDiscovery onOpenCourt={(courtId)=>{const match=courtFeed.find(item=>item.id===courtId);if(match){setSelectedCourt(match);setCourtSide("");setCourtOpen(true);}else showNotice("This archived Match Court is not currently available.");}}/>
         </section>
         
       </>}
