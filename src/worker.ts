@@ -334,6 +334,7 @@ if(path==="/api/admin/courts"&&request.method==="GET"){const admin=await editori
     await env.DB.batch([
      env.DB.prepare("INSERT INTO support_messages(id,ticket_id,sender_type,sender_id,body) VALUES(?,?,'admin',?,?)").bind(id(),ticket.id,String(admin),message),
      env.DB.prepare("UPDATE support_tickets SET status='waiting_member',updated_at=CURRENT_TIMESTAMP,last_message_at=CURRENT_TIMESTAMP WHERE id=?").bind(ticket.id),
+     env.DB.prepare("INSERT OR IGNORE INTO notifications(id,user_id,type,title,body,reference_id,event_key) VALUES(?,?,'support_reply','Customer Care replied',?,?,?)").bind(id(),ticket.user_id,"Our Customer Care team has replied to your support request: "+(await env.DB.prepare("SELECT subject FROM support_tickets WHERE id=?").bind(ticket.id).first<{subject:string}>())?.subject||"Your support request",ticket.id,"support-reply:"+ticket.id+":"+id()),
      env.DB.prepare("INSERT INTO admin_audit_log(id,admin_id,action,target_type,target_id,details) VALUES(?,?,?,?,?,?)").bind(id(),Number(admin),"support_ticket_replied","support_ticket",ticket.id,JSON.stringify({member_id:ticket.user_id}))
     ]);
     return json({sent:true,status:"waiting_member"});
