@@ -70,7 +70,12 @@ export default {async fetch(request:Request,env:Env):Promise<Response>{
    if(!/^[A-Za-z0-9-]{16,80}$/.test(campaignId)||!["home_feed","court_detail","match_centre","competition_hub"].includes(placement)||!["impression","click"].includes(eventType)||!/^[a-f0-9]{32}$/i.test(sessionKey))return json({error:"Invalid sponsorship event."},400);
    const eligible=await env.DB.prepare("SELECT c.id FROM sponsor_campaigns c JOIN sponsor_campaign_placements cp ON cp.campaign_id=c.id JOIN sponsor_placement_catalog p ON p.placement_key=cp.placement_key WHERE c.id=? AND cp.placement_key=? AND p.enabled=1 AND c.status='active' AND julianday(c.starts_at)<=julianday('now') AND julianday(c.ends_at)>julianday('now')").bind(campaignId,placement).first<{id:string}>();
    if(!eligible)return json({accepted:false,reason:"Campaign is not eligible for measurement."},404);
-   const eventDay=new Date().toISOString().slice(0,10),dedupeKey=await sha256Hex([sessionKey,campaignId,placement,eventType,eventDay].join("|"));
+   const eventDay=new Date().toISOString().slice(0,10);
+   const ipDigest=await rateLimitIpHash(request,env),dailyIpHash=await sha256Hex(ipDigest+"|"+eventDay);
+   await env.DB.prepare("DELETE FROM sponsor_event_rate_limits WHERE event_day<date('now','-7 days')").run();
+   const allowance=await env.DB.prepare("INSERT INTO sponsor_event_rate_limits(ip_hash,event_day,event_count) VALUES(?,?,1) ON CONFLICT(ip_hash,event_day) DO UPDATE SET event_count=event_count+1,updated_at=CURRENT_TIMESTAMP WHERE event_count<180 RETURNING event_count").bind(dailyIpHash,eventDay).first<{event_count:number}>();
+   if(!allowance)return json({error:"Sponsorship event rate limit reached."},429);
+   const dedupeKey=await sha256Hex([sessionKey,campaignId,placement,eventType,eventDay].join("|"));
    const result=await env.DB.prepare("INSERT OR IGNORE INTO sponsor_events(id,campaign_id,placement_key,event_type,event_day,dedupe_key) VALUES(?,?,?,?,?,?)").bind(id(),campaignId,placement,eventType,eventDay,dedupeKey).run() as {meta?:{changes?:number}};
    return json({accepted:true,recorded:Number(result.meta?.changes)===1});
   }catch{return json({error:"Sponsorship event could not be recorded."},503);}
