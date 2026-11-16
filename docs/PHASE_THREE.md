@@ -185,3 +185,18 @@ Implementation scope completed:
 Supported region groups: Africa, Europe, Asia, North America, South America, Oceania and Global / Unassigned. Admin must assign each competition to the appropriate region; unclassified existing catalogue entries remain Global / Unassigned until reviewed.
 
 Final production validation remains deferred until all planned Phase Three components are implemented. No live member journeys, external-provider tests, authenticated Admin browser tests or automated test suites are run during feature development.
+
+
+## Component 7 research record — Future token ecosystem
+
+Research assessment completed on 16 November 2026 and documented in [SETHIS Token Ecosystem — Research & Readiness Assessment](SETHIS_TOKEN_ECOSYSTEM_RESEARCH.md).
+
+Findings and direction:
+- Current CT and SETHIS balances are separate off-chain database-ledger balances. The reviewed member application and Worker do not implement SETHIS wallet connections, blockchain transfers, cash-out, exchange or SETHIS spending.
+- Preserve CT as the platform participation currency and SETHIS as the separate reward balance.
+- Recommend continuing with a closed-loop, non-transferable, non-cash-redeemable Settle This! rewards model while validating member utility and business demand. This may fit relevant Nigerian loyalty/rewards exclusions only if the actual functionality and operating model satisfy the applicable conditions; legal confirmation is required.
+- Research reviewed Nigeria's CBN non-security virtual-asset regulations effective 5 November 2026, Investments and Securities Act 2025, Nigeria Tax Administration Act 2025, 2026 virtual-asset coordination framework, SEC revised minimum-capital circular, and Telegram's TON/TON Connect requirements for Mini Apps with cryptocurrency functionality.
+- On-chain issuance, wallet integration, SETHIS transfers, cash redemption, exchange activity and airdrops remain out of scope and require separate legal, commercial and explicit owner approval.
+- No token contract, wallet connection, blockchain transaction, token supply, airdrop or wallet mechanic was implemented or changed.
+
+This component is complete as a research deliverable only. Any future implementation requires a separate approved scope.
