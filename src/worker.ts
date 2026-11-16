@@ -328,16 +328,24 @@ if(path==="/api/admin/courts"&&request.method==="GET"){const admin=await editori
    if(adminMessageMatch&&request.method==="POST"){
     const body=await request.json() as Record<string,unknown>,message=textField(body.message,2000);
     if(message.length<2)return json({error:"Write a reply before sending."},400);
-    const ticket=await env.DB.prepare("SELECT id,status,user_id FROM support_tickets WHERE id=?").bind(adminMessageMatch[1]).first<{id:string;status:string;user_id:string}>();
+    const ticket=await env.DB.prepare("SELECT id,status,user_id,subject FROM support_tickets WHERE id=?").bind(adminMessageMatch[1]).first<{id:string;status:string;user_id:string;subject:string}>();
     if(!ticket)return json({error:"Support request not found."},404);
     if(ticket.status==="resolved")return json({error:"Reopen this request before replying."},409);
     await env.DB.batch([
      env.DB.prepare("INSERT INTO support_messages(id,ticket_id,sender_type,sender_id,body) VALUES(?,?,'admin',?,?)").bind(id(),ticket.id,String(admin),message),
      env.DB.prepare("UPDATE support_tickets SET status='waiting_member',updated_at=CURRENT_TIMESTAMP,last_message_at=CURRENT_TIMESTAMP WHERE id=?").bind(ticket.id),
-     env.DB.prepare("INSERT OR IGNORE INTO notifications(id,user_id,type,title,body,reference_id,event_key) VALUES(?,?,'support_reply','Customer Care replied',?,?,?)").bind(id(),ticket.user_id,"Our Customer Care team has replied to your support request: "+(await env.DB.prepare("SELECT subject FROM support_tickets WHERE id=?").bind(ticket.id).first<{subject:string}>())?.subject||"Your support request",ticket.id,"support-reply:"+ticket.id+":"+id()),
+     env.DB.prepare("INSERT OR IGNORE INTO notifications(id,user_id,type,title,body,reference_id,event_key) VALUES(?,?,'support_reply','Customer Care replied',?,?,?)").bind(id(),ticket.user_id,"Our Customer Care team has replied to your support request: "+ticket.subject,ticket.id,"support-reply:"+ticket.id+":"+id()),
      env.DB.prepare("INSERT INTO admin_audit_log(id,admin_id,action,target_type,target_id,details) VALUES(?,?,?,?,?,?)").bind(id(),Number(admin),"support_ticket_replied","support_ticket",ticket.id,JSON.stringify({member_id:ticket.user_id}))
     ]);
-    return json({sent:true,status:"waiting_member"});
+    let telegramNotified=false;
+    if(env.TELEGRAM_BOT_TOKEN){
+     try{
+      const telegramResponse=await fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/sendMessage",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({chat_id:ticket.user_id,text:"📩 Settle This! Customer Care has replied to your support request: "+ticket.subject+". Open the Mini App and visit Wallet → Help & Information → Contact Support to read the reply."})});
+      const telegramResult=await telegramResponse.json() as {ok?:boolean};
+      telegramNotified=telegramResponse.ok&&telegramResult.ok===true;
+     }catch{}
+    }
+    return json({sent:true,status:"waiting_member",telegram_notified:telegramNotified});
    }
    if(adminTicketMatch&&request.method==="PATCH"){
     const body=await request.json() as Record<string,unknown>,status=String(body.status||"");
