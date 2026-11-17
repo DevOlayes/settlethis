@@ -3,6 +3,9 @@
   "name": "settlethis",
   "main": "src/worker.ts",
   "compatibility_date": "2026-11-14",
+  "ai": {
+    "binding": "AI"
+  },
   "d1_databases": [
     {
       "binding": "DB",
@@ -16,6 +19,6 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-      "not_found_handling": "single-page-application"
+    "not_found_handling": "single-page-application"
   }
 }
