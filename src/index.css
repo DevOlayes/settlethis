@@ -1827,3 +1827,25 @@
 .quiz-reward-strip small{font-size:7px;letter-spacing:.1em;font-weight:900;color:#b8c8d6}
 .quiz-daily-result{position:relative;z-index:1;margin:9px 0;color:#9fe8f2;font-size:10px;font-weight:800}
 .quiz-daily-feature .quiz-open-button{position:relative;z-index:1;min-height:43px;border-radius:9px;background:linear-gradient(90deg,#27d7f2,#72e6ef);box-shadow:0 5px 15px #27d7f226;font-size:10px;letter-spacing:.08em}
+
+
+/* Football Knowledge: premium matchday broadcast treatment */
+.quiz-daily-feature{isolation:isolate;min-height:250px;padding:15px 14px 13px;border:1px solid #3b6576;background:linear-gradient(118deg,#0b1728 0%,#10283a 52%,#152e3c 100%);box-shadow:inset 0 1px 0 #ffffff20,0 14px 32px #0005}
+.quiz-daily-feature:before{width:230px;height:230px;right:-95px;top:12px;border:1px solid #70eaff35;box-shadow:0 0 0 13px #27d7f20b,0 0 0 29px #27d7f208,0 0 0 48px #27d7f205}
+.quiz-daily-feature:after{content:"";position:absolute;z-index:0;right:-10px;bottom:62px;width:165px;height:92px;opacity:.18;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 31px,#d8faff 32px 33px),linear-gradient(0deg,transparent 0 44px,#d8faff 45px 46px,transparent 47px),linear-gradient(90deg,transparent 49%,#d8faff 50%,transparent 51%);border:1px solid #d8faff;border-radius:5px;transform:perspective(160px) rotateX(8deg)}
+.quiz-daily-feature .quiz-card-top{font-size:8px;letter-spacing:.17em;color:#f4d58e}
+.quiz-daily-feature .quiz-card-top>span:before{content:"◉";font-size:8px;margin-right:7px;color:#27d7f2}
+.quiz-daily-feature .quiz-card-top b{padding:5px 8px;border:1px solid #ffffff20;border-radius:20px;background:#ffffff0a;color:#d8e7ef;font-size:7px}
+.quiz-feature-main{margin:17px 0 14px;gap:10px}
+.quiz-feature-kicker{display:inline-block;padding:4px 7px;border-left:2px solid #27d7f2;background:#27d7f20e;color:#a8eff8;font-size:7px;font-weight:900;letter-spacing:.18em}
+.quiz-daily-feature .quiz-feature-main h3{font-size:31px;line-height:.98;letter-spacing:-.015em;margin:9px 0 7px;text-shadow:0 3px 14px #0008}
+.quiz-daily-feature .quiz-feature-main p{max-width:255px;color:#c4d7e2;font-size:10px;line-height:1.55}
+.quiz-ball-art{position:relative;width:72px;height:72px;flex-basis:72px;border:1px solid #ffffff85;border-radius:50%;font-size:0;background:radial-gradient(circle at 33% 25%,#ffffff 0 8%,#dce8ec 31%,#8299a5 68%,#eaf2f5 100%);box-shadow:0 0 0 5px #27d7f21a,0 10px 23px #0008,inset -8px -8px 12px #07132165}
+.quiz-ball-art:before{content:"";position:absolute;inset:23px;border-radius:50%;background:#172533;clip-path:polygon(50% 0,94% 35%,77% 91%,23% 91%,6% 35%)}
+.quiz-ball-art:after{content:"";position:absolute;inset:5px;border:1px solid #253c4b;border-radius:50%;background:repeating-conic-gradient(from 12deg at 50% 50%,transparent 0 17deg,#253c4b 18deg 19deg,transparent 20deg 72deg);opacity:.7}
+.quiz-reward-strip{margin:14px 0 12px;padding:10px 7px;border:1px solid #ffffff1e;background:linear-gradient(90deg,#071321d9,#10263ad9);box-shadow:inset 0 1px 0 #ffffff12}
+.quiz-reward-strip b{font-size:22px;color:#f4d58e;text-shadow:0 2px 10px #f4d58e25}
+.quiz-reward-strip small{font-size:6px;letter-spacing:.13em;color:#c3d5df}
+.quiz-daily-feature .quiz-open-button{min-height:44px;background:linear-gradient(100deg,#27d7f2,#6de7e9 58%,#c6f4ee);color:#06131b;box-shadow:0 7px 18px #27d7f229,inset 0 1px 0 #ffffff99;font-size:9px;letter-spacing:.16em}
+.quiz-daily-feature .quiz-open-button:disabled{background:#26364d;color:#91a5b6;box-shadow:none}
+@media(max-width:600px){.quiz-daily-feature{min-height:0;padding:13px 12px}.quiz-feature-main{margin:15px 0 12px}.quiz-daily-feature .quiz-feature-main h3{font-size:29px}.quiz-ball-art{width:61px;height:61px;flex-basis:61px}.quiz-ball-art:before{inset:19px}.quiz-daily-feature:after{width:128px;height:72px;right:-8px;bottom:63px}}
