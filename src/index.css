@@ -1796,3 +1796,15 @@
 .debate-candidate-editor>summary:after{content:"＋";font-size:13px}
 .debate-candidate-editor[open]>summary:after{content:"−"}
 @media(max-width:420px){.debate-candidate-overview{grid-template-columns:104px minmax(0,1fr);gap:9px}.debate-candidate-thumb{aspect-ratio:1/1;max-height:104px}.debate-feed-grid{grid-template-columns:1fr}}
+
+
+/* AI editorial and image verification review */
+.debate-source-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.debate-ai-status{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.debate-ai-status span{display:inline-flex;align-items:center;padding:5px 9px;border:1px solid #30445d;border-radius:999px;background:#101d30;color:#dce8f5;font-size:10px;font-weight:800;letter-spacing:.04em}
+.debate-image-verdict{margin:6px 0 12px;color:#c3d2e3;font-size:12px;line-height:1.5}
+.debate-ai-draft{margin:10px 0;padding:10px 12px;border:1px solid #30445d;border-radius:10px;background:#0d192a}
+.debate-ai-draft summary{cursor:pointer;color:#27d7f2;font-size:11px;font-weight:800}
+.debate-ai-draft pre{max-height:360px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;color:#e5edf7;font-size:11px;line-height:1.5}
+.debate-candidate-thumb{object-fit:cover;object-position:center;width:148px;min-width:148px;height:104px;border-radius:10px;background:#17263a}
+@media(max-width:600px){.debate-candidate-overview{align-items:flex-start}.debate-candidate-thumb{width:112px;min-width:112px;height:88px}.debate-source-actions{width:100%}.debate-source-actions button{flex:1}}
