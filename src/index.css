@@ -1808,3 +1808,22 @@
 .debate-ai-draft pre{max-height:360px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;color:#e5edf7;font-size:11px;line-height:1.5}
 .debate-candidate-thumb{object-fit:cover;object-position:center;width:148px;min-width:148px;height:104px;border-radius:10px;background:#17263a}
 @media(max-width:600px){.debate-candidate-overview{align-items:flex-start}.debate-candidate-thumb{width:112px;min-width:112px;height:88px}.debate-source-actions{width:100%}.debate-source-actions button{flex:1}}
+
+/* Daily Football Knowledge feature card */
+.quiz-daily-feature{position:relative;overflow:hidden;padding:15px;border-color:#5b4b2b;background:radial-gradient(ellipse at 100% 0%,#31445a 0%,#18283b 42%,#101a29 100%);box-shadow:inset 0 1px 0 #ffffff12,0 10px 26px #0003}
+.quiz-daily-feature:before{content:"";position:absolute;width:170px;height:170px;border:1px solid #27d7f21c;border-radius:50%;right:-70px;top:18px;box-shadow:0 0 0 16px #27d7f20a,0 0 0 34px #27d7f208;pointer-events:none}
+.quiz-daily-feature .quiz-card-top{position:relative;z-index:1;color:#f3cf83;font-size:9px;letter-spacing:.12em}
+.quiz-daily-feature .quiz-card-top b{color:#b9c9d7}
+.quiz-feature-main{position:relative;z-index:1;display:flex;align-items:center;gap:8px;margin:14px 0 13px}
+.quiz-feature-main>div:first-child{flex:1;min-width:0}
+.quiz-feature-kicker{font-size:8px;font-weight:900;letter-spacing:.16em;color:#27d7f2}
+.quiz-daily-feature .quiz-feature-main h3{font:800 25px 'Barlow Condensed',sans-serif;letter-spacing:.01em;margin:4px 0 5px;color:#fff}
+.quiz-daily-feature .quiz-feature-main p{max-width:290px;font-size:11px;line-height:1.5;color:#c5d2df;margin:0}
+.quiz-ball-art{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;border-radius:50%;font-size:39px;background:linear-gradient(145deg,#f2d38b,#b88639);box-shadow:0 7px 22px #0005,inset 0 2px 5px #fff8}
+.quiz-reward-strip{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:13px 0;padding:10px 8px;border:1px solid #ffffff17;border-radius:10px;background:#0713219c}
+.quiz-reward-strip span{display:flex;flex-direction:column;align-items:center;gap:3px;border-right:1px solid #ffffff16}
+.quiz-reward-strip span:last-child{border:0}
+.quiz-reward-strip b{font:800 19px 'Barlow Condensed';color:#f5d38f}
+.quiz-reward-strip small{font-size:7px;letter-spacing:.1em;font-weight:900;color:#b8c8d6}
+.quiz-daily-result{position:relative;z-index:1;margin:9px 0;color:#9fe8f2;font-size:10px;font-weight:800}
+.quiz-daily-feature .quiz-open-button{position:relative;z-index:1;min-height:43px;border-radius:9px;background:linear-gradient(90deg,#27d7f2,#72e6ef);box-shadow:0 5px 15px #27d7f226;font-size:10px;letter-spacing:.08em}
