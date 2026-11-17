@@ -1775,3 +1775,24 @@
 .pool-court-preview-image img{display:block;width:100%;max-height:220px;object-fit:cover}
 .pool-court-preview-image figcaption{padding:7px 10px;font-size:10px}
 .pool-court-preview-image a{color:#27d7f2;font-weight:800}
+
+/* Debate sourcing: compact editorial scan, image-first preview, and safe status clarity */
+.debate-provider-ready{display:block;margin-top:5px;color:#8de8cf;font-size:9px;line-height:1.45}
+.debate-provider-stale{display:block;color:#f4d58e;font-size:8px;line-height:1.4}
+.debate-feed-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px;margin:8px 0 14px}
+.debate-candidate-overview{display:grid;grid-template-columns:minmax(112px,150px) minmax(0,1fr);gap:12px;align-items:start}
+.debate-candidate-thumb{display:block;width:100%;aspect-ratio:4/3;max-height:112px;object-fit:cover;border:1px solid #31465c;border-radius:8px;background:#0b1220}
+.debate-thumb-missing{display:grid;place-content:center;justify-items:center;gap:6px;color:#8ea6b8;background:linear-gradient(145deg,#15263a,#0b1421)}
+.debate-thumb-missing span{font-size:28px;opacity:.7}
+.debate-thumb-missing small{font-size:7px;letter-spacing:.1em;font-weight:900}
+.debate-candidate-copy{display:grid;gap:7px;min-width:0}
+.debate-candidate-copy .debate-match-context{margin:0}
+.debate-candidate-copy .debate-candidate-summary{margin:0}
+.debate-duplicate-note,.debate-image-caption{font-size:8px;line-height:1.4;color:#91a8b9}
+.debate-candidate-editor{border-top:1px solid #ffffff18;padding-top:9px}
+.debate-candidate-editor>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid #27d7f244;border-radius:7px;background:#10283a;color:#27d7f2;font-size:8px;font-weight:900;letter-spacing:.08em}
+.debate-candidate-editor>summary::-webkit-details-marker{display:none}
+.debate-candidate-editor[open]>summary{margin-bottom:12px;background:#123246}
+.debate-candidate-editor>summary:after{content:"＋";font-size:13px}
+.debate-candidate-editor[open]>summary:after{content:"−"}
+@media(max-width:420px){.debate-candidate-overview{grid-template-columns:104px minmax(0,1fr);gap:9px}.debate-candidate-thumb{aspect-ratio:1/1;max-height:104px}.debate-feed-grid{grid-template-columns:1fr}}
