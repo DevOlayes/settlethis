@@ -1,0 +1,12 @@
+ALTER TABLE debate_candidates ADD COLUMN ai_review_status TEXT NOT NULL DEFAULT 'unreviewed';
+ALTER TABLE debate_candidates ADD COLUMN ai_review_score INTEGER;
+ALTER TABLE debate_candidates ADD COLUMN ai_review_json TEXT;
+ALTER TABLE debate_candidates ADD COLUMN ai_reviewed_at TEXT;
+ALTER TABLE debate_candidates ADD COLUMN image_review_status TEXT NOT NULL DEFAULT 'not_checked';
+ALTER TABLE debate_candidates ADD COLUMN image_match_score INTEGER;
+ALTER TABLE debate_candidates ADD COLUMN image_match_reason TEXT;
+ALTER TABLE debate_candidates ADD COLUMN image_subjects TEXT;
+ALTER TABLE debate_candidates ADD COLUMN image_checked_at TEXT;
+ALTER TABLE debate_candidates ADD COLUMN image_sha256 TEXT;
+CREATE INDEX IF NOT EXISTS idx_debate_candidates_ai_review ON debate_candidates(ai_review_status, ai_review_score DESC, published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_debate_candidates_image_review ON debate_candidates(image_review_status, image_match_score DESC);
