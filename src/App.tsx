@@ -12,7 +12,7 @@ import createAdHandler from "monetag-tg-sdk";
 type NavIconName = "games" | "tasks" | "rankings" | "wallet" | "referrals";
 function NavIcon({name}:{name:NavIconName}) {
  const p={width:23,height:23,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const,"aria-hidden":true as const};
- if(name==="games")return <svg {...p}><circle cx="12" cy="12" r="9.2"/><path d="m12 6.7 3.3 2.4-1.25 3.9h-4.1L8.7 9.1 12 6.7ZM12 6.7V2.8M15.3 9.1l4.2-1.2M14.05 13l2.55 4M9.95 13l-2.55 4M8.7 9.1 4.5 7.9M7.4 17l-2.1 2.2M16.6 17l2.1 2.2"/></svg>;
+ if(name==="games")return <svg {...p} viewBox="0 0 28 24"><path d="M7.2 7.2h13.6c2.3 0 3.7 1.5 4.2 4l1.1 5.2c.5 2.5-2.1 4.1-4 2.5l-3.2-2.7H9.1l-3.2 2.7c-1.9 1.6-4.5 0-4-2.5L3 11.2c.5-2.5 1.9-4 4.2-4Z"/><path d="M8 10.2v5M5.5 12.7h5M19.2 11.3h.01M22 14h.01"/><path d="m14 9.5 2.5 1.8-.95 2.9h-3.1l-.95-2.9L14 9.5Z" strokeWidth="1.35"/></svg>;
  if(name==="tasks")return <svg {...p}><rect x="4" y="3.5" width="16" height="18" rx="2.2"/><path d="M8 8.5h.01M11 8.5h5M8 13h.01M11 13h5M8 17.5l1.5 1.5L12 16.5M14 18h2"/></svg>;
  if(name==="rankings")return <svg {...p}><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"/><path d="M8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 13v4M8 21h8M9 17h6"/></svg>;
  if(name==="referrals")return <svg {...p}><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20v-1.2a5.5 5.5 0 0 1 11 0V20M17 8v6M14 11h6M17 17.5l2 2 3-3"/></svg>;
