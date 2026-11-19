@@ -10,7 +10,7 @@ const palettes:Record<string,[string,string,string]> = {
   rooney:["#e0d2ba","#6d4d35","#d4ad8f"], ramos:["#f0f0f0","#4a5360","#e4c5ad"],
   iniesta:["#e6e6e6","#6d6d6d","#e4c3a4"], mane:["#e8c64e","#23613b","#8c5b42"],
   pirlo:["#e9ecef","#2e4b70","#dfbda0"], eto:["#e9d8ba","#d94a3d","#81543c"],
-  kaka:["#d9e8f8","#a72c37","#d4b292"], vanpersie:["#f28a37","#7d2b22","#e1b99a"]
+  kaka:["#d9e8f8","#a72c37","#d4b292"], vanpersie:["#f28a37","#7d2b22","#e1b99a"], weah:["#f1f1f1","#1d5a37","#81543c"], okocha:["#f1f1f1","#277c42","#81543c"], yayatoure:["#f1d04e","#1c5b39","#81543c"], mahrez:["#3e8d55","#16452c","#8c6047"], kane:["#ffffff","#1b3d75","#d9b99d"], son:["#e6e6e6","#244f8e","#d6aa8c"], suarez:["#f1f1f1","#285b3e","#d5b08f"], benzema:["#f4f4f4","#263b67","#c79c7d"], totti:["#f4e6c8","#8d6b3e","#d7b294"], kompany:["#5ba2df","#1c3e68","#6e4c39"]
 };
 export default function MysteryAvatar({avatarKey="messi",revealed=false,size="large"}:{avatarKey?:string;revealed?:boolean;size?:"large"|"small"}) {
  const [shirt,trim,skin]=palettes[avatarKey]||["#27D7F2","#16445b","#bd8d6b"];
