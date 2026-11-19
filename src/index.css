@@ -2741,3 +2741,24 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .game-member-gate p{max-width:390px!important;margin:0 auto!important;text-align:center!important}
 .game-gate-note{max-width:390px;margin:20px auto 0!important;text-align:left}
 @media(max-width:600px){.game-member-gate{margin:16px auto!important;padding:23px 16px 18px!important}.game-gate-brand .game-emblem,.game-gate-brand .game-emblem svg{width:68px!important;height:68px!important;flex-basis:68px!important}}
+
+
+/* Final Tasks polish: rewards read as values, actions remain clear and calm */
+.tasks-page .task-reward-amount{
+  display:inline!important;min-height:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  color:#f4f1f7!important;font-size:11px!important;font-weight:900!important;
+  letter-spacing:.01em;white-space:nowrap;
+}
+.tasks-page .task-action-button,
+.tasks-page .task-reward-button{
+  background:#443b50!important;color:#f4f1f7!important;
+  border:1px solid #9b8acb55!important;
+}
+.tasks-page .task-action-button:disabled,
+.tasks-page .task-reward-button:disabled{color:#f4f1f7!important;opacity:.58}
+.tasks-page .task-ad-reward .task-reward-amount{color:#f4f1f7!important}
+.tasks-page .task-action-stack{gap:7px}
+@media(max-width:420px){
+  .tasks-page .task-reward-amount{font-size:10px!important}
+}
