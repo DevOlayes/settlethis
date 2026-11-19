@@ -1925,3 +1925,9 @@
 .game-member-gate h1{font:900 34px/1 'Barlow Condensed';margin:10px 0}.game-member-gate p{color:#b5c6d7;font-size:13px;line-height:1.65}
 @media(max-width:640px){.game-home{padding:14px 12px 28px}.game-welcome{align-items:flex-start}.game-welcome h1{font-size:39px}.game-live-pill{font-size:8px;padding:7px 8px}.mystery-game-hero{grid-template-columns:1fr 125px;padding:15px 13px 9px}.mystery-game-copy h2{font-size:31px}.mystery-game-copy p{font-size:10px}.mystery-avatar-wrap{width:125px}.mystery-round-panel,.mystery-start-panel{padding:13px}.game-lower-grid{grid-template-columns:1fr}.game-how-card,.game-leaderboard{padding:14px}}
 @media(max-width:360px){.mystery-game-hero{grid-template-columns:1fr 105px}.mystery-avatar-wrap{width:105px}.mystery-game-copy h2{font-size:27px}}
+
+
+.game-earn-ct{padding:7px 9px!important;border:1px solid #27d7f25c!important;border-radius:8px!important;background:#103346!important;color:#c8f8ff!important;font-size:9px!important;font-weight:900!important;white-space:nowrap}
+.game-loading{margin:0 0 10px;padding:10px 13px;border-radius:10px;background:#13263a;color:#b9d8e9;font-size:11px}
+.game-gate-note{margin-top:18px;padding:12px;border:1px solid #ffffff20;border-radius:10px;color:#b9d2e3;font-size:11px;line-height:1.5;background:#0a1726}
+@media(max-width:380px){.game-wallet-strip{gap:6px}.game-wallet-strip>span{font-size:8px}.game-earn-ct{padding:7px 6px!important;font-size:8px!important}}
