@@ -3,6 +3,19 @@ import CustomerCare from "./CustomerCare";
 import "./WalletHelpCentre.css";
 
 type ArticleKey = "how" | "terms" | "privacy" | "community";
+
+function HelpIcon({name}:{name:"support"|"guide"|"rules"|"privacy"|"community"}) {
+  const common={viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const,"aria-hidden":true as const};
+  const paths:Record<string,React.ReactNode>={
+    support:<><path d="M4 13v-2a8 8 0 0 1 16 0v2"/><path d="M4 13h3v6H6a2 2 0 0 1-2-2v-4Zm16 0h-3v6h1a2 2 0 0 0 2-2v-4ZM17 20h-4"/></>,
+    guide:<><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"/><path d="M4 6h12M8 9h8m-8 4h7"/></>,
+    rules:<><path d="M12 3 20 6v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-3Z"/><path d="m9 12 2 2 4-4"/></>,
+    privacy:<><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></>,
+    community:<><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1m2-9a3 3 0 1 0 0-6m1 9a5 5 0 0 1 3 5"/></>
+  };
+  return <svg {...common}>{paths[name]}</svg>;
+}
+
 const faqs = [
   {q:"What is Settle This!?",a:"Settle This! is a football courtroom where fans take a position on a football question, explain their reasoning and engage with the other side. Each Court has its own context, entry details and published resolution criteria."},
   {q:"What is the difference between CT and SETHIS?",a:"CT (Court Tokens) is used to enter eligible Regular Courts and take positions in Pool Courts. SETHIS is the separate reward token credited for qualifying outcomes and other approved reward programmes. They are different balances and are not interchangeable."},
@@ -26,11 +39,11 @@ export default function WalletHelpCentre() {
       <div className="wallet-help-heading"><div><span className="eyebrow">NEED A HAND?</span><h3>Help & information</h3><p>Find answers and understand how the courtroom works.</p></div><span className="wallet-help-mark">?</span></div>
       <div className="wallet-help-group-label">EXPLORE SETTLE THIS!</div>
       <div className="wallet-help-menu">
-        <button className="wallet-help-menu-row" onClick={()=>setSupportOpen(true)}><span className="wallet-help-icon">◉</span><span className="wallet-help-copy"><b>Contact Support</b><small>Get help with your account or a Court</small></span><span className="wallet-help-chevron">›</span></button>
-        <button className="wallet-help-menu-row" onClick={()=>setArticle("how")}><span className="wallet-help-icon">▤</span><span className="wallet-help-copy"><b>How It Works</b><small>Your guide to Courts, CT and SETHIS</small></span><span className="wallet-help-chevron">›</span></button>
-        <button className="wallet-help-menu-row" onClick={()=>setArticle("terms")}><span className="wallet-help-icon">▧</span><span className="wallet-help-copy"><b>Platform Rules & Terms</b><small>Participation, rewards and fair play</small></span><span className="wallet-help-chevron">›</span></button>
-        <button className="wallet-help-menu-row" onClick={()=>setArticle("privacy")}><span className="wallet-help-icon">◇</span><span className="wallet-help-copy"><b>Privacy & Account</b><small>What your account information is used for</small></span><span className="wallet-help-chevron">›</span></button>
-        <button className="wallet-help-menu-row" onClick={()=>setArticle("community")}><span className="wallet-help-icon">⚖</span><span className="wallet-help-copy"><b>Community Standards</b><small>Keep football debate respectful</small></span><span className="wallet-help-chevron">›</span></button>
+        <button className="wallet-help-menu-row" onClick={()=>setSupportOpen(true)}><span className="wallet-help-icon"><HelpIcon name="support"/></span><span className="wallet-help-copy"><b>Contact Support</b><small>Get help with your account or a Court</small></span><span className="wallet-help-chevron">›</span></button>
+        <button className="wallet-help-menu-row" onClick={()=>setArticle("how")}><span className="wallet-help-icon"><HelpIcon name="guide"/></span><span className="wallet-help-copy"><b>How It Works</b><small>Your guide to Courts, CT and SETHIS</small></span><span className="wallet-help-chevron">›</span></button>
+        <button className="wallet-help-menu-row" onClick={()=>setArticle("terms")}><span className="wallet-help-icon"><HelpIcon name="rules"/></span><span className="wallet-help-copy"><b>Platform Rules & Terms</b><small>Participation, rewards and fair play</small></span><span className="wallet-help-chevron">›</span></button>
+        <button className="wallet-help-menu-row" onClick={()=>setArticle("privacy")}><span className="wallet-help-icon"><HelpIcon name="privacy"/></span><span className="wallet-help-copy"><b>Privacy & Account</b><small>What your account information is used for</small></span><span className="wallet-help-chevron">›</span></button>
+        <button className="wallet-help-menu-row" onClick={()=>setArticle("community")}><span className="wallet-help-icon"><HelpIcon name="community"/></span><span className="wallet-help-copy"><b>Community Standards</b><small>Keep football debate respectful</small></span><span className="wallet-help-chevron">›</span></button>
       </div>
       <div className="wallet-help-group-label wallet-faq-label">QUICK ANSWERS</div>
       <label className="wallet-faq-search"><span>⌕</span><input value={query} onChange={e=>{setQuery(e.target.value);setExpanded(null);}} placeholder="Search frequently asked questions" aria-label="Search frequently asked questions"/></label>
