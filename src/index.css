@@ -2764,15 +2764,15 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 }
 
 
-/* Tasks: use a clearly distinct, richer violet for action buttons */
+/* Tasks: carry the SETHIS logo violet into a vivid, dimensional button gradient */
 .tasks-page .task-action-button,
 .tasks-page .task-reward-button{
   display:inline-flex!important;align-items:center!important;justify-content:center!important;
   min-height:35px!important;padding:0 14px!important;
-  border:1px solid #b8a7df!important;border-radius:10px!important;
-  background:linear-gradient(135deg,#806ca9 0%,#68548f 100%)!important;
-  color:#f4f1f7!important;
-  box-shadow:inset 0 1px 0 #ffffff30,0 5px 14px #09071166!important;
+  border:1px solid #b77bff!important;border-radius:10px!important;
+  background:linear-gradient(135deg,#b36bff 0%,#862fea 48%,#5b16b5 100%)!important;
+  color:#ffffff!important;
+  box-shadow:inset 0 1px 0 #ffffff55,0 5px 16px #862fea55!important;
   font-weight:900!important;letter-spacing:.055em!important;
 }
 .tasks-page .task-action-button:active,
