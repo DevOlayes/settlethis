@@ -181,7 +181,7 @@ INSERT OR IGNORE INTO mystery_player_clues(id,player_id,clue_number,clue_text) V
 ('benzema-c3','benzema',3,'I won the 2022 Ballon d’Or.'),
 ('totti-c1','totti',1,'I spent my entire senior club career at one Italian club.'),
 ('totti-c2','totti',2,'I captained Roma and won the 2006 World Cup with Italy.'),
-('totti-c3','totti',3,'My nickname was Er Bimbo de Oro and I wore number 10 for Roma.'),
+('totti-c3','totti',3,'I was Roma’s iconic number 10 and became known as Il Capitano.'),
 ('kompany-c1','kompany',1,'I am a Belgian centre-back.'),
 ('kompany-c2','kompany',2,'I captained Manchester City during the club’s rise to the top of English football.'),
 ('kompany-c3','kompany',3,'I scored a famous long-range winner against Leicester in the 2018–19 title race.');
