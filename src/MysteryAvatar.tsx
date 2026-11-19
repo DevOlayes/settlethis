@@ -13,7 +13,7 @@ const palettes:Record<string,[string,string,string]> = {
   kit-19:["#d9e8f8","#a72c37","#d4b292"], kit-20:["#f28a37","#7d2b22","#e1b99a"], kit-21:["#f1f1f1","#1d5a37","#81543c"], kit-22:["#f1f1f1","#277c42","#81543c"], kit-23:["#f1d04e","#1c5b39","#81543c"], kit-24:["#3e8d55","#16452c","#8c6047"], kit-25:["#ffffff","#1b3d75","#d9b99d"], kit-26:["#e6e6e6","#244f8e","#d6aa8c"], kit-27:["#f1f1f1","#285b3e","#d5b08f"], kit-28:["#f4f4f4","#263b67","#c79c7d"], kit-29:["#f4e6c8","#8d6b3e","#d7b294"], kit-30:["#5ba2df","#1c3e68","#6e4c39"]
 };
 function generatedPalette(key:string):[string,string,string]{let hash=0;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))>>>0;const hue=hash%360;return [`hsl(${hue} 72% 58%)`,`hsl(${(hue+38)%360} 58% 28%)`,"#bd8d6b"];}
-export default function MysteryAvatar({avatarKey="messi",revealed=false,size="large"}:{avatarKey?:string;revealed?:boolean;size?:"large"|"small"}) {
+export default function MysteryAvatar({avatarKey="kit-01",revealed=false,size="large"}:{avatarKey?:string;revealed?:boolean;size?:"large"|"small"}) {
  const [shirt,trim,skin]=palettes[avatarKey]||generatedPalette(avatarKey);
  const style={"--avatar-shirt":shirt,"--avatar-trim":trim,"--avatar-skin":skin} as CSSProperties;
  return <div className={"mystery-avatar "+(revealed?"is-revealed ":"")+(size==="small"?"avatar-small":"")} style={style} aria-label={revealed?"Mystery footballer revealed":"Hidden mystery footballer"}>
