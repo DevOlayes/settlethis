@@ -2764,17 +2764,17 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 }
 
 
-/* Tasks: give every action a deliberate violet-plum button surface */
+/* Tasks: use a clearly distinct, richer violet for action buttons */
 .tasks-page .task-action-button,
 .tasks-page .task-reward-button{
   display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  min-height:33px!important;padding:0 12px!important;
-  border:1px solid #9b8acb88!important;border-radius:9px!important;
-  background:linear-gradient(135deg,#5a4d6d 0%,#40364f 100%)!important;
+  min-height:35px!important;padding:0 14px!important;
+  border:1px solid #b8a7df!important;border-radius:10px!important;
+  background:linear-gradient(135deg,#806ca9 0%,#68548f 100%)!important;
   color:#f4f1f7!important;
-  box-shadow:inset 0 1px 0 #ffffff18,0 4px 12px #09071155!important;
+  box-shadow:inset 0 1px 0 #ffffff30,0 5px 14px #09071166!important;
   font-weight:900!important;letter-spacing:.055em!important;
 }
 .tasks-page .task-action-button:active,
-.tasks-page .task-reward-button:active{transform:translateY(1px);filter:brightness(1.12)}
-.tasks-page .task-action-button[aria-disabled="true"]{opacity:.58;box-shadow:none!important}
+.tasks-page .task-reward-button:active{transform:translateY(1px);filter:brightness(1.1)}
+.tasks-page .task-action-button[aria-disabled="true"]{opacity:.62;box-shadow:none!important}
