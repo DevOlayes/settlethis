@@ -2641,3 +2641,103 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
  .tasks-page>h1,.rankings-page>h1{font-size:32px}
  .wallet-page>.wallet-title{margin-bottom:13px!important}
 }
+
+
+/* Responsive full-bleed header: never inherit the narrow content column */
+.topbar{
+ width:100vw!important;max-width:none!important;
+ margin-left:calc(50% - 50vw)!important;margin-right:0!important;
+ padding-left:clamp(12px,3.2vw,30px)!important;
+ padding-right:clamp(12px,3.2vw,30px)!important;
+ box-sizing:border-box!important;
+}
+@media(max-width:600px){
+ .topbar{width:100vw!important;max-width:none!important;margin-left:calc(50% - 50vw)!important;padding-left:10px!important;padding-right:10px!important}
+ .brand{flex:0 1 auto;min-width:0}
+ .top-actions{flex:0 0 auto}
+}
+
+/* Tasks: clearer zones, stronger contrast and deliberate reward hierarchy */
+.tasks-page>.page-intro{max-width:460px;color:#c9c2d2}
+.task-zone-label{display:flex;align-items:center;gap:11px;margin:19px 2px 9px}
+.task-zone-label>span{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:#302b3d;border:1px solid #9b8acb70;color:#e9e1f5;font-size:10px;font-weight:900}
+.task-zone-label>div{display:flex;flex-direction:column;gap:3px}
+.task-zone-label b{font-size:9px;letter-spacing:.13em;color:#f4f1f7}
+.task-zone-label small{font-size:9px;color:#aaa3b5}
+.quiz-hub{margin:0 0 17px!important;padding:15px!important;border:1px solid #9b8acb75!important;background:linear-gradient(145deg,#302b3d 0%,#252231 62%,#211d2d 100%)!important;box-shadow:0 12px 26px #0003!important}
+.quiz-hub-heading .eyebrow{color:#e98272!important}
+.quiz-hub-heading h2{color:#fff!important}
+.quiz-hub-heading p{color:#d0cbd7!important}
+.quiz-hub-heading>button{background:#211d2d!important;border-color:#e9827270!important;color:#f4a092!important}
+.quiz-list-card{background:#171522!important;border:1px solid #ffffff22!important;box-shadow:inset 0 1px #ffffff08!important}
+.quiz-card-top{display:flex;align-items:center;gap:8px}
+.quiz-card-top>span{padding:6px 8px;border-radius:6px;background:#393247;color:#e7dff2!important;font-size:8px;font-weight:900}
+.quiz-card-top>b{padding:5px 7px;border-radius:6px;background:#26382f;color:#a9e0bd!important;font-size:8px}
+.quiz-card-top>b:not(:contains("LIVE")){color:#c8c1d0}
+.quiz-feature-kicker{color:#e98272!important}
+.quiz-list-card h3{color:#fff!important}
+.quiz-list-card p{color:#c9c2d2!important}
+.quiz-fixture-label{color:#c0b2df!important}
+.quiz-reward-strip{border-color:#ffffff20!important}
+.quiz-reward-strip span{background:#252231;border:1px solid #ffffff16;border-radius:9px;padding:8px 10px}
+.quiz-reward-strip span b{color:#fff!important}
+.quiz-reward-strip span small{color:#c4bdcc!important}
+.quiz-open-button{background:#9b8acb!important;color:#171522!important;border-radius:10px!important;font-weight:900!important}
+.task-list{gap:10px!important}
+.task-row{display:flex;align-items:center;min-height:76px;padding:12px!important;border:1px solid #ffffff20!important;border-radius:14px!important;background:#252231!important;box-shadow:0 8px 20px #0002!important}
+.task-row .task-symbol{width:42px;height:42px;flex:0 0 42px;border-radius:12px;background:#393247!important;border:1px solid #9b8acb55!important;color:#f4f1f7!important}
+.task-row .task-symbol img{width:23px;height:23px}
+.task-row>div:not(.task-action-stack){min-width:0}
+.task-row b{font-size:11px!important;color:#fff!important}
+.task-row small{font-size:9px!important;line-height:1.45;color:#c4bdcc!important}
+.task-row .task-reward-amount{display:inline-flex;align-items:center;justify-content:center;min-height:25px;padding:0 8px;border-radius:7px;background:#443448;color:#ffb4a6!important;border:1px solid #e9827260;font-size:10px!important}
+.task-row .task-action-button,.task-row .task-reward-button{min-height:32px;padding:0 11px;border-radius:9px;background:#9b8acb!important;color:#171522!important;border:0;font-size:8px!important;font-weight:900;letter-spacing:.06em}
+.task-ad-reward{background:linear-gradient(110deg,#393247,#252231 72%)!important;border-color:#e9827260!important}
+.task-ad-reward .task-symbol{background:#513b43!important;border-color:#e9827270!important;color:#ffb3a5!important}
+.task-ad-count{color:#e4a99f!important}
+.social-task-row .brand-task-symbol{background:#302b3d!important;border:1px solid #ffffff24!important}
+.social-task-row .task-action-stack{align-items:flex-end}
+.task-invite-row{background:linear-gradient(110deg,#302b3d,#252231)!important;border-color:#9b8acb55!important}
+.task-invite-row .referral-progress-track{height:5px;background:#171522}
+.task-invite-row .referral-progress-track span{background:linear-gradient(90deg,#9b8acb,#e98272)}
+.task-invite-row .invite-people-icon{color:#e98272!important}
+@media(max-width:420px){
+ .tasks-page>.page-intro{font-size:11px}
+ .task-zone-label{margin-top:16px}
+ .quiz-hub{padding:12px!important}
+ .task-row{gap:9px!important;padding:10px!important}
+ .task-row .task-symbol{width:37px;height:37px;flex-basis:37px}
+ .task-row .task-action-stack{min-width:70px}
+ .task-row .task-reward-amount{font-size:9px!important}
+}
+
+/* Wallet: one useful reward surface, no duplicate referral or ledger panels */
+.fund-card{position:relative;overflow:hidden;padding:17px!important;border:1px solid #9b8acb65!important;border-radius:18px!important;background:radial-gradient(ellipse at 100% 0%,#e9827225,transparent 45%),linear-gradient(135deg,#302b3d,#211d2d 75%)!important;box-shadow:0 15px 32px #0003!important}
+.fund-card:after{content:"";position:absolute;right:-42px;top:-48px;width:160px;height:160px;border:1px solid #e9827233;border-radius:50%;box-shadow:0 0 0 17px #e9827208,0 0 0 34px #e9827206;pointer-events:none}
+.fund-card-heading{position:relative;z-index:1;display:flex;align-items:flex-start;gap:13px}
+.fund-card-icon{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#e98272,#b85f56);color:#211725;box-shadow:0 8px 20px #e9827225}
+.fund-card-icon svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fund-card-heading .eyebrow{color:#f2a397!important}
+.fund-card h3{margin:5px 0 6px!important;font-size:clamp(18px,4.8vw,22px)!important;line-height:1.13;letter-spacing:-.04em;color:#fff}
+.fund-card p{margin:0!important;color:#d6cfdb!important;font-size:10px!important;line-height:1.6}
+.fund-card p strong{color:#ffb3a5}
+.fund-card-reward{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:15px 0 13px;padding:10px 12px;border:1px solid #ffffff20;border-radius:11px;background:#17152288}
+.fund-card-reward>span{display:flex;align-items:baseline;gap:7px}
+.fund-card-reward b{font-size:21px;color:#fff}
+.fund-card-reward small{font-size:8px;font-weight:900;letter-spacing:.1em;color:#c9bfdc}
+.fund-card-reward>i{font-size:8px;color:#c9c2d2;font-style:normal;text-align:right}
+.fund-card .primary-wide{position:relative;z-index:1;min-height:43px;border-radius:11px!important;background:linear-gradient(100deg,#b5a6df,#9b8acb)!important;color:#171522!important;font-size:9px!important}
+.fund-card .integration-note{position:relative;z-index:1;color:#c8c1d0!important;font-size:8px!important;line-height:1.5}
+.wallet-page .wallet-help-centre{margin-top:20px}
+.wallet-page .referral-promo,.wallet-separation,.wallet-history,.wallet-future{display:none!important}
+
+/* Member entry screen: centred football crest and a sharper platform message */
+.game-member-gate{max-width:470px!important;margin:26px auto!important;padding:25px 21px 21px!important;text-align:center!important}
+.game-gate-brand{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;margin:0 auto 19px!important}
+.game-gate-brand .game-emblem{display:grid!important;width:76px!important;height:76px!important;flex:0 0 76px!important;place-items:center;filter:drop-shadow(0 9px 18px #e9827230)}
+.game-gate-brand .game-emblem svg{width:76px!important;height:76px!important}
+.game-gate-brand .eyebrow{font-size:8px!important;letter-spacing:.2em!important}
+.game-member-gate h1{font-size:clamp(29px,7.8vw,39px)!important;line-height:1.05!important;max-width:420px;margin:0 auto 13px!important}
+.game-member-gate p{max-width:390px!important;margin:0 auto!important;text-align:center!important}
+.game-gate-note{max-width:390px;margin:20px auto 0!important;text-align:left}
+@media(max-width:600px){.game-member-gate{margin:16px auto!important;padding:23px 16px 18px!important}.game-gate-brand .game-emblem,.game-gate-brand .game-emblem svg{width:68px!important;height:68px!important;flex-basis:68px!important}}
