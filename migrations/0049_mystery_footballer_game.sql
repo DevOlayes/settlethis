@@ -70,7 +70,7 @@ INSERT OR IGNORE INTO mystery_players(id,answer,accepted_answers_json,nationalit
 ('iniesta','Andres Iniesta','["iniesta","andres iniesta","andrés iniesta"]','Spain','hard','iniesta'),
 ('mane','Sadio Mane','["mane","sadio mane","sadio mané"]','Senegal','medium','mane'),
 ('pirlo','Andrea Pirlo','["pirlo","andrea pirlo"]','Italy','hard','pirlo'),
-('eto','Samuel Eto’o','["eto","eto'o","samuel eto","samuel eto’o","samuel eto'o"]','Cameroon','hard','eto'),
+('eto','Samuel Eto’o','["eto","etoo","samuel eto","samuel etoo"]','Cameroon','hard','eto'),
 ('kaka','Kaka','["kaka","kaká","ricardo kaka","ricardo kaká"]','Brazil','hard','kaka'),
 ('vanpersie','Robin van Persie','["van persie","robin van persie","r v p"]','Netherlands','hard','vanpersie');
 
