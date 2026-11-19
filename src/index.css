@@ -2627,3 +2627,17 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
  .bottom-nav button small{font-size:7px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Page-level composition: each destination now reads as its own product space */
+.tasks-page>.eyebrow,.rankings-page>.eyebrow{color:#e98272;border-color:#e9827255;background:#2b2530}
+.tasks-page>h1,.rankings-page>h1{max-width:500px}
+.tasks-page>.page-intro,.rankings-page>.page-intro{font-size:12px;max-width:500px}
+.wallet-page>.eyebrow{color:#e98272;border-color:#e9827255;background:#2b2530}
+.wallet-page .referral-promo{margin:13px 0}
+.wallet-page .wallet-help-centre{margin-top:20px}
+.referrals-shell{padding-top:17px}
+.wallet-help-icon svg{width:20px;height:20px;display:block}
+@media(max-width:600px){
+ .tasks-page>h1,.rankings-page>h1{font-size:32px}
+ .wallet-page>.wallet-title{margin-bottom:13px!important}
+}
