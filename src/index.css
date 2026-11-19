@@ -2778,3 +2778,40 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .tasks-page .task-action-button:active,
 .tasks-page .task-reward-button:active{transform:translateY(1px);filter:brightness(1.08)}
 .tasks-page .task-action-button[aria-disabled="true"]{opacity:.62;box-shadow:none!important}
+
+
+/* Task actions: deeper coral, centred labels and a clean reward column */
+.tasks-page .task-action-stack{
+  width:98px!important;min-width:98px!important;flex:0 0 98px!important;
+  align-items:center!important;justify-content:center!important;gap:7px!important;
+}
+.tasks-page .task-action-stack .task-reward-amount{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;min-height:18px!important;text-align:center!important;
+  font-size:10px!important;line-height:1.15!important;letter-spacing:.015em!important;
+  white-space:nowrap!important;
+}
+.tasks-page .task-action-button,
+.tasks-page .task-reward-button{
+  width:100%!important;min-width:0!important;min-height:36px!important;height:36px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:0!important;padding:0 8px!important;text-align:center!important;
+  border:1px solid #e98272!important;border-radius:10px!important;
+  background:linear-gradient(135deg,#D97867 0%,#C65C50 52%,#A9433B 100%)!important;
+  color:#fff!important;
+  box-shadow:inset 0 1px 0 #ffffff20,0 4px 12px #a9433b35!important;
+  font-size:9px!important;font-weight:1000!important;letter-spacing:.07em!important;
+  line-height:1!important;
+}
+.tasks-page .task-action-button span,
+.tasks-page .task-reward-button span{display:none!important}
+.tasks-page .social-task-row .task-action-stack,
+.tasks-page .task-invite-row .task-action-stack,
+.tasks-page .task-ad-reward .task-action-stack{align-items:center!important}
+@media(max-width:420px){
+  .tasks-page .task-action-stack{width:88px!important;min-width:88px!important;flex-basis:88px!important}
+  .tasks-page .task-action-button,.tasks-page .task-reward-button{min-height:35px!important;height:35px!important;font-size:8px!important}
+}
+@media(max-width:370px){
+  .tasks-page .task-action-stack{width:78px!important;min-width:78px!important;flex-basis:78px!important}
+}
