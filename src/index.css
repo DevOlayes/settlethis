@@ -2282,3 +2282,82 @@ html,body{background:#171522;color:#f4f1f7}
 .task-symbol,.empty-ball,.note-icon{background:#393247;color:#b4a5dc}
 .game-answer-reveal,.mystery-answer-reveal{background:linear-gradient(110deg,#303c39,#211d2d)}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* SETHIS premium game lobby and mobile game-room polish */
+.game-home{max-width:480px;margin:0 auto;padding:18px 0 28px}
+.game-welcome{position:relative;display:block;padding:19px 17px 18px;margin:0 0 13px;border:1px solid #9b8acb30;border-radius:18px;background:radial-gradient(ellipse at 88% 10%,#9b8acb20,transparent 48%),linear-gradient(135deg,#302b3d,#211d2d 68%,#292438);overflow:hidden}
+.game-welcome:after{content:"";position:absolute;width:160px;height:160px;border:1px solid #b4a5dc19;border-radius:50%;right:-75px;bottom:-105px;box-shadow:0 0 0 18px #b4a5dc08,0 0 0 38px #b4a5dc06;pointer-events:none}
+.game-welcome h1{font-size:clamp(28px,7vw,36px);line-height:1.06;letter-spacing:-.065em;margin:13px 0 8px;font-weight:850}
+.game-welcome h1 em{color:#c0b2df;font-style:normal}
+.game-welcome p{font-size:11px;line-height:1.6;color:#c9c3d2;max-width:275px;margin:0}
+.game-live-pill{position:absolute;right:13px;top:15px;z-index:1;padding:7px 9px;border-radius:30px;font-size:8px;letter-spacing:.06em;display:flex;align-items:center;gap:6px}
+.game-live-pill i{width:6px;height:6px;border-radius:50%;background:#78d7a5;box-shadow:0 0 9px #78d7a5;display:inline-block}
+.game-wallet-strip{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:0 0 22px;padding:10px;border:1px solid #b9acd02b;border-radius:13px;background:#211d2d}
+.game-wallet-strip>button:first-child{display:flex;align-items:center;gap:9px;text-align:left;background:transparent;border:0;padding:0;min-width:0}
+.game-wallet-strip>button:first-child>span:first-child{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#40384f;color:#c8b9e9;font-size:15px}
+.game-wallet-strip>button:first-child>span:nth-child(2){display:flex;flex-direction:column;gap:4px;font-size:7px;letter-spacing:.1em;color:#aaa3b5;font-weight:800}
+.game-wallet-strip strong{font-size:16px;line-height:1.1;color:#f4f1f7;letter-spacing:0}
+.game-wallet-strip strong small{font-size:9px;color:#c0b2df}
+.game-wallet-strip>span{display:none}
+.game-wallet-strip .game-earn-ct{display:flex;align-items:center;justify-content:center;gap:5px;height:34px;padding:0 10px;border-radius:8px;font-size:7px;letter-spacing:.07em;font-weight:900;white-space:nowrap}
+.game-section-label{display:flex;align-items:end;justify-content:space-between;margin:0 2px 11px}
+.game-section-label h2{font-size:20px;letter-spacing:-.045em;margin:4px 0 0}
+.mystery-game-card{border-radius:18px;overflow:hidden;border:1px solid #9b8acb45;box-shadow:0 18px 45px #09081155}
+.mystery-game-top{height:39px;padding:0 13px;display:flex;align-items:center;justify-content:space-between;background:#211d2d;border-bottom:1px solid #ffffff12}
+.mystery-game-top>span:first-child{font-size:7px;letter-spacing:.12em;color:#c7bfd5;font-weight:900}
+.mystery-game-hero{min-height:218px;padding:19px 14px 17px;display:grid;grid-template-columns:1fr 116px;gap:5px;align-items:center;position:relative}
+.mystery-game-copy{min-width:0;position:relative;z-index:1}
+.game-kicker{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.game-kicker .eyebrow{font-size:7px;letter-spacing:.14em}
+.mystery-game-copy h2{font-size:clamp(29px,8vw,39px);line-height:.91;letter-spacing:-.075em;margin:0 0 10px;font-weight:900}
+.mystery-game-copy h2 em{font-style:normal;color:#e9a093}
+.mystery-game-copy p{font-size:9px;line-height:1.55;color:#d0c8d8;max-width:230px;margin:0}
+.mystery-avatar-wrap{position:relative;min-width:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.mystery-avatar-wrap .mystery-avatar{width:106px;height:132px;position:relative;z-index:1;filter:drop-shadow(0 12px 14px #08060e70)}
+.mystery-avatar-wrap:before{content:"";position:absolute;width:116px;height:116px;border:1px solid #c7b6df30;border-radius:50%;box-shadow:0 0 0 12px #c7b6df08,0 0 35px #b69bdd20}
+.mystery-avatar-tag{position:relative;z-index:2;margin-top:-5px;font-size:6px;letter-spacing:.13em;color:#f1d8d2;font-weight:900;background:#3e303f;border:1px solid #e9827255;padding:5px 7px;border-radius:30px;white-space:nowrap}
+.mystery-start-panel,.mystery-round-panel{padding:15px 13px 14px;background:#211d2d}
+.mystery-start-copy b{font-size:13px;letter-spacing:-.02em}
+.mystery-start-copy p{font-size:9px;line-height:1.55;color:#bdb5c8;margin:5px 0 13px}
+.mystery-difficulty-picker{gap:6px;margin:10px 0 12px}
+.mystery-difficulty-picker button{min-width:0;flex:1;padding:10px 7px;border-radius:9px;text-align:left}
+.mystery-difficulty-picker button b{font-size:8px}
+.mystery-difficulty-picker button small{font-size:7px;line-height:1.35}
+.game-primary{height:43px;border-radius:9px;font-size:9px;letter-spacing:.12em;font-weight:900}
+.mystery-round-meta{margin:11px 0 8px}
+.mystery-round-meta span{display:flex;align-items:center;gap:5px;font-size:7px;letter-spacing:.1em}
+.mystery-round-meta svg,.mystery-clue svg,.game-how-card ol svg{width:14px;height:14px;color:#c0b2df;flex-shrink:0}
+.mystery-round-meta i{font-style:normal;color:#aaa3b5}
+.mystery-clue{padding:13px 12px;border-radius:11px;border:1px solid #9b8acb45}
+.mystery-clue>span{display:flex;align-items:center;gap:6px;font-size:7px;letter-spacing:.12em;font-weight:900;color:#c5b8df}
+.mystery-clue p{font-size:14px;line-height:1.45;letter-spacing:-.02em;color:#f4f1f7;font-weight:700;margin:9px 0 1px}
+.mystery-guess-box{margin-top:13px}
+.mystery-guess-box label{display:block;font-size:8px;letter-spacing:.12em;margin-bottom:7px}
+.mystery-guess-box input{height:44px;border-radius:9px;padding:0 12px;background:#171522;border:1px solid #ffffff25;font-size:11px}
+.mystery-guess-box button{height:44px;min-width:48px;border-radius:9px;font-size:0}
+.mystery-guess-box button:after{content:"↗";font-size:20px}
+.mystery-round-actions{display:flex;align-items:center;gap:9px;margin-top:11px}
+.mystery-round-actions button{min-height:35px;border-radius:8px;padding:0 11px;font-size:7px;letter-spacing:.08em}
+.mystery-round-actions span{font-size:7px;color:#aaa3b5}
+.game-lower-grid{display:grid;grid-template-columns:1fr;gap:11px}
+.game-how-card,.game-leaderboard{padding:15px 13px;border-radius:14px;background:linear-gradient(145deg,#292536,#211d2d);border:1px solid #ffffff18}
+.game-how-card h3,.game-leaderboard h3{font-size:18px;letter-spacing:-.05em;margin:6px 0 12px}
+.game-how-card ol{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.game-how-card ol li{display:flex;align-items:center;gap:9px;font-size:9px;color:#ddd6e6}
+.game-how-card ol li>span{display:flex;flex-direction:column;gap:3px}
+.game-how-card ol li b{font-size:9px}
+.game-how-card ol li small{font-size:8px;color:#aaa3b5}
+.game-score-rules{display:flex;gap:5px;margin-top:14px}
+.game-score-rules span{flex:1;padding:8px 5px;border:1px solid #ffffff16;border-radius:7px;background:#171522;font-size:6px;text-align:center;color:#aaa3b5}
+.game-score-rules b{display:block;font-size:10px;color:#c8b9e9;margin-top:4px}
+.game-leaderboard-head h3{margin-bottom:3px}
+.leader-cup{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#49343b;color:#e9a093}
+.leader-cup svg{width:19px;height:19px}
+.game-leader-row{padding:9px 0;border-bottom:1px solid #ffffff12}
+.game-rank{font-size:9px;color:#aaa3b5}
+.game-leader-avatar{width:29px;height:29px;border-radius:9px;background:#40384f;color:#e3d9f4}
+.game-leader-points{font-size:9px;color:#e9a093}
+.game-footer-line{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:22px;color:#837b91;font-size:6px;letter-spacing:.13em;font-weight:900}
+.game-footer-line i{width:4px;height:4px;border-radius:50%;background:#e98272}
+@media(min-width:600px){.game-home{max-width:520px}.game-lower-grid{grid-template-columns:1fr 1fr}.mystery-game-hero{grid-template-columns:1fr 145px;min-height:235px}.mystery-avatar-wrap .mystery-avatar{width:128px;height:150px}}
+@media(max-width:360px){.game-welcome h1{font-size:27px}.mystery-game-hero{grid-template-columns:1fr 100px;padding-left:11px;padding-right:10px}.mystery-game-copy h2{font-size:28px}.mystery-avatar-wrap .mystery-avatar{width:91px;height:119px}}
