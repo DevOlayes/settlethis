@@ -12,8 +12,9 @@ const palettes:Record<string,[string,string,string]> = {
   pirlo:["#e9ecef","#2e4b70","#dfbda0"], eto:["#e9d8ba","#d94a3d","#81543c"],
   kaka:["#d9e8f8","#a72c37","#d4b292"], vanpersie:["#f28a37","#7d2b22","#e1b99a"], weah:["#f1f1f1","#1d5a37","#81543c"], okocha:["#f1f1f1","#277c42","#81543c"], yayatoure:["#f1d04e","#1c5b39","#81543c"], mahrez:["#3e8d55","#16452c","#8c6047"], kane:["#ffffff","#1b3d75","#d9b99d"], son:["#e6e6e6","#244f8e","#d6aa8c"], suarez:["#f1f1f1","#285b3e","#d5b08f"], benzema:["#f4f4f4","#263b67","#c79c7d"], totti:["#f4e6c8","#8d6b3e","#d7b294"], kompany:["#5ba2df","#1c3e68","#6e4c39"]
 };
+function generatedPalette(key:string):[string,string,string]{let hash=0;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))>>>0;const hue=hash%360;return [`hsl(${hue} 72% 58%)`,`hsl(${(hue+38)%360} 58% 28%)`,"#bd8d6b"];}
 export default function MysteryAvatar({avatarKey="messi",revealed=false,size="large"}:{avatarKey?:string;revealed?:boolean;size?:"large"|"small"}) {
- const [shirt,trim,skin]=palettes[avatarKey]||["#27D7F2","#16445b","#bd8d6b"];
+ const [shirt,trim,skin]=palettes[avatarKey]||generatedPalette(avatarKey);
  const style={"--avatar-shirt":shirt,"--avatar-trim":trim,"--avatar-skin":skin} as CSSProperties;
  return <div className={"mystery-avatar "+(revealed?"is-revealed ":"")+(size==="small"?"avatar-small":"")} style={style} aria-label={revealed?"Mystery footballer revealed":"Hidden mystery footballer"}>
   <div className="avatar-stadium-glow"/><div className="avatar-frame-lines"/>
