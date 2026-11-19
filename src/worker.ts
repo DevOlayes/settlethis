@@ -213,7 +213,7 @@ if(path==="/api/admin/competition-catalogue"&&request.method==="GET"){const admi
     let player=await env.DB.prepare("SELECT id,avatar_key FROM mystery_players WHERE active=1 AND difficulty=? AND id NOT IN (SELECT player_id FROM mystery_game_rounds WHERE user_id=? ORDER BY started_at DESC LIMIT 5) ORDER BY random() LIMIT 1").bind(difficulty,user).first<{id:string;avatar_key:string}>();
     if(!player)player=await env.DB.prepare("SELECT id,avatar_key FROM mystery_players WHERE active=1 AND difficulty=? ORDER BY random() LIMIT 1").bind(difficulty).first<{id:string;avatar_key:string}>();
     if(!player)return json({error:"There are no mystery players available at this difficulty yet."},503);
-    const settings=await env.DB.prepare("SELECT entry_ct,session_minutes FROM mystery_game_settings WHERE id=1").first<{entry_ct:number;session_minutes:number}>(),entryCt=Math.max(0,Number(settings?.entry_ct??100)),sessionMinutes=Math.max(1,Math.min(60,Number(settings?.session_minutes??10)));
+    const settings=await env.DB.prepare("SELECT entry_ct,session_minutes FROM mystery_game_settings WHERE id=1").first<{entry_ct:number;session_minutes:number}>(),entryCt=Math.max(1,Number(settings?.entry_ct??100)),sessionMinutes=Math.max(1,Math.min(60,Number(settings?.session_minutes??10)));
     const roundId=id(),ledgerKey="mystery-game-entry:"+roundId,expiresAt=new Date(Date.now()+sessionMinutes*60*1000).toISOString();
     await env.DB.batch([
      env.DB.prepare("INSERT OR IGNORE INTO wallets(user_id,ct_balance,sethis_balance) VALUES(?,0,0)").bind(user),
