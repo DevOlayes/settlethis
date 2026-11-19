@@ -1957,3 +1957,11 @@
 .admin-mystery-toggle{flex:none;padding:8px 10px;border:1px solid #ffffff22;border-radius:8px;background:#26364d;color:#d6e3ef;font-size:9px;font-weight:900}
 .admin-mystery-toggle.active{border-color:#27d7f277;background:#103748;color:#bff8ff}
 @media(max-width:650px){.admin-mystery-clues{grid-template-columns:1fr}.admin-mystery-stats{gap:6px}.admin-mystery-stats article{padding:10px}.admin-mystery-stats b{font-size:19px}.admin-mystery-list article{align-items:flex-start;flex-wrap:wrap}.admin-mystery-toggle{margin-left:49px}}
+
+
+.game-invite-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin:0 0 10px;border:1px solid #27d7f233;border-radius:12px;background:linear-gradient(100deg,#132d40,#101d2c)}
+.game-invite-strip b,.game-invite-strip small{display:block}
+.game-invite-strip b{font-size:10px;color:#f4fbff;letter-spacing:.06em}
+.game-invite-strip small{margin-top:4px;color:#9db4c7;font-size:10px}
+.game-invite-strip button{flex:none;padding:9px 11px;border:1px solid #27d7f266;border-radius:8px;background:#12364a;color:#c8f8ff;font-size:9px;font-weight:900;white-space:nowrap}
+@media(max-width:390px){.game-invite-strip{align-items:flex-start;flex-direction:column}.game-invite-strip button{width:100%}}
