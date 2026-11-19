@@ -2225,3 +2225,60 @@ button,input,textarea,select{font-family:'Manrope',Arial,sans-serif}
 .section-heading h2,.inner-page h1,.featured-content h3,.minute,.hero h1,.empty-state b{font-family:'Manrope',Arial,sans-serif}
 .section-heading h2,.inner-page h1{font-weight:800;letter-spacing:-.045em}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+
+/* SETHIS palette pass — restrained aubergine, muted violet and warm coral */
+:root{
+ --bg:#171522;
+ --panel:#211d2d;
+ --raised:#302b3d;
+ --cyan:#9b8acb;
+ --gold:#e98272;
+ --white:#f4f1f7;
+ --muted:#aaa3b5;
+ --line:#c9bfdc24;
+}
+html,body{background:#171522;color:#f4f1f7}
+.app-shell{background:radial-gradient(ellipse at 50% -15%,#51476a30,transparent 43%),radial-gradient(ellipse at 100% 55%,#75483f16,transparent 34%),#171522}
+.topbar{background:#191725f2;border-bottom-color:#c9bfdc20}
+.brand-mark{background:linear-gradient(145deg,#514766,#302b3d);border-color:#9b8acb70}
+.brand-mark span,.brand-name i,.brand-name>span{color:#b4a5dc}
+.balance-pill{background:linear-gradient(120deg,#302b3d,#393247);border-color:#9b8acb65}
+.balance-pill small,.ct-gem,.plus{color:#b4a5dc}
+.bottom-nav{background:linear-gradient(180deg,#302b3df5,#191725fc);border-color:#9b8acb30}
+.bottom-nav button{color:#aaa3b5}
+.bottom-nav button.selected{color:#c1b4e2;background:linear-gradient(180deg,#51476688,#302b3d66)}
+.bottom-nav button.selected .bottom-nav-icon{background:linear-gradient(145deg,#625777,#40384f);color:#e0d6f4}
+.bottom-nav button.selected:before{background:#e98272;box-shadow:0 0 10px #e98272}
+.game-welcome h1 em,.mystery-game-copy h2 em{color:#b4a5dc;text-shadow:0 0 22px #9b8acb25}
+.game-live-pill{background:#302b3d;border-color:#e9827250;color:#f2b3a8}
+.game-invite-strip{background:linear-gradient(110deg,#393247,#211d2d 75%);border-color:#9b8acb40}
+.game-invite-strip button,.view-court{background:linear-gradient(110deg,#625777,#40384f);border-color:#9b8acb70;color:#fff}
+.game-earn-ct,.mystery-clue{background:linear-gradient(120deg,#393247,#211d2d)!important;border-color:#9b8acb48!important}
+.mystery-game-card{background:linear-gradient(145deg,#393247 0%,#211d2d 56%,#1b1927 100%);border-color:#9b8acb65}
+.mystery-game-hero{background:radial-gradient(ellipse at 78% 48%,#76658b38,transparent 43%),linear-gradient(112deg,#514766,#292536 75%)}
+.mystery-difficulty{background:#49343b55;border-color:#e9827260;color:#f2b3a8}
+.mystery-guess-box input:focus{border-color:#b4a5dc;box-shadow:0 0 0 3px #9b8acb20}
+.mystery-guess-box button,.game-primary{background:linear-gradient(105deg,#9b8acb,#c0acd9);color:#171522;box-shadow:0 8px 20px #9b8acb20}
+.mystery-difficulty-picker button.active{background:linear-gradient(145deg,#514766,#393247);border-color:#b4a5dc;box-shadow:inset 0 0 0 1px #b4a5dc44,0 5px 18px #0003}
+.game-member-gate{background:radial-gradient(ellipse at 50% 0%,#76658b2b,transparent 55%),linear-gradient(145deg,#393247,#1b1927);border-color:#9b8acb55}
+.game-member-gate h1 em{color:#e98272}
+.game-member-gate .eyebrow{color:#c0b2df}
+.game-gate-note{background:#211d2d;border-color:#9b8acb30;color:#d3cddd}
+.game-emblem{display:none}
+.game-kicker .game-emblem{display:inline-grid}
+.primary-wide,.hero-cta,.task-feature button{background:#9b8acb;color:#171522}
+.hero{background:linear-gradient(110deg,#302b3d,#211d2d 58%,#393247);border-color:#625777}
+.hero h1 em,.hero-foot b{color:#b4a5dc}
+.hero-cta{background:#9b8acb;color:#171522}
+.whistle{background:linear-gradient(145deg,#e98272,#b85f56);border-color:#f1b1a5;color:#241d2c}
+.hero-stamp b,.minute,.featured-content .status-dot,.reward-token,.quiz-task strong{color:#e98272}
+.featured-court,.featured-content{background:#211d2d}
+.court-visual{background:radial-gradient(ellipse at 50% 50%,#514766,#302b3d 70%,#211d2d)}
+.view-court{background:#393247;border-color:#9b8acb65}
+.task-feature,.quiz-task,.quiz-promo{border-color:#e9827240;background:linear-gradient(110deg,#39302f,#292536)}
+.task-feature button,.reward-token,.quiz-task strong{color:#f2b3a8}
+.quiz-big,.quiz-icon{background:#49343b;color:#f2b3a8}
+.task-symbol,.empty-ball,.note-icon{background:#393247;color:#b4a5dc}
+.game-answer-reveal,.mystery-answer-reveal{background:linear-gradient(110deg,#303c39,#211d2d)}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
