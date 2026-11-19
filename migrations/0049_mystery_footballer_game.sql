@@ -50,6 +50,13 @@ CREATE TABLE IF NOT EXISTS mystery_game_presence (
   user_id TEXT PRIMARY KEY REFERENCES telegram_users(telegram_user_id) ON DELETE CASCADE,
   last_seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS mystery_game_settings (
+  id INTEGER PRIMARY KEY CHECK(id=1),
+  entry_ct INTEGER NOT NULL DEFAULT 100 CHECK(entry_ct BETWEEN 0 AND 100000),
+  session_minutes INTEGER NOT NULL DEFAULT 10 CHECK(session_minutes BETWEEN 1 AND 60),
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+INSERT OR IGNORE INTO mystery_game_settings(id,entry_ct,session_minutes) VALUES(1,100,10);
 CREATE INDEX IF NOT EXISTS idx_mystery_presence_last_seen ON mystery_game_presence(last_seen_at);
 
 INSERT OR IGNORE INTO mystery_players(id,answer,accepted_answers_json,nationality,difficulty,avatar_key) VALUES
