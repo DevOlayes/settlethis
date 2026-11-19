@@ -2361,3 +2361,52 @@ html,body{background:#171522;color:#f4f1f7}
 .game-footer-line i{width:4px;height:4px;border-radius:50%;background:#e98272}
 @media(min-width:600px){.game-home{max-width:520px}.game-lower-grid{grid-template-columns:1fr 1fr}.mystery-game-hero{grid-template-columns:1fr 145px;min-height:235px}.mystery-avatar-wrap .mystery-avatar{width:128px;height:150px}}
 @media(max-width:360px){.game-welcome h1{font-size:27px}.mystery-game-hero{grid-template-columns:1fr 100px;padding-left:11px;padding-right:10px}.mystery-game-copy h2{font-size:28px}.mystery-avatar-wrap .mystery-avatar{width:91px;height:119px}}
+
+
+/* SETHIS mobile-first header, wallet contrast and member gate refinement */
+.ct-balance-modal .ct-balance-number,
+.ct-balance-modal .ct-balance-number i{color:#fff!important;text-shadow:0 1px 12px #ffffff18}
+.ct-balance-modal .ct-balance-number i{font-style:normal}
+.ct-balance-ad-head>div small{color:#f4f1f7}
+.game-member-gate{max-width:460px;margin:22px auto;padding:25px 19px 20px;text-align:left;border-radius:20px;background:radial-gradient(ellipse at 50% 0%,#9b8acb24,transparent 52%),linear-gradient(145deg,#302b3d,#211d2d 72%,#1b1927);border:1px solid #9b8acb55;box-shadow:0 18px 48px #08071166}
+.game-gate-brand{display:flex;align-items:center;gap:12px;margin-bottom:19px}
+.game-gate-brand .game-emblem{display:grid;width:58px;height:58px;flex:0 0 58px}
+.game-gate-brand .game-emblem svg{width:58px;height:58px}
+.game-gate-brand .eyebrow{font-size:9px;letter-spacing:.16em;color:#c0b2df;font-weight:900}
+.game-member-gate h1{font-size:clamp(31px,8vw,40px);line-height:1.02;letter-spacing:-.065em;margin:0 0 13px;font-weight:900}
+.game-member-gate h1 em{display:inline-block;margin-top:4px;color:#e98272;font-style:normal}
+.game-member-gate p{font-size:12px;line-height:1.7;color:#d8d2df;margin:0;max-width:370px}
+.game-gate-note{display:flex;align-items:center;gap:11px;margin-top:20px;padding:13px 12px;border:1px solid #9b8acb38;border-radius:13px;background:#171522;color:#f4f1f7}
+.game-gate-note>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.game-gate-note b{font-size:9px;letter-spacing:.1em;color:#f4f1f7}
+.game-gate-note small{font-size:10px;line-height:1.55;color:#c9c2d2}
+.game-gate-note>svg{width:17px;height:17px;color:#e98272;flex:0 0 auto}
+.game-gate-note-icon{width:34px;height:34px;display:grid;place-items:center;flex:0 0 34px;border-radius:10px;background:#302b3d;color:#c0b2df}
+.game-gate-note-icon svg{width:19px;height:19px}
+@media(max-width:600px){
+ .topbar{height:calc(58px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 10px 0;gap:7px;box-sizing:border-box}
+ .brand{gap:6px;min-width:0;flex:0 1 auto}
+ .brand-emblem,.brand-mark{width:30px;height:30px;flex:0 0 30px;border-radius:9px}
+ .brand-wordmark,.brand-name{font-size:12px;letter-spacing:-.055em;white-space:nowrap}
+ .top-actions{gap:6px;min-width:0;flex:0 0 auto}
+ .balance-pill{height:35px;min-width:0;padding:0 8px;gap:4px;border-radius:11px;white-space:nowrap}
+ .balance-pill b{font-size:12px;font-variant-numeric:tabular-nums;color:#fff}
+ .balance-pill small{font-size:9px;color:#f4f1f7}
+ .balance-pill .plus{font-size:16px;margin-left:1px;color:#c0b2df}
+ .profile-dot{width:32px;height:32px;min-width:32px;font-size:12px}
+ .staff-desk-trigger{font-size:7px;padding:6px 7px}
+ .main-content{padding-left:12px;padding-right:12px}
+ .game-member-gate{margin:17px auto;padding:22px 16px 17px;border-radius:17px}
+ .game-gate-brand{margin-bottom:17px}
+ .game-member-gate h1{font-size:clamp(29px,8.5vw,37px)}
+}
+@media(max-width:380px){
+ .topbar{padding-left:8px;padding-right:8px;gap:4px}
+ .brand{gap:5px}
+ .brand-emblem,.brand-mark{width:27px;height:27px;flex-basis:27px}
+ .brand-wordmark,.brand-name{font-size:10px}
+ .top-actions{gap:4px}
+ .balance-pill{height:33px;padding:0 6px;gap:3px}
+ .balance-pill b{font-size:11px}
+ .profile-dot{width:29px;height:29px;min-width:29px}
+}
