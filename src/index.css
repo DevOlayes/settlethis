@@ -2921,3 +2921,15 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 @media(max-width:420px){
   .tasks-page .task-action-stack .task-reward-amount{font-size:10px!important;margin-bottom:4px!important}
 }
+
+
+/* Growing game hub — supporting the first featured title without inventing future games */
+.games-lineup-note{display:flex;align-items:center;gap:13px;margin:15px 0 6px;padding:14px 15px;border:1px solid #9b8acb42;border-radius:16px;background:linear-gradient(112deg,#211d2c 0%,#2b2638 100%);color:#f4f1f7}
+.games-lineup-icon{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border:1px solid #e9827244;border-radius:13px;background:#e9827218;color:#e98272}
+.games-lineup-icon svg{width:20px;height:20px}
+.games-lineup-note>div{min-width:0;flex:1}
+.games-lineup-note .eyebrow{display:block;margin-bottom:4px;color:#c8bce0;font-size:8px;letter-spacing:.14em}
+.games-lineup-note h3{margin:0;color:#f4f1f7;font-size:13px;font-weight:850;letter-spacing:-.025em}
+.games-lineup-note p{margin:4px 0 0;color:#aaa3b5;font-size:10px;line-height:1.5}
+.games-lineup-count{flex:0 0 auto;color:#e98272;font-size:10px;font-weight:900;letter-spacing:.04em}
+@media(max-width:390px){.games-lineup-note{gap:10px;padding:12px}.games-lineup-icon{width:36px;height:36px;flex-basis:36px}.games-lineup-note h3{font-size:12px}.games-lineup-note p{font-size:9px}.games-lineup-count{font-size:9px}}
