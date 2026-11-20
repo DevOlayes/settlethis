@@ -3318,3 +3318,9 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 @keyframes giftLibraryFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes giftLibraryOpen{0%{transform:scale(.88) rotate(-5deg)}65%{transform:scale(1.06) rotate(2deg)}100%{transform:scale(1)}}
 @media(max-width:420px){.onboarding-visual{height:190px}.onboarding-art-backdrop{height:154px}.gift-icon-stage{width:160px;height:150px}}
+
+/* Keep imported Iconoir artwork crisp and proportionate inside story compositions */
+.onboarding-art-backdrop .art-icon-main>svg{position:relative!important;width:92px!important;height:92px!important;max-height:none!important;stroke-width:1.65!important;filter:drop-shadow(0 6px 10px #0005)}
+.onboarding-art-backdrop .art-search svg{position:relative!important;width:37px!important;height:37px!important;max-height:none!important;stroke-width:2!important}
+.onboarding-art-backdrop .onboarding-token-coin .coin-detail{position:absolute!important;width:26px!important;height:26px!important;max-height:none!important;stroke-width:1.8!important}
+.onboarding-art-backdrop .art-entry-token svg{position:relative!important;width:27px!important;height:27px!important;max-height:none!important;stroke-width:1.8!important}
