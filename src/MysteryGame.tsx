@@ -1,12 +1,24 @@
 import {useEffect,useState} from "react";
+import {Coins,Play,ArrowRight,ShieldCheck,LightBulb,Target,Book,Wallet,SoccerBall} from "iconoir-react";
 import MysteryAvatar from "./MysteryAvatar";
 import type {TelegramUser} from "./telegram";
 
 type Round={id:string;difficulty:"easy"|"medium"|"hard";clue_index:number;guess_count:number;expires_at:string;avatar_key:string;clue:string;status?:string};
 type Leader={rank:number;username:string|null;first_name:string;points:number;games_played:number;wins:number;is_me?:boolean};
 type GameState={entry_ct:number;online_count:number;wallet:{ct_balance:number;sethis_balance:number};leaderboard:Leader[];active_round:Round|null;total_players:number};
-function GameIcon({name}:{name:string}){const p={viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const,"aria-hidden":true as const};const paths:Record<string,React.ReactNode>={coins:<><circle cx="8" cy="8" r="5"/><path d="M8 5v6m-2-4h4M13 5a5 5 0 0 1 5 5m-5 5h5a3 3 0 0 0 3-3"/></>,play:<path d="m8 5 11 7-11 7V5Z" fill="currentColor"/>,arrow:<><path d="M5 12h14m-6-6 6 6-6 6"/></>,shield:<><path d="M12 3 20 6v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-3Z"/><path d="m9 12 2 2 4-4"/></>,bulb:<><path d="M9 18h6m-5 3h4m-5-6a7 7 0 1 1 6 0c-.8.6-1 1.2-1 3h-4c0-1.8-.2-2.4-1-3Z"/></>,target:<><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></>,trophy:<><path d="M8 4h8v5a4 4 0 0 1-8 0V4Zm0 2H4v2a4 4 0 0 0 4 4m8-6h4v2a4 4 0 0 1-4 4M12 13v5m-4 2h8"/></>,users:<><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m6-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/></>,book:<><path d="M12 7v14m0-14C9 5 6 4 3 5v14c3-1 6 0 9 2m0-14c3-2 6-3 9-2v14c-3-1-6 0-9 2"/></>,ticket:<><path d="M3 8a2 2 0 0 0 0 4v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0 0-4V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2Z"/><path d="M13 5v2m0 4v2m0 4v2"/></>};return <svg {...p}>{paths[name]||<circle cx="12" cy="12" r="8"/>}</svg>}
-function GameEmblem({small=false}:{small?:boolean}){return <span className={"game-emblem"+(small?" game-emblem-small":"")} aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="M32 3 55 12v17c0 15-9 25-23 32C18 54 9 44 9 29V12L32 3Z" fill="url(#gameEmblemFill)" stroke="#b49cff" strokeWidth="1.5"/><path d="M32 13 45 18v11c0 10-5.5 17-13 21-7.5-4-13-11-13-21V18l13-5Z" fill="#211d30" stroke="#ffffff55"/><path d="m32 20 6 4.4-2.3 7.1h-7.4L26 24.4 32 20Zm0 0v-5m6 9.4 7-2m-9.3 9.1 4.2 6.5m-12.6-6.5-4.2 6.5M26 24.4l-7-2" stroke="#c4b7ff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/><path d="M32 39v8" stroke="#ff907d" strokeWidth="2" strokeLinecap="round"/><defs><linearGradient id="gameEmblemFill" x1="8" y1="5" x2="54" y2="60"><stop stopColor="#6b579b"/><stop offset="1" stopColor="#2b223e"/></linearGradient></defs></svg><b>?</b></span>}
+function GameIcon({name}:{name:string}) {
+ const p={width:20,height:20,strokeWidth:1.8,"aria-hidden":true as const};
+ if(name==="coins")return <Coins {...p}/>;
+ if(name==="play")return <Play {...p}/>;
+ if(name==="arrow")return <ArrowRight {...p}/>;
+ if(name==="shield")return <ShieldCheck {...p}/>;
+ if(name==="bulb")return <LightBulb {...p}/>;
+ if(name==="target")return <Target {...p}/>;
+ if(name==="book")return <Book {...p}/>;
+ if(name==="ticket")return <Wallet {...p}/>;
+ return <SoccerBall {...p}/>;
+}
+function GameEmblem({small=false}:{small?:boolean}){return <span className={"game-emblem"+(small?" game-emblem-small":"")} aria-hidden="true"><SoccerBall width={small?34:48} height={small?34:48} strokeWidth={1.55}/><b>?</b></span>}
 export default function MysteryGame({telegramUser,onWalletChange,onOpenWallet,showNotice,onWatchAd}:{telegramUser:TelegramUser|null;onWalletChange:(wallet:{ct:number;sethis:number})=>void;onOpenWallet:()=>void;showNotice:(message:string)=>void;onWatchAd:()=>void}) {
  const [state,setState]=useState<GameState|null>(null),[loading,setLoading]=useState(true),[difficulty,setDifficulty]=useState<"easy"|"medium"|"hard">("easy"),[guess,setGuess]=useState(""),[busy,setBusy]=useState(false),[feedback,setFeedback]=useState(""),[revealedAnswer,setRevealedAnswer]=useState<string|null>(null),[revealedAvatarKey,setRevealedAvatarKey]=useState("kit-01"),[inviteLink,setInviteLink]=useState<string|null>(null);
  const initData=window.Telegram?.WebApp?.initData||"";
