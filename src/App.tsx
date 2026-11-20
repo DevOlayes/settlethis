@@ -40,19 +40,19 @@ function OnboardingArt({step}:{step:number}) {
    <path d="M118 178h84M160 129v-18M138 151h-18M202 151h-20"/>
   </svg>}
   {step===1&&<svg viewBox="0 0 320 220">
-   <circle cx="160" cy="47" r="25"/>
-   <path d="M126 83c-21 7-35 24-39 49l-8 62h162l-8-62c-4-25-18-42-39-49l-34 25-34-25Z"/>
-   <path d="m126 83 34 25 34-25M160 108v86"/>
-   <path d="M145 142c0-10 7-17 16-17s16 6 16 15c0 8-5 12-12 17-4 3-5 6-5 11M160 180v1"/>
-   <circle cx="241" cy="63" r="22"/><path d="m257 79 20 20"/>
-   <path d="M69 194h182"/>
+   <path d="m111 43 29-17h40l29 17 39 24-23 42-22-12v94H117V97l-22 12-23-42 39-24Z"/>
+   <path d="m140 26 20 24 20-24M117 97l-22 12M203 97l22 12"/>
+   <path d="M160 72v40"/>
+   <path d="M143 143c0-11 7-19 17-19s17 7 17 17c0 9-6 14-13 19-4 3-5 6-5 11M160 188v1"/>
+   <circle cx="253" cy="54" r="22"/><path d="m269 70 20 20"/>
+   <path d="M49 194h222"/>
   </svg>}
   {step===2&&<div className="onboarding-token-coin"><span className="coin-rim"/><BrandMark className="coin-brand-mark"/><i>SETHIS</i></div>}
   {step===3&&<svg viewBox="0 0 320 220">
-   <path d="M74 65c0-17 13-30 30-30h112c17 0 30 13 30 30v91c0 17-13 30-30 30H104c-17 0-30-13-30-30V65Z"/>
-   <path d="M111 88v48M87 112h48"/>
-   <circle cx="202" cy="91" r="11"/><circle cx="226" cy="116" r="11"/>
-   <path d="M165 68h25M165 160h25"/>
+   <path d="M103 62c8-15 22-23 41-23h32c19 0 33 8 41 23l33 64c12 24-3 49-25 49-12 0-20-6-30-19l-15-19h-40l-15 19c-10 13-18 19-30 19-22 0-37-25-25-49l33-64Z"/>
+   <path d="M115 92v48M91 116h48"/>
+   <circle cx="204" cy="99" r="10"/><circle cx="229" cy="124" r="10"/>
+   <path d="M158 70h12M164 64v12"/>
   </svg>}
   <span>{["FOOTBALL STARTS HERE","MYSTERY FOOTBALLER","THE SETHIS REWARD","GAME ACCESS"][step]||"SETHIS"}</span>
  </div>;
