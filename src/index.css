@@ -3330,18 +3330,18 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 
 /* Official two-colour SETHIS monogram and animated Telegram startup screen */
 .telegram-app-loading{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#30243e 0%,#1b1626 42%,#11101a 100%);color:#f4f1f7;text-align:center}
-.telegram-app-loading:before,.telegram-app-loading:after{content:"";position:absolute;width:178px;height:178px;border:1px solid #27d7f244;border-radius:50%;animation:sethisLoaderPulse 2.1s ease-out infinite;pointer-events:none}
-.telegram-app-loading:after{animation-delay:1.05s;border-color:#9b8acb55}
+.telegram-app-loading:before,.telegram-app-loading:after{content:"";position:absolute;width:178px;height:178px;border:1px solid #E9827244;border-radius:50%;animation:sethisLoaderPulse 2.1s ease-out infinite;pointer-events:none}
+.telegram-app-loading:after{animation-delay:1.05s;border-color:#E9827255}
 .telegram-app-loading>div{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;padding:28px}
 .telegram-app-mark{position:relative;width:164px;height:164px;display:grid;place-items:center;margin:0 auto 24px}
-.telegram-loader-logo{position:relative;z-index:2;width:94px;height:75px;filter:drop-shadow(0 0 12px #27d7f255);animation:sethisLogoBeep 1.8s ease-in-out infinite}
-.telegram-loader-orbit{position:absolute;inset:8px;border:1px solid #27d7f266;border-radius:50%;box-shadow:0 0 22px #27d7f222,inset 0 0 22px #9b8acb18;animation:sethisOrbit 5s linear infinite}
+.telegram-loader-logo{position:relative;z-index:2;width:94px;height:75px;filter:drop-shadow(0 0 12px #E9827255);animation:sethisLogoBeep 1.8s ease-in-out infinite}
+.telegram-loader-orbit{position:absolute;inset:8px;border:1px solid #E9827266;border-radius:50%;box-shadow:0 0 22px #E9827222,inset 0 0 22px #E9827218;animation:sethisOrbit 5s linear infinite}
 .telegram-loader-word{position:absolute;top:calc(100% + 7px);font-size:10px;font-weight:900;letter-spacing:.32em;color:#f4f1f7}
 .telegram-app-loading h1{margin:0 0 8px;font-size:20px;font-weight:800;letter-spacing:-.03em}
 .telegram-app-loading p{margin:0;color:#aaa3b5;font-size:13px}
 .telegram-app-mark-static{animation:none}
 .telegram-app-mark-static .telegram-loader-logo{animation:none}
 @keyframes sethisLoaderPulse{0%{transform:scale(.68);opacity:.75}100%{transform:scale(1.65);opacity:0}}
-@keyframes sethisLogoBeep{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px #27d7f244)}12%{transform:scale(1.07);filter:drop-shadow(0 0 19px #27d7f288)}24%{transform:scale(1);filter:drop-shadow(0 0 8px #9b8acb55)}}
+@keyframes sethisLogoBeep{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px #E9827244)}12%{transform:scale(1.07);filter:drop-shadow(0 0 19px #E9827288)}24%{transform:scale(1);filter:drop-shadow(0 0 8px #E9827255)}}
 @keyframes sethisOrbit{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.telegram-app-loading:before,.telegram-app-loading:after,.telegram-loader-logo,.telegram-loader-orbit{animation:none!important}}
