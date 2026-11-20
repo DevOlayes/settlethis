@@ -1,6 +1,7 @@
 import React,{useEffect,useState} from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import BrandMark from "./BrandMark";
 import AdminPortal from "./Admin";
 import {authenticateTelegram,initializeTelegramApp,type TelegramUser} from "./telegram";
 import "./index.css";
@@ -22,14 +23,15 @@ function TelegramLanding(){
  return <main className="telegram-landing">
   <div className="telegram-landing-glow" aria-hidden="true"/>
   <section className="telegram-landing-content">
-   <div className="telegram-landing-brand"><span className="telegram-landing-crest">S</span><span>SETHIS</span></div>
-   <div className="telegram-landing-kicker">FOOTBALL GAMES · MADE FOR THE FANS</div>
-   <h1>Think you know football? <em>Prove it.</em></h1>
-   <p className="telegram-landing-intro">Take on the mystery, read the clues and put your football instincts to the test.</p>
-   <div className="telegram-landing-rule"><span>YOUR GAME STARTS HERE</span><i/></div>
-   <div className="telegram-landing-note"><span className="telegram-landing-lock">✦</span><p>Your game record starts with a registered SETHIS account. Open SETHIS through Telegram to register, play and keep your progress.</p></div>
-   {botUrl?<a className="telegram-landing-button" href={botUrl}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3.5 18.3 20c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L5.7 13.6.8 12c-1.1-.3-1.1-1.1.2-1.6L20 3c.9-.3 1.7.2 1.5.5Z"/></svg><span>OPEN IN TELEGRAM</span><b>↗</b></a>:<button className="telegram-landing-button" disabled><span>{loading?"CONNECTING TO TELEGRAM…":"TELEGRAM LINK UNAVAILABLE"}</span></button>}
-   <p className="telegram-landing-foot">SETHIS opens inside Telegram. No browser gameplay.</p>
+   <div className="telegram-landing-brand"><BrandMark className="telegram-landing-logo"/><span className="telegram-landing-wordmark"><b>SETTLE</b><i>THIS!</i><small>SETHIS FOOTBALL GAMES</small></span></div>
+   <div className="telegram-landing-kicker">THE FOOTBALL REWARD ARENA</div>
+   <h1>Play football. <em>Earn SETHIS.</em></h1>
+   <p className="telegram-landing-intro">Take on football challenges, complete eligible tasks and invite your crew. Build your record and earn SETHIS rewards along the way.</p>
+   <div className="telegram-landing-rule"><span>MORE THAN JUST A GAME</span><i/></div>
+   <div className="telegram-earning-points"><div><b>01</b><span><strong>PLAY THE CHALLENGES</strong><small>Take on Guess Who? and earn game points for your football knowledge.</small></span></div><div><b>02</b><span><strong>EARN SETHIS REWARDS</strong><small>Complete eligible community tasks and referral milestones to earn SETHIS.</small></span></div><div><b>03</b><span><strong>GET CT. GET IN THE GAME.</strong><small>Earn CT through available rewarded ads and use it to enter eligible games.</small></span></div></div>
+   <p className="telegram-landing-disclaimer">SETHIS rewards are subject to each published task or referral rule. CT is the separate in-app participation currency — it is not SETHIS.</p>
+   {botUrl?<a className="telegram-landing-button" href={botUrl}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3.5 18.3 20c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L5.7 13.6.8 12c-1.1-.3-1.1-1.1.2-1.6L20 3c.9-.3 1.7.2 1.5.5Z"/></svg><span>OPEN TELEGRAM & START EARNING</span><b>↗</b></a>:<button className="telegram-landing-button" disabled><span>{loading?"CONNECTING TO TELEGRAM…":"TELEGRAM LINK UNAVAILABLE"}</span></button>}
+   <p className="telegram-landing-foot">Register in Telegram to unlock games, tasks, rewards and your SETHIS wallet.</p>
   </section>
  </main>;
 }
