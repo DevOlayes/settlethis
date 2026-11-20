@@ -1,5 +1,5 @@
 import {useEffect,useState} from "react";
-import {Coins,Play,ArrowRight,ShieldCheck,LightBulb,Target,Book,Wallet,SoccerBall,Trophy} from "iconoir-react";
+import {Coins,Play,ArrowRight,ShieldCheck,LightBulb,Search,Book,Wallet,SoccerBall,Trophy} from "iconoir-react";
 import MysteryAvatar from "./MysteryAvatar";
 import type {TelegramUser} from "./telegram";
 
@@ -13,7 +13,7 @@ function GameIcon({name}:{name:string}) {
  if(name==="arrow")return <ArrowRight {...p}/>;
  if(name==="shield")return <ShieldCheck {...p}/>;
  if(name==="bulb")return <LightBulb {...p}/>;
- if(name==="target")return <Target {...p}/>;
+ if(name==="target")return <Search {...p}/>;
  if(name==="book")return <Book {...p}/>;
  if(name==="ticket")return <Wallet {...p}/>;
  return <SoccerBall {...p}/>;
