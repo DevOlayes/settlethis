@@ -17,3 +17,11 @@ CREATE INDEX IF NOT EXISTS idx_telegram_bot_members_broadcast
 
 CREATE INDEX IF NOT EXISTS idx_telegram_bot_members_pending_payload
   ON telegram_bot_members(telegram_user_id, pending_start_payload);
+
+CREATE TABLE IF NOT EXISTS telegram_bot_settings (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  bot_username TEXT NOT NULL DEFAULT '',
+  webhook_configured_at TEXT,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+INSERT OR IGNORE INTO telegram_bot_settings(id,bot_username) VALUES(1,'');
