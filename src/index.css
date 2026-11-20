@@ -1471,33 +1471,33 @@
 
 
 /* Referral hub and clearer home wallet figures */
-.referral-hub{margin:16px 0 18px;padding:17px;border:1px solid #862fea4a;border-radius:15px;background:radial-gradient(circle at 100% 0%,#36145d88,transparent 42%),linear-gradient(145deg,#25103d,#1a0c2b 72%);box-shadow:0 12px 28px #0003}
+.referral-hub{margin:16px 0 18px;padding:17px;border:1px solid #E982724a;border-radius:15px;background:radial-gradient(circle at 100% 0%,#36145d88,transparent 42%),linear-gradient(145deg,#25103d,#1a0c2b 72%);box-shadow:0 12px 28px #0003}
 .referral-hub-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .referral-hub-top h2{margin:4px 0 5px;font:700 25px 'Manrope',sans-serif;color:#faf8fc}
 .referral-hub-top p{margin:0;max-width:440px;color:#d1c4e0;font-size:12px;line-height:1.5}
-.referral-emblem{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;background:#2c104d;border:1px solid #862fea66;color:#862fea;font-size:22px;font-weight:800}
+.referral-emblem{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;background:#2c104d;border:1px solid #E9827266;color:#E98272;font-size:22px;font-weight:800}
 .referral-reward-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:15px 0 13px;padding:12px;border-radius:11px;background:#150726;border:1px solid #ffffff16}
 .referral-reward-banner>div:first-child{display:grid;gap:3px}
 .referral-reward-banner small,.referral-progress-head span,.referral-stats span{font-size:9px;font-weight:800;letter-spacing:.1em;color:#b19dc8}
 .referral-reward-banner strong{font-size:16px;color:#faf8fc}
 .referral-reward-banner span{font-size:10px;color:#c6b7d7}
 .referral-reward-value{text-align:right;display:grid;gap:0}
-.referral-reward-value b{font:800 29px/.95 'Manrope',sans-serif;color:#862fea}
-.referral-reward-value small{color:#862fea}
+.referral-reward-value b{font:800 29px/.95 'Manrope',sans-serif;color:#E98272}
+.referral-reward-value small{color:#E98272}
 .referral-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
 .referral-progress-head b{font-size:10px;color:#f4a28e;letter-spacing:.06em}
 .referral-hub-track{height:9px;margin:8px 0 13px;background:#37254b;border-radius:99px;overflow:hidden}
-.referral-hub-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#862fea,#60ebc8);transition:width .25s ease}
+.referral-hub-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#E98272,#E98272);transition:width .25s ease}
 .referral-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .referral-stats>div{min-width:0;display:grid;gap:4px;padding:10px 8px;border-radius:9px;background:#ffffff08;border:1px solid #ffffff12}
 .referral-stats strong{font:800 23px/.95 'Manrope',sans-serif;color:#fff}
 .referral-stats span{font-size:8px;line-height:1.3}
 .referral-how{margin-top:13px;padding-top:11px;border-top:1px solid #ffffff18}
-.referral-how>b{font-size:9px;letter-spacing:.12em;color:#862fea}
+.referral-how>b{font-size:9px;letter-spacing:.12em;color:#E98272}
 .referral-how p{margin:5px 0 0;font-size:11px;line-height:1.55;color:#d1c4e0}
 .referral-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:14px}
 .referral-actions button{min-height:42px;border-radius:9px;font-size:10px;font-weight:900;letter-spacing:.06em}
-.referral-share-button{padding:0 14px;background:#862fea;color:#10051c;border:0}
+.referral-share-button{padding:0 14px;background:#E98272;color:#10051c;border:0}
 .referral-copy-button{padding:0 13px;background:#38244f;color:#faf8fc;border:1px solid #ffffff20}
 .referral-footnote{display:block;margin-top:10px;color:#a48fbb;font-size:9px;line-height:1.45}
 .hero-condensed .hero-balance{padding:13px 15px 14px;gap:5px 12px}
@@ -1528,60 +1528,60 @@
 
 
 /* Dedicated referral programme page and entry points */
-.home-referral-entry,.wallet-referral-entry{width:100%;display:flex;align-items:center;gap:11px;text-align:left;border:1px solid #4b2f6c;border-radius:10px;background:linear-gradient(110deg,#291144,#1e0f2f);color:#faf8fc;padding:12px 13px;margin:12px 0 15px}
+.home-referral-entry,.wallet-referral-entry{width:100%;display:flex;align-items:center;gap:11px;text-align:left;border:1px solid #E9827244;border-radius:10px;background:linear-gradient(110deg,#291144,#1e0f2f);color:#faf8fc;padding:12px 13px;margin:12px 0 15px}
 .home-referral-entry>span:nth-child(2),.wallet-referral-entry>span:nth-child(2){display:grid;gap:4px;min-width:0;flex:1}
 .home-referral-entry b,.wallet-referral-entry b{font-size:10px;letter-spacing:.1em;color:#faf8fc}
 .home-referral-entry small,.wallet-referral-entry small{font-size:9px;line-height:1.4;color:#c5b6d6}
-.home-referral-entry>strong,.wallet-referral-entry>strong{font-size:8px;letter-spacing:.08em;color:#862fea;white-space:nowrap}
-.home-referral-icon,.wallet-referral-entry>span:first-child{width:34px;height:34px;display:grid;place-items:center;flex:0 0 34px;border:1px solid #862fea66;border-radius:9px;background:#2c104d;color:#862fea;font-size:20px;font-weight:900}
+.home-referral-entry>strong,.wallet-referral-entry>strong{font-size:8px;letter-spacing:.08em;color:#E98272;white-space:nowrap}
+.home-referral-icon,.wallet-referral-entry>span:first-child{width:34px;height:34px;display:grid;place-items:center;flex:0 0 34px;border:1px solid #E9827266;border-radius:9px;background:#2c104d;color:#E98272;font-size:20px;font-weight:900}
 .referral-page{display:grid;gap:15px}
 .referral-page-top{display:flex;align-items:center;gap:12px}
 .referral-page-top button{border:1px solid #ffffff20;border-radius:6px;background:#27163b;color:#faf8fc;padding:8px 10px;font-size:8px;font-weight:900;letter-spacing:.08em}
 .referral-page-top .eyebrow{margin-left:auto}
-.referral-page-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 16px;border:1px solid #4b2f6c;border-radius:13px;background:radial-gradient(circle at 100% 0%,#36145d88,transparent 45%),linear-gradient(145deg,#291244,#190b2a)}
+.referral-page-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 16px;border:1px solid #E9827244;border-radius:13px;background:radial-gradient(circle at 100% 0%,#36145d88,transparent 45%),linear-gradient(145deg,#291244,#190b2a)}
 .referral-page-heading h1{margin:5px 0 7px;font:700 28px/1.05 'Manrope',sans-serif;color:#faf8fc}
 .referral-page-heading p{max-width:520px;margin:0;color:#d1c4e0;font-size:11px;line-height:1.6}
-.referral-page-mark{width:42px;height:42px;display:grid;place-items:center;flex:0 0 42px;border:1px solid #862fea66;border-radius:12px;background:#2c104d;color:#862fea;font-size:23px}
+.referral-page-mark{width:42px;height:42px;display:grid;place-items:center;flex:0 0 42px;border:1px solid #E9827266;border-radius:12px;background:#2c104d;color:#E98272;font-size:23px}
 .referral-page-state,.referral-link-card,.referral-performance,.referral-milestone-card,.referral-steps,.referral-activity,.referral-reward-history{padding:14px;border:1px solid #ffffff18;border-radius:11px;background:#201132}
 .referral-page-state{font-size:11px;color:#d1c4e0}
 .referral-page-error p{font-size:10px;line-height:1.5}
-.referral-page-error button{border:0;border-radius:6px;background:#862fea;color:#10051c;padding:9px 12px;font-size:9px;font-weight:900}
-.referral-link-card{border-color:#862fea55;background:linear-gradient(145deg,#291244,#190b2a)}
+.referral-page-error button{border:0;border-radius:6px;background:#E98272;color:#10051c;padding:9px 12px;font-size:9px;font-weight:900}
+.referral-link-card{border-color:#E9827255;background:linear-gradient(145deg,#291244,#190b2a)}
 .referral-link-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.referral-link-head span,.referral-link-head b{font-size:9px;font-weight:900;letter-spacing:.1em;color:#862fea}
+.referral-link-head span,.referral-link-head b{font-size:9px;font-weight:900;letter-spacing:.1em;color:#E98272}
 .referral-link-head b{color:#f4a28e}
 .referral-link-value{overflow-wrap:anywhere;margin:12px 0;padding:11px;border-radius:7px;background:#130622;border:1px solid #ffffff18;color:#f1e9fb;font-size:10px;line-height:1.5}
 .referral-link-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.referral-link-actions button{min-height:40px;border:0;border-radius:7px;background:#862fea;color:#10051c;font-size:9px;font-weight:900;letter-spacing:.08em}
+.referral-link-actions button{min-height:40px;border:0;border-radius:7px;background:#E98272;color:#10051c;font-size:9px;font-weight:900;letter-spacing:.08em}
 .referral-link-actions button+button{background:#38244f;color:#faf8fc;border:1px solid #ffffff20}
 .referral-link-actions button:disabled{opacity:.45}
 .referral-performance-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .referral-performance-title h2,.referral-milestone-top h2,.referral-reward-history h2{margin:3px 0 0;font:700 20px 'Manrope',sans-serif;color:#faf8fc}
-.referral-performance-title>button{border:1px solid #4b2f6c;border-radius:6px;background:#28163c;color:#862fea;padding:8px 9px;font-size:8px;font-weight:900}
+.referral-performance-title>button{border:1px solid #E9827244;border-radius:6px;background:#28163c;color:#E98272;padding:8px 9px;font-size:8px;font-weight:900}
 .referral-performance-title>span{font-size:8px;color:#b09cc6;font-weight:900}
 .referral-metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .referral-metric-grid article{display:grid;gap:5px;min-width:0;padding:10px 8px;border:1px solid #ffffff14;border-radius:8px;background:#1a0c2a}
 .referral-metric-grid small{font-size:8px;letter-spacing:.1em;color:#b09cc6;font-weight:900}
-.referral-metric-grid strong{font:800 27px/.95 'Manrope',sans-serif;color:#862fea}
+.referral-metric-grid strong{font:800 27px/.95 'Manrope',sans-serif;color:#E98272}
 .referral-metric-grid span{font-size:8px;line-height:1.35;color:#c6b8d6}
 .referral-milestone-card{border-color:#bc685344;background:linear-gradient(135deg,#29211f,#201132 60%)}
 .referral-milestone-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .referral-milestone-top p{max-width:440px;margin:6px 0 0;color:#d1c4e0;font-size:10px;line-height:1.5}
 .referral-milestone-reward{display:grid;justify-items:end;gap:2px;flex:0 0 auto}
-.referral-milestone-reward strong{font:800 29px/.9 'Manrope',sans-serif;color:#862fea}
-.referral-milestone-reward small{font-size:8px;letter-spacing:.1em;color:#862fea;font-weight:900}
+.referral-milestone-reward strong{font:800 29px/.9 'Manrope',sans-serif;color:#E98272}
+.referral-milestone-reward small{font-size:8px;letter-spacing:.1em;color:#E98272;font-weight:900}
 .referral-milestone-progress{margin-top:14px}
 .referral-milestone-progress>div:first-child{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:#f4a28e}
 .referral-page-track{height:9px;overflow:hidden;margin:8px 0;border-radius:99px;background:#37254b}
-.referral-page-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#862fea,#60ebc8)}
+.referral-page-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#E98272,#E98272)}
 .referral-milestone-progress>p{margin:7px 0 0;font-size:9px;line-height:1.45;color:#d1c4e0}
 .referral-steps{display:grid;gap:12px}
-.referral-steps>div{padding-left:11px;border-left:2px solid #862fea}
+.referral-steps>div{padding-left:11px;border-left:2px solid #E98272}
 .referral-steps>div b{font-size:10px;color:#faf8fc}
 .referral-steps>div p{margin:4px 0 0;color:#c6b7d7;font-size:9px;line-height:1.5}
 .referral-member-list{display:grid;gap:0}
 .referral-member-list article{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px solid #ffffff12}
-.referral-member-avatar{width:31px;height:31px;display:grid;place-items:center;flex:0 0 31px;border-radius:50%;background:#2c104d;border:1px solid #862fea66;color:#862fea;font-size:11px;font-weight:900}
+.referral-member-avatar{width:31px;height:31px;display:grid;place-items:center;flex:0 0 31px;border-radius:50%;background:#2c104d;border:1px solid #E9827266;color:#E98272;font-size:11px;font-weight:900}
 .referral-member-list article>div{display:grid;gap:3px;min-width:0;flex:1}
 .referral-member-list article>div b{font-size:10px;color:#faf8fc;overflow-wrap:anywhere}
 .referral-member-list article>div small{font-size:8px;color:#b09cc6}
@@ -1592,32 +1592,32 @@
 .referral-reward-history article span{display:grid;gap:4px}
 .referral-reward-history article b{font-size:10px;color:#faf8fc}
 .referral-reward-history article small{font-size:8px;color:#b09cc6}
-.referral-reward-history article strong{font-size:10px;color:#862fea;white-space:nowrap}
+.referral-reward-history article strong{font-size:10px;color:#E98272;white-space:nowrap}
 .referral-page-note{color:#a28db9;font-size:8px;line-height:1.5}
 @media(max-width:390px){.referral-page-heading{padding:14px 12px}.referral-page-heading h1{font-size:25px}.referral-metric-grid{gap:5px}.referral-metric-grid article{padding:9px 6px}.referral-metric-grid strong{font-size:23px}.referral-metric-grid span{font-size:7px}.referral-page-top .eyebrow{font-size:7px}.referral-link-actions{grid-template-columns:1fr}.referral-milestone-top{gap:7px}.referral-milestone-reward strong{font-size:25px}}
 
 
 /* Referral programme banners: prominent, data-led entry points */
-.referral-promo{position:relative;isolation:isolate;display:flex;width:100%;gap:13px;align-items:stretch;overflow:hidden;text-align:left;padding:14px;border:1px solid #862fea77;border-radius:13px;color:#faf8fc;background:radial-gradient(ellipse at 88% 5%,#47167f88,transparent 42%),linear-gradient(120deg,#250e3f 0%,#2a1245 48%,#190b2a 100%);box-shadow:0 9px 25px #0a021466;margin:12px 0 16px}
-.referral-promo:before{content:"";position:absolute;z-index:-1;right:-25px;top:-48px;width:180px;height:180px;border:1px solid #862fea26;border-radius:50%;box-shadow:0 0 0 18px #862fea0b,0 0 0 38px #862fea08}
-.referral-promo:after{content:"";position:absolute;z-index:-1;right:24px;top:0;bottom:0;width:1px;background:#862fea1c;transform:rotate(25deg)}
-.referral-promo-art{position:relative;display:flex;flex:0 0 56px;align-self:stretch;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:1px solid #862fea55;border-radius:10px;background:linear-gradient(160deg,#36135d,#1b0b2e);color:#862fea}
-.referral-promo-art>span{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:#862fea;color:#10051c;font-size:20px;font-weight:900;box-shadow:0 0 20px #862fea44}
-.referral-promo-art>i{width:30px;height:1px;background:#ed6b4a}
+.referral-promo{position:relative;isolation:isolate;display:flex;width:100%;gap:13px;align-items:stretch;overflow:hidden;text-align:left;padding:14px;border:1px solid #E9827277;border-radius:13px;color:#faf8fc;background:radial-gradient(ellipse at 88% 5%,#47167f88,transparent 42%),linear-gradient(120deg,#250e3f 0%,#2a1245 48%,#190b2a 100%);box-shadow:0 9px 25px #0a021466;margin:12px 0 16px}
+.referral-promo:before{content:"";position:absolute;z-index:-1;right:-25px;top:-48px;width:180px;height:180px;border:1px solid #E9827226;border-radius:50%;box-shadow:0 0 0 18px #E982720b,0 0 0 38px #E9827208}
+.referral-promo:after{content:"";position:absolute;z-index:-1;right:24px;top:0;bottom:0;width:1px;background:#E982721c;transform:rotate(25deg)}
+.referral-promo-art{position:relative;display:flex;flex:0 0 56px;align-self:stretch;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:1px solid #E9827255;border-radius:10px;background:linear-gradient(160deg,#36135d,#1b0b2e);color:#E98272}
+.referral-promo-art>span{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:#E98272;color:#10051c;font-size:20px;font-weight:900;box-shadow:0 0 20px #E9827244}
+.referral-promo-art>i{width:30px;height:1px;background:#E98272}
 .referral-promo-art>b{font-size:7px;letter-spacing:.12em;color:#f4a38f}
 .referral-promo-main{display:flex;min-width:0;flex:1;flex-direction:column;gap:6px}
-.referral-promo-kicker{font-size:7px;line-height:1.3;letter-spacing:.14em;color:#ad72f1;font-weight:900}
+.referral-promo-kicker{font-size:7px;line-height:1.3;letter-spacing:.14em;color:#E98272;font-weight:900}
 .referral-promo-main>strong{max-width:340px;font:700 20px/1.03 'Manrope',sans-serif;color:#fff}
 .referral-promo-main>small{font-size:9px;line-height:1.4;color:#d0c2e0}
 .referral-promo-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:3px}
 .referral-promo-stats>span{display:grid;gap:3px;min-width:0;padding:7px 8px;border:1px solid #ffffff17;border-radius:7px;background:#15062699}
 .referral-promo-stats b{font:800 19px/.95 'Manrope',sans-serif;color:#fff}
-.referral-promo-stats small{font-size:7px;letter-spacing:.1em;color:#b29ccb;font-weight:900}
+.referral-promo-stats small{font-size:7px;letter-spacing:.1em;color:#AAA3B5;font-weight:900}
 .referral-promo-progress{height:5px;overflow:hidden;border-radius:20px;background:#ffffff20;margin-top:2px}
-.referral-promo-progress i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#862fea,#ed6b4a)}
+.referral-promo-progress i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#E98272,#E98272)}
 .referral-promo-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:1px}
 .referral-promo-foot>b{font-size:7px;line-height:1.35;letter-spacing:.07em;color:#f4a38f}
-.referral-promo-foot>strong{font-size:8px;letter-spacing:.06em;color:#862fea;white-space:nowrap}
+.referral-promo-foot>strong{font-size:8px;letter-spacing:.06em;color:#E98272;white-space:nowrap}
 .referral-promo-wallet{margin:14px 0 18px;padding:16px}
 .referral-promo-wallet .referral-promo-main>strong{font-size:23px}
 .referral-promo-wallet .referral-promo-stats>span{padding:9px}
@@ -1627,46 +1627,46 @@
 
 /* Referral Centre progression and shared community challenge */
 .referral-page-hero{position:relative;overflow:hidden;min-height:154px;background:radial-gradient(ellipse at 92% 0%,#48187e88,transparent 44%),linear-gradient(125deg,#260e42,#190a2a 78%)}
-.referral-page-hero:after{content:"";position:absolute;right:-34px;bottom:-92px;width:210px;height:210px;border:1px solid #862fea33;border-radius:50%;box-shadow:0 0 0 18px #862fea0b,0 0 0 40px #862fea07;pointer-events:none}
+.referral-page-hero:after{content:"";position:absolute;right:-34px;bottom:-92px;width:210px;height:210px;border:1px solid #E9827233;border-radius:50%;box-shadow:0 0 0 18px #E982720b,0 0 0 40px #E9827207;pointer-events:none}
 .referral-page-hero>div{position:relative;z-index:1}
 .referral-hero-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:13px}
-.referral-hero-tags span{padding:6px 7px;border:1px solid #862fea44;border-radius:5px;background:#15062688;color:#ad72f1;font-size:7px;font-weight:900;letter-spacing:.08em}
+.referral-hero-tags span{padding:6px 7px;border:1px solid #E9827244;border-radius:5px;background:#15062688;color:#E98272;font-size:7px;font-weight:900;letter-spacing:.08em}
 .referral-link-prompt{margin:8px 0 0;color:#d1c4e0;font-size:10px;line-height:1.45}
 .referral-next-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:15px;border:1px solid #bd6c5866;border-radius:12px;background:radial-gradient(ellipse at 100% 0%,#71302033,transparent 50%),linear-gradient(135deg,#28211f,#201132 66%)}
 .referral-next-copy h2{margin:4px 0;font:700 22px 'Manrope',sans-serif;color:#faf8fc}
 .referral-next-copy p{margin:4px 0 0;color:#d2c6e0;font-size:10px;line-height:1.5}
 .referral-next-copy p b{color:#f4a28e}
 .referral-next-reward{display:grid;align-content:center;justify-items:end;gap:2px}
-.referral-next-reward strong{font:800 30px/.95 'Manrope',sans-serif;color:#862fea}
-.referral-next-reward small{font-size:8px;font-weight:900;letter-spacing:.12em;color:#862fea}
+.referral-next-reward strong{font:800 30px/.95 'Manrope',sans-serif;color:#E98272}
+.referral-next-reward small{font-size:8px;font-weight:900;letter-spacing:.12em;color:#E98272}
 .referral-next-card .referral-milestone-progress{grid-column:1/-1;margin-top:2px}
 .referral-milestone-journey,.referral-community-card{padding:14px;border:1px solid #ffffff1c;border-radius:12px;background:#201132}
 .referral-milestone-journey .referral-performance-title p{margin:4px 0 0;color:#b09cc6;font-size:9px;line-height:1.4}
 .referral-milestone-list{display:grid;gap:7px}
 .referral-milestone-list>article{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:9px;padding:10px;border:1px solid #ffffff14;border-radius:8px;background:#190b29}
-.referral-milestone-list>article.current{border-color:#862fea77;background:linear-gradient(100deg,#2a1048,#190b29)}
+.referral-milestone-list>article.current{border-color:#E9827277;background:linear-gradient(100deg,#2a1048,#190b29)}
 .referral-milestone-list>article.earned{border-color:#28836c66}
 .referral-milestone-number{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#38244f;color:#d1c4e0;font-size:10px;font-weight:900}
 .referral-milestone-list .earned .referral-milestone-number{background:#144d3f;color:#8de8cf}
-.referral-milestone-list .current .referral-milestone-number{background:#862fea;color:#10051c}
+.referral-milestone-list .current .referral-milestone-number{background:#E98272;color:#10051c}
 .referral-milestone-detail{display:grid;gap:3px;min-width:0}
 .referral-milestone-detail>b{font-size:10px;color:#faf8fc}
-.referral-milestone-detail>small{font-size:8px;color:#862fea;font-weight:800}
+.referral-milestone-detail>small{font-size:8px;color:#E98272;font-weight:800}
 .referral-milestone-detail>span{font-size:8px;color:#b09cc6;line-height:1.35}
 .referral-milestone-prize{display:grid;justify-items:end;gap:1px}
 .referral-milestone-prize strong{font:800 17px/.95 'Manrope',sans-serif;color:#f4a28e}
 .referral-milestone-prize small{font-size:7px;color:#f4a28e;font-weight:900}
 .referral-milestone-prize em{margin-top:3px;font-style:normal;font-size:6px;letter-spacing:.08em;color:#b09cc6;font-weight:900}
-.referral-milestone-list .current .referral-milestone-prize em{color:#862fea}
+.referral-milestone-list .current .referral-milestone-prize em{color:#E98272}
 .referral-milestone-list .earned .referral-milestone-prize em{color:#8de8cf}
-.referral-community-card{position:relative;overflow:hidden;border-color:#862fea55;background:radial-gradient(ellipse at 100% 0%,#3e146e88,transparent 48%),linear-gradient(145deg,#260e42,#190a2a 78%)}
+.referral-community-card{position:relative;overflow:hidden;border-color:#E9827255;background:radial-gradient(ellipse at 100% 0%,#3e146e88,transparent 48%),linear-gradient(145deg,#260e42,#190a2a 78%)}
 .referral-community-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .referral-community-heading h2{margin:4px 0 0;font:700 23px/1.05 'Manrope',sans-serif;color:#faf8fc}
-.referral-community-ball{width:40px;height:40px;display:grid;place-items:center;flex:0 0 40px;border:1px solid #862fea66;border-radius:50%;background:#2c104d;color:#f4a28e;font-size:22px}
+.referral-community-ball{width:40px;height:40px;display:grid;place-items:center;flex:0 0 40px;border:1px solid #E9827266;border-radius:50%;background:#2c104d;color:#f4a28e;font-size:22px}
 .referral-community-card>p{max-width:510px;margin:9px 0 13px;color:#d1c4e0;font-size:10px;line-height:1.55}
 .referral-community-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:7px}
 .referral-community-stats article{display:grid;gap:4px;padding:10px 8px;border:1px solid #ffffff17;border-radius:8px;background:#150626aa;min-width:0}
-.referral-community-stats strong{font:800 22px/.95 'Manrope',sans-serif;color:#862fea}
+.referral-community-stats strong{font:800 22px/.95 'Manrope',sans-serif;color:#E98272}
 .referral-community-stats small{font-size:7px;line-height:1.3;letter-spacing:.07em;color:#baa8cf;font-weight:900}
 .referral-community-goal{margin-top:14px}
 .referral-community-goal>div:first-child{display:flex;justify-content:space-between;gap:8px;color:#f4a28e;font-size:9px;font-weight:900}
@@ -1678,8 +1678,8 @@
 .referral-community-ladder>span small{font-size:6px;letter-spacing:.04em;color:#a48fbb;font-weight:900}
 .referral-community-ladder>span.achieved{border-color:#257f69;background:#103d32}
 .referral-community-ladder>span.achieved b,.referral-community-ladder>span.achieved small{color:#8de8cf}
-.referral-community-ladder>span.active{border-color:#862fea;background:#2a1048}
-.referral-community-ladder>span.active b,.referral-community-ladder>span.active small{color:#862fea}
+.referral-community-ladder>span.active{border-color:#E98272;background:#2a1048}
+.referral-community-ladder>span.active b,.referral-community-ladder>span.active small{color:#E98272}
 .referral-contributor-status{margin-top:12px;padding:10px;border:1px solid #ffffff1c;border-radius:7px;background:#15062688;color:#d1c4e0;font-size:8px;line-height:1.45;font-weight:900;letter-spacing:.04em}
 .referral-contributor-status.eligible{border-color:#257f69;color:#8de8cf;background:#103d32}
 .referral-community-reward{display:grid;gap:4px;margin-top:10px;padding-top:10px;border-top:1px solid #ffffff1c}
@@ -1692,11 +1692,11 @@
 .referral-admin{display:grid;gap:12px}
 .referral-admin-list{display:grid;gap:10px}
 .referral-admin-row{display:grid;gap:10px;padding:13px;border:1px solid #ffffff1b;border-radius:9px;background:#201032}
-.referral-admin-row.community{border-color:#862fea33}
+.referral-admin-row.community{border-color:#E9827233}
 .referral-admin-row-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.referral-admin-row-head>b{font-size:10px;letter-spacing:.1em;color:#862fea}
+.referral-admin-row-head>b{font-size:10px;letter-spacing:.1em;color:#E98272}
 .referral-admin-toggle{display:flex;align-items:center;gap:6px;color:#c6b7d7;font-size:8px;font-weight:900;letter-spacing:.06em}
-.referral-admin-toggle input{accent-color:#862fea}
+.referral-admin-toggle input{accent-color:#E98272}
 .referral-admin-row .admin-form-grid{margin:0}
 .referral-admin-row .admin-form-grid label{min-width:0}
 .referral-admin-wide{grid-column:1/-1}
@@ -1713,7 +1713,7 @@
 .referral-community-leader.you{margin:0 -4px;padding:8px 9px;border-radius:6px;background:#2a1048}
 .referral-leader-rank{font:800 11px 'Manrope',sans-serif;color:#f4a28e;text-align:center}
 .referral-community-leader>b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;color:#e6dbf2}
-.referral-community-leader>strong{font:800 12px 'Manrope',sans-serif;color:#862fea;white-space:nowrap}
+.referral-community-leader>strong{font:800 12px 'Manrope',sans-serif;color:#E98272;white-space:nowrap}
 .referral-community-leader>strong small{font:800 6px sans-serif;color:#a48fbb}
 .referral-community-empty{font-size:9px;line-height:1.5;color:#b09cc6;margin:8px 0 2px}
 
@@ -3434,3 +3434,17 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .referral-page .referral-contributor-status.eligible{border-color:#E9827255!important;color:#E98272!important}
 .referral-page .referral-page-note{color:#AAA3B5!important}
 @media(max-width:390px){.ranking-slider button,.referral-section-slider button{font-size:7px;padding:8px 7px}.referral-page-hero h1{font-size:23px!important}.quiz-list-card{padding:9px!important}}
+
+
+/* Final height controls for the mobile landing panels */
+.game-welcome{min-height:0!important;padding:12px 0 9px!important;margin:0 0 5px!important;gap:10px!important}
+.game-welcome h1{font-size:clamp(27px,8vw,35px)!important;line-height:.98!important;margin:5px 0!important}
+.game-welcome p{font-size:9px!important;line-height:1.4!important;margin:5px 0 0!important;max-width:235px}
+.game-live-pill{align-self:flex-start;margin-top:8px!important}
+.quiz-daily-feature,.quiz-list-card{min-height:0!important;height:auto!important}
+.quiz-feature-main{min-height:0!important}
+.quiz-reward-strip{min-height:0!important}
+.referral-page .referral-link-card{padding:13px!important}
+.referral-page .referral-link-prompt{font-size:9px!important;line-height:1.4!important}
+.referral-page .referral-link-value{padding:8px 10px!important;font-size:9px!important}
+.referral-page .referral-link-actions button{min-height:36px!important}
