@@ -21,7 +21,7 @@ export default function MysteryGame({telegramUser,onWalletChange,onOpenWallet,sh
  return <section className="game-home">
   <div className="game-welcome"><div><span className="eyebrow"><i/> SETHIS FOOTBALL GAMES</span><h1>Know your ball.<br/><em>Own the bragging rights.</em></h1><p>Big football energy. Quick-fire challenges. The leaderboard is waiting.</p></div><div className="game-live-pill"><i/>{(state?.online_count||0).toLocaleString()} ONLINE</div></div>
   <div className="game-invite-strip"><div><b>BRING YOUR FOOTBALL CREW</b><small>Challenge your people. See who really knows the game.</small></div><button onClick={shareInvite}>INVITE YOUR CREW ↗</button></div>
-  <div className="game-wallet-strip"><button onClick={onOpenWallet}><span>YOUR COURT TOKENS</span><strong>{Number(state?.wallet.ct_balance||0).toLocaleString()} <small>CT</small></strong><i>＋</i></button><span>{Number(state?.wallet.sethis_balance||0).toLocaleString()} SETHIS</span><button className="game-earn-ct" onClick={onWatchAd}>EARN FREE CT</button></div>
+  <div className="game-wallet-strip"><button onClick={onOpenWallet}><span>YOUR CT BALANCE</span><strong>{Number(state?.wallet.ct_balance||0).toLocaleString()} <small>CT</small></strong><i>＋</i></button><span>{Number(state?.wallet.sethis_balance||0).toLocaleString()} SETHIS</span><button className="game-earn-ct" onClick={onWatchAd}>EARN FREE CT</button></div>
   {loading&&<div className="game-loading">Preparing your game room…</div>}
   <article className="mystery-game-card">
    <div className="mystery-game-top"><span>GAME 001 · PLAYER IDENTITY</span><span className="mystery-difficulty">{round?round.difficulty.toUpperCase():difficulty.toUpperCase()}</span></div>
