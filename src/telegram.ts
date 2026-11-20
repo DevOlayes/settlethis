@@ -29,8 +29,8 @@ export function initializeTelegramApp(): TelegramWebApp | null {
   if (!webApp) return null;
   webApp.ready();
   webApp.expand();
-  webApp.setHeaderColor?.("#0B1220");
-  webApp.setBackgroundColor?.("#0B1220");
+  webApp.setHeaderColor?.("#171522");
+  webApp.setBackgroundColor?.("#171522");
   webApp.disableVerticalSwipes?.();
   const params = webApp.themeParams ?? {};
   if (params.bg_color) document.documentElement.style.setProperty("--tg-theme-bg-color", params.bg_color);
