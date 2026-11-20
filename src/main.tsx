@@ -25,7 +25,7 @@ function TelegramLanding(){
   <section className="telegram-landing-content">
    <div className="telegram-landing-brand"><BrandMark className="telegram-landing-logo"/><span className="telegram-landing-wordmark"><b>SETTLE</b><i>THIS!</i><small>SETHIS FOOTBALL GAMES</small></span></div>
    <div className="telegram-landing-kicker">THE FOOTBALL REWARD ARENA</div>
-   <h1>Play football. <em>Earn SETHIS.</em></h1>
+   <h1>Think you know football? <em>Prove it.</em></h1>
    <p className="telegram-landing-intro">Take on football challenges, complete eligible tasks and invite your crew. Build your record and earn SETHIS rewards along the way.</p>
    <div className="telegram-landing-rule"><span>MORE THAN JUST A GAME</span><i/></div>
    <div className="telegram-earning-points"><div><b>01</b><span><strong>PLAY THE CHALLENGES</strong><small>Take on Guess Who? and earn game points for your football knowledge.</small></span></div><div><b>02</b><span><strong>EARN SETHIS REWARDS</strong><small>Complete eligible community tasks and referral milestones to earn SETHIS.</small></span></div><div><b>03</b><span><strong>GET CT. GET IN THE GAME.</strong><small>Earn CT through available rewarded ads and use it to enter eligible games.</small></span></div></div>
