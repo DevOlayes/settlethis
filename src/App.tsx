@@ -33,11 +33,28 @@ const crest = (id: number) => `https://media.api-sports.io/football/teams/${id}.
 function Brand() { return <a className="brand" href="#" aria-label="Settle This home"><BrandMark className="brand-emblem"/><span className="brand-wordmark"><b>SETTLE</b><i>THIS!</i></span></a>; }
 function OnboardingArt({step}:{step:number}) {
  return <div className={`onboarding-visual onboarding-visual-${step}`} aria-hidden="true">
-  {step===0&&<svg viewBox="0 0 240 132"><path d="M22 106V42l98-27 98 27v64M22 42l98 27 98-27M120 69v37M22 106l98 18 98-18" /><path d="M83 35v-9h74v9M100 50a20 20 0 0 1 40 0M120 30v8" /><circle cx="120" cy="82" r="12"/><path d="m120 73 7 5-3 9h-8l-3-9 7-5Z"/></svg>}
-  {step===1&&<svg viewBox="0 0 240 132"><path d="M78 25h84l14 22-8 69H72l-8-69 14-22Z"/><path d="m92 25 28 20 28-20M120 45v71M88 67h19M133 67h19"/><circle cx="120" cy="83" r="16"/><path d="m120 73 9 7-4 11h-10l-4-11 9-7Z"/><circle cx="178" cy="42" r="19"/><path d="m192 56 19 19"/></svg>}
+  {step===0&&<svg viewBox="0 0 320 220">
+   <path d="M24 178V83l136-52 136 52v95M24 83l136 52 136-52M160 135v43M24 178l136 24 136-24"/>
+   <path d="M52 92v67M268 92v67M68 76v-20l92-35 92 35v20M94 66l66-25 66 25"/>
+   <circle cx="160" cy="151" r="22"/><path d="m160 135 13 9-5 15h-16l-5-15 13-9Z"/>
+   <path d="M118 178h84M160 129v-18M138 151h-18M202 151h-20"/>
+  </svg>}
+  {step===1&&<svg viewBox="0 0 320 220">
+   <circle cx="160" cy="47" r="25"/>
+   <path d="M126 83c-21 7-35 24-39 49l-8 62h162l-8-62c-4-25-18-42-39-49l-34 25-34-25Z"/>
+   <path d="m126 83 34 25 34-25M160 108v86"/>
+   <path d="M145 142c0-10 7-17 16-17s16 6 16 15c0 8-5 12-12 17-4 3-5 6-5 11M160 180v1"/>
+   <circle cx="241" cy="63" r="22"/><path d="m257 79 20 20"/>
+   <path d="M69 194h182"/>
+  </svg>}
   {step===2&&<div className="onboarding-token-coin"><span className="coin-rim"/><BrandMark className="coin-brand-mark"/><i>SETHIS</i></div>}
-  {step===3&&<svg viewBox="0 0 240 132"><path d="M46 35h148a10 10 0 0 1 10 10v52a10 10 0 0 1-10 10H46a10 10 0 0 1-10-10V45a10 10 0 0 1 10-10Z"/><path d="M58 35v72M182 35v72M78 56h42M78 75h26"/><circle cx="155" cy="68" r="21"/><path d="m155 56 9 7-4 11h-10l-4-11 9-7ZM155 47v9M155 80v9M134 68h-8M184 68h-8"/><path d="M91 18h58"/></svg>}
-  <span>{["THE SETHIS ARENA","THE FIRST CHALLENGE","THE MAIN REWARD","GAME ACCESS"][step]||"SETHIS"}</span>
+  {step===3&&<svg viewBox="0 0 320 220">
+   <path d="M74 65c0-17 13-30 30-30h112c17 0 30 13 30 30v91c0 17-13 30-30 30H104c-17 0-30-13-30-30V65Z"/>
+   <path d="M111 88v48M87 112h48"/>
+   <circle cx="202" cy="91" r="11"/><circle cx="226" cy="116" r="11"/>
+   <path d="M165 68h25M165 160h25"/>
+  </svg>}
+  <span>{["FOOTBALL STARTS HERE","MYSTERY FOOTBALLER","THE SETHIS REWARD","GAME ACCESS"][step]||"SETHIS"}</span>
  </div>;
 }
 
@@ -206,8 +223,8 @@ const refreshTasks=()=>{const initData=window.Telegram?.WebApp?.initData;if(!tel
     {onboardingLoading&&telegramUser&&<div className="overlay onboarding-overlay"><section className="modal onboarding-modal"><div className="onboarding-loading-mark"><BrandMark/></div><span className="eyebrow">SETTLE THIS! · YOUR FIRST VISIT</span><h2>Preparing your SETHIS game room</h2><p>Securing your welcome journey and checking your gift eligibility…</p></section></div>}
     {onboardingError&&!onboardingOpen&&telegramUser&&<div className="overlay onboarding-overlay"><section className="modal onboarding-modal"><span className="eyebrow">WELCOME JOURNEY</span><h2>We need to verify your first visit.</h2><p>{onboardingError}</p><button className="primary-wide" onClick={()=>{setOnboardingError("");setOnboardingLoading(true);const initData=window.Telegram?.WebApp?.initData;fetch("/api/onboarding/status",{headers:{"x-telegram-init-data":initData||""}}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{setOnboardingStep(d.completed?onboardingStories.length:Number(d.step)||0);setOnboardingOpen(!d.gift_claimed);}).catch(()=>setOnboardingError("Still unable to verify. Please reload the Mini App.")).finally(()=>setOnboardingLoading(false));}}>RETRY</button></section></div>}
     {onboardingOpen&&<div className="overlay onboarding-overlay"><section className="modal onboarding-modal onboarding-premium">
-      <div className="onboarding-progress">{onboardingStories.map((story,i)=><span key={story.title} className={i<=onboardingStep?"done":""}/>)}</div>
-      {onboardingStep<onboardingStories.length?<><OnboardingArt step={onboardingStep}/><span className="eyebrow">YOUR SETTLE THIS! FIELD GUIDE · {String(onboardingStep+1).padStart(2,"0")} / {onboardingStories.length}</span><h2>{onboardingStories[onboardingStep].title}</h2><p>{onboardingStories[onboardingStep].body}</p><div className="onboarding-story-note"><b>{onboardingStories[onboardingStep].label}</b><span>{onboardingStories[onboardingStep].detail}</span></div><div className="onboarding-bottom">{onboardingStep>0&&<button className="onboarding-back" onClick={()=>setOnboardingStep(step=>Math.max(0,step-1))}>← BACK</button>}<span>{onboardingStep+1} OF {onboardingStories.length}</span><button className="primary-wide" onClick={advanceOnboarding}>CONTINUE →</button></div></>:<div className="welcome-gift-stage">
+      <div className="onboarding-topline"><div className="onboarding-brand"><BrandMark/><b>SETTLE THIS!</b></div><div className="onboarding-progress" aria-label={`Story ${Math.min(onboardingStep+1,onboardingStories.length)} of ${onboardingStories.length}`}>{onboardingStories.map((story,i)=><span key={story.title} className={i<=onboardingStep?"done":""}/>)}</div></div>
+      {onboardingStep<onboardingStories.length?<><OnboardingArt step={onboardingStep}/><span className="eyebrow">YOUR FIELD GUIDE · {String(onboardingStep+1).padStart(2,"0")} / {onboardingStories.length}</span><h2>{onboardingStories[onboardingStep].title}</h2><p>{onboardingStories[onboardingStep].body}</p><div className="onboarding-story-note"><b>{onboardingStories[onboardingStep].label}</b><span>{onboardingStories[onboardingStep].detail}</span></div><div className="onboarding-bottom">{onboardingStep>0&&<button type="button" className="onboarding-back" onClick={()=>setOnboardingStep(step=>Math.max(0,step-1))}>← BACK</button>}<span>{String(onboardingStep+1).padStart(2,"0")} / {String(onboardingStories.length).padStart(2,"0")}</span><button type="button" className="primary-wide" onClick={advanceOnboarding}>CONTINUE <span>→</span></button></div></>:<div className="welcome-gift-stage">
         <span className="eyebrow">YOU'VE REACHED THE FINAL WHISTLE</span><h2>{giftOpened?"YOUR FIRST GIFT IS IN!":"A WELCOME GIFT FOR YOU"}</h2>
         {!giftOpened?<><p>Every new member starts with CT to explore SETHIS games. Claim your one-time welcome gift and start playing.</p><div className="gift-box-wrap"><div className="gift-glow"/><div className="gift-box"><div className="gift-lid"><i/></div><div className="gift-ribbon-v"/><div className="gift-ribbon-h"/><div className="gift-bow"><i/><b/></div></div><div className="gift-box-shadow"/></div><div className="gift-amount">3,500 <span>CT</span></div><button className="primary-wide gift-claim-button" disabled={giftBusy} onClick={claimWelcomeGift}>{giftBusy?"SECURING YOUR GIFT…":"CLAIM YOUR 3,500 CT GIFT 🎁"}</button><small className="gift-once-note">One-time welcome gift · credited directly to your CT wallet</small></>:<><div className="gift-box-wrap gift-opened"><div className="gift-box opened"><div className="gift-lid"><i/></div><div className="gift-ribbon-v"/><div className="gift-ribbon-h"/><div className="gift-bow"><i/><b/></div></div><div className="gift-box-shadow"/></div><div className="gift-confetti">{Array.from({length:24},(_,i)=><i key={i} style={{"--confetti-i":i} as CSSProperties}/>)}</div><div className="welcome-gold-coin"><BrandMark className="brand-emblem"/></div><div className="gift-amount gift-revealed">+3,500 <span>CT</span></div><p className="gift-success-copy">Your CT balance has been credited. Your first football game is waiting.</p><button className="primary-wide" onClick={()=>setOnboardingOpen(false)}>LET’S PLAY →</button></>}
       </div>}
