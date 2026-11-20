@@ -1,3 +1,5 @@
+> **HISTORICAL / SUPERSEDED:** This plan documents the previous Courts-and-debate product concept. The current member product is SETHIS Football Games, with Guess Who? / Mystery Footballer as the first featured game. Do not use this document as the active roadmap. See [Current Product Direction](PRODUCT_DIRECTION.md).
+
 # Settle This! — Phase Three Expansion & Monetisation Plan
 
 ## Goal
