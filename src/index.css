@@ -3223,3 +3223,50 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
  .onboarding-story-note{margin-top:10px;padding:9px 0}
  .onboarding-bottom{padding-top:12px}
 }
+
+/* SETHIS official primary accent: warm coral from the "Prove it" wordmark */
+:root{--sethis-coral:#E98272}
+.hero h1 em,.hero-foot b{color:var(--sethis-coral)!important}
+.hero-cta{background:var(--sethis-coral)!important;color:#21101d!important}
+.brand-emblem,.onboarding-brand svg{color:var(--sethis-coral)!important}
+.brand-wordmark i{color:var(--sethis-coral)!important}
+.onboarding-progress span.done{background:var(--sethis-coral)!important;box-shadow:0 0 12px #E9827266}
+.onboarding-premium>.eyebrow{color:var(--sethis-coral)!important}
+.onboarding-visual{color:var(--sethis-coral)!important}
+.onboarding-visual svg{stroke:var(--sethis-coral)!important;stroke-width:5.5!important;stroke-linecap:round;stroke-linejoin:round}
+.onboarding-visual-0 svg,.onboarding-visual-1 svg,.onboarding-visual-3 svg{stroke:var(--sethis-coral)!important;stroke-width:5.5!important}
+.onboarding-visual>span{color:#E9B1A8!important}
+.onboarding-story-note{border-top-color:#E982724d;border-bottom-color:#E982724d}
+.onboarding-story-note b{color:var(--sethis-coral)!important}
+.onboarding-bottom .primary-wide,
+.onboarding-premium .gift-claim-button,
+.onboarding-premium .welcome-gift-stage>.primary-wide{background:var(--sethis-coral)!important;color:#21101d!important;box-shadow:0 9px 25px #E9827238}
+.onboarding-token-coin{border-color:var(--sethis-coral)!important;box-shadow:0 0 0 8px #E9827220,0 22px 50px #0007,inset 0 0 0 5px #ffffff0b}
+.onboarding-token-coin .coin-rim{border-color:#F5B7AC!important}
+.onboarding-token-coin .coin-brand-mark{color:var(--sethis-coral)!important}
+.welcome-gold-coin{background:radial-gradient(circle at 30% 25%,#f8c9c0,#E98272 46%,#9f4039 84%,#f2a397)!important;border-color:#f6c2b9!important;box-shadow:0 0 0 7px #E9827220,0 18px 36px #0008,inset 0 0 0 3px #ffffff30!important}
+.welcome-gold-coin .brand-emblem{color:#21101d!important;filter:drop-shadow(0 1px 2px #ffffff66)!important}
+.gift-amount span,.gift-revealed{color:var(--sethis-coral)!important}
+.gift-claim-button{background:var(--sethis-coral)!important;color:#21101d!important;box-shadow:0 10px 28px #E9827238!important}
+.gift-glow{width:205px;height:175px;background:radial-gradient(circle,#E9827255 0%,#E982721c 48%,transparent 72%)!important;filter:blur(12px)!important;animation:giftHalo 2.8s ease-in-out infinite!important}
+.gift-box{width:132px;height:94px;margin-top:35px;border:2px solid #f5b5aa!important;border-radius:9px 9px 13px 13px!important;background:linear-gradient(145deg,#583047 0%,#382039 52%,#24152c 100%)!important;box-shadow:0 20px 36px #0008,inset 0 2px 12px #ffffff18,0 0 0 1px #E9827240!important;animation:giftFloat 3s ease-in-out infinite!important}
+.gift-box:before{left:-11px!important;right:-11px!important;top:-17px!important;height:23px!important;border:2px solid #f8c5bb!important;background:linear-gradient(100deg,#f5b2a5,#E98272 48%,#c95f57)!important;box-shadow:0 7px 14px #0006!important}
+.gift-lid{left:-11px!important;right:-11px!important;top:-27px!important;height:15px!important;border:2px solid #ffd1c8!important;background:linear-gradient(90deg,#f4b4a8,#E98272 50%,#c95b55)!important;transform-origin:12% 100%!important;animation:none!important;box-shadow:0 5px 12px #0006!important}
+.gift-lid i{top:-18px!important;width:34px!important;height:22px!important;border:5px solid #E98272!important;filter:drop-shadow(0 2px 2px #0005)}
+.gift-ribbon-v{top:-14px!important;width:20px!important;background:linear-gradient(90deg,#b84f4c,#f7c2b8 48%,#d56b65)!important;box-shadow:0 0 12px #E9827230}
+.gift-ribbon-h{top:37px!important;height:15px!important;background:linear-gradient(90deg,#b84f4c,#f7c2b8 48%,#d56b65)!important}
+.gift-bow i,.gift-bow b{border:5px solid #E98272!important;box-shadow:0 2px 5px #0005}
+.gift-box-shadow{bottom:4px!important;width:155px!important;height:16px!important;background:#0009!important;filter:blur(9px)!important}
+.gift-opened .gift-box{animation:giftRevealPremium .9s cubic-bezier(.16,.82,.25,1) both!important}
+.gift-box.opened .gift-lid{animation:giftLidPremium .85s cubic-bezier(.18,.82,.2,1) forwards!important}
+.gift-confetti i{width:7px!important;height:13px!important;border-radius:3px!important;background:var(--sethis-coral)!important;box-shadow:0 0 8px #E9827244}
+.gift-confetti i:nth-child(3n){background:#b69bd5!important}
+.gift-confetti i:nth-child(3n + 1){background:#f5c4ba!important}
+.gift-confetti i:nth-child(4n){width:5px!important;height:5px!important;border-radius:50%!important}
+@keyframes giftHalo{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.13)}}
+@keyframes giftRevealPremium{0%{transform:translateY(16px) scale(.82)}60%{transform:translateY(-8px) scale(1.1)}82%{transform:translateY(3px) scale(.98)}100%{transform:translateY(0) scale(1)}}
+@keyframes giftLidPremium{0%{transform:rotate(0) translateY(0)}55%{transform:rotate(-44deg) translate(-15px,-19px)}100%{transform:rotate(-38deg) translate(-14px,-16px)}}
+.profile-replay-onboarding{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:3px 10px;width:100%;margin:14px 0 18px;padding:12px;border:1px solid #E9827255;border-radius:10px;background:linear-gradient(110deg,#E982721c,#E9827208);color:#f4f1f7;text-align:left}
+.profile-replay-onboarding>span{grid-row:1/3;width:32px;height:32px;display:grid;place-items:center;border-radius:9px;background:#E9827228;color:var(--sethis-coral);font-size:22px;font-weight:800}
+.profile-replay-onboarding b{font-size:9px;letter-spacing:.1em;color:var(--sethis-coral)}
+.profile-replay-onboarding small{font-size:8px;color:#c9bfce}
