@@ -61,8 +61,8 @@ function Root(){
  },[retry,isAdmin]);
  if(isAdmin)return <AdminPortal/>;
  if(authStatus==="outside")return <TelegramLanding/>;
- if(authStatus==="checking")return <main className="telegram-app-loading"><div><div className="telegram-app-mark">SETHIS</div><h1>Getting your game ready</h1><p>Verifying your Telegram account…</p></div></main>;
- if(authStatus==="failed")return <main className="telegram-app-loading"><div className="telegram-app-error"><div className="telegram-app-mark">SETHIS</div><h1>Telegram sign-in needs attention</h1><p>{authError}</p><button onClick={()=>setRetry(value=>value+1)}>TRY AGAIN</button><a href={APP_ORIGIN+"/"}>Return to the SETHIS introduction</a></div></main>;
+ if(authStatus==="checking")return <main className="telegram-app-loading"><div><div className="telegram-app-mark"><span className="telegram-loader-orbit"/><BrandMark className="telegram-loader-logo"/><span className="telegram-loader-word">SETHIS</span></div><h1>Getting your game ready</h1><p>Verifying your Telegram account…</p></div></main>;
+ if(authStatus==="failed")return <main className="telegram-app-loading"><div className="telegram-app-error"><div className="telegram-app-mark telegram-app-mark-static"><BrandMark className="telegram-loader-logo"/><span className="telegram-loader-word">SETHIS</span></div><h1>Telegram sign-in needs attention</h1><p>{authError}</p><button onClick={()=>setRetry(value=>value+1)}>TRY AGAIN</button><a href={APP_ORIGIN+"/"}>Return to the SETHIS introduction</a></div></main>;
  return <App telegramUser={authStatus==="ready"?telegramUser:null}/>;
 }
 ReactDOM.createRoot(document.getElementById("root")!).render(<React.StrictMode><Root/></React.StrictMode>);
