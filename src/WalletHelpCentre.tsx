@@ -1,19 +1,17 @@
 import { useState } from "react";
+import {Headset,Book,ShieldCheck,Lock,Group} from "iconoir-react";
 import CustomerCare from "./CustomerCare";
 import "./WalletHelpCentre.css";
 
 type ArticleKey = "how" | "terms" | "privacy" | "community";
 
 function HelpIcon({name}:{name:"support"|"guide"|"rules"|"privacy"|"community"}) {
-  const common={viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const,"aria-hidden":true as const};
-  const paths:Record<string,React.ReactNode>={
-    support:<><path d="M4 13v-2a8 8 0 0 1 16 0v2"/><path d="M4 13h3v6H6a2 2 0 0 1-2-2v-4Zm16 0h-3v6h1a2 2 0 0 0 2-2v-4ZM17 20h-4"/></>,
-    guide:<><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"/><path d="M4 6h12M8 9h8m-8 4h7"/></>,
-    rules:<><path d="M12 3 20 6v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-3Z"/><path d="m9 12 2 2 4-4"/></>,
-    privacy:<><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></>,
-    community:<><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1m2-9a3 3 0 1 0 0-6m1 9a5 5 0 0 1 3 5"/></>
-  };
-  return <svg {...common}>{paths[name]}</svg>;
+ const p={width:22,height:22,strokeWidth:1.8,"aria-hidden":true as const};
+ if(name==="support")return <Headset {...p}/>;
+ if(name==="guide")return <Book {...p}/>;
+ if(name==="rules")return <ShieldCheck {...p}/>;
+ if(name==="privacy")return <Lock {...p}/>;
+ return <Group {...p}/>;
 }
 
 const faqs = [
