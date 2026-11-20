@@ -1,15 +1,12 @@
-import React, { useId } from "react";
+import React from "react";
 
 /**
- * Settle This! — master monogram traced from the approved SETHIS coin artwork.
- * Both cyan ribbon sections are preserved as one consistent vector mark.
- * Use this component everywhere the brand symbol appears.
+ * Settle This! — approved coral-orange master monogram.
+ * Use this exact mark everywhere the brand symbol appears.
  */
 export default function BrandMark({className=""}:{className?:string}) {
-  const gradientId = "sethis-brand-gradient-" + useId().replace(/:/g, "");
   return <svg className={className} viewBox="0 0 580 460" role="img" aria-label="Settle This" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#27D7F2"/><stop offset="100%" stopColor="#9B8ACB"/></linearGradient></defs>
-    <path fill={`url(#${gradientId})`} d="M 27 428 L 383 429 L 406 427 L 428 422 L 452 413 L 479 397 L 495 384 L 513 364 L 529 337 L 536 315 L 538 283 L 535 266 L 522 237 L 498 208 L 472 188 L 431 166 L 401 158 L 226 157 L 225 158 L 254 175 L 377 242 L 410 262 L 421 275 L 427 292 L 426 306 L 417 324 L 400 337 L 381 341 L 105 341 Z"/>
-    <path fill={`url(#${gradientId})`} d="M 64 119 L 56 136 L 52 153 L 52 176 L 56 192 L 62 205 L 75 223 L 92 239 L 124 260 L 166 281 L 191 289 L 366 291 L 335 273 L 223 217 L 184 195 L 170 179 L 166 166 L 167 149 L 173 136 L 193 117 L 210 109 L 230 104 L 446 105 L 521 24 L 521 22 L 239 21 L 208 24 L 165 37 L 130 54 L 98 78 L 77 100 Z"/>
+    <path fill="#E98272" d="M 27 428 L 383 429 L 406 427 L 428 422 L 452 413 L 479 397 L 495 384 L 513 364 L 529 337 L 536 315 L 538 283 L 535 266 L 522 237 L 498 208 L 472 188 L 431 166 L 401 158 L 226 157 L 225 158 L 254 175 L 377 242 L 410 262 L 421 275 L 427 292 L 426 306 L 417 324 L 400 337 L 381 341 L 105 341 Z"/>
+    <path fill="#E98272" d="M 64 119 L 56 136 L 52 153 L 52 176 L 56 192 L 62 205 L 75 223 L 92 239 L 124 260 L 166 281 L 191 289 L 366 291 L 335 273 L 223 217 L 184 195 L 170 179 L 166 166 L 167 149 L 173 136 L 193 117 L 210 109 L 230 104 L 446 105 L 521 24 L 521 22 L 239 21 L 208 24 L 165 37 L 130 54 L 98 78 L 77 100 Z"/>
   </svg>;
 }
