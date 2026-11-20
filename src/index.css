@@ -3283,3 +3283,38 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 @keyframes giftArtReveal{0%{transform:translateY(12px) scale(.88)}65%{transform:translateY(-7px) scale(1.07)}100%{transform:translateY(0) scale(1)}}
 .onboarding-back{border:1px solid #E98272!important;background:#E982721c!important;color:#E98272!important;min-height:42px;padding:0 15px!important;border-radius:9px!important;font-size:9px!important;font-weight:900!important;letter-spacing:.1em}
 .onboarding-back:active{transform:translateY(1px);background:#E9827233!important}
+
+/* Consistent Iconoir visual system — replace improvised onboarding drawings */
+.onboarding-visual{height:204px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;overflow:hidden}
+.onboarding-art-backdrop{position:relative;width:min(100%,340px);height:166px;display:grid;place-items:center;border:1px solid #ffffff12;border-radius:24px;background:radial-gradient(ellipse at 50% 45%,#49354f 0%,#2b2237 46%,#1c1828 100%);overflow:hidden}
+.onboarding-art-backdrop:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#e9827215,transparent 48%),radial-gradient(circle at 50% 50%,transparent 0 45%,#ffffff08 46% 46.5%,transparent 47%)}
+.onboarding-art-caption{font-size:9px;letter-spacing:.19em;font-weight:900;color:#c9bfd5}
+.art-icon-main{position:relative;z-index:2;width:126px;height:126px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#3c314b,#211d2d);border:1px solid #e9827255;box-shadow:0 14px 35px #0006,inset 0 1px #ffffff18;color:#e98272}
+.art-icon-main svg{filter:drop-shadow(0 6px 10px #0005)}
+.art-pitch-markings{position:absolute;inset:17px 26px;border:1px solid #ffffff22;border-radius:12px}
+.art-pitch-markings:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #ffffff22}
+.art-pitch-markings:after{content:"";position:absolute;left:50%;top:50%;width:48px;height:48px;transform:translate(-50%,-50%);border:1px solid #ffffff22;border-radius:50%}
+.art-orbit{position:absolute;border:1px solid #e9827244;border-radius:50%;transform:rotate(-24deg)}
+.art-orbit-one{width:230px;height:76px}.art-orbit-two{width:270px;height:112px;transform:rotate(28deg)}
+.jersey-search{color:#c9b9e6}
+.jersey-search .art-search{position:absolute;right:-12px;bottom:0;width:53px;height:53px;display:grid;place-items:center;border-radius:50%;background:#e98272;color:#211725;border:5px solid #2b2237}
+.art-clue-chip{position:absolute;right:22px;top:17px;padding:7px 10px;border:1px solid #b9a5db66;border-radius:7px;background:#322844;color:#e3d9f1;font-size:8px;font-weight:900;letter-spacing:.12em}
+.onboarding-visual-2 .onboarding-art-backdrop{background:radial-gradient(ellipse at center,#493a53,#211d2d 75%)}
+.onboarding-token-coin{position:relative;width:132px;height:132px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#55415c,#251f31 70%);border:5px solid #e98272;box-shadow:0 0 0 5px #e9827224,0 14px 30px #0008,inset 0 0 0 2px #f7b6a9}
+.onboarding-token-coin .coin-brand-mark{width:48px;height:48px;color:#e98272!important}
+.onboarding-token-coin i{font-size:10px;font-style:normal;font-weight:900;letter-spacing:.2em;color:#f4f1f7}
+.onboarding-token-coin .coin-detail{position:absolute;right:-22px;bottom:0;color:#e98272;background:#2a2236;padding:6px;border:1px solid #e98272;border-radius:50%;box-sizing:content-box}
+.art-entry-token{position:absolute;right:calc(50% - 84px);bottom:24px;width:55px;height:55px;display:grid;place-items:center;border-radius:50%;background:#e98272;color:#251a2a;border:4px solid #2b2237;box-shadow:0 8px 18px #0007}
+.art-entry-token b{font-size:8px;letter-spacing:.1em}
+.art-play-label{position:absolute;left:22px;bottom:22px;font-size:8px;letter-spacing:.16em;font-weight:900;color:#c9bfd5}
+.gift-library-art{height:205px;display:grid;place-items:center}
+.gift-icon-stage{position:relative;width:178px;height:162px;display:grid;place-items:center;border-radius:32px;background:radial-gradient(circle at 50% 38%,#58404d,#2a2234 72%);border:1px solid #e9827266;box-shadow:0 15px 35px #0007,inset 0 1px #ffffff20;animation:giftLibraryFloat 3s ease-in-out infinite}
+.gift-library-icon{color:#e98272;filter:drop-shadow(0 8px 12px #0007)}
+.gift-token-float{position:absolute;right:-18px;bottom:5px;width:57px;height:57px;display:grid;place-items:center;border-radius:50%;background:#e98272;color:#251725;border:4px solid #2a2234;box-shadow:0 7px 18px #0007}
+.gift-token-float b{position:absolute;font-size:8px;font-weight:900;letter-spacing:.08em}
+.gift-spark{position:absolute;width:8px;height:8px;background:#f3b2a6;transform:rotate(45deg);border-radius:2px}
+.gift-spark-one{top:22px;left:19px}.gift-spark-two{top:48px;right:15px;width:5px;height:5px}
+.gift-icon-stage.opened{animation:giftLibraryOpen .8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes giftLibraryFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes giftLibraryOpen{0%{transform:scale(.88) rotate(-5deg)}65%{transform:scale(1.06) rotate(2deg)}100%{transform:scale(1)}}
+@media(max-width:420px){.onboarding-visual{height:190px}.onboarding-art-backdrop{height:154px}.gift-icon-stage{width:160px;height:150px}}
