@@ -3030,3 +3030,196 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .onboarding-back{border:1px solid #493454;background:#241333;border-radius:7px;padding:10px 12px;font-size:8px;font-weight:900;color:#d8cde2}
 .onboarding-token-coin+.onboarding-token-coin{display:none}
 @media(max-width:420px){.onboarding-premium{padding:15px 14px}.onboarding-premium h2{font-size:25px}.onboarding-visual{height:136px}.onboarding-visual svg{height:105px}}
+
+
+/* Full-screen SETHIS onboarding: immersive story pages, not modal cards */
+.onboarding-overlay{
+  z-index:90!important;
+  display:block!important;
+  padding:0!important;
+  background:#150a21!important;
+  backdrop-filter:none!important;
+}
+.onboarding-premium{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  width:100%!important;
+  height:100vh;
+  height:100dvh;
+  min-height:100vh;
+  min-height:100dvh;
+  max-height:none!important;
+  max-width:none!important;
+  margin:0;
+  padding:calc(env(safe-area-inset-top,0px) + 22px) clamp(22px,6vw,76px) calc(env(safe-area-inset-bottom,0px) + 22px);
+  overflow-x:hidden;
+  overflow-y:auto;
+  border:0!important;
+  border-radius:0!important;
+  background:
+    radial-gradient(ellipse at 50% 24%,#30204b 0%,transparent 48%),
+    linear-gradient(155deg,#1d1729 0%,#171522 55%,#120f1c 100%)!important;
+  box-shadow:none!important;
+  color:#faf8fc;
+}
+.onboarding-topline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:22px;
+  width:100%;
+  max-width:720px;
+  margin:0 auto clamp(18px,4vh,38px);
+}
+.onboarding-brand{display:flex;align-items:center;gap:10px;color:#f4f1f7}
+.onboarding-brand svg{width:31px;height:25px;color:var(--cyan)}
+.onboarding-brand b{font-size:10px;font-weight:950;letter-spacing:.12em}
+.onboarding-progress{
+  display:flex;
+  flex:0 1 220px;
+  gap:6px;
+  margin:0;
+  padding:0;
+}
+.onboarding-progress span{height:4px;flex:1;border-radius:0;background:#ffffff24}
+.onboarding-progress span.done{background:var(--cyan)}
+.onboarding-premium>.onboarding-visual{
+  flex:1 1 auto;
+  width:100%;
+  max-width:720px;
+  min-height:190px;
+  max-height:38vh;
+  margin:0 auto clamp(22px,4vh,38px);
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--cyan);
+}
+.onboarding-visual:before{display:none}
+.onboarding-visual svg{
+  width:min(78%,390px);
+  height:100%;
+  max-height:260px;
+  stroke:var(--cyan);
+  stroke-width:2.2;
+  filter:drop-shadow(0 10px 22px #0005);
+}
+.onboarding-visual-0 svg{stroke:var(--cyan);stroke-width:2}
+.onboarding-visual-1 svg{stroke:var(--cyan);stroke-width:2.3}
+.onboarding-visual-3 svg{stroke:var(--cyan);stroke-width:3}
+.onboarding-visual>span{
+  left:50%;
+  bottom:0;
+  transform:translateX(-50%);
+  width:max-content;
+  max-width:100%;
+  color:#b8a9c9;
+  font-size:8px;
+  letter-spacing:.2em;
+  text-align:center;
+}
+.onboarding-premium>.eyebrow,
+.onboarding-premium>h2,
+.onboarding-premium>p,
+.onboarding-story-note,
+.onboarding-bottom,
+.welcome-gift-stage{
+  width:100%;
+  max-width:720px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.onboarding-premium>.eyebrow{color:var(--cyan);font-size:9px;letter-spacing:.18em}
+.onboarding-premium h2{
+  max-width:680px;
+  margin-top:13px;
+  margin-bottom:12px;
+  font-size:clamp(30px,6vw,48px);
+  line-height:1.04;
+  letter-spacing:-.045em;
+}
+.onboarding-premium>p{max-width:620px;font-size:clamp(13px,2.2vw,16px);line-height:1.7;color:#d8d2e0}
+.onboarding-story-note{
+  display:grid;
+  gap:6px;
+  margin-top:clamp(15px,3vh,26px);
+  margin-bottom:0;
+  padding:13px 0;
+  border:0;
+  border-top:1px solid #ffffff1c;
+  border-bottom:1px solid #ffffff1c;
+  background:transparent;
+}
+.onboarding-story-note b{color:var(--cyan);font-size:9px;letter-spacing:.15em}
+.onboarding-story-note span{color:#c7c0d1;font-size:11px;line-height:1.55}
+.onboarding-bottom{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:auto;
+  padding-top:clamp(18px,4vh,34px);
+}
+.onboarding-bottom>span{color:#b8a9c9;font-size:10px;letter-spacing:.12em}
+.onboarding-bottom .primary-wide{
+  width:auto;
+  min-width:min(220px,52vw);
+  max-width:none;
+  min-height:54px;
+  margin-left:auto;
+  padding:0 22px;
+  border-radius:12px;
+  background:var(--cyan)!important;
+  color:#150a21!important;
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:.08em;
+}
+.onboarding-bottom .primary-wide span{margin-left:12px;font-size:17px}
+.onboarding-back{
+  min-height:48px;
+  padding:0 16px;
+  border:1px solid #ffffff28;
+  border-radius:11px;
+  background:#ffffff08;
+  color:#f4f1f7;
+  font-size:9px;
+  font-weight:900;
+}
+.onboarding-token-coin{
+  width:clamp(126px,27vh,210px);
+  height:clamp(126px,27vh,210px);
+  border:2px solid var(--cyan);
+  background:radial-gradient(circle at 32% 25%,#51406b,#30263e 58%,#1b1725 100%);
+  box-shadow:0 0 0 8px color-mix(in srgb,var(--cyan) 12%,transparent),0 22px 50px #0007,inset 0 0 0 5px #ffffff0b;
+}
+.onboarding-token-coin .coin-rim{inset:9px;border-color:var(--cyan)}
+.onboarding-token-coin .coin-brand-mark{width:58%;height:48%;color:var(--cyan)!important;filter:none}
+.onboarding-token-coin i{bottom:17px;color:#f4f1f7;font-size:9px;letter-spacing:.22em}
+.onboarding-premium .welcome-gift-stage{margin-top:auto;margin-bottom:auto}
+.onboarding-premium .gift-claim-button,
+.onboarding-premium .welcome-gift-stage>.primary-wide{background:var(--cyan)!important;color:#150a21!important}
+@media(max-width:520px){
+ .onboarding-premium{padding-left:22px;padding-right:22px}
+ .onboarding-topline{gap:12px;margin-bottom:12px}
+ .onboarding-brand{gap:7px}
+ .onboarding-brand svg{width:27px;height:22px}
+ .onboarding-brand b{font-size:8px}
+ .onboarding-progress{flex-basis:112px;gap:4px}
+ .onboarding-premium>.onboarding-visual{min-height:170px;max-height:32vh;margin-bottom:19px}
+ .onboarding-visual svg{width:88%;max-height:220px}
+ .onboarding-premium h2{font-size:clamp(29px,8vw,38px)}
+ .onboarding-premium>p{font-size:13px}
+ .onboarding-story-note span{font-size:10px}
+ .onboarding-bottom{gap:9px}
+ .onboarding-bottom .primary-wide{min-width:0;flex:1;min-height:52px;padding:0 14px}
+ .onboarding-bottom>span{font-size:9px}
+}
+@media(max-height:680px){
+ .onboarding-topline{margin-bottom:10px}
+ .onboarding-premium>.onboarding-visual{min-height:128px;max-height:27vh;margin-bottom:12px}
+ .onboarding-premium h2{font-size:clamp(26px,6vh,36px);margin-top:8px;margin-bottom:7px}
+ .onboarding-story-note{margin-top:10px;padding:9px 0}
+ .onboarding-bottom{padding-top:12px}
+}
