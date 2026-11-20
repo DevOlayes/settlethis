@@ -65,9 +65,9 @@ function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser
   const [poolMarket,setPoolMarket]=useState<PoolMarketData|null>(null);const [poolMarkets,setPoolMarkets]=useState<PoolMarketData[]>([]);const [selectedPool,setSelectedPool]=useState<PoolMarketData|null>(null);
   const refreshMyCourts=()=>{const initData=window.Telegram?.WebApp?.initData;if(!telegramUser||!initData){setMyCourts([]);setMyPoolPositions([]);return;}fetch("/api/my-courts",{headers:{"x-telegram-init-data":initData}}).then(r=>r.ok?r.json():null).then(d=>{setMyCourts(Array.isArray(d?.courts)?d.courts:[]);setMyPoolPositions(Array.isArray(d?.pool_positions)?d.pool_positions:[]);}).catch(()=>{});};
   const refreshPool=()=>fetch("/api/pool-court").then(r=>r.ok?r.json():null).then(d=>{setPoolMarket(d?.pool||null);setPoolMarkets(Array.isArray(d?.pools)?d.pools:(d?.pool?[d.pool]:[]));}).catch(()=>{});
-  useEffect(()=>{fetch("/api/courts").then(r=>r.ok?r.json():null).then(d=>setCourtFeed(Array.isArray(d?.courts)?d.courts:[])).catch(()=>{});refreshPool();},[]);
-  useEffect(()=>{fetch("/api/settle-argument").then(r=>r.ok?r.json():null).then(d=>setSettleEpisodes(Array.isArray(d?.episodes)?d.episodes:[])).catch(()=>setSettleEpisodes([]));},[]);
-  useEffect(()=>{refreshMyCourts();},[telegramUser]);
+  
+  
+  
   const [checkin,setCheckin]=useState<CheckinState|null>(null);
   const [checkinBusy,setCheckinBusy]=useState(false);
   const [checkinError,setCheckinError]=useState("");
