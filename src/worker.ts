@@ -115,7 +115,7 @@ async function handleTelegramBotUpdate(request:Request,env:Env){
  if(commandName==="start"){
   await env.DB.prepare("INSERT INTO telegram_bot_members(telegram_user_id,username,first_name,broadcast_opt_in,pending_start_payload,start_payload,started_at,stopped_at,last_interaction_at,updated_at) VALUES(?,?,?,1,?,?,CURRENT_TIMESTAMP,NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP) ON CONFLICT(telegram_user_id) DO UPDATE SET username=excluded.username,first_name=excluded.first_name,broadcast_opt_in=1,pending_start_payload=CASE WHEN excluded.pending_start_payload IS NOT NULL THEN excluded.pending_start_payload ELSE telegram_bot_members.pending_start_payload END,start_payload=CASE WHEN excluded.start_payload IS NOT NULL THEN excluded.start_payload ELSE telegram_bot_members.start_payload END,started_at=COALESCE(telegram_bot_members.started_at,CURRENT_TIMESTAMP),stopped_at=NULL,last_interaction_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP").bind(telegramId,from.username||null,from.first_name||"",payload||null,payload||null).run();
   const referred=payload.startsWith("ref_")?"Your friend's invite has been carried into your SETHIS registration.\n\n":"";
-  const welcome="⚽ WELCOME TO SETHIS!\n\nFootball knowledge. Quick-fire challenges. Bragging rights.\n\nThink you know the game? Prove it in Guess Who? — our Mystery Footballer challenge. Read the clues, make your guesses and build your game record.\n\n"+referred+"Your SETHIS account and game progress live inside Telegram. Tap below to open the Mini App and get started.\n\nYou can receive important SETHIS updates here. Send /stop any time to opt out of broadcast messages.";
+  const welcome="⚽ WELCOME TO SETHIS!\n\nFootball knowledge. Quick-fire challenges. Bragging rights.\n\nThink you know the game? Prove it in Guess Who? — our Mystery Footballer challenge. Read the clues, make your guesses and build your game record.\n\n"+referred+"Your SETHIS account and game progress live inside Telegram. Tap below to open the Mini App and get started.\n\nBy pressing Start, you have opened a direct SETHIS chat for game and account updates. We may send important platform broadcasts here. Send /stop at any time to opt out.";
   await telegramBotCall(env,"sendMessage",{chat_id:chat.id,text:welcome,reply_markup:{inline_keyboard:[[{text:"⚽ OPEN SETHIS & START PLAYING",web_app:{url:SETHIS_MINI_APP_URL}}]]}});
  }else if(commandName==="stop"){
   await env.DB.prepare("UPDATE telegram_bot_members SET broadcast_opt_in=0,stopped_at=CURRENT_TIMESTAMP,last_interaction_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE telegram_user_id=?").bind(telegramId).run();
@@ -245,6 +245,7 @@ if(path==="/api/admin/status"&&request.method==="GET"){try{const admin=await env
  if(path==="/api/admin/telegram-broadcast"&&request.method==="POST"){
   if(!sameOrigin(request))return json({error:"Request origin could not be verified."},403);
   const admin=await editorialAdmin(request,env);if(!admin)return json({error:"A valid browser administrator session is required."},401);
+  if(!env.TELEGRAM_BOT_TOKEN)return json({error:"Telegram bot messaging is not configured."},503);
   try{
    const body=await request.json() as {message?:unknown;after_id?:unknown};
    const message=typeof body.message==="string"?body.message.trim():"",afterId=typeof body.after_id==="string"?body.after_id:"";
