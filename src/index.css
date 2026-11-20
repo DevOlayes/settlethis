@@ -2964,3 +2964,27 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .telegram-app-error button{width:100%;margin:12px 0;padding:14px;border:0;border-radius:12px;background:#e98272;color:#171522;font-weight:950}
 .telegram-app-error a{display:block;color:#c8bce0;font-size:11px;text-decoration:none}
 @media(min-width:700px){.telegram-landing-content{max-width:500px}.telegram-landing-brand{margin-bottom:75px}}
+
+
+.admin-telegram-broadcast{display:grid;gap:17px;padding:20px;border:1px solid #9b8acb35;border-radius:18px;background:linear-gradient(145deg,#211d2c,#191724);color:#f4f1f7}
+.admin-telegram-broadcast .admin-detail-head{margin:0}
+.admin-telegram-broadcast .admin-detail-head small{color:#bba9d9;font-size:9px;letter-spacing:.14em}
+.admin-telegram-broadcast .admin-detail-head h2{margin:6px 0;color:#f4f1f7;font-size:22px}
+.admin-telegram-broadcast .admin-detail-head p{max-width:520px;color:#aaa3b5;font-size:12px;line-height:1.6}
+.admin-telegram-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.admin-telegram-stats article{display:grid;gap:7px;padding:13px;border:1px solid #ffffff12;border-radius:12px;background:#ffffff06}
+.admin-telegram-stats small{color:#aaa3b5;font-size:8px;font-weight:850;letter-spacing:.08em}
+.admin-telegram-stats strong{color:#fff;font-size:22px;font-weight:950}
+.admin-telegram-status{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-radius:10px;background:#ffffff08;color:#aaa3b5;font-size:10px}
+.admin-telegram-status>span:first-child{font-weight:900;letter-spacing:.07em}
+.admin-telegram-status .connected{color:#8dd5b0}
+.admin-telegram-status .pending{color:#e98272}
+.admin-telegram-message{display:grid;gap:8px;color:#cfc7d9;font-size:10px;font-weight:900;letter-spacing:.1em}
+.admin-telegram-message textarea{width:100%;min-height:150px;resize:vertical;padding:13px;border:1px solid #9b8acb55;border-radius:12px;outline:none;background:#12101b;color:#f4f1f7;font:500 13px/1.65 Manrope,system-ui,sans-serif;letter-spacing:0}
+.admin-telegram-message textarea:focus{border-color:#e98272}
+.admin-telegram-compose-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#aaa3b5;font-size:10px}
+.admin-telegram-compose-foot .admin-primary{min-height:42px;padding:0 16px;border:0;border-radius:11px;background:#e98272;color:#171522;font-size:10px;font-weight:950}
+.admin-telegram-compose-foot .admin-primary:disabled{opacity:.45}
+.admin-telegram-progress{padding:12px;border:1px solid #e9827240;border-radius:10px;color:#cfc7d9;font-size:11px}
+.admin-telegram-progress b{color:#fff}
+@media(max-width:520px){.admin-telegram-broadcast{padding:14px}.admin-telegram-stats article{padding:10px}.admin-telegram-stats strong{font-size:18px}.admin-telegram-compose-foot{align-items:stretch;flex-direction:column}.admin-telegram-compose-foot .admin-primary{width:100%}}
