@@ -420,7 +420,7 @@ if(settleEpisodeMatch&&request.method==="PATCH"){if(!sameOrigin(request))return 
    }
    if(path==="/api/support/tickets"&&request.method==="POST"){
     const body=await request.json() as Record<string,unknown>,category=String(body.category||""),subject=textField(body.subject,120),message=textField(body.message,2000);
-    if(!["account","wallet","court","rewards","technical","safety","other"].includes(category)||subject.length<4||message.length<10)return json({error:"Choose a support category and provide a subject plus at least 10 characters describing the issue."},400);
+    if(!["account","wallet","games","rewards","referrals","technical","safety","other"].includes(category)||subject.length<4||message.length<10)return json({error:"Choose a support category and provide a subject plus at least 10 characters describing the issue."},400);
     const recent=await env.DB.prepare("SELECT COUNT(*) AS total FROM support_tickets WHERE user_id=? AND created_at>=datetime('now','-24 hours')").bind(user).first<{total:number}>();
     const open=await env.DB.prepare("SELECT COUNT(*) AS total FROM support_tickets WHERE user_id=? AND status<>'resolved'").bind(user).first<{total:number}>();
     if(Number(recent?.total)>=8||Number(open?.total)>=8)return json({error:"You have reached the current support request limit. Please continue an existing request or try again later."},429);
