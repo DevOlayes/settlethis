@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from "react";
-import { SoccerBall, Search, Coins, Gift, Gamepad, Trophy, TaskList, UserPlus, Wallet } from "iconoir-react";
+import { SoccerBall, User, Search, Coins, Gift, Gamepad, Trophy, TaskList, UserPlus, Wallet } from "iconoir-react";
 import BrandMark from "./BrandMark";
 import CompetitionDiscovery from "./CompetitionDiscovery";
 import SponsorSlot from "./SponsorSlot";
@@ -37,7 +37,7 @@ function OnboardingArt({step}:{step:number}) {
  return <div className={`onboarding-visual onboarding-visual-${step}`} aria-hidden="true">
   <div className="onboarding-art-backdrop">
    {step===0&&<><div className="art-pitch-markings"/><div className="art-icon-main"><SoccerBall {...iconProps}/></div><span className="art-orbit art-orbit-one"/><span className="art-orbit art-orbit-two"/></>}
-   {step===1&&<><div className="art-icon-main jersey-search"><SoccerBall {...iconProps}/><span className="art-search"><Search width={37} height={37} strokeWidth={2}/></span></div><span className="art-clue-chip">WHO IS IT?</span></>}
+   {step===1&&<><div className="art-icon-main mystery-person"><User {...iconProps}/><span className="art-question-mark">?</span></div><span className="art-clue-chip">WHO IS IT?</span></>}
    {step===2&&<div className="onboarding-token-coin"><span className="coin-rim"/><BrandMark className="coin-brand-mark"/><i>SETHIS</i><Coins className="coin-detail" width={26} height={26}/></div>}
    {step===3&&<><div className="art-icon-main"><Gamepad {...iconProps}/></div><span className="art-entry-token"><Coins width={27} height={27} strokeWidth={1.8}/><b>CT</b></span><span className="art-play-label">GAME ACCESS</span></>}
   </div>
