@@ -3345,3 +3345,92 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 @keyframes sethisLogoBeep{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px #E9827244)}12%{transform:scale(1.07);filter:drop-shadow(0 0 19px #E9827288)}24%{transform:scale(1);filter:drop-shadow(0 0 8px #E9827255)}}
 @keyframes sethisOrbit{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.telegram-app-loading:before,.telegram-app-loading:after,.telegram-loader-logo,.telegram-loader-orbit{animation:none!important}}
+
+
+/* Compact mobile-first navigation and content density refinements */
+.games-section-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:19px 2px 9px}
+.games-section-heading .eyebrow{display:block;color:#E98272;font-size:8px;letter-spacing:.16em;font-weight:900}
+.games-section-heading h2{margin:3px 0 0;font-size:18px;line-height:1.1;letter-spacing:-.04em;color:#F4F1F7}
+.games-section-heading>small{font-size:8px;font-weight:850;letter-spacing:.1em;color:#AAA3B5}
+.mystery-game-card{padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.mystery-game-top{min-height:27px;padding:0 2px 7px!important;border:0!important;background:transparent!important}
+.mystery-game-top>span:first-child{color:#E98272!important;font-size:8px;letter-spacing:.12em;font-weight:900}
+.mystery-game-hero{border:1px solid #ffffff18!important;border-radius:13px!important;background:linear-gradient(115deg,#302b3d 0%,#211e2b 100%)!important;padding:14px!important;min-height:140px}
+.mystery-game-copy h2{font-size:clamp(25px,7vw,34px)!important;line-height:.94!important}
+.mystery-game-copy p{font-size:10px!important;line-height:1.45!important;max-width:260px}
+.mystery-round-panel,.mystery-start-panel{margin-top:9px!important;padding:13px!important;border-radius:12px!important}
+.games-lineup-note{margin:17px 2px 5px!important;padding:9px 0!important;border:0!important;border-top:1px solid #ffffff18!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.games-lineup-icon{width:32px!important;height:32px!important;flex-basis:32px!important;border-radius:9px!important;background:#302b3d!important;color:#E98272!important}
+.games-lineup-note .eyebrow{color:#E98272!important}
+.games-lineup-note h3{font-size:12px!important}
+.games-lineup-note p{font-size:9px!important;line-height:1.4!important}
+.game-invite-strip,.game-wallet-strip,.game-lower-grid{display:none!important}
+
+/* Smaller quiz and mission blocks; no decorative numeric section markers */
+.task-zone-label{margin:15px 0 8px!important;padding:0!important;min-height:0!important}
+.task-zone-label>span{display:none!important}
+.task-zone-label b{font-size:10px!important;letter-spacing:.11em}
+.quiz-hub{padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.quiz-hub-heading{margin-bottom:8px!important}
+.quiz-list-card{padding:10px!important;border-radius:11px!important}
+.quiz-list-card .quiz-feature-main{gap:8px!important;align-items:center!important}
+.quiz-list-card .quiz-feature-main h3{font-size:16px!important;margin:3px 0!important}
+.quiz-list-card .quiz-feature-main p{font-size:9px!important;line-height:1.4!important;margin:0!important}
+.quiz-list-card .quiz-ball-art{width:46px!important;height:46px!important;flex:0 0 46px!important;font-size:27px!important}
+.quiz-list-card .quiz-reward-strip{margin:7px 0!important;padding:6px 7px!important}
+.quiz-list-card .quiz-open-button{min-height:34px!important;padding:8px 11px!important}
+.quiz-card-top{margin-bottom:5px!important}
+
+/* Sliding breadcrumb controls for rankings and referral sections */
+.ranking-slider,.referral-section-slider{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:4px;border:1px solid #ffffff16;border-radius:11px;background:#171522;margin:14px 0 13px}
+.ranking-slider::-webkit-scrollbar,.referral-section-slider::-webkit-scrollbar{display:none}
+.ranking-slider button,.referral-section-slider button{flex:1 0 auto;min-height:34px;padding:8px 12px;border:0;border-radius:8px;background:transparent;color:#AAA3B5;font:800 8px 'Manrope';letter-spacing:.08em;white-space:nowrap}
+.ranking-slider button.active,.referral-section-slider button.active{background:#E98272;color:#211725;box-shadow:0 3px 10px #E9827233}
+.ranking-view-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 10px}
+.ranking-view-heading span{font-size:9px;font-weight:900;letter-spacing:.12em;color:#E98272}
+.ranking-view-heading small{font-size:8px;color:#AAA3B5}
+.ranking-method{display:none!important}
+
+/* Referral centre: shorter intro, independent sections, coral-only accent */
+.referral-page-hero{padding:12px 0 10px!important;margin:0!important;min-height:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.referral-page-hero h1{font-size:clamp(23px,6vw,29px)!important;line-height:1.08!important;margin:5px 0!important;max-width:320px}
+.referral-page-hero p{font-size:10px!important;line-height:1.45!important;margin:5px 0 0!important;max-width:340px}
+.referral-page-mark{display:none!important}
+.referral-page .eyebrow,.referral-page .referral-performance-title .eyebrow,.referral-page .referral-next-copy .eyebrow{color:#E98272!important}
+.referral-section-slider{position:sticky;top:0;z-index:5;background:#171522ee;backdrop-filter:blur(12px)}
+.referral-section-slider button{font-size:7px;padding:8px 9px}
+.referral-view-panel{display:grid;gap:13px}
+.referral-view-panel>section{margin:0!important}
+.referral-performance-title h2,.referral-next-copy h2,.referral-community-heading h2,.referral-activity h2,.referral-reward-history h2{font-size:17px!important;line-height:1.12!important}
+.referral-performance-title p{font-size:9px!important}
+.referral-performance,.referral-next-card,.referral-milestone-journey,.referral-community-card,.referral-activity,.referral-reward-history{background:transparent!important;border-color:#ffffff18!important;box-shadow:none!important}
+.referral-next-card,.referral-milestone-journey,.referral-community-card{padding:13px!important}
+.referral-community-card>p{font-size:9px!important;line-height:1.5!important}
+.referral-promo{background:linear-gradient(115deg,#302b3d,#211e2b)!important;border-color:#E9827244!important;box-shadow:none!important}
+.referral-promo:before{border-color:#E9827226!important;box-shadow:0 0 0 18px #E982720b,0 0 0 38px #E9827208!important}
+.referral-promo:after{background:#E9827222!important}
+.referral-promo-art{border-color:#E9827244!important;background:#302b3d!important;color:#E98272!important}
+.referral-promo-art>span{background:#E98272!important;color:#211725!important;box-shadow:0 0 15px #E9827244!important}
+.referral-promo-art>i{background:#E98272!important}
+.referral-promo-art>b,.referral-promo-foot>b{color:#E98272!important}
+.referral-promo-kicker{color:#E98272!important}
+.referral-promo-stats>span{background:#171522!important}
+.referral-promo-stats small{color:#AAA3B5!important}
+.referral-promo-progress i{background:#E98272!important}
+.referral-promo-foot>strong{color:#E98272!important}
+.referral-page .referral-page-track{background:#302b3d!important}
+.referral-page .referral-page-track i{background:#E98272!important}
+.referral-page .referral-milestone-number{color:#E98272!important}
+.referral-page .referral-milestone-list article{border-color:#ffffff18!important}
+.referral-page .referral-milestone-prize em{color:#E98272!important}
+.referral-page .referral-community-ladder .active{border-color:#E98272!important;color:#E98272!important}
+.referral-page .referral-community-leader.you{border-color:#E9827255!important;background:#302b3d!important}
+.referral-page .referral-leader-rank{color:#E98272!important}
+.referral-page .referral-member-status.qualified{color:#E98272!important}
+.referral-page .referral-link-card{background:#211e2b!important;border-color:#E9827244!important;box-shadow:none!important}
+.referral-page .referral-link-actions button:first-child{background:#E98272!important;color:#211725!important}
+.referral-page .referral-link-actions button:last-child{border-color:#E9827266!important;color:#E98272!important}
+.referral-page .referral-telegram-verified,.referral-page .referral-community-ball{color:#E98272!important}
+.referral-page .referral-contributor-status.eligible{border-color:#E9827255!important;color:#E98272!important}
+.referral-page .referral-page-note{color:#AAA3B5!important}
+@media(max-width:390px){.ranking-slider button,.referral-section-slider button{font-size:7px;padding:8px 7px}.referral-page-hero h1{font-size:23px!important}.quiz-list-card{padding:9px!important}}
