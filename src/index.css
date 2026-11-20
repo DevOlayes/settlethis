@@ -3270,3 +3270,16 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .profile-replay-onboarding>span{grid-row:1/3;width:32px;height:32px;display:grid;place-items:center;border-radius:9px;background:#E9827228;color:var(--sethis-coral);font-size:22px;font-weight:800}
 .profile-replay-onboarding b{font-size:9px;letter-spacing:.1em;color:var(--sethis-coral)}
 .profile-replay-onboarding small{font-size:8px;color:#c9bfce}
+
+/* Integrated SETHIS welcome gift illustration */
+.gift-box-art{width:min(248px,78vw);height:205px;overflow:visible;filter:drop-shadow(0 16px 18px #0007);animation:giftArtFloat 3.2s ease-in-out infinite;position:relative;z-index:2}
+.gift-svg-lid{transform-box:fill-box;transform-origin:12% 100%;transition:transform .8s cubic-bezier(.18,.82,.2,1)}
+.gift-box-art.opened .gift-svg-lid{animation:giftArtLidOpen .9s cubic-bezier(.18,.82,.2,1) forwards}
+.gift-box-art.opened{animation:giftArtReveal .9s cubic-bezier(.16,.82,.25,1) both}
+.gift-opened .gift-box-art{animation:giftArtReveal .9s cubic-bezier(.16,.82,.25,1) both}
+.gift-box-shadow{z-index:1}
+@keyframes giftArtFloat{0%,100%{transform:translateY(2px) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1deg)}}
+@keyframes giftArtLidOpen{0%{transform:rotate(0) translate(0,0)}65%{transform:rotate(-38deg) translate(-9px,-12px)}100%{transform:rotate(-34deg) translate(-8px,-10px)}}
+@keyframes giftArtReveal{0%{transform:translateY(12px) scale(.88)}65%{transform:translateY(-7px) scale(1.07)}100%{transform:translateY(0) scale(1)}}
+.onboarding-back{border:1px solid #E98272!important;background:#E982721c!important;color:#E98272!important;min-height:42px;padding:0 15px!important;border-radius:9px!important;font-size:9px!important;font-weight:900!important;letter-spacing:.1em}
+.onboarding-back:active{transform:translateY(1px);background:#E9827233!important}
