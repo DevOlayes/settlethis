@@ -1,3 +1,5 @@
+> **PRODUCT CONTEXT UPDATE:** This research was written for the previous Courts/debate-first product. SETHIS is now game-first, with Mystery Footballer as the first featured game. The closed-loop CT/SETHIS and no-cash-value guardrails remain relevant, but Court/Pool-specific utilities and reward examples must be reassessed against [Current Product Direction](PRODUCT_DIRECTION.md) before implementation.
+
 # SETHIS Token Ecosystem — Research & Readiness Assessment
 
 **Status:** Component 7 research deliverable — complete; implementation and token launch remain gated  
