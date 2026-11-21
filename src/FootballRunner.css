@@ -8,3 +8,7 @@
 .runner-control-pad button:disabled{opacity:.35}
 .runner-controls>span{font-size:7px;color:#aaa3b5;letter-spacing:.13em;text-align:center}
 @media(max-width:540px){.runner-control-pad{gap:12px}.runner-control-pad button{width:52px;height:46px;font-size:21px}.runner-controls{padding:8px 0 calc(12px + env(safe-area-inset-bottom,0))}}
+
+.runner-sound-toggle{height:31px;padding:0 9px;border:1px solid #e9827255;border-radius:7px;background:#302b3d;color:#e98272;font:800 8px Manrope,Arial,sans-serif;letter-spacing:.08em;white-space:nowrap}
+.runner-sound-toggle[aria-pressed="false"]{border-color:#ffffff24;color:#aaa3b5;background:#211e2b}
+@media(max-width:540px){.runner-topbar{gap:7px}.runner-sound-toggle{padding:0 7px;font-size:7px}.runner-prototype-tag{padding:6px 7px;font-size:7px}}
