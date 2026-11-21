@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { RunnerEngine } from "./football-runner/RunnerEngine";
+import { RUNNER_REWARD_DEMO } from "./football-runner/config";
 import type { RunnerControls, RunnerHud, RunnerPhase, RunnerRecords, RunnerRunRecord, RunnerSummary } from "./football-runner/types";
 import "./FootballRunner.css";
 
@@ -7,6 +8,7 @@ type Props = { onBack: () => void };
 
 const EMPTY_HUD: RunnerHud = { distance: 0, points: 0, balls: 0, speed: 1 };
 const RECORDS_KEY = "sethis.runner.records.v1";
+const DAILY_PREVIEW_KEY = "sethis.runner.reward-preview.v1";
 const EMPTY_RECORDS: RunnerRecords = { bestDistance: 0, bestPoints: 0, totalRuns: 0, recentRuns: [] };
 
 function readRecords(): RunnerRecords {
@@ -53,7 +55,24 @@ export default function FootballRunner({ onBack }: Props) {
         onPhase: setPhase,
         onHud: setHud,
         onSummary: (result) => {
-          setSummary(result);
+          const today = new Date();
+          const dayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+          let previousDailyTotal = 0;
+          try {
+            const savedDaily = JSON.parse(localStorage.getItem(DAILY_PREVIEW_KEY) || "null") as { day?: string; total?: number } | null;
+            if (savedDaily?.day === dayKey) previousDailyTotal = Math.max(0, Math.floor(Number(savedDaily.total) || 0));
+          } catch { /* Ignore malformed local preview data. */ }
+          const dailyPreviewEarned = Math.min(result.sethis, Math.max(0, RUNNER_REWARD_DEMO.dailyPreviewCap - previousDailyTotal));
+          const dailyPreviewTotal = previousDailyTotal + dailyPreviewEarned;
+          const rewardResult: RunnerSummary = {
+            ...result,
+            sethis: dailyPreviewEarned,
+            dailyPreviewEarned,
+            dailyPreviewTotal,
+            dailyPreviewRemaining: Math.max(0, RUNNER_REWARD_DEMO.dailyPreviewCap - dailyPreviewTotal),
+          };
+          try { localStorage.setItem(DAILY_PREVIEW_KEY, JSON.stringify({ day: dayKey, total: dailyPreviewTotal })); } catch { /* Preview continues for this session. */ }
+          setSummary(rewardResult);
           const previous = recordsRef.current;
           setRecordFlags({
             distance: result.distance > previous.bestDistance,
@@ -159,7 +178,11 @@ export default function FootballRunner({ onBack }: Props) {
                   <div><small>FOOTBALLS</small><b>{summary.balls}</b></div>
                   <div><small>DISTANCE POINTS</small><b>{summary.distancePoints.toLocaleString()}</b></div>
                   <div><small>COLLECTION POINTS</small><b>{summary.footballPoints.toLocaleString()}</b></div>
-                  <div><small>SIMULATED SETHIS</small><b>{summary.sethis.toLocaleString()}</b></div>
+                  <div><small>ESTIMATED SETHIS</small><b>{summary.sethis.toLocaleString()}</b></div>
+                  <div><small>FOOTBALL REWARD</small><b>{summary.rewardFootball.toLocaleString()}</b></div>
+                  <div><small>DISTANCE BONUS</small><b>{summary.rewardDistance.toLocaleString()}</b></div>
+                  <div><small>PERFORMANCE BONUS</small><b>{summary.rewardPerformance.toLocaleString()}</b></div>
+                  <div><small>DAILY PREVIEW TOTAL</small><b>{(summary.dailyPreviewTotal ?? summary.sethis).toLocaleString()} / {RUNNER_REWARD_DEMO.dailyPreviewCap.toLocaleString()}</b></div>
                 </div>
                 {(recordFlags.distance || recordFlags.points) && <div className="runner-new-record">
                   NEW PERSONAL {recordFlags.distance && recordFlags.points ? "RECORD" : recordFlags.distance ? "DISTANCE RECORD" : "POINTS RECORD"}!
@@ -169,7 +192,7 @@ export default function FootballRunner({ onBack }: Props) {
                   <b>{records.bestDistance.toLocaleString()} m</b>
                   <i>{records.bestPoints.toLocaleString()} points</i>
                 </div>
-                <p>Prototype rewards only. No real CT is charged and no SETHIS is credited.</p>
+                <p>Prototype estimate only. Daily preview cap remaining: {(summary.dailyPreviewRemaining ?? RUNNER_REWARD_DEMO.dailyPreviewCap).toLocaleString()} SETHIS. No real CT is charged and no SETHIS is credited.</p>
                 <button onClick={start}>RUN AGAIN <span>→</span></button>
                 <button className="runner-secondary" onClick={onBack}>BACK TO SETHIS</button>
               </>}
