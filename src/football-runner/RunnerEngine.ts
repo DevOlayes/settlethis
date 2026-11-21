@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { RUNNER_CONFIG } from "./config";
+import { RunnerAudioFeedback } from "./AudioFeedback";
 import { clamp, getDemoReward, getRunSpeed } from "./math";
 import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
@@ -18,6 +19,7 @@ export class RunnerEngine {
   private readonly playerCharacter = createPlayerCharacter();
   private readonly playerAnimator = new PlayerAnimator(this.playerCharacter);
   private readonly performance = new RunnerPerformanceMonitor();
+  private readonly audio = new RunnerAudioFeedback();
   private readonly objects: ActiveObject[] = [];
   private readonly pools = new Map<string, ObjectPool<ActiveObject>>();
   private readonly effectPool = new ObjectPool<ActiveObject>(createCollectionEffect);
@@ -43,6 +45,8 @@ export class RunnerEngine {
   private performanceElapsed = 0;
   private obstacleIndex = 0;
   private lastObstacleLane = 2;
+  private lastDistanceMilestone = 0;
+  private lastSpeedTier = 4;
   private paused = true;
   private over = false;
   private disposed = false;
@@ -76,7 +80,11 @@ export class RunnerEngine {
     this.performanceElapsed = 0;
     this.obstacleIndex = 0;
     this.lastObstacleLane = 2;
+    this.lastDistanceMilestone = 0;
+    this.lastSpeedTier = 4;
     this.over = false;
+    void this.audio.unlock();
+    this.audio.setRunning(true);
     this.paused = false;
     this.playerCharacter.root.position.set(0, 0, RUNNER_CONFIG.playerStartZ);
     this.playerAnimator.reset();
@@ -100,6 +108,7 @@ export class RunnerEngine {
   pause = (): void => {
     if (this.disposed || this.over || this.paused) return;
     this.paused = true;
+    this.audio.setRunning(false);
     cancelAnimationFrame(this.frame);
     this.frame = 0;
     this.callbacks.onPhase("paused");
@@ -108,6 +117,8 @@ export class RunnerEngine {
   resume = (): void => {
     if (this.disposed || this.over || !this.paused) return;
     this.paused = false;
+    void this.audio.unlock();
+    this.audio.setRunning(true);
     this.callbacks.onPhase("running");
     this.startLoop();
   };
@@ -116,11 +127,20 @@ export class RunnerEngine {
 
   act = (action: RunnerAction): void => this.handleAction(action);
 
+  setSoundEnabled = (enabled: boolean): void => {
+    this.audio.setEnabled(enabled);
+    if (enabled && !this.paused && !this.over) {
+      void this.audio.unlock();
+      this.audio.setRunning(true);
+    }
+  };
+
   dispose = (): void => {
     if (this.disposed) return;
     this.disposed = true;
     cancelAnimationFrame(this.frame);
     this.input.detach();
+    this.audio.dispose();
     this.resizeObserver.disconnect();
     document.removeEventListener("visibilitychange", this.onVisibilityChange);
     this.releaseAllObjects();
@@ -143,9 +163,11 @@ export class RunnerEngine {
     if (action === "right") this.targetLane = clamp(this.targetLane + 1, -1, 1);
     if (action === "jump" && this.jumpProgress <= 0 && this.slideRemaining <= 0) {
       this.jumpProgress = RUNNER_CONFIG.movement.jumpDuration;
+      this.audio.jump();
     }
     if (action === "slide" && this.jumpProgress <= 0) {
       this.slideRemaining = RUNNER_CONFIG.movement.slideDuration;
+      this.audio.slide();
     }
   }
 
@@ -231,6 +253,7 @@ export class RunnerEngine {
     if (this.over) return;
     this.over = true;
     this.paused = true;
+    this.audio.collision();
     const sethis = getDemoReward(this.balls, this.distance, this.points);
     const summary: RunnerSummary = {
       distance: Math.floor(this.distance),
@@ -276,7 +299,18 @@ export class RunnerEngine {
     this.elapsed += delta;
     this.updateCollectionEffects(delta);
     const speed = Math.min(config.movement.maximumSpeed, getRunSpeed(this.elapsed));
+    this.audio.updateRun(delta, speed / config.movement.initialSpeed);
     this.distance += speed * delta;
+    const distanceTier = Math.floor(this.distance / 250);
+    if (distanceTier > this.lastDistanceMilestone) {
+      this.lastDistanceMilestone = distanceTier;
+      this.audio.milestone("distance");
+    }
+    const speedTier = Math.floor((speed / config.movement.initialSpeed) * 4);
+    if (speedTier > this.lastSpeedTier && speedTier >= 6) {
+      this.lastSpeedTier = speedTier;
+      this.audio.milestone("speed");
+    }
     this.points += Math.floor(speed * delta * 12);
     this.spawnElapsed += delta;
     this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % config.world.length;
@@ -345,6 +379,7 @@ export class RunnerEngine {
           this.balls++;
           this.points += 100;
           this.playerAnimator.triggerKick();
+          this.audio.collect();
           this.spawnCollectionEffect(object.position);
           this.callbacks.onHud({
             distance: Math.floor(this.distance),
