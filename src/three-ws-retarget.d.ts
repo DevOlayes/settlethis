@@ -3,6 +3,8 @@ declare module "@three-ws/retarget" {
 
   export const MIN_COVERAGE: number;
 
+  export function canonicalizeBoneName(name: string): string;
+
   export function canonicalizeGLBBones(
     input: ArrayBuffer,
   ): { buffer: ArrayBuffer };
