@@ -8,6 +8,19 @@ export type PlayerAnimationInput = {
   laneLean: number;
 };
 
+type RunnerMotion = "run" | "sprint" | "jump" | "slide" | "crouch" | "kick";
+
+const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
+  run: [/\\brun\\b/, /jog/, /\\bwalk\\b/, /locomotion/],
+  sprint: [/sprint/, /fast.?run/, /run.?fast/],
+  jump: [/jump/, /hop/, /take.?off/, /airborne/],
+  slide: [/slide/, /sliding/, /low.?slide/, /roll/],
+  crouch: [/crouch/, /duck/, /low.?walk/, /sneak/],
+  kick: [/soccer.?kick/, /football.?kick/, /kick/, /shoot/, /pass/, /strike/],
+};
+
+const ONESHOT_MOTIONS = new Set<RunnerMotion>(["jump", "slide", "kick"]);
+
 export class PlayerAnimator {
   private runClock = 0;
   private kickElapsed = 10;
@@ -15,9 +28,12 @@ export class PlayerAnimator {
   private previousJumping = false;
   private riggedMixer?: THREE.AnimationMixer;
   private riggedActions = new Map<string, THREE.AnimationAction>();
+  private actionByMotion = new Map<RunnerMotion, THREE.AnimationAction>();
   private activeRiggedAction?: THREE.AnimationAction;
-  private activeRiggedState = "";
+  private activeRiggedMotion?: RunnerMotion;
   private riggedKickRemaining = 0;
+  private riggedSlideRemaining = 0;
+  private riggedJumping = false;
 
   constructor(private readonly character: PlayerCharacter) {}
 
@@ -25,69 +41,96 @@ export class PlayerAnimator {
     this.riggedMixer?.stopAllAction();
     this.riggedMixer = new THREE.AnimationMixer(model);
     this.riggedActions.clear();
+    this.actionByMotion.clear();
     this.activeRiggedAction = undefined;
-    this.activeRiggedState = "";
+    this.activeRiggedMotion = undefined;
 
     for (const clip of clips) {
       const key = clip.name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
       if (!key) continue;
-      this.riggedActions.set(key, this.riggedMixer.clipAction(clip));
+      const action = this.riggedMixer.clipAction(clip);
+      this.riggedActions.set(key, action);
     }
-    this.playRiggedState("run");
+
+    // Prefer dedicated locomotion clips; never use a one-shot kick/slide as a run.
+    for (const motion of ["run", "sprint", "jump", "crouch", "slide", "kick"] as RunnerMotion[]) {
+      const patterns = CLIP_PATTERNS[motion];
+      for (const [name, action] of this.riggedActions) {
+        if (patterns.some((pattern) => pattern.test(name))) {
+          this.actionByMotion.set(motion, action);
+          break;
+        }
+      }
+    }
+    this.playRiggedMotion("run");
   }
 
-  private findRiggedAction(state: string): THREE.AnimationAction | undefined {
-    const patterns: Record<string, RegExp[]> = {
-      run: [/\brun\b/, /sprint/, /jog/, /\bwalk\b/],
-      jump: [/jump/, /hop/, /take.?off/, /airborne/],
-      slide: [/slide/, /sliding/, /crouch/, /roll/],
-      kick: [/kick/, /shoot/, /pass/, /strike/, /dribble/],
-    };
-    const candidates = patterns[state] || [];
-    for (const [name, action] of this.riggedActions) {
-      if (candidates.some((pattern) => pattern.test(name))) return action;
-    }
-    if (state !== "run") return this.findRiggedAction("run");
-    return undefined;
-  }
+  private playRiggedMotion(motion: RunnerMotion): void {
+    if (!this.riggedMixer) return;
+    let next = this.actionByMotion.get(motion);
 
-  private playRiggedState(state: string): void {
-    if (!this.riggedMixer || state === this.activeRiggedState) return;
-    const next = this.findRiggedAction(state);
+    // Missing special clips should preserve the active run cycle, not restart it
+    // as a one-shot animation. A crouch can be used as a temporary slide fallback.
+    if (!next && motion === "slide") next = this.actionByMotion.get("crouch");
+    if (!next && motion === "sprint") next = this.actionByMotion.get("run");
+    if (!next && motion !== "run") return;
     if (!next) return;
+
+    if (next === this.activeRiggedAction && motion === this.activeRiggedMotion) return;
     const previous = this.activeRiggedAction;
     next.reset();
     next.enabled = true;
-    next.setEffectiveTimeScale(1);
+    next.paused = false;
     next.setEffectiveWeight(1);
-    if (state === "jump" || state === "kick" || state === "slide") {
+    next.setEffectiveTimeScale(1);
+    if (ONESHOT_MOTIONS.has(motion) && next !== this.actionByMotion.get("run")) {
       next.setLoop(THREE.LoopOnce, 1);
       next.clampWhenFinished = true;
     } else {
       next.setLoop(THREE.LoopRepeat, Infinity);
       next.clampWhenFinished = false;
     }
-    next.fadeIn(previous ? 0.2 : 0);
+    next.fadeIn(previous ? 0.16 : 0);
     next.play();
-    previous?.fadeOut(0.2);
+    if (previous && previous !== next) previous.fadeOut(0.16);
     this.activeRiggedAction = next;
-    this.activeRiggedState = state;
+    this.activeRiggedMotion = motion;
+  }
+
+  private chooseRiggedMotion(input: PlayerAnimationInput): RunnerMotion {
+    if (this.riggedKickRemaining > 0 && this.actionByMotion.has("kick")) return "kick";
+    if (input.sliding) {
+      if (this.actionByMotion.has("slide")) return "slide";
+      if (this.actionByMotion.has("crouch")) return "crouch";
+      return "run";
+    }
+    if (input.jumping && this.actionByMotion.has("jump")) return "jump";
+    if (input.speedRatio > 1.22 && this.actionByMotion.has("sprint")) return "sprint";
+    return "run";
   }
 
   private updateRigged(delta: number, input: PlayerAnimationInput): void {
     if (!this.riggedMixer) return;
     this.riggedKickRemaining = Math.max(0, this.riggedKickRemaining - delta);
-    const state = this.riggedKickRemaining > 0
-      ? "kick"
-      : input.sliding ? "slide"
-      : input.jumping ? "jump"
-      : "run";
-    this.playRiggedState(state);
+    this.riggedSlideRemaining = Math.max(0, this.riggedSlideRemaining - delta);
+    this.riggedJumping = input.jumping;
+
+    const motion = this.chooseRiggedMotion(input);
+    this.playRiggedMotion(motion);
+
+    if (this.activeRiggedAction && (motion === "run" || motion === "sprint")) {
+      this.activeRiggedAction.setEffectiveTimeScale(
+        THREE.MathUtils.clamp(input.speedRatio, 0.82, 1.55),
+      );
+    }
+
+    // Root lean and counter-rotation give lane changes weight without moving
+    // the gameplay root away from its collision lane.
     this.character.root.rotation.z = THREE.MathUtils.damp(
-      this.character.root.rotation.z, -input.laneLean * 0.12, 8, delta,
+      this.character.root.rotation.z, -input.laneLean * 0.15, 9, delta,
     );
     this.character.root.rotation.y = THREE.MathUtils.damp(
-      this.character.root.rotation.y, input.laneLean * 0.07, 8, delta,
+      this.character.root.rotation.y, input.laneLean * 0.09, 9, delta,
     );
     this.riggedMixer.update(delta);
   }
@@ -98,10 +141,12 @@ export class PlayerAnimator {
     this.landingPulse = 0;
     this.previousJumping = false;
     this.riggedKickRemaining = 0;
-    this.activeRiggedState = "";
+    this.riggedSlideRemaining = 0;
+    this.riggedJumping = false;
+    this.activeRiggedMotion = undefined;
     this.activeRiggedAction = undefined;
     this.riggedMixer?.stopAllAction();
-    if (this.riggedMixer) this.playRiggedState("run");
+    if (this.riggedMixer) this.playRiggedMotion("run");
     this.character.root.rotation.set(0, 0, 0);
     this.character.torso.rotation.set(0, 0, 0);
     this.character.pelvis.rotation.set(0, 0, 0);
@@ -123,7 +168,7 @@ export class PlayerAnimator {
 
   triggerKick(): void {
     this.kickElapsed = 0;
-    if (this.riggedMixer) this.riggedKickRemaining = 0.48;
+    if (this.riggedMixer && this.actionByMotion.has("kick")) this.riggedKickRemaining = 0.48;
   }
 
   update(delta: number, input: PlayerAnimationInput): void {
@@ -131,6 +176,9 @@ export class PlayerAnimator {
       this.updateRigged(delta, input);
       return;
     }
+
+    // Existing fallback animation remains active until the real rigged model
+    // and its compatible motion clips are bundled and verified.
     const c = this.character;
     const speed = THREE.MathUtils.clamp(input.speedRatio, 0.8, 1.65);
     this.runClock += delta * (8.8 * speed);
