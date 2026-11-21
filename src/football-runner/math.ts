@@ -11,9 +11,31 @@ export const getRunSpeed = (elapsedSeconds: number): number => {
   return initialSpeed + Math.min(maximumSpeed - initialSpeed, elapsedSeconds * speedRampPerSecond);
 };
 
-export const getDemoReward = (balls: number, distance: number, points: number): number => {
-  const reward = RUNNER_REWARD_DEMO;
-  const distanceBonus = Math.max(0, Math.floor(distance / reward.distanceStep)) * reward.distanceBonus;
-  const performanceBonus = reward.performanceThresholds.find((tier) => points >= tier.points)?.bonus ?? 0;
-  return Math.min(reward.prototypeDisplayCap, Math.round(balls * reward.ballValue + distanceBonus + performanceBonus));
+export type DemoRewardBreakdown = {
+  footballReward: number;
+  distanceBonus: number;
+  performanceBonus: number;
+  grossEstimate: number;
 };
+
+export const getDemoRewardBreakdown = (
+  balls: number,
+  distance: number,
+  points: number,
+): DemoRewardBreakdown => {
+  const reward = RUNNER_REWARD_DEMO;
+  const safeBalls = Math.max(0, Math.floor(Number.isFinite(balls) ? balls : 0));
+  const safeDistance = Math.max(0, Number.isFinite(distance) ? distance : 0);
+  const safePoints = Math.max(0, Number.isFinite(points) ? points : 0);
+  const footballReward = safeBalls * reward.ballValue;
+  const distanceBonus = Math.floor(safeDistance / reward.distanceStep) * reward.distanceBonus;
+  const performanceBonus = reward.performanceThresholds.find((tier) => safePoints >= tier.points)?.bonus ?? 0;
+  const grossEstimate = Math.min(
+    reward.prototypeDisplayCap,
+    footballReward + distanceBonus + performanceBonus,
+  );
+  return { footballReward, distanceBonus, performanceBonus, grossEstimate };
+};
+
+export const getDemoReward = (balls: number, distance: number, points: number): number =>
+  getDemoRewardBreakdown(balls, distance, points).grossEstimate;
