@@ -1,3 +1,13 @@
 {
+  "sourcePacks": [
+    {
+      "name": "KinemIQ Free Game Animations",
+      "version": "1.0",
+      "source": "https://github.com/Kinemiq/free-game-animations/releases/tag/v1.0",
+      "format": "GLB",
+      "license": "CC0-1.0",
+      "licenseNote": "35 humanoid game animations; free for commercial use. Retain source and licence notes in project documentation."
+    }
+  ],
   "clips": []
 }
