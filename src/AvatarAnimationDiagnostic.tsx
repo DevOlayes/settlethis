@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { loadRunnerAnimationManifest, loadRunnerCharacter, disposeRunnerCharacterModel } from "./football-runner/RiggedPlayerAsset";
 import { createNativeBipedJumpClips } from "./football-runner/NativeBipedJump";
+import { createNativeBipedManeuverClips, NATIVE_BIPED_MANEUVER_PHASES } from "./football-runner/NativeBipedManeuvers";
 
 type Props = { onBack: () => void };
 
@@ -26,8 +27,8 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
     let modelBaseY = 0;
     let playbackReady = false;
     let previewCycle = 0;
-    const phaseNames = ["run", "jumpTakeoff", "jumpAir", "jumpLand"];
-    const phaseDurations = [1.8, 0.22, 0.48, 0.32];
+    const phaseNames = ["run", "jumpTakeoff", "jumpAir", "jumpLand", "runAfterJump", "slideStart", "slideLoop", "slideRecovery", "runAfterSlide", "laneLeft", "runAfterLeft", "laneRight", "runAfterRight"];
+    const phaseDurations = [1.4, 0.22, 0.48, 0.32, 0.65, NATIVE_BIPED_MANEUVER_PHASES.slideStart, NATIVE_BIPED_MANEUVER_PHASES.slideLoop, NATIVE_BIPED_MANEUVER_PHASES.slideRecovery, 0.65, NATIVE_BIPED_MANEUVER_PHASES.laneChange, 0.55, NATIVE_BIPED_MANEUVER_PHASES.laneChange, 0.55];
     let previousTime = 0;
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x9dc8dd);
@@ -81,7 +82,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
       next.paused = false;
       next.setEffectiveWeight(1);
       next.setEffectiveTimeScale(1);
-      const looping = name === "run" || name === "jumpAir";
+      const looping = name === "run" || name === "jumpAir" || name === "slideLoop";
       next.setLoop(looping ? THREE.LoopRepeat : THREE.LoopOnce, looping ? Infinity : 1);
       next.clampWhenFinished = !looping;
       next.fadeIn(previous ? 0.12 : 0);
@@ -97,7 +98,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
       previousTime = now;
       if (playbackReady && mixer && action) {
         phaseElapsed += delta;
-        if (phaseIndex > 0) {
+        if (["jumpTakeoff", "jumpAir", "jumpLand"].includes(phaseNames[phaseIndex])) {
           jumpElapsed += delta;
           model!.position.y = modelBaseY + Math.sin(Math.min(1, jumpElapsed / 1.02) * Math.PI) * 1.5;
         } else if (model) {
@@ -110,7 +111,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
             previewCycle++;
             if (model) model.position.y = modelBaseY;
           }
-          if (phaseIndex === 1) jumpElapsed = 0;
+          if (phaseNames[phaseIndex] === "jumpTakeoff") jumpElapsed = 0;
           playPhase(phaseIndex);
         }
         mixer.update(delta);
@@ -157,8 +158,9 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         const missing = required.filter((bone) => !normalizedTracks.has(normalize(bone)));
         addCheck(missing.length ? "Missing key locomotion bones: " + missing.join(", ") : "All key leg, hip and arm tracks are present.");
         const jumpClips = createNativeBipedJumpClips(model, run);
+        const maneuverClips = createNativeBipedManeuverClips(model, run);
         const [takeoff, air, land] = jumpClips;
-        if (!takeoff?.tracks.length || !air?.tracks.length || !land?.tracks.length) {
+        if (!takeoff?.tracks.length || !air?.tracks.length || !land?.tracks.length || maneuverClips.length !== 5 || maneuverClips.some((clip) => !clip.tracks.length)) {
           throw new Error("The native Biped jump prototype could not find enough matching Sports Male 03 bones.");
         }
         addCheck("Native Biped jump clips created without retargeting or changing the skeleton.");
@@ -166,6 +168,9 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         addCheck("Airborne loop: " + air.tracks.length + " tracks · " + air.duration.toFixed(2) + "s");
         addCheck("Landing: " + land.tracks.length + " tracks · " + land.duration.toFixed(2) + "s");
         addCheck("Jump root arc: 1.02s · 1.5m preview, matching current gameplay physics.");
+        maneuverClips.forEach((clip) => addCheck("Native manoeuvre: " + clip.name + " · " + clip.tracks.length + " tracks · " + clip.duration.toFixed(2) + "s"));
+        addCheck("Slide sequence: start → sustained low slide → recovery.");
+        addCheck("Lane sequence: left bank/counter-step → run → right bank/counter-step.");
         mixer = new THREE.AnimationMixer(model);
         modelBaseY = model.position.y;
         phaseActions = {
@@ -173,12 +178,21 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
           jumpTakeoff: mixer.clipAction(takeoff),
           jumpAir: mixer.clipAction(air),
           jumpLand: mixer.clipAction(land),
+          slideStart: mixer.clipAction(maneuverClips[0]),
+          slideLoop: mixer.clipAction(maneuverClips[1]),
+          slideRecovery: mixer.clipAction(maneuverClips[2]),
+          laneLeft: mixer.clipAction(maneuverClips[3]),
+          laneRight: mixer.clipAction(maneuverClips[4]),
+          runAfterJump: mixer.clipAction(run),
+          runAfterSlide: mixer.clipAction(run),
+          runAfterLeft: mixer.clipAction(run),
+          runAfterRight: mixer.clipAction(run),
         };
         phaseIndex = 0;
         phaseElapsed = 0;
         playPhase(0);
         playbackReady = true;
-        addCheck("RUN → TAKEOFF → AIRBORNE → LAND → RUN sequence is playing.");
+        addCheck("Diagnostic sequence: RUN → JUMP → RUN → SLIDE START → SLIDE LOOP → RECOVERY → RUN → LEFT LANE CHANGE → RUN → RIGHT LANE CHANGE → RUN.");
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (!disposed) { setFailure(message); addCheck("ANIMATION TEST NEEDS ATTENTION: " + message); }
@@ -207,7 +221,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
     <main style={{ minHeight: "100dvh", background: "#171522", color: "#f4f1f7", display: "flex", flexDirection: "column", fontFamily: "Manrope, sans-serif" }}>
       <header style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", borderBottom: "1px solid #393346" }}>
         <button type="button" onClick={onBack} style={{ border: 0, borderRadius: 10, background: "#302b3d", color: "#f4f1f7", padding: "10px 14px", fontWeight: 800 }}>← BACK</button>
-        <div><b style={{ display: "block", letterSpacing: 1 }}>SETHIS</b><small style={{ color: "#aaa3b5", letterSpacing: 1 }}>SPORTS MALE 03 · JUMP & LAND TEST</small></div>
+        <div><b style={{ display: "block", letterSpacing: 1 }}>SETHIS</b><small style={{ color: "#aaa3b5", letterSpacing: 1 }}>SPORTS MALE 03 · JUMP / SLIDE / LANE TEST</small></div>
       </header>
       <div style={{ position: "relative", flex: 1, minHeight: 430, overflow: "hidden", background: "#9dc8dd" }}>
         <div ref={hostRef} style={{ position: "absolute", inset: 0 }} />
@@ -220,7 +234,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         </div>
       </div>
       <footer style={{ padding: "12px 16px", color: "#aaa3b5", fontSize: 11, lineHeight: 1.5, borderTop: "1px solid #393346" }}>
-        Isolated animation preview: approved native run plus authored native Biped jump poses. The original model and skeleton remain unchanged; gameplay and rewards are not affected.
+        Isolated animation preview: approved native run and jump plus authored native Biped slide/recovery and left/right lane-change poses. Original model and skeleton remain unchanged; gameplay and rewards are not affected.
       </footer>
     </main>
   );
