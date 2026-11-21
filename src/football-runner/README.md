@@ -206,3 +206,29 @@ The following checks are prepared for the final validation window after all deve
 - No automated test suite, live gameplay, browser interaction, Android device test, GPU profiling, WebGL context-loss test, or audio/share-sheet test was run during this stage.
 - TypeScript compilation and production bundling are permitted and will be checked through the GitHub build workflow. Automated test suites remain deferred until the user authorises final validation.
 - No real CT charge, SETHIS payout, rewarded-ad callback, Telegram identity integration or public leaderboard endpoint is introduced here.
+
+
+## External animation resources and retargeting pipeline
+
+The project now uses `@three-ws/retarget` (Apache-2.0) as an optional, local retargeting layer. It maps supported humanoid skeleton conventions, corrects rest-pose and hip-axis differences, reports bone coverage, and crossfades animation states. The runtime must reject clips below the package's 50% humanoid coverage gate rather than forcing a broken pose.
+
+Approved free sources to evaluate:
+
+- **KinemIQ / Quaternius 35-clip pack:** CC0, commercial use permitted, no attribution required. Includes run/sprint, crouch, jump take-off/air/landing and other general humanoid moves. GLB and FBX packs are available from the project's GitHub releases. The pack uses a shared 66-bone skeleton.
+- **KinemIQ expanded library:** 460 clips; 175 CC0 clips and 285 CC-BY clips. The CC-BY clips may be used commercially when their required creator credits are preserved. Export individual clips as GLB/FBX and bundle them locally.
+- **Xsens free mocap assets:** five walking/running clips and ten sports clips, including a soccer kick. Supplied as FBX and described as ready for retargeting. Review and preserve the source asset terms when downloading.
+- **CMU Graphics Lab Motion Capture Database:** free motion data, including locomotion; its terms allow use in commercial products but prohibit reselling the data directly. Prefer this as a supplementary source, not the first production pack.
+
+Source links:
+- https://github.com/Kinemiq/free-game-animations
+- https://kinemiq.app/free-game-animations/
+- https://www.xsens.com/entertainment/free-xsens-motion-capture-animation-assets
+- https://mocap.cs.cmu.edu/
+
+Implementation rules:
+- Do not call a third-party animation service during gameplay. Export and bundle approved clips under `public/assets/football-runner/animations/` so loading is same-origin and predictable.
+- Use general locomotion clips for run/jump/slide and a genuine football-specific kick clip for collection feedback where the rig supports it.
+- Inspect the Sports Male 03 skeleton names and rest pose before deciding whether it is directly supported. The current GLB was not available in the repository at the time this pipeline was added, so compatibility has not yet been confirmed.
+- Keep the procedural character as a fallback until the rigged character and its retargeted clips have been visually reviewed.
+- Preserve a per-asset licence/credit manifest alongside every bundled animation. Never bundle CC-BY clips without their required attribution.
+- Do not treat a successful TypeScript build as proof that the character animates correctly. Verify each clip's coverage, facing direction, foot contact, looping, crossfades and pose stability before sign-off.
