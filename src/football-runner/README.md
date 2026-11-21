@@ -208,6 +208,14 @@ The following checks are prepared for the final validation window after all deve
 - No real CT charge, SETHIS payout, rewarded-ad callback, Telegram identity integration or public leaderboard endpoint is introduced here.
 
 
+### Rigged-player movement state machine
+
+- The loader now canonicalizes the avatar GLB and each source animation GLB before parsing, so supported naming conventions such as 3ds Max `Bip01` can be mapped into the retargeter's canonical humanoid vocabulary.
+- The player controller recognises separate run, sprint, jump take-off, airborne, landing, slide, crouch and kick states. It crossfades state changes and adjusts locomotion playback speed with the runner's speed ratio.
+- Jump handling is phase-aware: take-off is preferred at launch, airborne motion is preferred while the player is in the air, and a landing clip is preferred for the short recovery window after touchdown.
+- Slide can use a dedicated slide clip, with a crouch cycle as a looped fallback. This avoids freezing a crouch pose as if it were a completed slide.
+- These are animation-system capabilities only. The Sports Male 03 GLB and the animation clips are not yet bundled into the repository, so the production game still uses its existing fallback character. The empty manifest deliberately prevents unreviewed clips from being loaded.
+
 ## External animation resources and retargeting pipeline
 
 The project now uses `@three-ws/retarget` (Apache-2.0) as an optional, local retargeting layer. It maps supported humanoid skeleton conventions, corrects rest-pose and hip-axis differences, reports bone coverage, and crossfades animation states. The runtime must reject clips below the package's 50% humanoid coverage gate rather than forcing a broken pose.
