@@ -3,7 +3,8 @@ import { canonicalizeBoneName } from "@three-ws/retarget";
 
 type EulerPose = readonly [number, number, number];
 
-function boneKey(name: string): string {
+function boneKey(name: unknown): string {
+  if (typeof name !== "string" || !name.trim()) return "";
   return canonicalizeBoneName(name)
     .split(":").pop()!
     .toLowerCase()
@@ -14,7 +15,12 @@ function collectBones(model: THREE.Object3D): Map<string, THREE.Bone> {
   const bones = new Map<string, THREE.Bone>();
   model.traverse((object) => {
     if (!(object instanceof THREE.Bone)) return;
-    bones.set(boneKey(object.name), object);
+    // Some imported rigs contain unnamed helper bones. They are not
+    // addressable by animation tracks, so skip them without failing setup.
+    if (typeof object.name !== "string" || !object.name.trim()) return;
+    const canonicalName = boneKey(object.name);
+    if (!canonicalName) return;
+    bones.set(canonicalName, object);
     bones.set(object.name.toLowerCase().replace(/[^a-z0-9]/g, ""), object);
   });
   return bones;
