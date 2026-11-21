@@ -9,9 +9,10 @@ export class InputController {
 
   private readonly onKeyDown = (event: KeyboardEvent) => {
     const target = event.target;
-    if (target instanceof HTMLElement && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(target.tagName))) return;
-
     const key = event.key.toLowerCase();
+    if (target instanceof HTMLElement && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))) return;
+    // Preserve native Space/Enter activation when a UI button has focus.
+    if (target instanceof HTMLButtonElement && (key === " " || key === "enter")) return;
     const actions: Record<string, RunnerAction> = {
       arrowleft: "left", a: "left",
       arrowright: "right", d: "right",
