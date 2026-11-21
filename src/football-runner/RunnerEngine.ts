@@ -21,6 +21,7 @@ export class RunnerEngine {
   private readonly playerCharacter = createPlayerCharacter();
   private readonly playerAnimator = new PlayerAnimator(this.playerCharacter);
   private loadedPlayerModel?: THREE.Group;
+  private pendingRiggedPlayer?: { model: THREE.Group; animations: THREE.AnimationClip[] };
   private readonly performance = new RunnerPerformanceMonitor();
   private readonly audio = new RunnerAudioFeedback();
   private readonly objects: ActiveObject[] = [];
@@ -96,21 +97,32 @@ export class RunnerEngine {
         return;
       }
 
-      // Do not replace the live fallback with an unanimated T-pose. Only promote
-      // the authored player after at least one compatible motion clip is available.
-      // Keep the gameplay root/pivots stable; replace only its visual child meshes.
-      for (const child of [...this.playerCharacter.root.children]) {
-        this.playerCharacter.root.remove(child);
-        disposeRunnerCharacterModel(child);
+      // Never swap the visual rig during an active run or over the results screen.
+      // If loading finishes late, promote it at the next safe start boundary.
+      if (!this.paused || this.over) {
+        this.pendingRiggedPlayer = { model, animations };
+        return;
       }
-      // Most glTF humanoid assets face +Z; the runner travels toward -Z.
-      model.rotation.y = Math.PI;
-      this.playerCharacter.root.add(model);
-      this.loadedPlayerModel = model;
-      this.playerAnimator.attachRiggedModel(model, animations);
+      this.installRiggedPlayer(model, animations);
     } catch {
       // The procedural character remains a safe fallback until a reviewed GLB is supplied.
     }
+  }
+
+  private installRiggedPlayer(model: THREE.Group, animations: THREE.AnimationClip[]): void {
+    if (this.disposed) {
+      disposeRunnerCharacterModel(model);
+      return;
+    }
+    for (const child of [...this.playerCharacter.root.children]) {
+      this.playerCharacter.root.remove(child);
+      disposeRunnerCharacterModel(child);
+    }
+    // Most glTF humanoid assets face +Z; the runner travels toward -Z.
+    model.rotation.y = Math.PI;
+    this.playerCharacter.root.add(model);
+    this.loadedPlayerModel = model;
+    this.playerAnimator.attachRiggedModel(model, animations);
   }
 
   start = (): void => {
@@ -135,6 +147,11 @@ export class RunnerEngine {
     this.lastDistanceMilestone = 0;
     this.lastSpeedTier = 4;
     this.over = false;
+    if (this.pendingRiggedPlayer) {
+      const pending = this.pendingRiggedPlayer;
+      this.pendingRiggedPlayer = undefined;
+      this.installRiggedPlayer(pending.model, pending.animations);
+    }
     void this.audio.unlock();
     this.audio.setRunning(true);
     this.paused = false;
@@ -198,6 +215,10 @@ export class RunnerEngine {
     this.effectPool.clear();
     this.allEffects.forEach((object) => this.disposeObject(object));
     this.allEffects.clear();
+    if (this.pendingRiggedPlayer) {
+      disposeRunnerCharacterModel(this.pendingRiggedPlayer.model);
+      this.pendingRiggedPlayer = undefined;
+    }
     this.bundle.scene.remove(this.playerCharacter.root);
     this.disposeObject(this.playerCharacter.root);
     this.allPooledObjects.forEach((object) => this.disposeObject(object));
