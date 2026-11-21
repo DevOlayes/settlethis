@@ -41,6 +41,7 @@ function TelegramLanding(){
 function Root(){
  const isFootballRunner=window.location.pathname==="/football-runner";
  const isRunnerPreview=window.location.pathname==="/football-runner-preview";
+ const isAvatarDiagnostic=window.location.pathname==="/avatar-diagnostic";
  const [telegramUser,setTelegramUser]=useState<TelegramUser|null>(null);
  const [authStatus,setAuthStatus]=useState<"checking"|"ready"|"outside"|"failed">("checking");
  const [authError,setAuthError]=useState("");
@@ -64,6 +65,7 @@ function Root(){
   return()=>{active=false;};
  },[retry,isAdmin]);
  if(isAdmin)return <AdminPortal/>;
+ if(isAvatarDiagnostic)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the avatar test</h1><p>Loading Sports Male 03 directly…</p></div></main>}><FootballRunner telegramUser={null} preview onBack={()=>{window.location.href="/";}}/></Suspense>;
  if(isRunnerPreview)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the pitch</h1><p>Loading browser preview…</p></div></main>}><FootballRunner telegramUser={null} preview onBack={()=>{window.location.href="/";}}/></Suspense>;
  if(authStatus==="outside")return <TelegramLanding/>;
  if(authStatus==="checking")return <main className="telegram-app-loading"><div><div className="telegram-app-mark"><span className="telegram-loader-orbit"/><BrandMark className="telegram-loader-logo"/><span className="telegram-loader-word">SETHIS</span></div><h1>Getting your game ready</h1><p>Verifying your Telegram account…</p></div></main>;
