@@ -13,13 +13,13 @@ import {
 import type { RunnerControls, RunnerHud, RunnerPhase, RunnerRecords, RunnerRunRecord, RunnerSummary } from "./football-runner/types";
 import "./FootballRunner.css";
 
-type Props = { telegramUser: TelegramUser; onBack: () => void };
+type Props = { telegramUser: TelegramUser | null; onBack: () => void; preview?: boolean };
 
 const EMPTY_HUD: RunnerHud = { distance: 0, points: 0, balls: 0, speed: 1 };
 const EMPTY_RECORDS: RunnerRecords = { bestDistance: 0, bestPoints: 0, totalRuns: 0, recentRuns: [] };
 
 
-export default function FootballRunner({ telegramUser, onBack }: Props) {
+export default function FootballRunner({ telegramUser, onBack, preview = false }: Props) {
   const initData = window.Telegram?.WebApp?.initData || "";
   const mountRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<RunnerControls | null>(null);
@@ -29,7 +29,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
   const [engineError, setEngineError] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [records, setRecords] = useState<RunnerRecords>(EMPTY_RECORDS);
-  const [recordsLoading, setRecordsLoading] = useState(true);
+  const [recordsLoading, setRecordsLoading] = useState(!preview);
   const [recordsError, setRecordsError] = useState("");
   const [startBusy, setStartBusy] = useState(false);
   const [savingRun, setSavingRun] = useState(false);
@@ -45,7 +45,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
   const [incomingChallengeResult] = useState(() => decodeRunnerChallengeResult(new URLSearchParams(window.location.search).get("challengeResult")));
 
   useEffect(() => {
-    if (!telegramUser || !initData) return;
+    if (preview || !telegramUser || !initData) { setRecordsLoading(false); return; }
     let active = true;
     fetch("/api/runner/records", { headers: { "x-telegram-init-data": initData }, cache: "no-store" })
       .then(async (response) => {
@@ -70,7 +70,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
       })
       .finally(() => { if (active) setRecordsLoading(false); });
     return () => { active = false; };
-  }, [telegramUser, initData]);
+  }, [telegramUser, initData, preview]);
 
   useEffect(() => {
     const host = mountRef.current;
@@ -97,6 +97,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
             dailyPreviewTotal: 0,
             dailyPreviewRemaining: 0,
           });
+          if (preview) { setRunSaveStatus("Browser preview only. This run was not saved and earns no CT or SETHIS."); return; }
           const runId = activeRunIdRef.current;
           if (!runId || !initData) {
             setRunSaveStatus("This run could not be linked to your SETHIS account.");
@@ -145,10 +146,12 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
       engine.dispose();
       engineRef.current = null;
     };
-  }, []);
+  }, [preview, initData]);
 
   const start = async () => {
-    if (startBusy || savingRun || !initData || !telegramUser) return;
+    if (startBusy || savingRun) return;
+    if (preview) { setStartBusy(true); setConfirmAction(null); setInstructionsOpen(false); setRunSaveStatus(""); engineRef.current?.start(); setStartBusy(false); return; }
+    if (!initData || !telegramUser) return;
     setStartBusy(true);
     setConfirmAction(null);
     setInstructionsOpen(false);
@@ -247,7 +250,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
       <header className="runner-topbar">
         <button onClick={requestExit} aria-label="Exit Football Runner">←</button>
         <div><b>SETHIS</b><span>FOOTBALL RUNNER</span></div>
-        <span className="runner-prototype-tag">TELEGRAM MINI APP</span>
+        <span className="runner-prototype-tag">{preview ? "BROWSER PREVIEW · NO REWARDS" : "TELEGRAM MINI APP"}</span>
         <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"}>{soundEnabled ? "♫ SOUND ON" : "♪ SOUND OFF"}</button>
       </header>
 
@@ -264,7 +267,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
             <div className="runner-overlay">
               <span className="runner-overline">GAME ENGINE UNAVAILABLE</span>
               <h1>This device can't start the 3D scene.</h1>
-              <p>Try a browser with WebGL support. Your SETHIS account and balances are not affected.</p>
+              <p>Try a browser with WebGL support. This browser preview does not access accounts, balances or rewards.</p>
               <button onClick={onBack}>BACK TO SETHIS</button>
             </div>
           ) : phase !== "running" ? (
@@ -292,18 +295,18 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
                   <i>{new Date(incomingChallengeResult.completedAt).toLocaleString()} · Self-reported web result, not server-verified.</i>
                 </section>}
                 <div className="runner-personal-best">
-                  <span>PERSONAL BEST</span>
-                  <b>{recordsLoading?"…":records.bestDistance.toLocaleString()+" m"}</b>
-                  <i>{recordsLoading?"Loading account record…":records.bestPoints.toLocaleString()+" points · "+records.totalRuns+" "+(records.totalRuns===1?"run":"runs")}</i>
-                  {recordsError && <small className="runner-record-error">{recordsError}</small>}
+                  <span>{preview ? "BROWSER PREVIEW" : "PERSONAL BEST"}</span>
+                  <b>{preview ? "NOT SAVED" : recordsLoading?"…":records.bestDistance.toLocaleString()+" m"}</b>
+                  <i>{preview ? "Practice mode · no account record" : recordsLoading?"Loading account record…":records.bestPoints.toLocaleString()+" points · "+records.totalRuns+" "+(records.totalRuns===1?"run":"runs")}</i>
+                  {!preview && recordsError && <small className="runner-record-error">{recordsError}</small>}
                 </div>
                 <button className="runner-leaderboard-toggle" onClick={() => setLeaderboardOpen((open) => !open)} aria-expanded={leaderboardOpen}>{leaderboardOpen ? "HIDE MY LEADERBOARD" : "MY LEADERBOARD"} <span>{records.recentRuns.length} RUNS ↕</span></button>
                 {leaderboardOpen && <section className="runner-local-leaderboard"><div className="runner-instructions-heading">ACCOUNT RECORDS · RECENT RUNS</div>
                   {[...records.recentRuns].sort((a,b) => b.points-a.points || b.distance-a.distance || b.balls-a.balls).slice(0,5).map((run,index) => <div key={`${run.playedAt}-${index}`}><b>#{index+1}</b><span>{run.points.toLocaleString()} pts</span><small>{run.distance.toLocaleString()} m · {run.balls} balls</small></div>)}
-                  {records.recentRuns.length === 0 && <p>Complete a run to start your personal leaderboard.</p>}
-                  <small>Saved to your SETHIS account. Public ranking eligibility follows score-integrity validation.</small>
+                  {records.recentRuns.length === 0 && <p>{preview ? "Browser preview runs are not saved." : "Complete a run to start your personal leaderboard."}</p>}
+                  <small>{preview ? "Preview only. No account data or public ranking is used." : "Saved to your SETHIS account. Public ranking eligibility follows score-integrity validation."}</small>
                 </section>}
-                {records.recentRuns.length > 0 && <div className="runner-recent-runs">
+                {!preview && records.recentRuns.length > 0 && <div className="runner-recent-runs">
                   <span>RECENT RUNS</span>
                   {records.recentRuns.slice(0, 3).map((run) => <div key={run.playedAt}>
                     <b>{run.distance.toLocaleString()} m</b><i>{run.points.toLocaleString()} pts · {run.balls} balls</i>
@@ -363,17 +366,17 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
                   <div><span>YOUR SCORE <strong>{summary.points.toLocaleString()}</strong></span><span>TO BEAT <strong>{incomingChallenge.score.points.toLocaleString()}</strong></span></div><small>Points decide. Distance, then collected footballs, break ties.</small>
                   <button className="runner-secondary" onClick={shareChallengeResult}>SEND RESULT TO CHALLENGER ↗</button>
                 </section>}
-                <div className="runner-personal-best runner-result-best">
+                {!preview && <div className="runner-personal-best runner-result-best">
                   <span>ALL-TIME BEST</span>
                   <b>{records.bestDistance.toLocaleString()} m</b>
                   <i>{records.bestPoints.toLocaleString()} points</i>
-                </div>
-                <p>{runSaveStatus || "Your score is being prepared for your account record."}</p>
-                <div className="runner-rescue-notice"><b>EARLY ACCESS · FREE ENTRY</b><span>No CT is deducted. SETHIS payouts and rewarded-ad rescues are not enabled yet; this run does not create a wallet credit.</span></div>
+                </div>}
+                <p>{preview ? "Browser preview only. Your run is not saved to an account." : runSaveStatus || "Your score is being prepared for your account record."}</p>
+                <div className="runner-rescue-notice"><b>{preview ? "BROWSER PREVIEW · PRACTICE ONLY" : "EARLY ACCESS · FREE ENTRY"}</b><span>{preview ? "No Telegram sign-in, account record, CT deduction or SETHIS reward is connected to this preview." : "No CT is deducted. SETHIS payouts and rewarded-ad rescues are not enabled yet; this run does not create a wallet credit."}</span></div>
                 <div className="runner-ready-actions">
                   <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"RUN AGAIN"} <span>→</span></button>
-                  <button className="runner-secondary" onClick={shareMyChallenge}>CHALLENGE A FRIEND ↗</button>
-                  <button className="runner-secondary" onClick={requestExit}>BACK TO GAMES</button>
+                  {!preview && <button className="runner-secondary" onClick={shareMyChallenge}>CHALLENGE A FRIEND ↗</button>}
+                  <button className="runner-secondary" onClick={requestExit}>{preview ? "BACK TO SETHIS INTRO" : "BACK TO GAMES"}</button>
                 </div>
                 {shareNotice && <p className="runner-share-notice" role="status">{shareNotice}</p>}
               </>}
