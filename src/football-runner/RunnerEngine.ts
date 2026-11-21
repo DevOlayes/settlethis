@@ -9,6 +9,7 @@ import { createPlayerCharacter } from "./PlayerCharacter";
 import { disposeRunnerCharacterModel, loadRunnerAnimationManifest, loadRunnerCharacter } from "./RiggedPlayerAsset";
 import { PlayerAnimator } from "./PlayerAnimator";
 import { createNativeBipedJumpClips, NATIVE_BIPED_JUMP_PHASES } from "./NativeBipedJump";
+import { createNativeBipedManeuverClips } from "./NativeBipedManeuvers";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
 import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
 import { applyRunnerRenderQuality } from "./RenderQuality";
@@ -107,18 +108,18 @@ export class RunnerEngine {
       }
       const nativeRun = animations.find((clip) => clip.name === "sports-male-03-native-run");
       if (nativeRun) {
-        const nativeJumpClips = createNativeBipedJumpClips(model, nativeRun);
+        const nativeJumpClips = createNativeBipedJumpClips(model, nativeRun);\n        const nativeManeuverClips = createNativeBipedManeuverClips(model, nativeRun);
         // Prefer the approved Sports Male 03-native jump phases over generic
         // library jumps; keep the unrelated run, slide, crouch and kick clips.
         const genericJump = /^(jump_start|jump_loop|jump_land)$/i;
         const compatibleAnimations = animations.filter((clip) => !genericJump.test(clip.name.trim()));
-        this.playerAnimator.attachRiggedModel(model, [...nativeJumpClips, ...compatibleAnimations]);
+        this.playerAnimator.attachRiggedModel(model, [...nativeJumpClips, ...nativeManeuverClips, ...compatibleAnimations]);
         this.nativeJumpEnabled = true;
         console.info("Approved native Biped jump integrated into Football Runner", {
           takeoff: NATIVE_BIPED_JUMP_PHASES.takeoff,
           airborne: NATIVE_BIPED_JUMP_PHASES.airborne,
           landing: NATIVE_BIPED_JUMP_PHASES.landing,
-          total: NATIVE_BIPED_JUMP_PHASES.total,
+          total: NATIVE_BIPED_JUMP_PHASES.total,\n          nativeManeuvers: nativeManeuverClips.map((clip) => clip.name),
         });
       } else {
         console.warn("Approved native Sports Male 03 run clip unavailable; retaining existing animation set");
