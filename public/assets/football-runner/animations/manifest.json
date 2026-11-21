@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "avatar": {
     "name": "Sports Male 03 / Male Athlete 03",
     "source": "https://models.codelove.in/models/sports-male-03/",
@@ -48,7 +48,18 @@
     }
   ],
   "clips": [
-    {"name":"xbot-run","url":"/assets/football-runner/animations/xbot-run.json","format":"canonical-json","includeAnimations":["xbot-run"],"source":"Mixamo Run animation, canonicalized from three.ws Xbot.glb animation asset","license":"Mixamo terms: free commercial use as part of a product; see upstream licensing record"},
+    {
+      "name": "sports-male-03-native-run",
+      "url": "/assets/football-runner/animations/m_run_neutral_01.glb",
+      "format": "native-biped-glb",
+      "includeAnimations": [
+        "Take 001"
+      ],
+      "source": "https://models.codelove.in/animations/m_run_neutral_01.glb",
+      "license": "MIT",
+      "sha256": "35759e3225f62bcf879cb115eafcbbd815ccdf4e776196a651abf5b097d1637f",
+      "channels": 54
+    },
     {
       "name": "ual1",
       "url": "/assets/football-runner/animations/UAL1_Standard.pack",
