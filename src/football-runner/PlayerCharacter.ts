@@ -71,8 +71,13 @@ export function createPlayerCharacter(): PlayerCharacter {
   const torso = new THREE.Group();
   torso.position.set(0, 1.52, 0);
   root.add(torso);
-  const chest = addMesh(torso, new THREE.CapsuleGeometry(0.285, 0.52, 5, 12), kit, [0, 0.02, 0]);
-  chest.scale.set(1.12, 1.05, 0.78);
+  const chest = addMesh(torso, new THREE.CapsuleGeometry(0.31, 0.55, 6, 14), kit, [0, 0.02, 0]);
+  chest.scale.set(1.16, 1.04, 0.84);
+  // Rounded shoulder and upper-back volume gives the kit a recognisable athletic silhouette.
+  for (const side of [-1, 1]) {
+    const shoulderMass = addMesh(torso, new THREE.SphereGeometry(0.19, 14, 12), kit, [side * 0.285, 0.27, 0]);
+    shoulderMass.scale.set(1.12, 0.78, 1.04);
+  }
   addMesh(torso, new THREE.CylinderGeometry(0.105, 0.12, 0.13, 12), skin, [0, 0.48, 0]);
   addMesh(torso, new THREE.TorusGeometry(0.13, 0.025, 6, 18), trim, [0, 0.45, 0]).rotation.x = Math.PI / 2;
 
@@ -104,19 +109,19 @@ export function createPlayerCharacter(): PlayerCharacter {
   // Articulated shoulders and elbows allow a natural counter-swing while running.
   const makeArm = (side: -1 | 1) => {
     const shoulder = new THREE.Group();
-    shoulder.position.set(side * 0.37, 1.82, 0);
+    shoulder.position.set(side * 0.425, 1.81, 0);
     root.add(shoulder);
-    const sleeve = capsuleBetween(0.105, 0.18, kit, 9);
+    const sleeve = capsuleBetween(0.125, 0.2, kit, 10);
     sleeve.position.y = -0.11;
     sleeve.rotation.z = side * -0.12;
     shoulder.add(sleeve);
-    const upper = capsuleBetween(0.083, 0.32, skin, 9);
+    const upper = capsuleBetween(0.092, 0.34, skin, 10);
     upper.position.y = -0.39;
     shoulder.add(upper);
     const elbow = new THREE.Group();
     elbow.position.y = -0.56;
     shoulder.add(elbow);
-    const forearm = capsuleBetween(0.072, 0.32, skinLight, 9);
+    const forearm = capsuleBetween(0.082, 0.34, skinLight, 10);
     forearm.position.y = -0.2;
     elbow.add(forearm);
     const hand = addMesh(elbow, new THREE.SphereGeometry(0.085, 10, 8), skin, [0, -0.43, -0.005]);
@@ -129,20 +134,20 @@ export function createPlayerCharacter(): PlayerCharacter {
   // Two-piece legs with knees, socks and football boots. Pivots sit at the joints.
   const makeLeg = (side: -1 | 1) => {
     const thigh = new THREE.Group();
-    thigh.position.set(side * 0.17, 0.91, 0);
+    thigh.position.set(side * 0.19, 0.91, 0);
     root.add(thigh);
-    const upper = capsuleBetween(0.125, 0.37, shortsMat, 10);
+    const upper = capsuleBetween(0.145, 0.39, shortsMat, 12);
     upper.position.y = -0.22;
     thigh.add(upper);
 
     const knee = new THREE.Group();
     knee.position.y = -0.43;
     thigh.add(knee);
-    addMesh(knee, new THREE.SphereGeometry(0.105, 10, 8), skin, [0, 0, 0]);
-    const shin = capsuleBetween(0.085, 0.39, sock, 10);
+    addMesh(knee, new THREE.SphereGeometry(0.115, 12, 10), skin, [0, 0, 0]);
+    const shin = capsuleBetween(0.096, 0.41, sock, 12);
     shin.position.y = -0.25;
     knee.add(shin);
-    const sockBand = addMesh(knee, new THREE.CylinderGeometry(0.087, 0.087, 0.075, 10), sockAccent, [0, -0.12, 0]);
+    const sockBand = addMesh(knee, new THREE.CylinderGeometry(0.098, 0.098, 0.075, 12), sockAccent, [0, -0.12, 0]);
     sockBand.rotation.z = 0;
     const foot = new THREE.Group();
     foot.position.set(0, -0.49, -0.01);
