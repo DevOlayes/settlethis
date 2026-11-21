@@ -25,6 +25,18 @@ export class PlayerAnimator {
     this.character.torso.rotation.set(0, 0, 0);
     this.character.pelvis.rotation.set(0, 0, 0);
     this.character.torso.scale.set(1, 1, 1);
+    this.character.torso.position.y = 1.52;
+    this.character.head.rotation.set(0, 0, 0);
+    this.character.leftArm.rotation.set(0, 0, 0);
+    this.character.rightArm.rotation.set(0, 0, 0);
+    this.character.leftForearm.rotation.set(0, 0, 0);
+    this.character.rightForearm.rotation.set(0, 0, 0);
+    this.character.leftThigh.rotation.set(0, 0, 0);
+    this.character.rightThigh.rotation.set(0, 0, 0);
+    this.character.leftKnee.rotation.set(0, 0, 0);
+    this.character.rightKnee.rotation.set(0, 0, 0);
+    this.character.leftFoot.rotation.set(0, 0, 0);
+    this.character.rightFoot.rotation.set(0, 0, 0);
   }
 
   triggerKick(): void {
