@@ -1,14 +1,12 @@
 import * as THREE from "three";
-import { canonicalizeBoneName } from "@three-ws/retarget";
 
 type EulerPose = readonly [number, number, number];
 
 function boneKey(name: unknown): string {
   if (typeof name !== "string" || !name.trim()) return "";
-  return canonicalizeBoneName(name)
-    .split(":").pop()!
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
+  // Use local string normalisation here. The retarget library's canonical
+  // name helper assumes metadata that may be absent on helper bones.
+  return name.trim().split(":").pop()!.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
 function collectBones(model: THREE.Object3D): Map<string, THREE.Bone> {
