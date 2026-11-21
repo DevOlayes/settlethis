@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-import { canonicalizeGLBBones, MIN_COVERAGE, parseClipJSON, retargetClipToObject } from "@three-ws/retarget";
+import { canonicalizeGLBBones, MIN_COVERAGE, retargetClipToObject } from "@three-ws/retarget";
 
 export type LoadedRunnerCharacter = {
   model: THREE.Group;
@@ -225,8 +225,32 @@ export async function loadRunnerAnimationClips(
         : undefined;
 
       if (asset.format === "canonical-json") {
-        const json = JSON.parse(new TextDecoder().decode(downloaded));
-        const sourceClip = parseClipJSON(json, asset.name || "runner-motion");
+        const json = JSON.parse(new TextDecoder().decode(downloaded)) as {
+          name?: string;
+          duration?: number;
+          tracks?: Array<{
+            name: string;
+            type: "vector" | "quaternion";
+            times: number[];
+            values: number[];
+          }>;
+        };
+        if (!json || !Array.isArray(json.tracks) || !Number.isFinite(json.duration)) {
+          throw new Error("Canonical animation JSON has an invalid structure");
+        }
+        const sourceTracks = json.tracks.map((track) => {
+          if (!track.name || !Array.isArray(track.times) || !Array.isArray(track.values)) {
+            throw new Error("Canonical animation contains an invalid keyframe track");
+          }
+          return track.type === "quaternion"
+            ? new THREE.QuaternionKeyframeTrack(track.name, track.times, track.values)
+            : new THREE.VectorKeyframeTrack(track.name, track.times, track.values);
+        });
+        const sourceClip = new THREE.AnimationClip(
+          json.name || asset.name || "runner-motion",
+          json.duration as number,
+          sourceTracks,
+        );
         const result = retargetClipToObject(sourceClip, target);
         const requiredBones = [
           "Hips", "LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg",
