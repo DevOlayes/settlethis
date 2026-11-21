@@ -137,3 +137,9 @@
 .runner-overlay:has(.runner-score-showcase) .runner-ready-actions>button{min-height:40px}
 @media(max-height:760px){.runner-intro-art{height:105px;margin-bottom:8px}.runner-overlay:has(.runner-intro-art){padding-top:10px}.runner-score-showcase{padding:8px 12px}.runner-score-showcase>strong{font-size:36px}.runner-stat-strip>div{padding:6px}.runner-breakdown-panel{padding:7px 10px}.runner-breakdown-row{padding:4px 0}.runner-overlay:has(.runner-score-showcase){padding-top:8px}}
 @media(max-width:380px){.runner-stat-strip small{font-size:5px;letter-spacing:.06em}.runner-breakdown-row>span{font-size:6px}.runner-breakdown-title span{font-size:5px}}
+
+/* Start-screen hierarchy: keep the game lobby focused on the next run */
+.runner-overlay:has(.runner-intro-art) .runner-recent-runs{display:none}
+.runner-overlay:has(.runner-intro-art) .runner-leaderboard-toggle{margin-bottom:8px}
+.runner-overlay:has(.runner-intro-art) .runner-personal-best{padding:9px 13px}
+.runner-overlay:has(.runner-intro-art)>small{margin-top:10px}
