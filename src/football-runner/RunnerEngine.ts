@@ -40,7 +40,9 @@ export class RunnerEngine {
   private distance = 0;
   private points = 0;
   private balls = 0;
-  private spawnElapsed = 0;
+  private spawnDistance = 0;
+  private nextSpawnGap = RUNNER_CONFIG.spawning.initialGap;
+  private lastObstacleType = -1;
   private uiElapsed = 0;
   private performanceElapsed = 0;
   private obstacleIndex = 0;
@@ -75,7 +77,9 @@ export class RunnerEngine {
     this.distance = 0;
     this.points = 0;
     this.balls = 0;
-    this.spawnElapsed = 0;
+    this.spawnDistance = 0;
+    this.nextSpawnGap = RUNNER_CONFIG.spawning.initialGap;
+    this.lastObstacleType = -1;
     this.uiElapsed = 0;
     this.performanceElapsed = 0;
     this.obstacleIndex = 0;
@@ -93,12 +97,8 @@ export class RunnerEngine {
     this.cameraLookCurrent.set(...RUNNER_CONFIG.camera.lookAt);
     this.bundle.camera.lookAt(this.cameraLookCurrent);
 
-    for (let index = 0; index < RUNNER_CONFIG.spawning.initialObjects; index++) {
-      const z = -13 - index * RUNNER_CONFIG.spawning.initialSpacing;
-      const lane = (index % 3) - 1;
-      const isObstacle = index % 2 !== 0;
-      if (isObstacle) this.lastObstacleLane = lane;
-      this.spawnObject(isObstacle ? `obstacle-${this.obstacleIndex++ % 5}` : "collectible", lane, z);
+    for (let index = 0; index < RUNNER_CONFIG.spawning.initialRows; index++) {
+      this.spawnPattern(-13 - index * RUNNER_CONFIG.spawning.initialSpacing, 0);
     }
     this.callbacks.onHud({ distance: 0, points: 0, balls: 0, speed: 1 });
     this.callbacks.onPhase("running");
@@ -312,7 +312,7 @@ export class RunnerEngine {
       this.audio.milestone("speed");
     }
     this.points += Math.floor(speed * delta * 12);
-    this.spawnElapsed += delta;
+    this.spawnDistance += speed * delta;
     this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % config.world.length;
 
     const player = this.playerCharacter.root;
@@ -336,20 +336,17 @@ export class RunnerEngine {
     });
     this.updateChaseCamera(delta, player.position);
 
-    if (this.spawnElapsed > Math.max(
-      config.spawning.intervalMinimum,
-      config.spawning.intervalStart - this.elapsed * config.spawning.intervalRamp,
-    )) {
-      this.spawnElapsed = 0;
-      let lane = Math.floor(Math.random() * 3) - 1;
-      if (Math.random() < config.spawning.ballChance) {
-        this.spawnObject("collectible", lane, -config.spawning.startDistance);
-      } else {
-        // Keep each spawn row to one obstacle and avoid consecutive blocked lanes.
-        if (lane === this.lastObstacleLane) lane = lane === 1 ? -1 : lane + 1;
-        this.lastObstacleLane = lane;
-        this.spawnObject(`obstacle-${this.obstacleIndex++ % 5}`, lane, -config.spawning.startDistance);
-      }
+    const difficulty = this.getDifficulty();
+    if (this.spawnDistance >= this.nextSpawnGap) {
+      this.spawnDistance -= this.nextSpawnGap;
+      this.spawnPattern(-config.spawning.startDistance, difficulty);
+      const reactionSeconds = config.spawning.reactionSecondsStart
+        - (config.spawning.reactionSecondsStart - config.spawning.reactionSecondsMinimum) * difficulty;
+      this.nextSpawnGap = clamp(
+        speed * reactionSeconds,
+        config.spawning.gapMinimum,
+        config.spawning.gapMaximum,
+      );
     }
 
     for (let index = this.objects.length - 1; index >= 0; index--) {
@@ -412,6 +409,54 @@ export class RunnerEngine {
         balls: this.balls,
         speed: Math.round((speed / config.movement.initialSpeed) * 10) / 10,
       });
+    }
+  }
+
+  private getDifficulty(): number {
+    return clamp(this.distance / RUNNER_CONFIG.spawning.fullDifficultyDistance, 0, 1);
+  }
+
+  private nextObstacleVariant(): number {
+    const choices = [0, 1, 2, 3, 4].filter((variant) => variant !== this.lastObstacleType);
+    const selected = choices[Math.floor(Math.random() * choices.length)] ?? 0;
+    this.lastObstacleType = selected;
+    return selected;
+  }
+
+  private spawnPattern(z: number, difficulty: number): void {
+    const config = RUNNER_CONFIG.spawning;
+    const lanes = [-1, 0, 1];
+    const ballRowChance = config.ballChanceStart
+      - (config.ballChanceStart - config.ballChanceMinimum) * difficulty;
+
+    if (Math.random() < ballRowChance) {
+      const lane = lanes[Math.floor(Math.random() * lanes.length)];
+      const count = Math.random() < config.longBallLineChance ? 3 : 2;
+      for (let index = 0; index < count; index++) {
+        this.spawnObject("collectible", lane, z - index * config.ballLineSpacing);
+      }
+      return;
+    }
+
+    const doubleObstacleChance = config.doubleObstacleChanceStart
+      + (config.doubleObstacleChanceMaximum - config.doubleObstacleChanceStart) * difficulty;
+    const obstacleCount = Math.random() < doubleObstacleChance ? 2 : 1;
+    const shuffled = [...lanes].sort(() => Math.random() - 0.5);
+    const blockedLanes = shuffled.slice(0, obstacleCount);
+
+    // One or two lanes may be challenged, but at least one complete lane stays open.
+    for (const lane of blockedLanes) {
+      const variant = this.nextObstacleVariant();
+      this.spawnObject(`obstacle-${variant}`, lane, z);
+      this.lastObstacleLane = lane;
+    }
+
+    // A small football line sometimes rewards taking the remaining safe route.
+    if (Math.random() < config.safeLaneBallChance) {
+      const safeLane = lanes.find((lane) => !blockedLanes.includes(lane));
+      if (safeLane !== undefined) {
+        this.spawnObject("collectible", safeLane, z - config.safeLaneBallOffset);
+      }
     }
   }
 
