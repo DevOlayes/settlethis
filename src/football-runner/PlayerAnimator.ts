@@ -56,6 +56,13 @@ export class PlayerAnimator {
 
   attachRiggedModel(model: THREE.Object3D, sourceClips: THREE.AnimationClip[]): void {
     const clips = [...sourceClips];
+    if (!clips.some((clip) => /run|jog|walk|locomotion/i.test(clip.name))) {
+      const fallbackRun = this.createProceduralRiggedRunClip(model);
+      if (fallbackRun) {
+        clips.push(fallbackRun);
+        console.warn("Imported run clip unavailable; using procedural locomotion on Sports Male 03");
+      }
+    }
     if (!clips.some((clip) => /soccer.?kick|football.?kick/i.test(clip.name))) {
       const authoredKick = this.createFootballKickClip(model);
       if (authoredKick) clips.push(authoredKick);
@@ -240,6 +247,39 @@ export class PlayerAnimator {
     if (this.riggedMixer && this.actionByMotion.has("kick")) {
       this.riggedKickRemaining = this.actionByMotion.get("kick")?.getClip().duration ?? 0.68;
     }
+  }
+
+  private createProceduralRiggedRunClip(model: THREE.Object3D): THREE.AnimationClip | null {
+    const bones = new Map<string, THREE.Bone>();
+    model.traverse((object) => {
+      if (object instanceof THREE.Bone) bones.set(normalizedBoneKey(object.name), object);
+    });
+    const times = [0, 0.25, 0.5, 0.75, 1];
+    const tracks: THREE.KeyframeTrack[] = [];
+    const addSwing = (boneNames: string[], angles: number[]) => {
+      const bone = boneNames.map((name) => bones.get(name)).find(Boolean);
+      if (!bone) return;
+      const base = bone.quaternion.clone();
+      const values: number[] = [];
+      for (const angle of angles) {
+        const delta = new THREE.Quaternion().setFromEuler(new THREE.Euler(angle, 0, 0, "XYZ"));
+        const pose = base.clone().multiply(delta).normalize();
+        values.push(pose.x, pose.y, pose.z, pose.w);
+      }
+      tracks.push(new THREE.QuaternionKeyframeTrack(`${bone.name}.quaternion`, times, values));
+    };
+    addSwing(["leftupleg", "leftthigh"], [0, 0.62, 0, -0.62, 0]);
+    addSwing(["rightupleg", "rightthigh"], [0, -0.62, 0, 0.62, 0]);
+    addSwing(["leftleg", "leftcalf"], [0, 0.12, 0.48, 0.12, 0]);
+    addSwing(["rightleg", "rightcalf"], [0, 0.48, 0.12, 0.12, 0]);
+    addSwing(["leftarm", "leftupperarm"], [0, -0.48, 0, 0.48, 0]);
+    addSwing(["rightarm", "rightupperarm"], [0, 0.48, 0, -0.48, 0]);
+    addSwing(["leftforearm"], [0, -0.18, -0.32, -0.18, 0]);
+    addSwing(["rightforearm"], [0, -0.32, -0.18, -0.18, 0]);
+    if (!tracks.length) return null;
+    const clip = new THREE.AnimationClip("sports-male-03-procedural-run", 1, tracks);
+    clip.optimize();
+    return clip;
   }
 
 private createFootballKickClip(model: THREE.Object3D): THREE.AnimationClip | null {
