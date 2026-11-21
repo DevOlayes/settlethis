@@ -402,7 +402,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const firstNotifications = await api(env, "/api/notifications", firstInit);
   assert.equal(firstNotifications.data.notifications.some(item => item.type === "new_reply" && item.reference_id === argumentId), false);
   const secondNotifications = await api(env, "/api/notifications", secondInit);
-  const secondUserNotification = secondNotifications.data.notifications.find(item => item.type === "new_argument" && item.reference_id === courtId);
+  const secondUserNotification = secondNotifications.data.notifications.find(item => item.type === "wallet_credit");
   assert.ok(secondUserNotification);
   const crossAccountRead = await api(env, "/api/notifications/" + secondUserNotification.id + "/read", firstInit, "POST", {});
   assert.equal(crossAccountRead.response.status, 200);
