@@ -193,6 +193,14 @@ export class RunnerEngine {
     effect.position.copy(position);
     effect.scale.setScalar(1);
     effect.rotation.set(0, 0, 0);
+    effect.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        const surfaces = Array.isArray(child.material) ? child.material : [child.material];
+        surfaces.forEach((surface) => {
+          if (surface instanceof THREE.MeshBasicMaterial) surface.opacity = 0.95;
+        });
+      }
+    });
     this.bundle.scene.add(effect);
     this.activeEffects.push({ object: effect, elapsed: 0 });
     this.allEffects.add(effect);
