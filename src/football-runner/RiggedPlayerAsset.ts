@@ -190,7 +190,7 @@ export async function loadRunnerAnimationManifest(
   manifestUrl = "/assets/football-runner/animations/manifest.json",
 ): Promise<THREE.AnimationClip[]> {
   try {
-    const response = await fetch(manifestUrl, { cache: "force-cache" });
+    const response = await fetch(manifestUrl, { cache: "no-cache" });
     if (!response.ok) return [];
     const manifest = await response.json() as RunnerAnimationManifest;
     if (!Array.isArray(manifest.clips)) return [];
