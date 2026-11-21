@@ -182,7 +182,7 @@ export default function AvatarDiagnostic({ onBack }: Props) {
         });
       }
       scene.traverse((object) => {
-        if (!(object instanceof THREE.Mesh) || object === model) return;
+        if (!(object instanceof THREE.Mesh)) return;
         object.geometry.dispose();
         const list = Array.isArray(object.material) ? object.material : [object.material];
         list.forEach((material) => material.dispose());
