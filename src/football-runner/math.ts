@@ -15,5 +15,5 @@ export const getDemoReward = (balls: number, distance: number, points: number): 
   const reward = RUNNER_REWARD_DEMO;
   const distanceBonus = Math.max(0, Math.floor(distance / reward.distanceStep)) * reward.distanceBonus;
   const performanceBonus = reward.performanceThresholds.find((tier) => points >= tier.points)?.bonus ?? 0;
-  return Math.min(reward.dailyDisplayCap, Math.round(balls * reward.ballValue + distanceBonus + performanceBonus));
+  return Math.min(reward.prototypeDisplayCap, Math.round(balls * reward.ballValue + distanceBonus + performanceBonus));
 };
