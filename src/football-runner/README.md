@@ -53,3 +53,15 @@ The prototype character has been replaced by a reusable articulated footballer r
 - Procedural animation controller supports alternating running strides, arm counter-swing, lane-change banking, jump/tuck pose, crouched slide, landing compression and a right-foot kick when a collectible is picked up.
 - Animation timing is driven by the engine delta time and can be reused by a future Telegram Mini App renderer.
 - A GLB/GLTF asset loader remains available for a later replacement or upgraded skinned character; this stage does not claim a motion-captured or photorealistic asset.
+
+
+## Stage 4 — controls and movement
+
+- Three-lane steering supports left/right swipes, arrow keys and A/D.
+- Jump supports upward swipe, up arrow, W and Space. Slide supports downward swipe, down arrow and S.
+- Added large, accessible on-screen left/right/jump/slide buttons for touch users; controls are disabled outside an active run.
+- Swipe recognition uses a centralised threshold, rejects ambiguous diagonal gestures and ignores very long drags. Pointer cancellation and lost capture clear the gesture without accidentally firing a move.
+- Keyboard repeat is filtered so holding a key does not unexpectedly skip across lanes; inputs are ignored while typing or interacting with interface buttons.
+- Lane changes use frame-rate-independent exponential easing and snap cleanly to lane centres.
+- Jump and slide are mutually exclusive, with the full jump airtime retained for the jump pose and hurdle clearance.
+- The browser tab automatically pauses an active run when it becomes hidden; resuming restarts the animation loop with a fresh frame timestamp.
