@@ -32,6 +32,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
   const [recordsLoading, setRecordsLoading] = useState(true);
   const [recordsError, setRecordsError] = useState("");
   const [startBusy, setStartBusy] = useState(false);
+  const [savingRun, setSavingRun] = useState(false);
   const [runSaveStatus, setRunSaveStatus] = useState("");
   const activeRunIdRef = useRef<string | null>(null);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
@@ -101,6 +102,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
             setRunSaveStatus("This run could not be linked to your SETHIS account.");
             return;
           }
+          setSavingRun(true);
           setRunSaveStatus("Checking and saving your run…");
           fetch("/api/runner/finish", {
             method: "POST",
@@ -126,8 +128,10 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
               setRunSaveStatus("Run checked and saved to your SETHIS account.");
             })
             .catch((error) => {
+              activeRunIdRef.current = null;
               setRunSaveStatus(error instanceof Error ? error.message : "Your result could not be saved.");
-            });
+            })
+            .finally(() => setSavingRun(false));
         },
       });
       engine.setSoundEnabled(soundEnabled);
@@ -144,7 +148,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
   }, []);
 
   const start = async () => {
-    if (startBusy || !initData || !telegramUser) return;
+    if (startBusy || savingRun || !initData || !telegramUser) return;
     setStartBusy(true);
     setConfirmAction(null);
     setInstructionsOpen(false);
@@ -314,7 +318,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
                   <p>One collision ends the run. Watch the route ahead and keep a safe lane open.</p>
                 </section>}
                 <div className="runner-ready-actions">
-                  <button onClick={()=>void start()} disabled={startBusy}>{startBusy?"PREPARING RUN…":"START RUN"} <span>→</span></button>
+                  <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"START RUN"} <span>→</span></button>
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
                 </div>
                 {shareNotice && <p className="runner-share-notice" role="status">{shareNotice}</p>}
@@ -367,7 +371,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
                 <p>{runSaveStatus || "Your score is being prepared for your account record."}</p>
                 <div className="runner-rescue-notice"><b>EARLY ACCESS · FREE ENTRY</b><span>No CT is deducted. SETHIS payouts and rewarded-ad rescues are not enabled yet; this run does not create a wallet credit.</span></div>
                 <div className="runner-ready-actions">
-                  <button onClick={()=>void start()} disabled={startBusy}>{startBusy?"PREPARING RUN…":"RUN AGAIN"} <span>→</span></button>
+                  <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"RUN AGAIN"} <span>→</span></button>
                   <button className="runner-secondary" onClick={shareMyChallenge}>CHALLENGE A FRIEND ↗</button>
                   <button className="runner-secondary" onClick={requestExit}>BACK TO GAMES</button>
                 </div>
