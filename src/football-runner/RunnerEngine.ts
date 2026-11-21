@@ -76,7 +76,7 @@ export class RunnerEngine {
     for (let index = 0; index < RUNNER_CONFIG.spawning.initialObjects; index++) {
       const z = -13 - index * RUNNER_CONFIG.spawning.initialSpacing;
       const lane = (index % 3) - 1;
-      this.spawnObject(index % 2 === 0 ? "collectible" : `obstacle-${this.obstacleIndex++ % 3}`, lane, z);
+      this.spawnObject(index % 2 === 0 ? "collectible" : `obstacle-${this.obstacleIndex++ % 5}`, lane, z);
     }
     this.callbacks.onHud({ distance: 0, points: 0, balls: 0, speed: 1 });
     this.callbacks.onPhase("running");
@@ -248,7 +248,7 @@ export class RunnerEngine {
       if (Math.random() < config.spawning.ballChance) {
         this.spawnObject("collectible", lane, -config.spawning.startDistance);
       } else {
-        this.spawnObject(`obstacle-${this.obstacleIndex++ % 3}`, lane, -config.spawning.startDistance);
+        this.spawnObject(`obstacle-${this.obstacleIndex++ % 5}`, lane, -config.spawning.startDistance);
       }
     }
 
@@ -262,18 +262,35 @@ export class RunnerEngine {
         continue;
       }
 
+      const hitbox = object.userData.hitbox as {
+        halfWidth: number;
+        halfDepth: number;
+        height: number;
+        clearance?: "jump" | "slide" | "none";
+        clearanceHeight?: number;
+        slideClearanceHeight?: number;
+      } | undefined;
+      const depthLimit = (hitbox?.halfDepth ?? 0.35) + config.collision.playerHalfDepth;
+      const widthLimit = (hitbox?.halfWidth ?? 0.35) + config.collision.playerHalfWidth;
       const depth = Math.abs(object.position.z - player.position.z);
       const width = Math.abs(object.position.x - player.position.x);
-      if (depth < config.collision.depth && width < config.collision.width) {
+      if (depth < depthLimit && width < widthLimit) {
         if (object.userData.kind === "ball") {
           this.balls++;
           this.points += 100;
           this.playerAnimator.triggerKick();
           this.releaseObject(object);
           this.objects.splice(index, 1);
-        } else if (!(this.jumpProgress > 0.05 && object.userData.obstacleType === "hurdle") && this.slideRemaining <= 0) {
-          this.finish();
-          break;
+        } else {
+          const jumpClears = hitbox?.clearance === "jump"
+            && player.position.y >= (hitbox.clearanceHeight ?? hitbox.height + config.collision.clearanceMargin);
+          const slideClears = hitbox?.clearance === "slide"
+            && this.slideRemaining > 0
+            && config.collision.slidingPlayerHeight <= (hitbox.slideClearanceHeight ?? 1.1);
+          if (!jumpClears && !slideClears) {
+            this.finish();
+            break;
+          }
         }
       }
     }
