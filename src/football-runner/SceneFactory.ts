@@ -299,8 +299,10 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
 }
 
 export function resizeRunnerScene(bundle: RunnerSceneBundle, host: HTMLElement): void {
-  const width = host.clientWidth;
+  const width = Math.max(1, host.clientWidth);
   const height = Math.max(1, host.clientHeight);
+  const currentSize = bundle.renderer.getSize(new THREE.Vector2());
+  if (currentSize.x === width && currentSize.y === height) return;
   bundle.camera.aspect = width / height;
   bundle.camera.updateProjectionMatrix();
   bundle.renderer.setSize(width, height);
@@ -309,14 +311,21 @@ export function resizeRunnerScene(bundle: RunnerSceneBundle, host: HTMLElement):
 export function disposeRunnerScene(bundle: RunnerSceneBundle, host: HTMLElement): void {
   const geometries = new Set<THREE.BufferGeometry>();
   const materials = new Set<THREE.Material>();
+  const textures = new Set<THREE.Texture>();
   bundle.scene.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return;
     geometries.add(object.geometry);
     const list = Array.isArray(object.material) ? object.material : [object.material];
-    list.forEach((item) => materials.add(item));
+    list.forEach((surface) => {
+      materials.add(surface);
+      Object.values(surface).forEach((value) => {
+        if (value instanceof THREE.Texture) textures.add(value);
+      });
+    });
   });
   geometries.forEach((geometry) => geometry.dispose());
   materials.forEach((surface) => surface.dispose());
+  textures.forEach((texture) => texture.dispose());
   bundle.renderer.dispose();
   if (bundle.renderer.domElement.parentElement === host) host.removeChild(bundle.renderer.domElement);
 }
