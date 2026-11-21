@@ -11,7 +11,7 @@ The web prototype is being organised as a reusable game engine. React owns the s
 | `SceneFactory.ts` | Creates the Three.js scene, camera, renderer, stadium foundation, resizing and scene disposal |
 | `EntityFactory.ts` | Creates football collectibles and obstacle models |
 | `PlayerCharacter.ts` | Builds the articulated full-kit footballer, including torso, numbered shirt, shorts, arms, jointed legs, socks and boots |
-| `PlayerAnimator.ts` | Drives procedural running, lane lean, jump, slide, landing recovery and automatic collection-kick poses |
+| `PlayerAnimator.ts` | Crossfades rigged run, sprint, jump, slide, crouch and kick states; retains the procedural fallback controller |\n| `RiggedPlayerAsset.ts` | Loads the bundled Sports Male 03 GLB, canonicalizes its Biped skeleton, loads approved local animation packs and retargets clips |
 | `InputController.ts` | Converts keyboard and pointer swipes into game actions; owns and removes its event listeners |
 | `ObjectPool.ts` | Reuses spawned Three.js groups instead of allocating and discarding them every time |
 | `AssetLoader.ts` | Loads and caches GLB/GLTF assets, clones rigged scenes safely and reports asset progress |
@@ -42,18 +42,19 @@ The web prototype is being organised as a reusable game engine. React owns the s
 
 ## Current prototype limitations
 
-The footballer is currently a self-contained, stylised procedural 3D character with articulated joints and procedural animation; it does not yet use a separately authored or motion-captured GLB character asset. The stadium, training grounds and player facilities are procedurally assembled from reusable Three.js geometry; authored high-detail environment assets and final art direction are still outstanding. Collision profiles, fair obstacle sequencing, world streaming, production reward verification, rewarded-ad rescues and persistence are not complete. Prototype SETHIS figures are display-only and must never be treated as wallet credits. Those systems belong to later roadmap stages.
+The actual Sports Male 03 human avatar and two verified animation packs are now bundled under `public/assets/football-runner/`. The loader maps the model's Biped bones into the retargeter's canonical humanoid naming, decodes its Meshopt geometry, retargets the selected Quaternius clips and keeps the procedural footballer as a fallback unless the complete required movement set is available.
+
+The animation system and assets are committed, but the character has not yet been visually validated in a running browser session. The current code/build work does not establish that every retargeted pose looks natural, that feet remain planted, or that the avatar fits the camera and collision capsule perfectly. Those checks remain for the authorised final validation window. The environment remains procedural geometry and materials; authored high-detail environment assets and final art direction are still outstanding. Collision fairness, production reward verification, rewarded-ad rescues and persistence are not complete. Prototype SETHIS figures remain display-only and must never be treated as wallet credits.
 
 ## Stage 3 — player character and animation
 
-The prototype character has been replaced by a reusable articulated footballer rig. The model is built from Three.js geometry and materials so the first web build has no external model download or asset licence dependency.
-
-- Full football kit silhouette: coral jersey with contrasting trim and rear shirt number, dark shorts, socks, sock bands and football boots with studs.
-- Separate head, torso, pelvis, shoulders, elbows, hips, knees, ankles and feet allow animation without moving the whole character as one rigid mesh.
-- Procedural animation controller supports alternating running strides, arm counter-swing, lane-change banking, jump/tuck pose, crouched slide, landing compression and a right-foot kick when a collectible is picked up.
-- Animation timing is driven by the engine delta time and can be reused by a future Telegram Mini App renderer.
-- A GLB/GLTF asset loader remains available for a later replacement or upgraded skinned character; this stage does not claim a motion-captured or photorealistic asset.
-
+- Recovered the user's original `Sports_Male_03.glb` from Library and verified the downloaded production copy is byte-for-byte identical: SHA-256 `ad4b96ce02b6856c73cf3045631d49981b4f896898b1c1097b3339410ad3e590`.
+- The avatar has an 80-joint Biped rig, 9,534 triangles, five embedded textures and three materials. Its MIT licence text is bundled beside the model.
+- Bundled Quaternius Universal Animation Library 1 Standard (CC0) and Universal Animation Library 2 Standard (CC0), with checksum verification and licence records.
+- Selected in-place clips include jog/run, sprint, jump start, airborne loop, landing, crouch-forward, slide start, slide loop and slide exit.
+- Added Biped-to-canonical bone mapping, Meshopt decoding, source-clip filtering, coverage-gated retargeting and crossfades. The procedural footballer remains a safe fallback until the complete required motion set is loaded.
+- Added an original in-place football collection kick animation on the rigged avatar; it is not misrepresented as third-party soccer motion capture.
+- This is an asset-integration and build milestone. Visual quality, animation timing, foot contact, facing direction and ordinary Android performance still require authorised validation.
 
 ## Stage 4 — controls and movement
 
@@ -208,35 +209,35 @@ The following checks are prepared for the final validation window after all deve
 - No real CT charge, SETHIS payout, rewarded-ad callback, Telegram identity integration or public leaderboard endpoint is introduced here.
 
 
-### Rigged-player movement state machine
+## Rigged-player asset and movement integration
 
-- The loader now canonicalizes the avatar GLB and each source animation GLB before parsing, so supported naming conventions such as 3ds Max `Bip01` can be mapped into the retargeter's canonical humanoid vocabulary.
-- The player controller recognises separate run, sprint, jump take-off, airborne, landing, slide, crouch and kick states. It crossfades state changes and adjusts locomotion playback speed with the runner's speed ratio.
-- Jump handling is phase-aware: take-off is preferred at launch, airborne motion is preferred while the player is in the air, and a landing clip is preferred for the short recovery window after touchdown.
-- Slide can use a dedicated slide clip, with a crouch cycle as a looped fallback. This avoids freezing a crouch pose as if it were a completed slide.
-- These are animation-system capabilities only. The Sports Male 03 GLB and the animation clips are not yet bundled into the repository, so the production game still uses its existing fallback character. The empty manifest deliberately prevents unreviewed clips from being loaded.
+### Bundled avatar
 
-## External animation resources and retargeting pipeline
+- `public/assets/football-runner/player.glb` is the exact Sports Male 03 file recovered from the user's Library. The CI importer checked the file's SHA-256 against the Library copy and confirmed an exact byte match.
+- The model's embedded Microsoft MIT licence is preserved in `public/assets/football-runner/LICENSE-MICROSOFT.txt`.
+- The loader enables Three.js Meshopt decoding and maps the 3ds Max Biped names (`Bip01 Pelvis`, spine, limbs and finger chains) to Mixamo-style names before the retarget library canonicalizes the skeleton.
+- The model is only promoted into the live scene after all nine required locomotion clips have retargeted successfully. If the model, texture decoding or any required clip fails, the existing procedural footballer remains visible.
 
-The project now uses `@three-ws/retarget` (Apache-2.0) as an optional, local retargeting layer. It maps supported humanoid skeleton conventions, corrects rest-pose and hip-axis differences, reports bone coverage, and crossfades animation states. The runtime must reject clips below the package's 50% humanoid coverage gate rather than forcing a broken pose.
+### Bundled animation packs
 
-Approved free sources to evaluate:
+- `UAL1_Standard.glb`: Quaternius Universal Animation Library 1 Standard, CC0 1.0. Selected clips: `Jog_Fwd_Loop`, `Sprint_Loop`, `Jump_Start`, `Jump_Loop`, `Jump_Land`, `Crouch_Fwd_Loop` and `Crouch_Idle_Loop`.
+- `UAL2_Standard.glb`: Quaternius Universal Animation Library 2 Standard, CC0 1.0. Selected clips: `Slide_Start`, `Slide_Loop`, `Slide_Exit` and the optional Ninja Jump chain.
+- The `_Standard` variants are in-place clips. The game simulation, not the animation, owns forward movement and lane position.
+- Original Quaternius licence text and checksums/source records are preserved in `public/assets/football-runner/animations/` and `manifest.json`.
+- The import workflow obtains the public Standard releases, verifies their hashes, checks the exact clip names and commits the resulting local assets. Gameplay does not call Quaternius, KinemIQ or any external animation API.
 
-- **KinemIQ / Quaternius 35-clip pack:** CC0, commercial use permitted, no attribution required. Includes run/sprint, crouch, jump take-off/air/landing and other general humanoid moves. GLB and FBX packs are available from the project's GitHub releases. The pack uses a shared 66-bone skeleton.
-- **KinemIQ expanded library:** 460 clips; 175 CC0 clips and 285 CC-BY clips. The CC-BY clips may be used commercially when their required creator credits are preserved. Export individual clips as GLB/FBX and bundle them locally.
-- **Xsens free mocap assets:** five walking/running clips and ten sports clips, including a soccer kick. Supplied as FBX and described as ready for retargeting. Review and preserve the source asset terms when downloading.
-- **CMU Graphics Lab Motion Capture Database:** free motion data, including locomotion; its terms allow use in commercial products but prohibit reselling the data directly. Prefer this as a supplementary source, not the first production pack.
+### Runtime movement states
 
-Source links:
-- https://github.com/Kinemiq/free-game-animations
-- https://kinemiq.app/free-game-animations/
-- https://www.xsens.com/entertainment/free-xsens-motion-capture-animation-assets
-- https://mocap.cs.cmu.edu/
+- **Run and sprint:** Jog/run cycle is the default locomotion; sprint is selected as the speed ratio rises. The cycle playback rate follows the game speed.
+- **Jump:** Separate take-off, airborne and landing clips are selected according to the jump lifecycle.
+- **Slide:** Slide-start plays on entry, slide-loop holds while the slide is active, and slide-exit plays during recovery. Crouch-forward remains an available low-profile fallback.
+- **Lane changes:** The gameplay root stays aligned with its collision lane while smooth banking and counter-rotation give lateral movement some body weight.
+- **Football collection:** An original in-place right-foot kick is authored on the rigged model and triggered automatically when the player collects a glowing football.
+- **Transitions:** The animation controller crossfades between states, returns to the run cycle after one-shot actions and preserves the safe procedural character if the required clip set is incomplete.
 
-Implementation rules:
-- Do not call a third-party animation service during gameplay. Export and bundle approved clips under `public/assets/football-runner/animations/` so loading is same-origin and predictable.
-- Use general locomotion clips for run/jump/slide and a genuine football-specific kick clip for collection feedback where the rig supports it.
-- Inspect the Sports Male 03 skeleton names and rest pose before deciding whether it is directly supported. The current GLB was not available in the repository at the time this pipeline was added, so compatibility has not yet been confirmed.
-- Keep the procedural character as a fallback until the rigged character and its retargeted clips have been visually reviewed.
-- Preserve a per-asset licence/credit manifest alongside every bundled animation. Never bundle CC-BY clips without their required attribution.
-- Do not treat a successful TypeScript build as proof that the character animates correctly. Verify each clip's coverage, facing direction, foot contact, looping, crossfades and pose stability before sign-off.
+### Technical and validation boundary
+
+- `@three-ws/retarget` (Apache-2.0) handles canonical humanoid mapping, rest-pose/hip-axis correction and clip coverage checks. Clips below the 50% coverage gate are rejected rather than forced onto the model.
+- Animation assets are local and same-origin; no remote animation service is called during play.
+- The football kick is original game-authored animation. The current bundle does not claim to contain a captured professional soccer-kick performance.
+- GitHub build and Cloudflare deployment checks are separate from visual validation. No browser preview, live gameplay, Android device test or final animation quality sign-off has been performed during development.
