@@ -3448,3 +3448,5 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .referral-page .referral-link-prompt{font-size:9px!important;line-height:1.4!important}
 .referral-page .referral-link-value{padding:8px 10px!important;font-size:9px!important}
 .referral-page .referral-link-actions button{min-height:36px!important}
+
+.telegram-landing-preview-link{display:flex;align-items:center;justify-content:center;gap:8px;margin:13px auto 0;padding:12px 14px;width:min(100%,360px);border:1px solid #E9827266;border-radius:8px;color:#F4F1F7;text-decoration:none;font:800 9px Manrope,sans-serif;letter-spacing:.09em;background:#302B3D88}.telegram-landing-preview-link span{color:#E98272;font-size:14px}.telegram-landing-preview-link:active{background:#302B3D}
