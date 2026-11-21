@@ -38,6 +38,8 @@ export default function FootballRunner({ onBack }: Props) {
   const [records, setRecords] = useState<RunnerRecords>(EMPTY_RECORDS);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
   const [recordFlags, setRecordFlags] = useState({ distance: false, points: false });
+  const [instructionsOpen, setInstructionsOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<"restart" | "exit" | null>(null);
 
   useEffect(() => {
     const saved = readRecords();
@@ -108,9 +110,40 @@ export default function FootballRunner({ onBack }: Props) {
     };
   }, []);
 
-  const start = () => engineRef.current?.start();
+  const start = () => {
+    setConfirmAction(null);
+    setInstructionsOpen(false);
+    engineRef.current?.start();
+  };
   const pause = () => engineRef.current?.pause();
-  const resume = () => engineRef.current?.resume();
+  const resume = () => {
+    setConfirmAction(null);
+    engineRef.current?.resume();
+  };
+  const requestExit = () => {
+    if (phase === "running") engineRef.current?.pause();
+    setConfirmAction("exit");
+  };
+  const confirmPendingAction = () => {
+    const action = confirmAction;
+    setConfirmAction(null);
+    if (action === "restart") engineRef.current?.restart();
+    if (action === "exit") onBack();
+  };
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (confirmAction) {
+        setConfirmAction(null);
+        return;
+      }
+      if (phase === "running") engineRef.current?.pause();
+      else if (phase === "paused") requestExit();
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [phase, confirmAction]);
   const toggleSound = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
@@ -120,14 +153,14 @@ export default function FootballRunner({ onBack }: Props) {
   return (
     <main className="football-runner-page">
       <header className="runner-topbar">
-        <button onClick={onBack} aria-label="Back to SETHIS introduction">←</button>
+        <button onClick={requestExit} aria-label="Exit Football Runner">←</button>
         <div><b>SETHIS</b><span>FOOTBALL RUNNER</span></div>
         <span className="runner-prototype-tag">WEB PROTOTYPE</span>
         <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"}>{soundEnabled ? "♫ SOUND ON" : "♪ SOUND OFF"}</button>
       </header>
 
       <section className="runner-stage-wrap">
-        <div className="runner-hud">
+        <div className="runner-hud" aria-label="Live game statistics" aria-live="off">
           <div><small>DISTANCE</small><b>{hud.distance.toLocaleString()} m</b></div>
           <div><small>POINTS</small><b>{hud.points.toLocaleString()}</b></div>
           <div><small>FOOTBALLS</small><b>{hud.balls}</b></div>
@@ -159,7 +192,18 @@ export default function FootballRunner({ onBack }: Props) {
                     <b>{run.distance.toLocaleString()} m</b><i>{run.points.toLocaleString()} pts · {run.balls} balls</i>
                   </div>)}
                 </div>}
-                <button onClick={start}>START RUN <span>→</span></button>
+                {instructionsOpen && <section className="runner-instructions" aria-label="How to play">
+                  <div className="runner-instructions-heading">HOW TO PLAY</div>
+                  <div className="runner-instruction-row"><b>← / →</b><span>Change lanes to avoid obstacles.</span></div>
+                  <div className="runner-instruction-row"><b>↑ / SPACE</b><span>Jump over cones and low hurdles.</span></div>
+                  <div className="runner-instruction-row"><b>↓</b><span>Slide beneath low training bars.</span></div>
+                  <div className="runner-instruction-row"><b>FOOTBALLS</b><span>Move into their lane to collect them automatically.</span></div>
+                  <p>One collision ends the run. Watch the route ahead and keep a safe lane open.</p>
+                </section>}
+                <div className="runner-ready-actions">
+                  <button onClick={start}>START RUN <span>→</span></button>
+                  <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
+                </div>
                 <small>SWIPE OR USE THE CONTROLS BELOW · UP TO JUMP · DOWN TO SLIDE</small>
               </>}
               {phase === "paused" && <>
@@ -167,11 +211,13 @@ export default function FootballRunner({ onBack }: Props) {
                 <h1>Run paused</h1>
                 <p>Your distance and collected footballs are safe.</p>
                 <button onClick={resume}>RESUME RUN <span>→</span></button>
-                <button className="runner-secondary" onClick={start}>RESTART RUN</button>
+                <button className="runner-secondary" onClick={() => setConfirmAction("restart")}>RESTART RUN</button>
+                <button className="runner-text-action" onClick={requestExit}>EXIT TO GAMES</button>
               </>}
               {phase === "over" && summary && <>
-                <span className="runner-overline">FULL TIME</span>
+                <span className="runner-overline">COLLISION · FULL TIME</span>
                 <h1>Run complete.</h1>
+                <p>Your run has ended. Here is your performance breakdown.</p>
                 <div className="runner-result-grid">
                   <div><small>DISTANCE</small><b>{summary.distance.toLocaleString()} m</b></div>
                   <div><small>TOTAL POINTS</small><b>{summary.points.toLocaleString()}</b></div>
@@ -193,14 +239,28 @@ export default function FootballRunner({ onBack }: Props) {
                   <i>{records.bestPoints.toLocaleString()} points</i>
                 </div>
                 <p>Prototype estimate only. Daily preview cap remaining: {(summary.dailyPreviewRemaining ?? RUNNER_REWARD_DEMO.dailyPreviewCap).toLocaleString()} SETHIS. No real CT is charged and no SETHIS is credited.</p>
-                <button onClick={start}>RUN AGAIN <span>→</span></button>
-                <button className="runner-secondary" onClick={onBack}>BACK TO SETHIS</button>
+                <div className="runner-rescue-notice"><b>AD RESCUES NOT AVAILABLE IN THIS WEB PREVIEW</b><span>In-game rescue limits are configured, but rewarded-ad verification is not connected. This run has ended.</span></div>
+                <div className="runner-ready-actions">
+                  <button onClick={start}>RUN AGAIN <span>→</span></button>
+                  <button className="runner-secondary" onClick={requestExit}>BACK TO GAMES</button>
+                </div>
               </>}
             </div>
           ) : null}
         </div>
 
-        {phase === "running" && <button className="runner-pause" onClick={pause}>Ⅱ PAUSE</button>}
+        {phase === "running" && <button className="runner-pause" onClick={pause} aria-label="Pause run">Ⅱ PAUSE</button>}
+        {confirmAction && <div className="runner-confirm-backdrop" role="presentation">
+          <section className="runner-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="runner-confirm-title">
+            <span className="runner-overline">CONFIRM ACTION</span>
+            <h2 id="runner-confirm-title">{confirmAction === "restart" ? "Restart this run?" : "Leave Football Runner?"}</h2>
+            <p>{confirmAction === "restart" ? "Your current distance and score will be lost. A fresh run will begin." : phase === "over" ? "Return to the SETHIS games page." : "Your current run will end and its progress will not be saved as a completed run."}</p>
+            <div className="runner-confirm-actions">
+              <button type="button" onClick={() => setConfirmAction(null)}>KEEP PLAYING</button>
+              <button type="button" className="runner-confirm-primary" onClick={confirmPendingAction}>{confirmAction === "restart" ? "RESTART" : "EXIT"}</button>
+            </div>
+          </section>
+        </div>}
       </section>
 
       <footer className="runner-controls">
