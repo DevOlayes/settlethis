@@ -24,6 +24,7 @@ export class PlayerAnimator {
     this.character.root.rotation.set(0, 0, 0);
     this.character.torso.rotation.set(0, 0, 0);
     this.character.pelvis.rotation.set(0, 0, 0);
+    this.character.torso.scale.set(1, 1, 1);
   }
 
   triggerKick(): void {
@@ -69,7 +70,8 @@ export class PlayerAnimator {
     c.pelvis.rotation.x = THREE.MathUtils.damp(c.pelvis.rotation.x, slideWeight * -0.3, 10, delta);
     c.torso.position.y = 1.52 - slideWeight * 0.22 + jumpWeight * 0.05;
     c.head.rotation.x = slideWeight * -0.12;
-    c.root.position.y += this.landingPulse * delta * 0.35;
+    c.torso.scale.y = 1 - this.landingPulse * 0.07;
+    c.torso.scale.x = 1 + this.landingPulse * 0.025;
 
     // Automatic right-foot strike when a football is collected.
     if (kickActive) {
