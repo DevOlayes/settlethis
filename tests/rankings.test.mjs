@@ -45,15 +45,15 @@ function setup() {
   return db;
 }
 
-test("ranks combined Court and Pool outcomes by wins, win rate, earned SETHIS, entries and stable identity", () => {
+test("ranks combined game, Court and Pool outcomes by game points, wins, win rate, earned SETHIS and stable identity", () => {
   const db = setup();
   const rows = db.prepare(RANKINGS_SQL).all("");
-  assert.deepEqual(rows.slice(0,6).map(row=>row.user_id),["u-c","u-g","u-b","u-f","u-a","u-d"]);
+  assert.deepEqual(rows.slice(0,6).map(row=>row.user_id),["u-c","u-b","u-f","u-g","u-a","u-d"]);
   assert.equal(rows[0].wins,2);
   assert.equal(rows[0].resolved,2);
   assert.equal(rows[0].win_rate,100);
   assert.equal(rows[0].sethis_earned,200);
-  assert.equal(rows[1].entries,3);
+  assert.equal(rows[3].entries,3);
   assert.equal(rows[4].entries,4);
   assert.equal(rows.some(row=>row.user_id==="u-e"),false);
   db.close();

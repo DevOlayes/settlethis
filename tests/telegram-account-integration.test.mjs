@@ -128,7 +128,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
 
   const outOfOrder = await api(env, "/api/onboarding/progress", firstInit, "POST", { step: 2 });
   assert.equal(outOfOrder.response.status, 409);
-  for (let step = 1; step <= 7; step++) {
+  for (let step = 1; step <= 4; step++) {
     const saved = await api(env, "/api/onboarding/progress", firstInit, "POST", { step });
     assert.equal(saved.response.status, 200);
     assert.equal(saved.data.step, step);
@@ -209,7 +209,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(secondProfile.data.profile.telegram_user_id, String(secondUser.id));
   assert.equal(secondProfile.data.profile.club, null);
 
-  for (let step = 1; step <= 7; step++) {
+  for (let step = 1; step <= 4; step++) {
     const saved = await api(env, "/api/onboarding/progress", secondInit, "POST", { step });
     assert.equal(saved.response.status, 200);
   }
@@ -229,7 +229,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
       body: JSON.stringify({ initData: invitedInit })
     }), env);
     assert.equal(invitedSignIn.status, 200);
-    for (let step = 1; step <= 7; step++) {
+    for (let step = 1; step <= 4; step++) {
       const saved = await api(env, "/api/onboarding/progress", invitedInit, "POST", { step });
       assert.equal(saved.response.status, 200);
     }
