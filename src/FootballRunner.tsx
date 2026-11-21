@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { RunnerEngine } from "./football-runner/RunnerEngine";
-import { RUNNER_REWARD_DEMO } from "./football-runner/config";
+import type { TelegramUser } from "./telegram";
 import {
   compareRunnerScores,
   createRunnerChallenge,
@@ -13,30 +13,14 @@ import {
 import type { RunnerControls, RunnerHud, RunnerPhase, RunnerRecords, RunnerRunRecord, RunnerSummary } from "./football-runner/types";
 import "./FootballRunner.css";
 
-type Props = { onBack: () => void };
+type Props = { telegramUser: TelegramUser; onBack: () => void };
 
 const EMPTY_HUD: RunnerHud = { distance: 0, points: 0, balls: 0, speed: 1 };
-const RECORDS_KEY = "sethis.runner.records.v1";
-const DAILY_PREVIEW_KEY = "sethis.runner.reward-preview.v1";
 const EMPTY_RECORDS: RunnerRecords = { bestDistance: 0, bestPoints: 0, totalRuns: 0, recentRuns: [] };
 
-function readRecords(): RunnerRecords {
-  try {
-    const raw = localStorage.getItem(RECORDS_KEY);
-    if (!raw) return EMPTY_RECORDS;
-    const parsed = JSON.parse(raw) as Partial<RunnerRecords>;
-    return {
-      bestDistance: Math.max(0, Number(parsed.bestDistance) || 0),
-      bestPoints: Math.max(0, Number(parsed.bestPoints) || 0),
-      totalRuns: Math.max(0, Number(parsed.totalRuns) || 0),
-      recentRuns: Array.isArray(parsed.recentRuns) ? parsed.recentRuns.slice(0, 20) as RunnerRunRecord[] : [],
-    };
-  } catch {
-    return EMPTY_RECORDS;
-  }
-}
 
-export default function FootballRunner({ onBack }: Props) {
+export default function FootballRunner({ telegramUser, onBack }: Props) {
+  const initData = window.Telegram?.WebApp?.initData || "";
   const mountRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<RunnerControls | null>(null);
   const [phase, setPhase] = useState<RunnerPhase>("ready");
@@ -45,6 +29,11 @@ export default function FootballRunner({ onBack }: Props) {
   const [engineError, setEngineError] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [records, setRecords] = useState<RunnerRecords>(EMPTY_RECORDS);
+  const [recordsLoading, setRecordsLoading] = useState(true);
+  const [recordsError, setRecordsError] = useState("");
+  const [startBusy, setStartBusy] = useState(false);
+  const [runSaveStatus, setRunSaveStatus] = useState("");
+  const activeRunIdRef = useRef<string | null>(null);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
   const [recordFlags, setRecordFlags] = useState({ distance: false, points: false });
   const [instructionsOpen, setInstructionsOpen] = useState(false);
@@ -55,10 +44,32 @@ export default function FootballRunner({ onBack }: Props) {
   const [incomingChallengeResult] = useState(() => decodeRunnerChallengeResult(new URLSearchParams(window.location.search).get("challengeResult")));
 
   useEffect(() => {
-    const saved = readRecords();
-    recordsRef.current = saved;
-    setRecords(saved);
-  }, []);
+    if (!telegramUser || !initData) return;
+    let active = true;
+    fetch("/api/runner/records", { headers: { "x-telegram-init-data": initData }, cache: "no-store" })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Your Football Runner record is unavailable.");
+        return data.records as RunnerRecords;
+      })
+      .then((saved) => {
+        if (!active) return;
+        const next: RunnerRecords = {
+          bestDistance: Math.max(0, Number(saved.bestDistance) || 0),
+          bestPoints: Math.max(0, Number(saved.bestPoints) || 0),
+          totalRuns: Math.max(0, Number(saved.totalRuns) || 0),
+          recentRuns: Array.isArray(saved.recentRuns) ? saved.recentRuns.slice(0, 20) : [],
+        };
+        recordsRef.current = next;
+        setRecords(next);
+        setRecordsError("");
+      })
+      .catch((error) => {
+        if (active) setRecordsError(error instanceof Error ? error.message : "Your record could not be loaded.");
+      })
+      .finally(() => { if (active) setRecordsLoading(false); });
+    return () => { active = false; };
+  }, [telegramUser, initData]);
 
   useEffect(() => {
     const host = mountRef.current;
@@ -70,44 +81,53 @@ export default function FootballRunner({ onBack }: Props) {
         onPhase: setPhase,
         onHud: setHud,
         onSummary: (result) => {
-          const today = new Date();
-          const dayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-          let previousDailyTotal = 0;
-          try {
-            const savedDaily = JSON.parse(localStorage.getItem(DAILY_PREVIEW_KEY) || "null") as { day?: string; total?: number } | null;
-            if (savedDaily?.day === dayKey) previousDailyTotal = Math.max(0, Math.floor(Number(savedDaily.total) || 0));
-          } catch { /* Ignore malformed local preview data. */ }
-          const dailyPreviewEarned = Math.min(result.sethis, Math.max(0, RUNNER_REWARD_DEMO.dailyPreviewCap - previousDailyTotal));
-          const dailyPreviewTotal = previousDailyTotal + dailyPreviewEarned;
-          const rewardResult: RunnerSummary = {
-            ...result,
-            sethis: dailyPreviewEarned,
-            dailyPreviewEarned,
-            dailyPreviewTotal,
-            dailyPreviewRemaining: Math.max(0, RUNNER_REWARD_DEMO.dailyPreviewCap - dailyPreviewTotal),
-          };
-          try { localStorage.setItem(DAILY_PREVIEW_KEY, JSON.stringify({ day: dayKey, total: dailyPreviewTotal })); } catch { /* Preview continues for this session. */ }
-          setSummary(rewardResult);
           const previous = recordsRef.current;
           setRecordFlags({
             distance: result.distance > previous.bestDistance,
             points: result.points > previous.bestPoints,
           });
-          const run: RunnerRunRecord = {
-            playedAt: Date.now(),
-            distance: result.distance,
-            points: result.points,
-            balls: result.balls,
-          };
-          const next: RunnerRecords = {
-            bestDistance: Math.max(previous.bestDistance, result.distance),
-            bestPoints: Math.max(previous.bestPoints, result.points),
-            totalRuns: previous.totalRuns + 1,
-            recentRuns: [run, ...previous.recentRuns].slice(0, 20),
-          };
-          recordsRef.current = next;
-          setRecords(next);
-          try { localStorage.setItem(RECORDS_KEY, JSON.stringify(next)); } catch { /* Records remain available for this session. */ }
+          setSummary({
+            ...result,
+            rewardFootball: 0,
+            rewardDistance: 0,
+            rewardPerformance: 0,
+            sethis: 0,
+            dailyPreviewEarned: 0,
+            dailyPreviewTotal: 0,
+            dailyPreviewRemaining: 0,
+          });
+          const runId = activeRunIdRef.current;
+          if (!runId || !initData) {
+            setRunSaveStatus("This run could not be linked to your SETHIS account.");
+            return;
+          }
+          setRunSaveStatus("Checking and saving your run…");
+          fetch("/api/runner/finish", {
+            method: "POST",
+            headers: { "content-type": "application/json", "x-telegram-init-data": initData },
+            body: JSON.stringify({ run_id: runId, distance: result.distance, points: result.points, footballs: result.balls }),
+          })
+            .then(async (response) => {
+              const data = await response.json();
+              if (!response.ok) throw new Error(data.error || "Your result could not be saved.");
+              return data;
+            })
+            .then((data) => {
+              activeRunIdRef.current = null;
+              const saved = data.records as RunnerRecords;
+              const next: RunnerRecords = {
+                bestDistance: Math.max(0, Number(saved.bestDistance) || 0),
+                bestPoints: Math.max(0, Number(saved.bestPoints) || 0),
+                totalRuns: Math.max(0, Number(saved.totalRuns) || 0),
+                recentRuns: Array.isArray(saved.recentRuns) ? saved.recentRuns.slice(0, 20) : [],
+              };
+              recordsRef.current = next;
+              setRecords(next);
+              setRunSaveStatus("Run checked and saved to your SETHIS account.");
+            })
+            .catch((error) => {
+              setRunSaveStatus(error instanceof Error ? error.message : "Your result could not be saved.");
+            });
         },
       });
       engine.setSoundEnabled(soundEnabled);
@@ -123,10 +143,27 @@ export default function FootballRunner({ onBack }: Props) {
     };
   }, []);
 
-  const start = () => {
+  const start = async () => {
+    if (startBusy || !initData || !telegramUser) return;
+    setStartBusy(true);
     setConfirmAction(null);
     setInstructionsOpen(false);
-    engineRef.current?.start();
+    setRunSaveStatus("");
+    try {
+      const response = await fetch("/api/runner/start", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-telegram-init-data": initData },
+        body: JSON.stringify({}),
+      });
+      const data = await response.json();
+      if (!response.ok || typeof data.run_id !== "string") throw new Error(data.error || "A new run could not be started.");
+      activeRunIdRef.current = data.run_id;
+      engineRef.current?.start();
+    } catch (error) {
+      setRunSaveStatus(error instanceof Error ? error.message : "A new run could not be started.");
+    } finally {
+      setStartBusy(false);
+    }
   };
   const pause = () => engineRef.current?.pause();
   const resume = () => {
@@ -144,7 +181,7 @@ export default function FootballRunner({ onBack }: Props) {
   const confirmPendingAction = () => {
     const action = confirmAction;
     setConfirmAction(null);
-    if (action === "restart") engineRef.current?.restart();
+    if (action === "restart") void start();
     if (action === "exit") onBack();
   };
 
@@ -206,7 +243,7 @@ export default function FootballRunner({ onBack }: Props) {
       <header className="runner-topbar">
         <button onClick={requestExit} aria-label="Exit Football Runner">←</button>
         <div><b>SETHIS</b><span>FOOTBALL RUNNER</span></div>
-        <span className="runner-prototype-tag">WEB PROTOTYPE</span>
+        <span className="runner-prototype-tag">TELEGRAM MINI APP</span>
         <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"}>{soundEnabled ? "♫ SOUND ON" : "♪ SOUND OFF"}</button>
       </header>
 
@@ -252,14 +289,14 @@ export default function FootballRunner({ onBack }: Props) {
                 </section>}
                 <div className="runner-personal-best">
                   <span>PERSONAL BEST</span>
-                  <b>{records.bestDistance.toLocaleString()} m</b>
-                  <i>{records.bestPoints.toLocaleString()} points · {records.totalRuns} {records.totalRuns === 1 ? "run" : "runs"}</i>
+                  <b>{recordsLoading?"…":records.bestDistance.toLocaleString()+" m"}</b>
+                  <i>{recordsLoading?"Loading account record…":records.bestPoints.toLocaleString()+" points · "+records.totalRuns+" "+(records.totalRuns===1?"run":"runs")}</i>
                 </div>
                 <button className="runner-leaderboard-toggle" onClick={() => setLeaderboardOpen((open) => !open)} aria-expanded={leaderboardOpen}>{leaderboardOpen ? "HIDE MY LEADERBOARD" : "MY LEADERBOARD"} <span>{records.recentRuns.length} RUNS ↕</span></button>
-                {leaderboardOpen && <section className="runner-local-leaderboard"><div className="runner-instructions-heading">TOP SCORES · RECENT 20 RUNS</div>
+                {leaderboardOpen && <section className="runner-local-leaderboard"><div className="runner-instructions-heading">ACCOUNT RECORDS · RECENT RUNS</div>
                   {[...records.recentRuns].sort((a,b) => b.points-a.points || b.distance-a.distance || b.balls-a.balls).slice(0,5).map((run,index) => <div key={`${run.playedAt}-${index}`}><b>#{index+1}</b><span>{run.points.toLocaleString()} pts</span><small>{run.distance.toLocaleString()} m · {run.balls} balls</small></div>)}
                   {records.recentRuns.length === 0 && <p>Complete a run to start your personal leaderboard.</p>}
-                  <small>Private to this browser/device. Not a global ranking.</small>
+                  <small>Saved to your SETHIS account. Public ranking eligibility follows score-integrity validation.</small>
                 </section>}
                 {records.recentRuns.length > 0 && <div className="runner-recent-runs">
                   <span>RECENT RUNS</span>
@@ -276,7 +313,7 @@ export default function FootballRunner({ onBack }: Props) {
                   <p>One collision ends the run. Watch the route ahead and keep a safe lane open.</p>
                 </section>}
                 <div className="runner-ready-actions">
-                  <button onClick={start}>START RUN <span>→</span></button>
+                  <button onClick={()=>void start()} disabled={startBusy}>{startBusy?"PREPARING RUN…":"START RUN"} <span>→</span></button>
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
                 </div>
                 {shareNotice && <p className="runner-share-notice" role="status">{shareNotice}</p>}
@@ -312,11 +349,7 @@ export default function FootballRunner({ onBack }: Props) {
                   <div className="runner-breakdown-row"><span>DISTANCE SCORE</span><b>{summary.distancePoints.toLocaleString()} <i>PTS</i></b></div>
                   <div className="runner-breakdown-row"><span>FOOTBALL COLLECTION</span><b>{summary.footballPoints.toLocaleString()} <i>PTS</i></b></div>
                   <div className="runner-breakdown-divider"/>
-                  <div className="runner-breakdown-row runner-reward-row"><span>FOOTBALL REWARD</span><b>{summary.rewardFootball.toLocaleString()}</b></div>
-                  <div className="runner-breakdown-row runner-reward-row"><span>DISTANCE BONUS</span><b>{summary.rewardDistance.toLocaleString()}</b></div>
-                  <div className="runner-breakdown-row runner-reward-row"><span>PERFORMANCE BONUS</span><b>{summary.rewardPerformance.toLocaleString()}</b></div>
-                  <div className="runner-estimated-total"><span>ESTIMATED SETHIS</span><b>{summary.sethis.toLocaleString()}</b></div>
-                  <div className="runner-daily-progress"><span>DAILY PREVIEW LIMIT</span><b>{(summary.dailyPreviewTotal ?? summary.sethis).toLocaleString()} / {RUNNER_REWARD_DEMO.dailyPreviewCap.toLocaleString()}</b></div>
+                  <div className="runner-reward-status"><span>SETHIS REWARDS</span><b>NOT ACTIVE YET</b><small>Only published and approved reward rules can credit your wallet. No estimated reward is shown as earned.</small></div>
                 </section>
                 {(recordFlags.distance || recordFlags.points) && <div className="runner-new-record"><span>✦</span> NEW PERSONAL {recordFlags.distance && recordFlags.points ? "RECORD" : recordFlags.distance ? "DISTANCE RECORD" : "POINTS RECORD"} <span>✦</span></div>}
                 {incomingChallenge && <section className="runner-challenge-outcome">
@@ -330,10 +363,10 @@ export default function FootballRunner({ onBack }: Props) {
                   <b>{records.bestDistance.toLocaleString()} m</b>
                   <i>{records.bestPoints.toLocaleString()} points</i>
                 </div>
-                <p>Prototype estimate only. Daily preview cap remaining: {(summary.dailyPreviewRemaining ?? RUNNER_REWARD_DEMO.dailyPreviewCap).toLocaleString()} SETHIS. No real CT is charged and no SETHIS is credited.</p>
-                <div className="runner-rescue-notice"><b>AD RESCUES NOT AVAILABLE IN THIS WEB PREVIEW</b><span>In-game rescue limits are configured, but rewarded-ad verification is not connected. This run has ended.</span></div>
+                <p>{runSaveStatus || "Your score is being prepared for your account record."}</p>
+                <div className="runner-rescue-notice"><b>EARLY ACCESS · FREE ENTRY</b><span>No CT is deducted. SETHIS payouts and rewarded-ad rescues are not enabled yet; this run does not create a wallet credit.</span></div>
                 <div className="runner-ready-actions">
-                  <button onClick={start}>RUN AGAIN <span>→</span></button>
+                  <button onClick={()=>void start()} disabled={startBusy}>{startBusy?"PREPARING RUN…":"RUN AGAIN"} <span>→</span></button>
                   <button className="runner-secondary" onClick={shareMyChallenge}>CHALLENGE A FRIEND ↗</button>
                   <button className="runner-secondary" onClick={requestExit}>BACK TO GAMES</button>
                 </div>

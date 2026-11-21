@@ -1,7 +1,8 @@
 import {useEffect,useState} from "react";
-import {Coins,Play,ArrowRight,ShieldCheck,LightBulb,Search,Book,SoccerBall} from "iconoir-react";
+import {Coins,Play,ArrowRight,ShieldCheck,LightBulb,Search,Book,SoccerBall,Gamepad} from "iconoir-react";
 import MysteryAvatar from "./MysteryAvatar";
 import type {TelegramUser} from "./telegram";
+import "./MysteryGame.css";
 
 type Round={id:string;difficulty:"easy"|"medium"|"hard";clue_index:number;guess_count:number;expires_at:string;avatar_key:string;clue:string;status?:string};
 type GameState={entry_ct:number;online_count:number;wallet:{ct_balance:number;sethis_balance:number};active_round:Round|null;total_players:number};
@@ -31,7 +32,7 @@ export default function MysteryGame({telegramUser,onWalletChange,showNotice}:{te
  return <section className="game-home">
   <div className="game-welcome"><div><span className="eyebrow"><i/> SETHIS FOOTBALL GAMES</span><h1>Know your ball.<br/><em>Own the bragging rights.</em></h1><p>Big football energy. Quick-fire challenges. The leaderboard is waiting.</p></div><div className="game-live-pill"><i/>{(state?.online_count||0).toLocaleString()} ONLINE</div></div>
   {loading&&<div className="game-loading">Preparing your game room…</div>}
-  <div className="games-section-heading"><div><span className="eyebrow">FEATURED GAMES</span><h2>Choose your challenge</h2></div><small>1 AVAILABLE</small></div>
+  <div className="games-section-heading"><div><span className="eyebrow">FEATURED GAMES</span><h2>Choose your challenge</h2></div><small>2 AVAILABLE</small></div>
   <article className="mystery-game-card">
    <div className="mystery-game-top"><span>AVAILABLE NOW</span><span className="mystery-difficulty">{round?round.difficulty.toUpperCase():difficulty.toUpperCase()}</span></div>
    <div className="mystery-game-hero"><div className="mystery-game-copy"><span className="game-kicker"><GameEmblem small/><span className="eyebrow">MYSTERY FOOTBALLER</span></span><h2>WHO'S THAT<br/><em>BALLER?</em></h2><p>One hidden star. Three clues. Three chances to prove you've got football knowledge.</p></div><div className="mystery-avatar-wrap"><MysteryAvatar avatarKey={round?.avatar_key||"kit-01"}/><span className="mystery-avatar-tag">IDENTITY LOCKED</span></div></div>
@@ -39,6 +40,16 @@ export default function MysteryGame({telegramUser,onWalletChange,showNotice}:{te
    {feedback&&<p className="mystery-feedback">{feedback}</p>}
    {revealedAnswer&&<div className="mystery-answer-reveal"><MysteryAvatar avatarKey={revealedAvatarKey} revealed size="small"/><div><span>{round?.status==="won"?"CORRECT ANSWER":"THE MYSTERY PLAYER WAS"}</span><b>{revealedAnswer}</b></div></div>}
   </article>
-  <section className="games-lineup-note"><span className="games-lineup-icon"><GameIcon name="play"/></span><div><span className="eyebrow">THE LINE-UP IS GROWING</span><h3>One game to start. More to come.</h3><p>Mystery Footballer leads the launch. More football challenges will join the Games hub as they are ready.</p></div></section>
+  <article className="runner-game-card">
+   <div className="runner-game-card-copy">
+    <span className="eyebrow">NOW AVAILABLE · 3D FOOTBALL RUNNER</span>
+    <h2>Run the pitch.<br/><em>Beat your best.</em></h2>
+    <p>Switch lanes, jump, slide and collect glowing footballs as you race through a connected football world.</p>
+    <div className="runner-game-card-meta"><span><Gamepad width={16} height={16}/> ENDLESS RUN</span><span><Coins width={16} height={16}/> FREE EARLY ACCESS</span></div>
+    <button type="button" onClick={()=>window.location.assign("/football-runner")}>PLAY FOOTBALL RUNNER <ArrowRight width={18} height={18}/></button>
+   </div>
+   <div className="runner-game-card-art" aria-hidden="true"><div className="runner-game-art-ring"/><SoccerBall width={92} height={92} strokeWidth={1.35}/><span>SETHIS<br/>RUNNER</span></div>
+  </article>
+  <section className="games-lineup-note"><span className="games-lineup-icon"><GameIcon name="play"/></span><div><span className="eyebrow">THE LINE-UP IS GROWING</span><h3>Two games to start. More to come.</h3><p>Mystery Footballer and Football Runner are the first challenges in a growing football games line-up.</p></div></section>
  </section>;
 }

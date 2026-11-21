@@ -242,3 +242,11 @@ The following checks are prepared for the final validation window after all deve
 - Animation assets are local and same-origin; no remote animation service is called during play. Gzip-packed `.pack` files are decompressed with the browser's native `DecompressionStream` API.
 - The football kick is original game-authored animation. The current bundle does not claim to contain a captured professional soccer-kick performance.
 - GitHub build and Cloudflare deployment checks are separate from visual validation. No browser preview, live gameplay, Android device test or final animation quality sign-off has been performed during development.
+
+## Stage 16 — Telegram Mini App early-access integration
+
+- Football Runner is available from the authenticated Games hub and is gated by the same verified Telegram Mini App session as the rest of SETHIS. Direct browser visitors are sent to the Telegram introduction rather than receiving guest game access.
+- A server-created run session is required before gameplay. Completed results are stored against the authenticated Telegram member in Cloudflare D1, and the member's personal bests and recent runs are available across devices.
+- The server rejects duplicate, expired and implausible submissions using elapsed server time, maximum movement speed, football-count bounds and score arithmetic. These checks are integrity screening, not a cryptographic replay proof; account records are not yet eligible for prizes or public leaderboard ranking.
+- The current Runner launch is explicitly free early access. No CT is deducted, no SETHIS is credited, and rewarded-ad rescues are disabled. The discussed 500 CT daily access, reward formula and ad limits remain inactive until their exact economy rules are approved.
+- The Mini App reuses the same Three.js engine and locally bundled avatar/animation assets. No external game or animation runtime is required.
