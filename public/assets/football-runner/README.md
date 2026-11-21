@@ -1,36 +1,25 @@
-# Football Runner character asset
+# Football Runner avatar and animation assets
 
-The procedural character is a temporary fallback only. The target production character is a licensed, rigged humanoid footballer delivered as a local GLB file.
+## Avatar
 
-## Required asset
+Sports Male 03 / Male Athlete 03, Microsoft Rocketbox model. The model is 9,534 triangles with an 80-joint Biped rig, five embedded textures and three materials. It is distributed under the MIT licence; retain LICENSE-MICROSOFT.txt.
 
-Place the selected and licence-cleared model at:
+Source: https://models.codelove.in/models/sports-male-03/
 
-`public/assets/football-runner/player.glb`
+The asset importer verifies the model's Microsoft copyright metadata, 80-joint skeleton signature, five images and three materials against the file recovered from the user's Library. It records whether the downloaded source is byte-identical to that Library file in animations/manifest.json.
 
-Requirements:
-- recognisable human footballer silhouette, with natural athletic proportions
-- football shirt, shorts, socks and boots; no generic stick/mannequin appearance
-- skinned mesh and a usable humanoid skeleton
-- neutral or relaxed bind pose, feet aligned to the ground
-- GLB/glTF 2.0, PBR materials and embedded textures
-- preferably 10–20k triangles for the player mesh and modest texture sizes for mobile
-- animation clips or a skeleton compatible with retargeted clips for running, jump, slide and kick
+## Animations
 
-## Sourcing and licensing
+- Quaternius Universal Animation Library 1 Standard: CC0 1.0.
+- Quaternius Universal Animation Library 2 Standard: CC0 1.0.
+- The bundled _Standard GLBs are in-place variants, not root-motion (_RM) variants. Game code owns the character's world movement.
+- Only the required movement clips are retargeted at runtime: jog/run, sprint, jump take-off/air/landing, crouch and slide start/loop/exit.
+- The full source pack ZIP hashes and selected clip names are recorded in animations/manifest.json.
 
-Candidate free animation-ready prototype: CodeLove, **Male Athlete 03**. Its listing states 9,534 triangles, 80 bones, a 785 KB GLB, ten compatible animation clips and MIT licensing. It is a generic sports athlete, not a finished football kit, so it must pass a visual review and kit adaptation before it can become the final player.
+Sources:
+- https://quaternius.itch.io/universal-animation-library
+- https://quaternius.itch.io/universal-animation-library-2
+- https://quaternius.com/packs/universalanimationlibrary.html
+- https://quaternius.com/packs/universalanimationlibrary2.html
 
-Candidate dedicated football assets: Fab listings for rigged realistic soccer players. These are closer to the required kit and role, but price and exact licence must be checked on the listing before any purchase.
-
-Adobe Mixamo is the preferred free animation authoring/auto-rigging option where compatible. Keep downloaded model and animation files with their original licence notices. Do not assume that every marketplace asset permits commercial use or redistribution.
-
-## Runtime integration
-
-`RiggedPlayerAsset.ts` loads the local GLB through Three.js GLTFLoader, normalises its height without changing proportions, enables mesh shadows and exposes embedded animation clips. The game keeps its procedural player as a fallback until the licensed asset is supplied. Do not hotlink marketplace or library model files at runtime.
-
-Three.js GLTFLoader and AnimationMixer provide the GLB/skinned-mesh/animation pipeline. Animation clips should be cross-faded instead of snapping between poses.
-
-## Approval gate
-
-Do not buy an asset or replace the current character with an unreviewed model. Inspect the actual model, skeleton, texture quality, animation compatibility, file size and licence first. Final acceptance requires a mobile gameplay review from the chase-camera angle.
+The football collection kick is an original game-authored clip, not a third-party motion-capture asset.

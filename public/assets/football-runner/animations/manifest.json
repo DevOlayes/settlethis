@@ -1,13 +1,79 @@
 {
+  "version": 1,
+  "avatar": {
+    "name": "Sports Male 03 / Male Athlete 03",
+    "source": "https://models.codelove.in/models/sports-male-03/",
+    "license": "MIT",
+    "exactLibraryUploadSha256": "ad4b96ce02b6856c73cf3045631d49981b4f896898b1c1097b3339410ad3e590",
+    "bundledSha256": "ad4b96ce02b6856c73cf3045631d49981b4f896898b1c1097b3339410ad3e590",
+    "exactLibraryFileMatch": true
+  },
   "sourcePacks": [
     {
-      "name": "KinemIQ Free Game Animations",
-      "version": "1.0",
-      "source": "https://github.com/Kinemiq/free-game-animations/releases/tag/v1.0",
-      "format": "GLB",
+      "name": "Quaternius Universal Animation Library 1 Standard",
+      "source": "https://quaternius.itch.io/universal-animation-library",
+      "mirror": "https://github.com/WaviestSun/atelier-packs/releases/download/characters-1/UAL1_Standard.glb",
       "license": "CC0-1.0",
-      "licenseNote": "35 humanoid game animations; free for commercial use. Retain source and licence notes in project documentation."
+      "sha256": "69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997",
+      "sourceBytes": 7618436,
+      "bundledGlbBytes": 7618436,
+      "bundledAnimationNames": [
+        "Crouch_Fwd_Loop",
+        "Crouch_Idle_Loop",
+        "Jog_Fwd_Loop",
+        "Jump_Land",
+        "Jump_Loop",
+        "Jump_Start",
+        "Sprint_Loop"
+      ]
+    },
+    {
+      "name": "Quaternius Universal Animation Library 2 Standard",
+      "source": "https://quaternius.itch.io/universal-animation-library-2",
+      "mirror": "https://github.com/WaviestSun/atelier-packs/releases/download/packs-2/Universal-Animation-Library-2-Standard.zip",
+      "license": "CC0-1.0",
+      "sha256": "4008ea208a604773a2b2177d965f0f5d3195498b5bf838c3f5785d68e95f2a68",
+      "sourceBytes": 18735003,
+      "bundledGlbBytes": 8091444,
+      "bundledAnimationNames": [
+        "NinjaJump_Idle_Loop",
+        "NinjaJump_Land",
+        "NinjaJump_Start",
+        "Slide_Exit",
+        "Slide_Loop",
+        "Slide_Start"
+      ]
     }
   ],
-  "clips": []
+  "clips": [
+    {
+      "name": "ual1",
+      "url": "/assets/football-runner/animations/UAL1_Standard.glb",
+      "includeAnimations": [
+        "Crouch_Fwd_Loop",
+        "Crouch_Idle_Loop",
+        "Jog_Fwd_Loop",
+        "Jump_Land",
+        "Jump_Loop",
+        "Jump_Start",
+        "Sprint_Loop"
+      ],
+      "source": "Quaternius Universal Animation Library 1 Standard",
+      "license": "CC0-1.0"
+    },
+    {
+      "name": "ual2",
+      "url": "/assets/football-runner/animations/UAL2_Standard.glb",
+      "includeAnimations": [
+        "NinjaJump_Idle_Loop",
+        "NinjaJump_Land",
+        "NinjaJump_Start",
+        "Slide_Exit",
+        "Slide_Loop",
+        "Slide_Start"
+      ],
+      "source": "Quaternius Universal Animation Library 2 Standard",
+      "license": "CC0-1.0"
+    }
+  ]
 }
