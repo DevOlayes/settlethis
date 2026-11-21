@@ -24,11 +24,13 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
     let phaseIndex = 0;
     let phaseElapsed = 0;
     let jumpElapsed = 0;
+    let modelBaseX = 0;
     let modelBaseY = 0;
+    let modelBaseZ = 0;
     let playbackReady = false;
     let previewCycle = 0;
     const phaseNames = ["run", "jumpTakeoff", "jumpAir", "jumpLand", "runAfterJump", "slideStart", "slideLoop", "slideRecovery", "runAfterSlide", "laneLeft", "runAfterLeft", "laneRight", "runAfterRight"];
-    const phaseDurations = [1.4, 0.22, 0.48, 0.32, 0.65, NATIVE_BIPED_MANEUVER_PHASES.slideStart, NATIVE_BIPED_MANEUVER_PHASES.slideLoop, NATIVE_BIPED_MANEUVER_PHASES.slideRecovery, 0.65, NATIVE_BIPED_MANEUVER_PHASES.laneChange, 0.55, NATIVE_BIPED_MANEUVER_PHASES.laneChange, 0.55];
+    const phaseDurations = [1.4, 0.22, 0.48, 0.32, 0.85, NATIVE_BIPED_MANEUVER_PHASES.slideStart, NATIVE_BIPED_MANEUVER_PHASES.slideLoop, NATIVE_BIPED_MANEUVER_PHASES.slideRecovery, 0.85, NATIVE_BIPED_MANEUVER_PHASES.laneChange, 0.85, NATIVE_BIPED_MANEUVER_PHASES.laneChange, 0.85];
     let previousTime = 0;
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x9dc8dd);
@@ -98,18 +100,30 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
       previousTime = now;
       if (playbackReady && mixer && action) {
         phaseElapsed += delta;
-        if (["jumpTakeoff", "jumpAir", "jumpLand"].includes(phaseNames[phaseIndex])) {
+        const phase = phaseNames[phaseIndex];
+        const phaseProgress = Math.min(1, phaseElapsed / Math.max(0.001, phaseDurations[phaseIndex]));
+        const eased = phaseProgress * phaseProgress * (3 - 2 * phaseProgress);
+        if (["jumpTakeoff", "jumpAir", "jumpLand"].includes(phase)) {
           jumpElapsed += delta;
           model!.position.y = modelBaseY + Math.sin(Math.min(1, jumpElapsed / 1.02) * Math.PI) * 1.5;
         } else if (model) {
-          model.position.y = modelBaseY;
+          let verticalOffset = 0;
+          let lateralOffset = 0;
+          if (phase === "slideStart") verticalOffset = -0.42 * eased;
+          if (phase === "slideLoop") verticalOffset = -0.42;
+          if (phase === "slideRecovery") verticalOffset = -0.42 * (1 - eased);
+          if (phase === "laneLeft") lateralOffset = -0.62 * eased;
+          if (phase === "runAfterLeft") lateralOffset = -0.62 * (1 - eased);
+          if (phase === "laneRight") lateralOffset = 0.62 * eased;
+          if (phase === "runAfterRight") lateralOffset = 0.62 * (1 - eased);
+          model.position.set(modelBaseX + lateralOffset, modelBaseY + verticalOffset, modelBaseZ);
         }
         if (phaseElapsed >= phaseDurations[phaseIndex]) {
           phaseElapsed = 0;
           phaseIndex = (phaseIndex + 1) % phaseNames.length;
           if (phaseIndex === 0) {
             previewCycle++;
-            if (model) model.position.y = modelBaseY;
+            if (model) model.position.set(modelBaseX, modelBaseY, modelBaseZ);
           }
           if (phaseNames[phaseIndex] === "jumpTakeoff") jumpElapsed = 0;
           playPhase(phaseIndex);
@@ -169,10 +183,12 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         addCheck("Landing: " + land.tracks.length + " tracks · " + land.duration.toFixed(2) + "s");
         addCheck("Jump root arc: 1.02s · 1.5m preview, matching current gameplay physics.");
         maneuverClips.forEach((clip) => addCheck("Native manoeuvre: " + clip.name + " · " + clip.tracks.length + " tracks · " + clip.duration.toFixed(2) + "s"));
-        addCheck("Slide sequence: start → sustained low slide → recovery.");
-        addCheck("Lane sequence: left bank/counter-step → run → right bank/counter-step.");
+        addCheck("Slide sequence: crouched body flex + 0.42m vertical drop → sustained low slide → recovery.");
+        addCheck("Lane sequence: visible left lean + 0.62m lateral travel → centre → visible right lean + 0.62m lateral travel → centre.");
         mixer = new THREE.AnimationMixer(model);
+        modelBaseX = model.position.x;
         modelBaseY = model.position.y;
+        modelBaseZ = model.position.z;
         phaseActions = {
           run: mixer.clipAction(run),
           jumpTakeoff: mixer.clipAction(takeoff),
@@ -234,7 +250,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         </div>
       </div>
       <footer style={{ padding: "12px 16px", color: "#aaa3b5", fontSize: 11, lineHeight: 1.5, borderTop: "1px solid #393346" }}>
-        Isolated animation preview: approved native run and jump plus authored native Biped slide/recovery and left/right lane-change poses. Original model and skeleton remain unchanged; gameplay and rewards are not affected.
+        Isolated animation preview: jump, a visibly lowered compact slide with recovery, and left/right lane changes with clear lateral travel and body counterbalance. Original model and skeleton remain unchanged; gameplay and rewards are not affected.
       </footer>
     </main>
   );
