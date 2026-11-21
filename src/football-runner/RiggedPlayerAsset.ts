@@ -238,13 +238,20 @@ export async function loadRunnerAnimationClips(
         if (!json || !Array.isArray(json.tracks) || !Number.isFinite(json.duration)) {
           throw new Error("Canonical animation JSON has an invalid structure");
         }
-        const sourceTracks = json.tracks.map((track) => {
+        // The canonical Mixamo export stores POSITION values for many
+        // child bones in source/world space (for example, Spine and Neck have
+        // large absolute Y coordinates). Replaying those as local bone
+        // translations pulls the avatar's mesh apart. Sports Male 03 must keep
+        // its own bind-pose bone offsets, so retarget rotations only.
+        const rotationTracks = json.tracks.filter((track) => track.type === "quaternion");
+        if (!rotationTracks.length) {
+          throw new Error("Canonical animation contains no bone rotation tracks");
+        }
+        const sourceTracks = rotationTracks.map((track) => {
           if (!track.name || !Array.isArray(track.times) || !Array.isArray(track.values)) {
-            throw new Error("Canonical animation contains an invalid keyframe track");
+            throw new Error("Canonical animation contains an invalid rotation track");
           }
-          return track.type === "quaternion"
-            ? new THREE.QuaternionKeyframeTrack(track.name, track.times, track.values)
-            : new THREE.VectorKeyframeTrack(track.name, track.times, track.values);
+          return new THREE.QuaternionKeyframeTrack(track.name, track.times, track.values);
         });
         const sourceClip = new THREE.AnimationClip(
           json.name || asset.name || "runner-motion",
