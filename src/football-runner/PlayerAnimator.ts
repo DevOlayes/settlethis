@@ -13,14 +13,98 @@ export class PlayerAnimator {
   private kickElapsed = 10;
   private landingPulse = 0;
   private previousJumping = false;
+  private riggedMixer?: THREE.AnimationMixer;
+  private riggedActions = new Map<string, THREE.AnimationAction>();
+  private activeRiggedAction?: THREE.AnimationAction;
+  private activeRiggedState = "";
+  private riggedKickRemaining = 0;
 
   constructor(private readonly character: PlayerCharacter) {}
+
+  attachRiggedModel(model: THREE.Object3D, clips: THREE.AnimationClip[]): void {
+    this.riggedMixer?.stopAllAction();
+    this.riggedMixer = new THREE.AnimationMixer(model);
+    this.riggedActions.clear();
+    this.activeRiggedAction = undefined;
+    this.activeRiggedState = "";
+
+    for (const clip of clips) {
+      const key = clip.name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      if (!key) continue;
+      this.riggedActions.set(key, this.riggedMixer.clipAction(clip));
+    }
+    this.playRiggedState("run");
+  }
+
+  private findRiggedAction(state: string): THREE.AnimationAction | undefined {
+    const patterns: Record<string, RegExp[]> = {
+      run: [/\\brun\\b/, /sprint/, /jog/],
+      jump: [/jump/, /hop/],
+      slide: [/slide/, /sliding/, /crouch/, /roll/],
+      kick: [/kick/, /shoot/, /pass/, /dribble/],
+    };
+    const candidates = patterns[state] || [];
+    for (const [name, action] of this.riggedActions) {
+      if (candidates.some((pattern) => pattern.test(name))) return action;
+    }
+    if (state !== "run") return this.findRiggedAction("run");
+    for (const [name, action] of this.riggedActions) {
+      if (/walk/.test(name)) return action;
+    }
+    return this.riggedActions.values().next().value;
+  }
+
+  private playRiggedState(state: string): void {
+    if (!this.riggedMixer || state === this.activeRiggedState) return;
+    const next = this.findRiggedAction(state);
+    if (!next) return;
+    const previous = this.activeRiggedAction;
+    next.reset();
+    next.enabled = true;
+    next.setEffectiveTimeScale(1);
+    next.setEffectiveWeight(1);
+    if (state === "jump" || state === "kick" || state === "slide") {
+      next.setLoop(THREE.LoopOnce, 1);
+      next.clampWhenFinished = true;
+    } else {
+      next.setLoop(THREE.LoopRepeat, Infinity);
+      next.clampWhenFinished = false;
+    }
+    next.fadeIn(previous ? 0.18 : 0);
+    next.play();
+    previous?.fadeOut(0.18);
+    this.activeRiggedAction = next;
+    this.activeRiggedState = state;
+  }
+
+  private updateRigged(delta: number, input: PlayerAnimationInput): void {
+    if (!this.riggedMixer) return;
+    this.riggedKickRemaining = Math.max(0, this.riggedKickRemaining - delta);
+    const state = this.riggedKickRemaining > 0
+      ? "kick"
+      : input.sliding ? "slide"
+      : input.jumping ? "jump"
+      : "run";
+    this.playRiggedState(state);
+    this.character.root.rotation.z = THREE.MathUtils.damp(
+      this.character.root.rotation.z, -input.laneLean * 0.12, 8, delta,
+    );
+    this.character.root.rotation.y = THREE.MathUtils.damp(
+      this.character.root.rotation.y, input.laneLean * 0.07, 8, delta,
+    );
+    this.riggedMixer.update(delta);
+  }
 
   reset(): void {
     this.runClock = 0;
     this.kickElapsed = 10;
     this.landingPulse = 0;
     this.previousJumping = false;
+    this.riggedKickRemaining = 0;
+    this.activeRiggedState = "";
+    this.activeRiggedAction = undefined;
+    this.riggedMixer?.stopAllAction();
+    if (this.riggedMixer) this.playRiggedState("run");
     this.character.root.rotation.set(0, 0, 0);
     this.character.torso.rotation.set(0, 0, 0);
     this.character.pelvis.rotation.set(0, 0, 0);
@@ -42,9 +126,14 @@ export class PlayerAnimator {
 
   triggerKick(): void {
     this.kickElapsed = 0;
+    if (this.riggedMixer) this.riggedKickRemaining = 0.48;
   }
 
   update(delta: number, input: PlayerAnimationInput): void {
+    if (this.riggedMixer) {
+      this.updateRigged(delta, input);
+      return;
+    }
     const c = this.character;
     const speed = THREE.MathUtils.clamp(input.speedRatio, 0.8, 1.65);
     this.runClock += delta * (8.8 * speed);
