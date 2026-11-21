@@ -258,7 +258,7 @@ export default function FootballRunner({ onBack }: Props) {
           <section className="runner-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="runner-confirm-title">
             <span className="runner-overline">CONFIRM ACTION</span>
             <h2 id="runner-confirm-title">{confirmAction === "restart" ? "Restart this run?" : "Leave Football Runner?"}</h2>
-            <p>{confirmAction === "restart" ? "Your current distance and score will be lost. A fresh run will begin." : phase === "over" ? "Return to the SETHIS games page." : "Your current run will end and its progress will not be saved as a completed run."}</p>
+            <p>{confirmAction === "restart" ? "Your current distance and score will be lost. A fresh run will begin." : phase === "over" ? "Return to the SETHIS games page." : phase === "ready" ? "Return to the SETHIS introduction. No run is currently in progress." : "Your current run will end and its progress will not be saved as a completed run."}</p>
             <div className="runner-confirm-actions">
               <button type="button" onClick={() => setConfirmAction(null)}>KEEP PLAYING</button>
               <button type="button" className="runner-confirm-primary" onClick={confirmPendingAction}>{confirmAction === "restart" ? "RESTART" : "EXIT"}</button>
