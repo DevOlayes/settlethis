@@ -41,7 +41,7 @@ function validChallenge(value: unknown): value is RunnerChallenge {
 }
 
 function encode(value: unknown): string {
-  return btoa(JSON.stringify(value)).replace(/\\+/g, "-").replace(/\\//g, "_").replace(/=+$/g, "");
+  return btoa(JSON.stringify(value)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
 function decode(value: string): unknown {
