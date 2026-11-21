@@ -69,7 +69,7 @@ function rewriteGlbJson(
   const inputBytes = new Uint8Array(input);
   const inputView = new DataView(input);
   if (inputView.getUint32(0, true) !== 0x46546c67 || inputView.getUint32(4, true) !== 2) {
-    throw new Error("Expected a glTF binary (GLB v2) asset");
+    throw new Error(`Expected a glTF binary (GLB v2) asset; received magic 0x${inputView.getUint32(0, true).toString(16)} and version ${inputView.getUint32(4, true)} (${inputBytes.length} bytes)`);
   }
 
   const chunks: Array<{ type: number; bytes: Uint8Array }> = [];
@@ -153,7 +153,7 @@ function createLoader(): GLTFLoader {
 export async function loadRunnerCharacter(
   url = "/assets/football-runner/player.glb",
 ): Promise<LoadedRunnerCharacter> {
-  const response = await fetch(url, { cache: "force-cache" });
+  const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) throw new Error(`Unable to load footballer asset (${response.status})`);
   const raw = await response.arrayBuffer();
   const buffer = canonicalizeAvatarBuffer(raw);
