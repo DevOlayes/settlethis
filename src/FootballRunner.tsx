@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { RunnerEngine } from "./football-runner/RunnerEngine";
 import { RUNNER_REWARD_DEMO } from "./football-runner/config";
+import {
+  compareRunnerScores,
+  createRunnerChallenge,
+  createRunnerChallengeResultUrl,
+  createRunnerChallengeUrl,
+  decodeRunnerChallenge,
+  decodeRunnerChallengeResult,
+  type RunnerChallengeResult,
+} from "./football-runner/challenges";
 import type { RunnerControls, RunnerHud, RunnerPhase, RunnerRecords, RunnerRunRecord, RunnerSummary } from "./football-runner/types";
 import "./FootballRunner.css";
 
@@ -40,6 +49,11 @@ export default function FootballRunner({ onBack }: Props) {
   const [recordFlags, setRecordFlags] = useState({ distance: false, points: false });
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<"restart" | "exit" | null>(null);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
+  const [shareNotice, setShareNotice] = useState("");
+  const [challengeResult, setChallengeResult] = useState<RunnerChallengeResult | null>(null);
+  const [incomingChallenge] = useState(() => decodeRunnerChallenge(new URLSearchParams(window.location.search).get("challenge")));
+  const [incomingChallengeResult] = useState(() => decodeRunnerChallengeResult(new URLSearchParams(window.location.search).get("challengeResult")));
 
   useEffect(() => {
     const saved = readRecords();
@@ -148,6 +162,41 @@ export default function FootballRunner({ onBack }: Props) {
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
   }, [phase, confirmAction]);
+  const shareUrl = async (url: string, title: string, message: string) => {
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, text: message, url });
+        setShareNotice("Challenge link shared.");
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        setShareNotice("Challenge link copied. Send it to your opponent.");
+      } else {
+        window.prompt("Copy this challenge link:", url);
+        setShareNotice("Copy the link and send it to your opponent.");
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") return;
+      setShareNotice("Sharing is unavailable here. You can try copying the link again.");
+    }
+  };
+  const shareMyChallenge = async () => {
+    if (!summary) return;
+    const challenge = createRunnerChallenge({ points: summary.points, distance: summary.distance, balls: summary.balls });
+    const url = createRunnerChallengeUrl(challenge);
+    await shareUrl(url, "Beat my Football Runner score", `I scored ${summary.points.toLocaleString()} points in SETHIS Football Runner. Think you can beat me?`);
+  };
+  const shareChallengeResult = async () => {
+    if (!summary || !incomingChallenge) return;
+    const result: RunnerChallengeResult = {
+      version: 1,
+      challenge: incomingChallenge,
+      result: { points: summary.points, distance: summary.distance, balls: summary.balls },
+      completedAt: Date.now(),
+    };
+    setChallengeResult(result);
+    const url = createRunnerChallengeResultUrl(result);
+    await shareUrl(url, "I took your Football Runner challenge", `I scored ${summary.points.toLocaleString()} points. Here's how I did against your challenge.`);
+  };
   const toggleSound = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
@@ -185,11 +234,29 @@ export default function FootballRunner({ onBack }: Props) {
                 <span className="runner-overline">THREE LANES. ONE ENDLESS RUN.</span>
                 <h1>Own the pitch.</h1>
                 <p>Dodge the training obstacles, kick glowing footballs and see how far you can go.</p>
+                {incomingChallenge && <section className="runner-challenge-banner">
+                  <span>ONE-ON-ONE CHALLENGE · {incomingChallenge.id.slice(0, 8).toUpperCase()}</span>
+                  <b>BEAT {incomingChallenge.score.points.toLocaleString()} POINTS</b>
+                  <small>{incomingChallenge.score.distance.toLocaleString()} m · {incomingChallenge.score.balls} footballs</small>
+                  <i>Play your run, then send your result back to the challenger.</i>
+                </section>}
+                {incomingChallengeResult && <section className="runner-challenge-banner runner-challenge-result-banner">
+                  <span>CHALLENGE RESULT RECEIVED</span>
+                  <b>{compareRunnerScores(incomingChallengeResult.result, incomingChallengeResult.challenge.score) > 0 ? "CHALLENGER BEATEN" : compareRunnerScores(incomingChallengeResult.result, incomingChallengeResult.challenge.score) < 0 ? "CHALLENGE HOLDER WINS" : "IT'S A TIE"}</b>
+                  <small>Original: {incomingChallengeResult.challenge.score.points.toLocaleString()} pts · Reply: {incomingChallengeResult.result.points.toLocaleString()} pts</small>
+                  <i>{new Date(incomingChallengeResult.completedAt).toLocaleString()} · Self-reported web result, not server-verified.</i>
+                </section>}
                 <div className="runner-personal-best">
                   <span>PERSONAL BEST</span>
                   <b>{records.bestDistance.toLocaleString()} m</b>
                   <i>{records.bestPoints.toLocaleString()} points · {records.totalRuns} {records.totalRuns === 1 ? "run" : "runs"}</i>
                 </div>
+                <button className="runner-leaderboard-toggle" onClick={() => setLeaderboardOpen((open) => !open)} aria-expanded={leaderboardOpen}>{leaderboardOpen ? "HIDE MY LEADERBOARD" : "MY LEADERBOARD"} <span>{records.recentRuns.length} RUNS ↕</span></button>
+                {leaderboardOpen && <section className="runner-local-leaderboard"><div className="runner-instructions-heading">TOP SCORES ON THIS DEVICE</div>
+                  {[...records.recentRuns].sort((a,b) => b.points-a.points || b.distance-a.distance || b.balls-a.balls).slice(0,5).map((run,index) => <div key={`${run.playedAt}-${index}`}><b>#{index+1}</b><span>{run.points.toLocaleString()} pts</span><small>{run.distance.toLocaleString()} m · {run.balls} balls</small></div>)}
+                  {records.recentRuns.length === 0 && <p>Complete a run to start your personal leaderboard.</p>}
+                  <small>Private to this browser/device. Not a global ranking.</small>
+                </section>}
                 {records.recentRuns.length > 0 && <div className="runner-recent-runs">
                   <span>RECENT RUNS</span>
                   {records.recentRuns.slice(0, 3).map((run) => <div key={run.playedAt}>
@@ -208,6 +275,7 @@ export default function FootballRunner({ onBack }: Props) {
                   <button onClick={start}>START RUN <span>→</span></button>
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
                 </div>
+                {shareNotice && <p className="runner-share-notice" role="status">{shareNotice}</p>}
                 <small>SWIPE OR USE THE CONTROLS BELOW · UP TO JUMP · DOWN TO SLIDE</small>
               </>}
               {phase === "paused" && <>
@@ -237,6 +305,12 @@ export default function FootballRunner({ onBack }: Props) {
                 {(recordFlags.distance || recordFlags.points) && <div className="runner-new-record">
                   NEW PERSONAL {recordFlags.distance && recordFlags.points ? "RECORD" : recordFlags.distance ? "DISTANCE RECORD" : "POINTS RECORD"}!
                 </div>}
+                {incomingChallenge && <section className="runner-challenge-outcome">
+                  <span>YOUR CHALLENGE RESULT</span>
+                  <b>{compareRunnerScores({ points: summary.points, distance: summary.distance, balls: summary.balls }, incomingChallenge.score) > 0 ? "YOU BEAT THE CHALLENGE!" : compareRunnerScores({ points: summary.points, distance: summary.distance, balls: summary.balls }, incomingChallenge.score) < 0 ? "THE CHALLENGE HOLDER WINS" : "IT'S A TIE!"}</b>
+                  <div><span>YOUR SCORE <strong>{summary.points.toLocaleString()}</strong></span><span>TO BEAT <strong>{incomingChallenge.score.points.toLocaleString()}</strong></span></div>
+                  <button className="runner-secondary" onClick={shareChallengeResult}>SEND RESULT TO CHALLENGER ↗</button>
+                </section>}
                 <div className="runner-personal-best runner-result-best">
                   <span>ALL-TIME BEST</span>
                   <b>{records.bestDistance.toLocaleString()} m</b>
@@ -246,8 +320,10 @@ export default function FootballRunner({ onBack }: Props) {
                 <div className="runner-rescue-notice"><b>AD RESCUES NOT AVAILABLE IN THIS WEB PREVIEW</b><span>In-game rescue limits are configured, but rewarded-ad verification is not connected. This run has ended.</span></div>
                 <div className="runner-ready-actions">
                   <button onClick={start}>RUN AGAIN <span>→</span></button>
+                  <button className="runner-secondary" onClick={shareMyChallenge}>CHALLENGE A FRIEND ↗</button>
                   <button className="runner-secondary" onClick={requestExit}>BACK TO GAMES</button>
                 </div>
+                {shareNotice && <p className="runner-share-notice" role="status">{shareNotice}</p>}
               </>}
             </div>
           ) : null}
