@@ -148,14 +148,7 @@ function addFacilities(world: THREE.Group, materials: Record<string, THREE.Mater
     }
     box(world, [0.2, 2.7, 2.1], [side * 10.35, 1.45, -118], materials.coral, false);
   }
-  // Low illuminated canopy guides the path between the training grounds and facilities.
-  box(world, [10.8, 0.32, 7], [0, 4.4, -116], materials.roof);
-  for (const side of [-1, 1]) {
-    box(world, [0.16, 4.2, 0.18], [side * 5.15, 2.1, -116], materials.metal);
-  }
-  for (const z of [-118, -121, -124]) {
-    box(world, [0.6, 0.08, 0.16], [0, 4.18, z], materials.lampGlow, false);
-  }
+  // Keep the facility approach open above the running lanes for uninterrupted visibility.
 }
 
 export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
