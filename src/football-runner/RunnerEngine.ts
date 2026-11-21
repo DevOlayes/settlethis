@@ -9,7 +9,8 @@ import { createPlayerCharacter } from "./PlayerCharacter";
 import { PlayerAnimator } from "./PlayerAnimator";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
 import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
-import type { RunnerAction, RunnerEngineCallbacks, RunnerPhase, RunnerSceneBundle, RunnerSummary } from "./types";
+import { applyRunnerRenderQuality } from "./RenderQuality";
+import type { RunnerAction, RunnerEngineCallbacks, RunnerPhase, RunnerSceneBundle, RunnerSummary, RunnerPerformanceSnapshot, RunnerRenderQuality } from "./types";
 
 type ActiveObject = THREE.Group;
 
@@ -45,6 +46,8 @@ export class RunnerEngine {
   private lastObstacleType = -1;
   private uiElapsed = 0;
   private performanceElapsed = 0;
+  private poorPerformanceSamples = 0;
+  private strongPerformanceSamples = 0;
   private lastObstacleLane = 2;
   private lastDistanceMilestone = 0;
   private lastSpeedTier = 4;
@@ -289,13 +292,37 @@ export class RunnerEngine {
     this.performanceElapsed += rawDelta;
     if (this.performanceElapsed >= 5) {
       this.performanceElapsed = 0;
-      this.callbacks.onPerformance?.(this.performance.takeSnapshot());
+      const snapshot = this.performance.takeSnapshot();
+      this.adjustRenderQuality(snapshot);
+      this.callbacks.onPerformance?.(snapshot);
     }
     if (!this.paused && !this.over) this.update(delta);
     this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
     if (!this.paused && !this.over) this.frame = requestAnimationFrame(this.animate);
     else this.frame = 0;
   };
+
+  private adjustRenderQuality(snapshot: RunnerPerformanceSnapshot): void {
+    if (snapshot.framesSampled < 30) return;
+    const struggling = snapshot.fps < 42 || snapshot.averageFrameMs > 24 || snapshot.slowFrameRatio > 0.35;
+    const headroom = snapshot.fps >= 57 && snapshot.averageFrameMs < 18 && snapshot.slowFrameRatio < 0.08;
+    this.poorPerformanceSamples = struggling ? this.poorPerformanceSamples + 1 : 0;
+    this.strongPerformanceSamples = headroom ? this.strongPerformanceSamples + 1 : 0;
+
+    if (this.poorPerformanceSamples >= 2) {
+      const next: RunnerRenderQuality = this.bundle.renderQuality === "high" ? "balanced" : "low";
+      if (next !== this.bundle.renderQuality) applyRunnerRenderQuality(this.bundle, next);
+      this.poorPerformanceSamples = 0;
+      this.strongPerformanceSamples = 0;
+      return;
+    }
+    if (this.strongPerformanceSamples >= 3) {
+      const next: RunnerRenderQuality = this.bundle.renderQuality === "low" ? "balanced" : "high";
+      if (next !== this.bundle.renderQuality) applyRunnerRenderQuality(this.bundle, next);
+      this.strongPerformanceSamples = 0;
+      this.poorPerformanceSamples = 0;
+    }
+  }
 
   private update(delta: number): void {
     const config = RUNNER_CONFIG;
