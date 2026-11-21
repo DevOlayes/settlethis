@@ -8,18 +8,20 @@ export type PlayerAnimationInput = {
   laneLean: number;
 };
 
-type RunnerMotion = "run" | "sprint" | "jump" | "slide" | "crouch" | "kick";
+type RunnerMotion = "run" | "sprint" | "jumpTakeoff" | "jumpAir" | "jumpLand" | "slide" | "crouch" | "kick";
 
 const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
   run: [/\\brun\\b/, /jog/, /\\bwalk\\b/, /locomotion/],
   sprint: [/sprint/, /fast.?run/, /run.?fast/],
-  jump: [/jump/, /hop/, /take.?off/, /airborne/],
+  jumpTakeoff: [/jump.?take.?off/, /take.?off/, /jump.?start/],
+  jumpAir: [/jump.?air/, /airborne/, /jump.?loop/, /in.?air/],
+  jumpLand: [/jump.?land/, /landing/, /land.?jump/],
   slide: [/slide/, /sliding/, /low.?slide/, /roll/],
   crouch: [/crouch/, /duck/, /low.?walk/, /sneak/],
   kick: [/soccer.?kick/, /football.?kick/, /kick/, /shoot/, /pass/, /strike/],
 };
 
-const ONESHOT_MOTIONS = new Set<RunnerMotion>(["jump", "slide", "kick"]);
+const ONESHOT_MOTIONS = new Set<RunnerMotion>(["jumpTakeoff", "jumpLand", "slide", "kick"]);
 
 export class PlayerAnimator {
   private runClock = 0;
@@ -34,6 +36,8 @@ export class PlayerAnimator {
   private riggedKickRemaining = 0;
   private riggedSlideRemaining = 0;
   private riggedJumping = false;
+  private jumpPhaseElapsed = 0;
+  private landingRemaining = 0;
 
   constructor(private readonly character: PlayerCharacter) {}
 
@@ -53,7 +57,7 @@ export class PlayerAnimator {
     }
 
     // Prefer dedicated locomotion clips; never use a one-shot kick/slide as a run.
-    for (const motion of ["run", "sprint", "jump", "crouch", "slide", "kick"] as RunnerMotion[]) {
+    for (const motion of ["run", "sprint", "jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slide", "kick"] as RunnerMotion[]) {
       const patterns = CLIP_PATTERNS[motion];
       for (const [name, action] of this.riggedActions) {
         if (patterns.some((pattern) => pattern.test(name))) {
@@ -83,7 +87,8 @@ export class PlayerAnimator {
     next.paused = false;
     next.setEffectiveWeight(1);
     next.setEffectiveTimeScale(1);
-    if (ONESHOT_MOTIONS.has(motion) && next !== this.actionByMotion.get("run")) {
+    const loopOnce = ONESHOT_MOTIONS.has(motion) && !(motion === "slide" && next === this.actionByMotion.get("crouch"));
+    if (loopOnce && next !== this.actionByMotion.get("run")) {
       next.setLoop(THREE.LoopOnce, 1);
       next.clampWhenFinished = true;
     } else {
@@ -104,7 +109,12 @@ export class PlayerAnimator {
       if (this.actionByMotion.has("crouch")) return "crouch";
       return "run";
     }
-    if (input.jumping && this.actionByMotion.has("jump")) return "jump";
+    if (input.jumping) {
+      if (this.jumpPhaseElapsed < 0.18 && this.actionByMotion.has("jumpTakeoff")) return "jumpTakeoff";
+      if (this.actionByMotion.has("jumpAir")) return "jumpAir";
+      if (this.actionByMotion.has("jumpTakeoff")) return "jumpTakeoff";
+    }
+    if (this.landingRemaining > 0 && this.actionByMotion.has("jumpLand")) return "jumpLand";
     if (input.speedRatio > 1.22 && this.actionByMotion.has("sprint")) return "sprint";
     return "run";
   }
@@ -112,7 +122,10 @@ export class PlayerAnimator {
   private updateRigged(delta: number, input: PlayerAnimationInput): void {
     if (!this.riggedMixer) return;
     this.riggedKickRemaining = Math.max(0, this.riggedKickRemaining - delta);
-    this.riggedSlideRemaining = Math.max(0, this.riggedSlideRemaining - delta);
+    if (input.jumping && !this.riggedJumping) this.jumpPhaseElapsed = 0;
+    if (input.jumping) this.jumpPhaseElapsed += delta;
+    if (!input.jumping && this.riggedJumping) this.landingRemaining = 0.32;
+    else this.landingRemaining = Math.max(0, this.landingRemaining - delta);
     this.riggedJumping = input.jumping;
 
     const motion = this.chooseRiggedMotion(input);
@@ -124,8 +137,6 @@ export class PlayerAnimator {
       );
     }
 
-    // Root lean and counter-rotation give lane changes weight without moving
-    // the gameplay root away from its collision lane.
     this.character.root.rotation.z = THREE.MathUtils.damp(
       this.character.root.rotation.z, -input.laneLean * 0.15, 9, delta,
     );
@@ -143,6 +154,8 @@ export class PlayerAnimator {
     this.riggedKickRemaining = 0;
     this.riggedSlideRemaining = 0;
     this.riggedJumping = false;
+    this.jumpPhaseElapsed = 0;
+    this.landingRemaining = 0;
     this.activeRiggedMotion = undefined;
     this.activeRiggedAction = undefined;
     this.riggedMixer?.stopAllAction();
