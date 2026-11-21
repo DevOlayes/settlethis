@@ -236,11 +236,11 @@ export default function FootballRunner({ onBack }: Props) {
                   <span>ONE-ON-ONE CHALLENGE · {incomingChallenge.id.slice(0, 8).toUpperCase()}</span>
                   <b>BEAT {incomingChallenge.score.points.toLocaleString()} POINTS</b>
                   <small>{incomingChallenge.score.distance.toLocaleString()} m · {incomingChallenge.score.balls} footballs</small>
-                  <i>Play your run, then send your result back to the challenger.</i>
+                  <i>Highest points wins; distance, then footballs, break ties. Send your result back after the run. Shared scores are not verified.</i>
                 </section>}
                 {incomingChallengeResult && <section className="runner-challenge-banner runner-challenge-result-banner">
                   <span>CHALLENGE RESULT RECEIVED</span>
-                  <b>{compareRunnerScores(incomingChallengeResult.result, incomingChallengeResult.challenge.score) > 0 ? "CHALLENGER BEATEN" : compareRunnerScores(incomingChallengeResult.result, incomingChallengeResult.challenge.score) < 0 ? "CHALLENGE HOLDER WINS" : "IT'S A TIE"}</b>
+                  <b>{compareRunnerScores(incomingChallengeResult.result, incomingChallengeResult.challenge.score) > 0 ? "YOUR CHALLENGE WAS BEATEN" : compareRunnerScores(incomingChallengeResult.result, incomingChallengeResult.challenge.score) < 0 ? "YOU HELD THE SCORE" : "IT'S A TIE"}</b>
                   <small>Original: {incomingChallengeResult.challenge.score.points.toLocaleString()} pts · Reply: {incomingChallengeResult.result.points.toLocaleString()} pts</small>
                   <i>{new Date(incomingChallengeResult.completedAt).toLocaleString()} · Self-reported web result, not server-verified.</i>
                 </section>}
@@ -250,7 +250,7 @@ export default function FootballRunner({ onBack }: Props) {
                   <i>{records.bestPoints.toLocaleString()} points · {records.totalRuns} {records.totalRuns === 1 ? "run" : "runs"}</i>
                 </div>
                 <button className="runner-leaderboard-toggle" onClick={() => setLeaderboardOpen((open) => !open)} aria-expanded={leaderboardOpen}>{leaderboardOpen ? "HIDE MY LEADERBOARD" : "MY LEADERBOARD"} <span>{records.recentRuns.length} RUNS ↕</span></button>
-                {leaderboardOpen && <section className="runner-local-leaderboard"><div className="runner-instructions-heading">TOP SCORES ON THIS DEVICE</div>
+                {leaderboardOpen && <section className="runner-local-leaderboard"><div className="runner-instructions-heading">TOP SCORES · RECENT 20 RUNS</div>
                   {[...records.recentRuns].sort((a,b) => b.points-a.points || b.distance-a.distance || b.balls-a.balls).slice(0,5).map((run,index) => <div key={`${run.playedAt}-${index}`}><b>#{index+1}</b><span>{run.points.toLocaleString()} pts</span><small>{run.distance.toLocaleString()} m · {run.balls} balls</small></div>)}
                   {records.recentRuns.length === 0 && <p>Complete a run to start your personal leaderboard.</p>}
                   <small>Private to this browser/device. Not a global ranking.</small>
@@ -306,7 +306,7 @@ export default function FootballRunner({ onBack }: Props) {
                 {incomingChallenge && <section className="runner-challenge-outcome">
                   <span>YOUR CHALLENGE RESULT</span>
                   <b>{compareRunnerScores({ points: summary.points, distance: summary.distance, balls: summary.balls }, incomingChallenge.score) > 0 ? "YOU BEAT THE CHALLENGE!" : compareRunnerScores({ points: summary.points, distance: summary.distance, balls: summary.balls }, incomingChallenge.score) < 0 ? "THE CHALLENGE HOLDER WINS" : "IT'S A TIE!"}</b>
-                  <div><span>YOUR SCORE <strong>{summary.points.toLocaleString()}</strong></span><span>TO BEAT <strong>{incomingChallenge.score.points.toLocaleString()}</strong></span></div>
+                  <div><span>YOUR SCORE <strong>{summary.points.toLocaleString()}</strong></span><span>TO BEAT <strong>{incomingChallenge.score.points.toLocaleString()}</strong></span></div><small>Points decide. Distance, then collected footballs, break ties.</small>
                   <button className="runner-secondary" onClick={shareChallengeResult}>SEND RESULT TO CHALLENGER ↗</button>
                 </section>}
                 <div className="runner-personal-best runner-result-best">
