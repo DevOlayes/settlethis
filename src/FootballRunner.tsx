@@ -229,9 +229,15 @@ export default function FootballRunner({ onBack }: Props) {
           ) : phase !== "running" ? (
             <div className="runner-overlay">
               {phase === "ready" && <>
-                <span className="runner-overline">THREE LANES. ONE ENDLESS RUN.</span>
+                <div className="runner-intro-art" aria-hidden="true">
+                  <div className="runner-intro-pitch"><i/><i/><i/></div>
+                  <div className="runner-intro-ball">⚽</div>
+                  <span className="runner-intro-speed">ENDLESS MODE</span>
+                  <span className="runner-intro-mark">SETHIS · FOOTBALL RUNNER</span>
+                </div>
+                <span className="runner-overline">THREE LANES. NO SECOND CHANCES.</span>
                 <h1>Own the pitch.</h1>
-                <p>Dodge the training obstacles, kick glowing footballs and see how far you can go.</p>
+                <p>Read the run. Beat the obstacles. Strike for every glowing ball. How far can you go?</p>
                 {incomingChallenge && <section className="runner-challenge-banner">
                   <span>ONE-ON-ONE CHALLENGE · {incomingChallenge.id.slice(0, 8).toUpperCase()}</span>
                   <b>BEAT {incomingChallenge.score.points.toLocaleString()} POINTS</b>
@@ -285,24 +291,34 @@ export default function FootballRunner({ onBack }: Props) {
                 <button className="runner-text-action" onClick={requestExit}>EXIT TO GAMES</button>
               </>}
               {phase === "over" && summary && <>
-                <span className="runner-overline">COLLISION · FULL TIME</span>
-                <h1>Run complete.</h1>
-                <p>Your run has ended. Here is your performance breakdown.</p>
-                <div className="runner-result-grid">
-                  <div><small>DISTANCE</small><b>{summary.distance.toLocaleString()} m</b></div>
-                  <div><small>TOTAL POINTS</small><b>{summary.points.toLocaleString()}</b></div>
-                  <div><small>FOOTBALLS</small><b>{summary.balls}</b></div>
-                  <div><small>DISTANCE POINTS</small><b>{summary.distancePoints.toLocaleString()}</b></div>
-                  <div><small>COLLECTION POINTS</small><b>{summary.footballPoints.toLocaleString()}</b></div>
-                  <div><small>ESTIMATED SETHIS</small><b>{summary.sethis.toLocaleString()}</b></div>
-                  <div><small>FOOTBALL REWARD</small><b>{summary.rewardFootball.toLocaleString()}</b></div>
-                  <div><small>DISTANCE BONUS</small><b>{summary.rewardDistance.toLocaleString()}</b></div>
-                  <div><small>PERFORMANCE BONUS</small><b>{summary.rewardPerformance.toLocaleString()}</b></div>
-                  <div><small>DAILY PREVIEW TOTAL</small><b>{(summary.dailyPreviewTotal ?? summary.sethis).toLocaleString()} / {RUNNER_REWARD_DEMO.dailyPreviewCap.toLocaleString()}</b></div>
+                <div className="runner-result-heading">
+                  <span className="runner-overline">FULL TIME · RUN SUMMARY</span>
+                  <h1>{recordFlags.distance || recordFlags.points ? "New personal best!" : "Run complete."}</h1>
+                  <p>Every metre counts. Here's how you performed.</p>
                 </div>
-                {(recordFlags.distance || recordFlags.points) && <div className="runner-new-record">
-                  NEW PERSONAL {recordFlags.distance && recordFlags.points ? "RECORD" : recordFlags.distance ? "DISTANCE RECORD" : "POINTS RECORD"}!
-                </div>}
+                <section className="runner-score-showcase" aria-label="Final score">
+                  <div className="runner-score-label">TOTAL SCORE</div>
+                  <strong>{summary.points.toLocaleString()}</strong>
+                  <span>POINTS</span>
+                  <div className="runner-score-ribbon"><i/> MATCH PERFORMANCE <i/></div>
+                </section>
+                <section className="runner-stat-strip" aria-label="Run statistics">
+                  <div><small>DISTANCE</small><b>{summary.distance.toLocaleString()}<em>m</em></b></div>
+                  <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
+                  <div><small>BEST DISTANCE</small><b>{records.bestDistance.toLocaleString()}<em>m</em></b></div>
+                </section>
+                <section className="runner-breakdown-panel">
+                  <div className="runner-breakdown-title"><b>PERFORMANCE BREAKDOWN</b><span>POINTS & REWARDS</span></div>
+                  <div className="runner-breakdown-row"><span>DISTANCE SCORE</span><b>{summary.distancePoints.toLocaleString()} <i>PTS</i></b></div>
+                  <div className="runner-breakdown-row"><span>FOOTBALL COLLECTION</span><b>{summary.footballPoints.toLocaleString()} <i>PTS</i></b></div>
+                  <div className="runner-breakdown-divider"/>
+                  <div className="runner-breakdown-row runner-reward-row"><span>FOOTBALL REWARD</span><b>{summary.rewardFootball.toLocaleString()}</b></div>
+                  <div className="runner-breakdown-row runner-reward-row"><span>DISTANCE BONUS</span><b>{summary.rewardDistance.toLocaleString()}</b></div>
+                  <div className="runner-breakdown-row runner-reward-row"><span>PERFORMANCE BONUS</span><b>{summary.rewardPerformance.toLocaleString()}</b></div>
+                  <div className="runner-estimated-total"><span>ESTIMATED SETHIS</span><b>{summary.sethis.toLocaleString()}</b></div>
+                  <div className="runner-daily-progress"><span>DAILY PREVIEW LIMIT</span><b>{(summary.dailyPreviewTotal ?? summary.sethis).toLocaleString()} / {RUNNER_REWARD_DEMO.dailyPreviewCap.toLocaleString()}</b></div>
+                </section>
+                {(recordFlags.distance || recordFlags.points) && <div className="runner-new-record"><span>✦</span> NEW PERSONAL {recordFlags.distance && recordFlags.points ? "RECORD" : recordFlags.distance ? "DISTANCE RECORD" : "POINTS RECORD"} <span>✦</span></div>}
                 {incomingChallenge && <section className="runner-challenge-outcome">
                   <span>YOUR CHALLENGE RESULT</span>
                   <b>{compareRunnerScores({ points: summary.points, distance: summary.distance, balls: summary.balls }, incomingChallenge.score) > 0 ? "YOU BEAT THE CHALLENGE!" : compareRunnerScores({ points: summary.points, distance: summary.distance, balls: summary.balls }, incomingChallenge.score) < 0 ? "THE CHALLENGE HOLDER WINS" : "IT'S A TIE!"}</b>
