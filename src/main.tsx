@@ -33,12 +33,14 @@ function TelegramLanding(){
    <p className="telegram-landing-disclaimer">SETHIS rewards are subject to each published task or referral rule. CT is the separate in-app participation currency — it is not SETHIS.</p>
    {botUrl?<a className="telegram-landing-button" href={botUrl}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3.5 18.3 20c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L5.7 13.6.8 12c-1.1-.3-1.1-1.1.2-1.6L20 3c.9-.3 1.7.2 1.5.5Z"/></svg><span>OPEN TELEGRAM & START EARNING</span><b>↗</b></a>:<button className="telegram-landing-button" disabled><span>{loading?"CONNECTING TO TELEGRAM…":"TELEGRAM LINK UNAVAILABLE"}</span></button>}
    <p className="telegram-landing-foot">Register in Telegram to unlock games, tasks, rewards and your SETHIS wallet.</p>
+   <a className="telegram-landing-preview-link" href="/football-runner-preview">PLAY FOOTBALL RUNNER IN YOUR BROWSER <span>↗</span></a>
   </section>
  </main>;
 }
 
 function Root(){
  const isFootballRunner=window.location.pathname==="/football-runner";
+ const isRunnerPreview=window.location.pathname==="/football-runner-preview";
  const [telegramUser,setTelegramUser]=useState<TelegramUser|null>(null);
  const [authStatus,setAuthStatus]=useState<"checking"|"ready"|"outside"|"failed">("checking");
  const [authError,setAuthError]=useState("");
@@ -62,6 +64,7 @@ function Root(){
   return()=>{active=false;};
  },[retry,isAdmin]);
  if(isAdmin)return <AdminPortal/>;
+ if(isRunnerPreview)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the pitch</h1><p>Loading browser preview…</p></div></main>}><FootballRunner telegramUser={null} preview onBack={()=>{window.location.href="/";}}/></Suspense>;
  if(authStatus==="outside")return <TelegramLanding/>;
  if(authStatus==="checking")return <main className="telegram-app-loading"><div><div className="telegram-app-mark"><span className="telegram-loader-orbit"/><BrandMark className="telegram-loader-logo"/><span className="telegram-loader-word">SETHIS</span></div><h1>Getting your game ready</h1><p>Verifying your Telegram account…</p></div></main>;
  if(authStatus==="failed")return <main className="telegram-app-loading"><div className="telegram-app-error"><div className="telegram-app-mark telegram-app-mark-static"><BrandMark className="telegram-loader-logo"/><span className="telegram-loader-word">SETHIS</span></div><h1>Telegram sign-in needs attention</h1><p>{authError}</p><button onClick={()=>setRetry(value=>value+1)}>TRY AGAIN</button><a href={APP_ORIGIN+"/"}>Return to the SETHIS introduction</a></div></main>;
