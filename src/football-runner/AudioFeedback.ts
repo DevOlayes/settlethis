@@ -20,7 +20,8 @@ export class RunnerAudioFeedback {
       const AudioContextConstructor = window.AudioContext;
       if (!AudioContextConstructor) return;
       if (!this.context) this.createContext(new AudioContextConstructor());
-      if (this.context.state === "suspended") await this.context.resume();
+      const context = this.context;
+      if (context && context.state === "suspended") await context.resume();
       this.updateAmbienceLevel();
     } catch {
       // Audio is an enhancement; gameplay remains available if a browser blocks it.
