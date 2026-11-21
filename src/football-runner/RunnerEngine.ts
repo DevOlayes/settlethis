@@ -234,7 +234,7 @@ export class RunnerEngine {
     this.slideRemaining = Math.max(0, this.slideRemaining - delta);
     this.playerAnimator.update(delta, {
       speedRatio: speed / config.movement.initialSpeed,
-      jumping: this.jumpProgress > 0.25,
+      jumping: this.jumpProgress > 0.05,
       sliding: this.slideRemaining > 0,
       laneLean: clamp(this.targetLane - player.position.x / config.laneWidth, -1, 1),
     });
@@ -271,7 +271,7 @@ export class RunnerEngine {
           this.playerAnimator.triggerKick();
           this.releaseObject(object);
           this.objects.splice(index, 1);
-        } else if (!(this.jumpProgress > 0.25 && object.userData.obstacleType === "hurdle") && this.slideRemaining <= 0) {
+        } else if (!(this.jumpProgress > 0.05 && object.userData.obstacleType === "hurdle") && this.slideRemaining <= 0) {
           this.finish();
           break;
         }
