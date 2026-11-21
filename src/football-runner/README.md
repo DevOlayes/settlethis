@@ -159,3 +159,16 @@ The prototype character has been replaced by a reusable articulated footballer r
 - Added a confirmation dialog for restarting or leaving, an Escape-key pause/exit affordance, accessible labels and modal semantics, scrollable long-form results, and responsive overlay styling for shorter mobile screens.
 - Existing automatic pause when the browser tab is hidden is retained. Sound toggle and touch controls remain available and respect the active game phase.
 - This is an implementation/build milestone only. No live gameplay, browser interaction, audio, ad-provider, or Android device testing was performed. Collision feel, screen transitions, keyboard focus behaviour and small-screen layout remain for the authorised final validation stage.
+
+## Stage 14 — asynchronous challenges, sharing and rankings
+
+- Added a compact, versioned challenge payload encoded into a shareable `/football-runner?challenge=...` URL. It carries the challenge ID, creation time and the score to beat (points, distance and collected footballs); the URL opens the standalone web game directly.
+- A recipient sees the challenge before starting. After completing a run, the game compares scores and provides a one-tap share action that sends a challenge-result URL back to the original player.
+- The original player can open the response URL to see whether their score held, was beaten or tied. No simultaneous online session, account matching or live presence is required.
+- Winner rules are explicit and deterministic: total points first; distance breaks a points tie; collected footballs break a remaining tie.
+- Sharing uses the device share sheet where available, then clipboard copy, with a manual-copy fallback. The share action does not require a Telegram bot or a new social integration.
+- Added a personal top-five leaderboard from the 20 most recent locally stored runs, sorted by points, distance and footballs. It is clearly labelled as browser/device-local and is not presented as a public ranking.
+- Challenge payload parsing is defensive: version and field checks, numeric bounds, identifier validation and a maximum encoded URL length. Invalid or malformed challenge parameters are ignored rather than crashing the game.
+- **Important prototype boundary:** challenge links contain self-reported client scores. They can be copied, edited or fabricated and are not signed by a trusted server. The UI explicitly marks received results as unverified. They are suitable for friendly web-preview challenges only—not prizes, SETHIS payouts, CT stakes, official rankings or anti-cheat decisions.
+- Global cross-player rankings and trusted challenge records are intentionally deferred until authenticated Telegram identity, server-side run verification, persistent D1 records, challenge ownership/expiry rules and anti-cheat are available in the later Telegram/release integration stage. No unauthenticated score-submission endpoint or wallet/reward path was introduced.
+- No live browser, share-sheet, gameplay or Android device test was run. Challenge-link handoff, mobile sharing behaviour, result comparison and local leaderboard layout remain for the authorised final validation stage.
