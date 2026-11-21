@@ -55,5 +55,5 @@ export const RUNNER_REWARD_DEMO = {
     { points: 10000, bonus: 8 },
     { points: 5000, bonus: 4 },
   ],
-  dailyDisplayCap: 1500,
+  prototypeDisplayCap: 1500,
 } as const;
