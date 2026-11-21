@@ -8,7 +8,13 @@ export type RunnerSummary = {
   balls: number;
   distancePoints: number;
   footballPoints: number;
+  rewardFootball: number;
+  rewardDistance: number;
+  rewardPerformance: number;
   sethis: number;
+  dailyPreviewEarned?: number;
+  dailyPreviewTotal?: number;
+  dailyPreviewRemaining?: number;
 };
 export type RunnerRunRecord = {
   playedAt: number;
