@@ -71,7 +71,7 @@ function addCrowd(world: THREE.Group): void {
   const bodies = new THREE.InstancedMesh(bodyGeometry, bodyMaterial, count);
   const heads = new THREE.InstancedMesh(headGeometry, headMaterial, count);
   const dummy = new THREE.Object3D();
-  const palette = [0xddd5d2, 0x7b5360, 0x51465e, 0x9b8acb, 0x8d7770, 0x6f7770, 0xe98272, 0xaaa3b5];
+  const palette = [0xe5e2dc, 0x7b5360, 0x51465e, 0x9b8acb, 0x8d7770, 0x6f7770, 0xe98272, 0xaaa3b5, 0x2c6fba, 0xf1f1eb, 0x2f9a62];
   let index = 0;
   for (const side of [-1, 1]) {
     for (let row = 0; row < 11; row++) {
@@ -211,8 +211,10 @@ function addFacilities(world: THREE.Group, materials: Record<string, THREE.Mater
 export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   const { colors, camera: cameraConfig, world: worldConfig } = RUNNER_CONFIG;
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(colors.background);
-  scene.fog = new THREE.Fog(colors.background, worldConfig.fogNear, worldConfig.fogFar);
+  // Daylight stadium atmosphere: a clear sky and pale distance haze replace the previous dark tunnel-like mood.
+  const skyBlue = new THREE.Color(0x83c8f2);
+  scene.background = skyBlue;
+  scene.fog = new THREE.Fog(0xa8d9f4, worldConfig.fogNear + 18, worldConfig.fogFar + 55);
 
   const camera = new THREE.PerspectiveCamera(
     cameraConfig.fov,
@@ -240,11 +242,11 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   renderer.shadowMap.autoUpdate = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  renderer.toneMappingExposure = 1.32;
   host.appendChild(renderer.domElement);
 
-  scene.add(new THREE.HemisphereLight(0xe5dff0, 0x252b2d, 1.65));
-  const keyLight = new THREE.DirectionalLight(0xffe2d5, 2.15);
+  scene.add(new THREE.HemisphereLight(0xeaf7ff, 0x526f45, 2.05));
+  const keyLight = new THREE.DirectionalLight(0xfff2d8, 3.05);
   keyLight.position.set(-8, 15, 7);
   keyLight.userData.runnerShadowLight = true;
   keyLight.castShadow = renderQuality !== "low";
@@ -260,14 +262,14 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   scene.add(keyLight);
 
   // Broad fill keeps the player's kit and obstacles legible in covered sections.
-  const frontFill = new THREE.DirectionalLight(0xd8c8e8, 0.72);
+  const frontFill = new THREE.DirectionalLight(0xf0f7ff, 1.05);
   frontFill.position.set(7, 8, 10);
   scene.add(frontFill);
-  const coolRim = new THREE.DirectionalLight(0x9b8acb, 0.42);
+  const coolRim = new THREE.DirectionalLight(0xb6ddf5, 0.32);
   coolRim.position.set(0, 8, -12);
   scene.add(coolRim);
 
-  const coralFill = new THREE.PointLight(colors.coral, 0.85, 30);
+  const coralFill = new THREE.PointLight(colors.coral, 0.28, 24);
   coralFill.position.set(0, 3.5, -13);
   scene.add(coralFill);
 
@@ -275,23 +277,23 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   scene.add(world);
 
   const materials: Record<string, THREE.Material> = {
-    pitch: new THREE.MeshStandardMaterial({ color: colors.pitch, roughness: 0.96 }),
-    stand: new THREE.MeshStandardMaterial({ color: 0x30283b, roughness: 0.9 }),
-    seatA: new THREE.MeshStandardMaterial({ color: 0x46384f, roughness: 0.84 }),
-    seatB: new THREE.MeshStandardMaterial({ color: 0x59445c, roughness: 0.84 }),
-    roof: new THREE.MeshStandardMaterial({ color: 0x252334, roughness: 0.82, metalness: 0.18 }),
+    pitch: new THREE.MeshStandardMaterial({ color: 0x3c9d43, roughness: 0.96 }),
+    stand: new THREE.MeshStandardMaterial({ color: 0x596a7a, roughness: 0.9 }),
+    seatA: new THREE.MeshStandardMaterial({ color: 0x657d91, roughness: 0.84 }),
+    seatB: new THREE.MeshStandardMaterial({ color: 0x8297a6, roughness: 0.84 }),
+    roof: new THREE.MeshStandardMaterial({ color: 0x647b8d, roughness: 0.82, metalness: 0.12 }),
     metal: new THREE.MeshStandardMaterial({ color: 0x777483, roughness: 0.48, metalness: 0.58 }),
     coral: new THREE.MeshStandardMaterial({ color: colors.coral, roughness: 0.72 }),
     light: new THREE.MeshStandardMaterial({ color: 0xd5c8b5, roughness: 0.35, emissive: 0x76634a, emissiveIntensity: 0.6 }),
     lampGlow: new THREE.MeshBasicMaterial({ color: 0xffe5bd }),
     scoreboard: new THREE.MeshBasicMaterial({ color: 0x201d2b }),
     adBoard: new THREE.MeshStandardMaterial({ color: 0x211d2b, roughness: 0.6, metalness: 0.22 }),
-    concrete: new THREE.MeshStandardMaterial({ color: 0x494453, roughness: 0.9 }),
-    building: new THREE.MeshStandardMaterial({ color: 0x353342, roughness: 0.78, metalness: 0.12 }),
+    concrete: new THREE.MeshStandardMaterial({ color: 0x9aa8ae, roughness: 0.9 }),
+    building: new THREE.MeshStandardMaterial({ color: 0x7d929d, roughness: 0.78, metalness: 0.12 }),
     glass: new THREE.MeshStandardMaterial({ color: 0x66717b, roughness: 0.22, metalness: 0.5, transparent: true, opacity: 0.62 }),
     windowFrame: new THREE.MeshStandardMaterial({ color: 0xaaa1ad, metalness: 0.55, roughness: 0.4 }),
     tunnelLight: new THREE.MeshBasicMaterial({ color: 0xe9a18f }),
-    trainingTurf: new THREE.MeshStandardMaterial({ color: 0x304a3d, roughness: 0.98 }),
+    trainingTurf: new THREE.MeshStandardMaterial({ color: 0x459d4c, roughness: 0.98 }),
     marking: new THREE.MeshBasicMaterial({ color: 0xe9e2d7, transparent: true, opacity: 0.68, side: THREE.DoubleSide }),
     post: new THREE.MeshStandardMaterial({ color: 0xf4f0e9, metalness: 0.25, roughness: 0.42 }),
     net: new THREE.MeshStandardMaterial({ color: 0xcac4cf, wireframe: true, transparent: true, opacity: 0.26 }),
@@ -308,8 +310,8 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
 
   // Alternating mowing bands break up the flat green surface and add pitch depth.
   const turfBands = [
-    new THREE.MeshStandardMaterial({ color: 0x2b4036, roughness: 1 }),
-    new THREE.MeshStandardMaterial({ color: 0x263a32, roughness: 1 }),
+    new THREE.MeshStandardMaterial({ color: 0x43a84a, roughness: 1 }),
+    new THREE.MeshStandardMaterial({ color: 0x328b3d, roughness: 1 }),
   ];
   for (let band = 0; band < 12; band++) {
     const stripe = new THREE.Mesh(new THREE.PlaneGeometry(24, 15), turfBands[band % 2]);
