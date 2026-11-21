@@ -79,9 +79,10 @@ function findModel(catalog) {
   return models.find((item) =>
     [item.name, item.title, item.label, item.slug, item.id]
       .filter(Boolean)
-      .some((value) => String(value).toLowerCase() === "male athlete 03" ||
-        String(value).toLowerCase().includes("sports-male-03") ||
-        String(value).toLowerCase().includes("male-athlete-03")),
+      .some((value) => {
+        const normalized = String(value).toLowerCase().replace(/[^a-z0-9]+/g, " ");
+        return normalized.includes("sports male 03") || normalized.includes("male athlete 03");
+      }),
   );
 }
 
