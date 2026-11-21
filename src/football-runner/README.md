@@ -126,3 +126,14 @@ The prototype character has been replaced by a reusable articulated footballer r
 - Every obstacle pattern blocks at most two of the three lanes, leaving at least one unobstructed route. Obstacle variants rotate without immediate repetition, and collectible lines are kept in a single lane or placed on a safe route.
 - Football lines use pooled entities and fixed spacing; obstacle and collectible creation continues to use the existing object pools.
 - The progression values are initial tuning defaults, not a claim that patterns have been proven fair. Actual solvability, pacing and difficulty still require authorised gameplay validation.
+
+
+## Stage 11 — points, distance and personal records
+
+- Centralised scoring values in configuration: 12 points per metre travelled and 100 points per football collected.
+- Total score is calculated from the full travelled distance and football count, avoiding frame-by-frame rounding loss.
+- Results include distance points, football collection points, total points and collected football count. The existing simulated SETHIS display remains explicitly prototype-only and is not a wallet credit.
+- Added browser-local personal bests for distance and points, total completed runs and a rolling history of the 20 most recent runs. The start screen shows the best and three latest results; the result screen highlights new records and the all-time best.
+- Records are stored locally on the current browser/device under a versioned key. They are not cross-device, account-linked or authoritative leaderboard data. The record shape is intentionally simple to support a later authenticated server-side ranking system.
+- No CT charging, real SETHIS payout, account sync or public leaderboard writes are introduced in this stage.
+- Score balance, record persistence across supported browsers and mobile layout still require authorised final validation.
