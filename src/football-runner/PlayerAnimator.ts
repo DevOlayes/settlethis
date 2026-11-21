@@ -119,10 +119,15 @@ export class PlayerAnimator {
 
     if (next === this.activeRiggedAction && motion === this.activeRiggedMotion) return;
     const previous = this.activeRiggedAction;
-    next.reset();
+    const runAction = this.actionByMotion.get("run");
+    // Keep the locomotion clock alive during a jump and reuse its current
+    // phase on landing; restarting the run clip here creates a visible pause.
+    const keepRunClock = next === runAction && next.isRunning();
+    if (!keepRunClock) next.reset();
     next.enabled = true;
     next.paused = false;
-    next.setEffectiveWeight(1);
+    const blendingJump = motion.startsWith("jump");
+    next.setEffectiveWeight(blendingJump ? 0.82 : 1);
     next.setEffectiveTimeScale(1);
     const loopOnce = ONESHOT_MOTIONS.has(motion) && !(motion.startsWith("slide") && next === this.actionByMotion.get("crouch"));
     if (loopOnce && next !== this.actionByMotion.get("run")) {
@@ -134,7 +139,16 @@ export class PlayerAnimator {
     }
     next.fadeIn(previous ? 0.16 : 0);
     next.play();
-    if (previous && previous !== next) previous.fadeOut(0.16);
+    if (previous && previous !== next) {
+      if (previous === runAction && blendingJump) {
+        // A quiet run layer keeps the legs cycling through takeoff, flight and
+        // landing instead of freezing the stride while the jump pose plays.
+        previous.setEffectiveWeight(0.28);
+        previous.play();
+      } else {
+        previous.fadeOut(0.16);
+      }
+    }
     this.activeRiggedAction = next;
     this.activeRiggedMotion = motion;
   }
