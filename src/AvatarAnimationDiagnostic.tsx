@@ -8,7 +8,6 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [checks, setChecks] = useState<string[]>(["Preparing the approved Sports Male 03 model and imported run animation…"]);
   const [failure, setFailure] = useState("");
-  const [playing, setPlaying] = useState(true);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -128,12 +127,6 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
       if (renderer?.domElement.parentElement === host) host.removeChild(renderer.domElement);
     };
   }, []);
-
-  const toggle = () => {
-    const next = !playing;
-    setPlaying(next);
-    window.dispatchEvent(new CustomEvent("sethis-avatar-animation-toggle", { detail: next }));
-  };
 
   return (
     <main style={{ minHeight: "100dvh", background: "#171522", color: "#f4f1f7", display: "flex", flexDirection: "column", fontFamily: "Manrope, sans-serif" }}>
