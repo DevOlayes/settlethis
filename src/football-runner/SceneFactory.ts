@@ -183,36 +183,48 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   );
   camera.position.set(...cameraConfig.start);
   camera.lookAt(...cameraConfig.lookAt);
+  camera.updateProjectionMatrix();
 
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: false,
     powerPreference: "high-performance",
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  // Cap render resolution to protect frame pacing on mid-range Android devices.
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
   renderer.setSize(host.clientWidth, host.clientHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.shadowMap.autoUpdate = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 1.12;
   host.appendChild(renderer.domElement);
 
-  scene.add(new THREE.HemisphereLight(0xd9d1e9, 0x302438, 1.8));
-  const keyLight = new THREE.DirectionalLight(0xffdfd1, 2.0);
-  keyLight.position.set(-7, 13, 9);
+  scene.add(new THREE.HemisphereLight(0xe5dff0, 0x252b2d, 1.65));
+  const keyLight = new THREE.DirectionalLight(0xffe2d5, 2.15);
+  keyLight.position.set(-8, 15, 7);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(1024, 1024);
-  keyLight.shadow.camera.left = -24;
-  keyLight.shadow.camera.right = 24;
-  keyLight.shadow.camera.top = 18;
-  keyLight.shadow.camera.bottom = -18;
+  keyLight.shadow.bias = -0.00018;
+  keyLight.shadow.normalBias = 0.025;
+  keyLight.shadow.camera.left = -17;
+  keyLight.shadow.camera.right = 17;
+  keyLight.shadow.camera.top = 13;
+  keyLight.shadow.camera.bottom = -13;
   keyLight.shadow.camera.near = 1;
   keyLight.shadow.camera.far = 48;
   scene.add(keyLight);
 
-  const coralFill = new THREE.PointLight(colors.coral, 1.1, 26);
+  // Broad fill keeps the player's kit and obstacles legible in covered sections.
+  const frontFill = new THREE.DirectionalLight(0xd8c8e8, 0.72);
+  frontFill.position.set(7, 8, 10);
+  scene.add(frontFill);
+  const coolRim = new THREE.DirectionalLight(0x9b8acb, 0.42);
+  coolRim.position.set(0, 8, -12);
+  scene.add(coolRim);
+
+  const coralFill = new THREE.PointLight(colors.coral, 0.85, 30);
   coralFill.position.set(0, 3.5, -13);
   scene.add(coralFill);
 
