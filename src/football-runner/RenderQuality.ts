@@ -13,7 +13,8 @@ export function getInitialRunnerRenderQuality(): RunnerRenderQuality {
   const memory = device.deviceMemory ?? 8;
   const cores = navigator.hardwareConcurrency || 4;
   if (memory <= 2 || cores <= 2) return "low";
-  if (memory <= 4 || cores <= 4) return "balanced";
+  const coarsePointer = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
+  if (coarsePointer || memory <= 4 || cores <= 4) return "balanced";
   return "high";
 }
 
