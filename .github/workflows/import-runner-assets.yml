@@ -32,5 +32,7 @@ jobs:
             echo "No asset changes to commit."
           else
             git commit -m "Bundle verified Football Runner avatar and animations"
+            git fetch origin main
+            git rebase origin/main
             git push
           fi
