@@ -291,6 +291,7 @@ export default function FootballRunner({ telegramUser, onBack }: Props) {
                   <span>PERSONAL BEST</span>
                   <b>{recordsLoading?"…":records.bestDistance.toLocaleString()+" m"}</b>
                   <i>{recordsLoading?"Loading account record…":records.bestPoints.toLocaleString()+" points · "+records.totalRuns+" "+(records.totalRuns===1?"run":"runs")}</i>
+                  {recordsError && <small className="runner-record-error">{recordsError}</small>}
                 </div>
                 <button className="runner-leaderboard-toggle" onClick={() => setLeaderboardOpen((open) => !open)} aria-expanded={leaderboardOpen}>{leaderboardOpen ? "HIDE MY LEADERBOARD" : "MY LEADERBOARD"} <span>{records.recentRuns.length} RUNS ↕</span></button>
                 {leaderboardOpen && <section className="runner-local-leaderboard"><div className="runner-instructions-heading">ACCOUNT RECORDS · RECENT RUNS</div>

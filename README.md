@@ -2,7 +2,7 @@
 
 SETHIS is a mobile-first football gaming and entertainment platform delivered as a Telegram Mini App. Members play football challenges, build a game record, compete on rankings, earn eligible rewards and invite their football community.
 
-**The first featured game is Guess Who? / Mystery Footballer.** A player's identity is hidden behind three clues and up to three guesses. Correct answers earn game points, with earlier guesses earning more points. Additional football games will be introduced as they are ready.
+**The first featured game is Guess Who? / Mystery Footballer. Football Runner is the second game, currently in free early access.** A player's identity is hidden behind three clues and up to three guesses. Correct answers earn game points, with earlier guesses earning more points. Additional football games will be introduced as they are ready.
 
 ## Current product experience
 
@@ -25,7 +25,7 @@ Help & Information and Customer Care explain the current game rules, tokens, rew
 - Rewarded-ad credits are issued only after provider verification.
 - Mystery Footballer scoring is based on when the player is identified: 100 points on clue one, 70 on clue two and 40 on clue three.
 - Game rankings reflect recorded performance, not token spending.
-- The Games hub is designed to grow as more football game formats are developed.
+- The Games hub is designed to grow as more football game formats are developed. Football Runner currently records account-linked personal scores; CT entry, SETHIS rewards, rewarded-ad rescues and public rankings remain disabled until their rules and score-integrity requirements are approved.
 
 The detailed current direction, product rules and development sequence are documented in **[Current Product Direction](docs/PRODUCT_DIRECTION.md)**.
 

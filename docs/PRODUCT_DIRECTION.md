@@ -11,14 +11,14 @@ SETHIS is a football gaming and entertainment platform for registered football f
 
 The product is no longer a football courtroom, debate network or platform for joining sides and waiting for verdicts. The previous Courts experience is retired from the member-facing product.
 
-The Games area is the centre of the new experience. Mystery Footballer is the first featured game, not the only game the platform will ever contain. The product architecture and language must support additional games without making the whole platform look like a single-game website.
+The Games area is the centre of the new experience. Mystery Footballer is the first featured game, and Football Runner is the second game in free early access. The product architecture and language must support additional games without making the whole platform look like a single-game website.
 
 ## 2. Member experience and navigation
 
 The primary navigation contains five destinations:
 
 ### Games
-The home for available football games. Mystery Footballer is the first featured title. The Games hub should make it clear that additional games will join the line-up as they are developed and released. Do not invent future game names or imply that unreleased games are playable.
+The home for available football games. Mystery Footballer and Football Runner are the first two titles. Football Runner is free early access: its proposed CT entry fee, SETHIS payouts and rewarded-ad rescues remain inactive until the product owner approves the exact economy. The Games hub should make it clear that additional games will join the line-up as they are developed and released. Do not invent future game names or imply that unreleased games are playable.
 
 ### Tasks
 A place for daily football quizzes, member missions, check-ins and eligible reward activities. Each task must clearly explain what the member must do, how completion is verified and what reward is available. A reward amount is information, not a button; only the action itself should look clickable.
@@ -104,7 +104,7 @@ SETHIS and CT are not interchangeable. No cash value, exchange listing, withdraw
 
 ## 5. Other games and the growing Games hub
 
-Mystery Footballer is the first featured game. Additional football games are part of the product direction, but their exact formats, rules, scoring and rewards must be defined before implementation.
+Mystery Footballer is the first featured game. Football Runner is implemented as the second game in free early access. Authenticated runs are recorded against the member account, but scores are not yet prize-eligible or included in public rankings because the client simulation does not provide cryptographic replay verification. CT entry, SETHIS payout and rewarded-ad rescue rules remain disabled pending explicit economy approval. Further games must have their exact formats, rules, scoring and rewards defined before implementation.
 
 The existing daily and fixture football quizzes remain available within Tasks for now. Their placement and the wider Games hub can be revisited as the game catalogue expands.
 
