@@ -116,3 +116,13 @@ The prototype character has been replaced by a reusable articulated footballer r
 - Added an always-visible sound on/off control. Muting fades the ambience and suppresses effects; pausing reduces the ambience, while a running session restores it.
 - Audio nodes and the ambience source are cleaned up when the game engine is disposed.
 - No external audio assets, music tracks or voice recordings are included. Sound levels and mix are an initial implementation and still require listening checks on desktop speakers, headphones and ordinary Android devices during authorised final validation.
+
+
+## Stage 10 — endless generation and progressive difficulty
+
+- Replaced timer-only single-object spawning with distance-based pattern generation. Spawn spacing scales with current running speed so the intended reaction window does not collapse as the footballer accelerates.
+- Runs begin with a short, readable warm-up sequence. New rows continue to stream in ahead of the player, with the next spacing adjusted smoothly from the current speed and difficulty.
+- Difficulty increases continuously over the first 1,800 metres: reaction windows narrow gradually, football-only rows become less frequent, and two-lane obstacle patterns become more common. There are no discrete stages or sudden difficulty jumps.
+- Every obstacle pattern blocks at most two of the three lanes, leaving at least one unobstructed route. Obstacle variants rotate without immediate repetition, and collectible lines are kept in a single lane or placed on a safe route.
+- Football lines use pooled entities and fixed spacing; obstacle and collectible creation continues to use the existing object pools.
+- The progression values are initial tuning defaults, not a claim that patterns have been proven fair. Actual solvability, pacing and difficulty still require authorised gameplay validation.
