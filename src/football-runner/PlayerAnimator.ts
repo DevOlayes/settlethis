@@ -26,6 +26,59 @@ const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
 
 const ONESHOT_MOTIONS = new Set<RunnerMotion>(["jumpTakeoff", "jumpLand", "slideStart", "slideEnd", "kick"]);
 
+function createUprightRunClip(model: THREE.Object3D, sprint = false): THREE.AnimationClip {
+  const bones = new Map<string, THREE.Bone>();
+  model.traverse((object) => {
+    if (object instanceof THREE.Bone) bones.set(canonicalizeBoneName(object.name), object);
+  });
+
+  // Avatar-specific in-place locomotion. The retargeted jog was producing a
+  // horizontal, swimming-like stroke on this Biped, so run/sprint are authored
+  // directly against its canonical humanoid joints instead.
+  const duration = 0.84;
+  const sampleCount = 9;
+  const times = Array.from({ length: sampleCount }, (_, index) => duration * index / (sampleCount - 1));
+  const stride = sprint ? 0.76 : 0.62;
+  const armSwing = sprint ? 0.58 : 0.48;
+  const kneeLift = sprint ? 0.82 : 0.68;
+  const tracks: THREE.KeyframeTrack[] = [];
+
+  const addRotation = (name: string, valuesAtPhase: (phase: number) => [number, number, number]) => {
+    const bone = bones.get(name);
+    if (!bone) return;
+    const base = bone.quaternion.clone();
+    const values: number[] = [];
+    for (let index = 0; index < sampleCount; index++) {
+      const phase = (index / (sampleCount - 1)) * Math.PI * 2;
+      const poseValues = valuesAtPhase(phase);
+      const delta = new THREE.Quaternion().setFromEuler(new THREE.Euler(poseValues[0], poseValues[1], poseValues[2], "XYZ"));
+      const pose = base.clone().multiply(delta).normalize();
+      values.push(pose.x, pose.y, pose.z, pose.w);
+    }
+    tracks.push(new THREE.QuaternionKeyframeTrack(bone.name + ".quaternion", times, values));
+  };
+
+  addRotation("LeftUpLeg", (phase) => [Math.sin(phase) * stride, 0, 0.015]);
+  addRotation("RightUpLeg", (phase) => [-Math.sin(phase) * stride, 0, -0.015]);
+  addRotation("LeftLeg", (phase) => [Math.max(0, -Math.sin(phase)) * kneeLift, 0, 0]);
+  addRotation("RightLeg", (phase) => [Math.max(0, Math.sin(phase)) * kneeLift, 0, 0]);
+  addRotation("LeftFoot", (phase) => [-Math.sin(phase) * 0.12, 0, 0]);
+  addRotation("RightFoot", (phase) => [Math.sin(phase) * 0.12, 0, 0]);
+
+  // Arms swing opposite their same-side leg, with a stable elbow bend.
+  addRotation("LeftArm", (phase) => [-Math.sin(phase) * armSwing, 0, -0.045]);
+  addRotation("RightArm", (phase) => [Math.sin(phase) * armSwing, 0, 0.045]);
+  addRotation("LeftForeArm", (phase) => [-0.58 - Math.max(0, Math.sin(phase)) * 0.12, 0, 0]);
+  addRotation("RightForeArm", (phase) => [-0.58 - Math.max(0, -Math.sin(phase)) * 0.12, 0, 0]);
+
+  // Upright chest, a slight athletic forward lean and restrained hip counter-rotation.
+  addRotation("Spine", (phase) => [-0.075, 0, Math.sin(phase) * 0.012]);
+  addRotation("Spine1", (phase) => [-0.025, 0, -Math.sin(phase) * 0.01]);
+  addRotation("Hips", (phase) => [0, 0, -Math.sin(phase) * 0.018]);
+
+  return new THREE.AnimationClip(sprint ? "SETHIS Upright Sprint" : "SETHIS Upright Run", duration, tracks);
+}
+
 export class PlayerAnimator {
   private runClock = 0;
   private kickElapsed = 10;
@@ -66,8 +119,9 @@ export class PlayerAnimator {
       this.riggedActions.set(key, action);
     }
 
-    // Prefer dedicated locomotion clips; never use a one-shot kick/slide as a run.
-    for (const motion of ["run", "sprint", "jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slideStart", "slideLoop", "slideEnd", "kick"] as RunnerMotion[]) {
+    // Keep retargeted jump/slide clips, but use an avatar-specific upright
+    // locomotion cycle: the imported jog reads like a swimming stroke on this Biped.
+    for (const motion of ["jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slideStart", "slideLoop", "slideEnd", "kick"] as RunnerMotion[]) {
       const patterns = CLIP_PATTERNS[motion];
       for (const pattern of patterns) {
         const match = [...this.riggedActions].find(([name]) => pattern.test(name));
@@ -77,6 +131,13 @@ export class PlayerAnimator {
         }
       }
     }
+
+    const uprightRun = this.riggedMixer.clipAction(createUprightRunClip(model));
+    const uprightSprint = this.riggedMixer.clipAction(createUprightRunClip(model, true));
+    this.actionByMotion.set("run", uprightRun);
+    this.actionByMotion.set("sprint", uprightSprint);
+    this.riggedActions.set("sethis upright run", uprightRun);
+    this.riggedActions.set("sethis upright sprint", uprightSprint);
     this.playRiggedMotion("run");
   }
 
