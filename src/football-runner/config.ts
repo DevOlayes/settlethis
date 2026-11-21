@@ -72,12 +72,16 @@ export const RUNNER_CONFIG = {
 } as const;
 
 export const RUNNER_REWARD_DEMO = {
+  // Provisional preview values only. These do not define an approved wallet payout.
   ballValue: 5,
   distanceStep: 500,
-  distanceBonus: 4,
+  distanceBonus: 10,
   performanceThresholds: [
-    { points: 10000, bonus: 8 },
-    { points: 5000, bonus: 4 },
+    { points: 10000, bonus: 20 },
+    { points: 5000, bonus: 10 },
   ],
   prototypeDisplayCap: 1500,
+  dailyPreviewCap: 1500,
+  rewardedRescuesPerRun: 2,
+  rewardedAdsPerDay: 10,
 } as const;
