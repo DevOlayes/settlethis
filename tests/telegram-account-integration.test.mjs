@@ -480,7 +480,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
 
   const walletAudit = await adminApi(env, "/api/admin/wallet-audit", adminToken);
   assert.equal(walletAudit.response.status, 200);
-  assert.equal(walletAudit.data.checks.length, 36);
+  assert.equal(walletAudit.data.checks.length, 37);
   assert.equal(walletAudit.data.healthy, true, JSON.stringify(walletAudit.data.checks.filter(item => item.issues > 0)));
 
   const unauthenticatedDestinations = await adminApi(env, "/api/admin/task-destinations", "b".repeat(64));
