@@ -77,7 +77,21 @@ export class RunnerEngine {
       const animations = embeddedAnimations.length
         ? embeddedAnimations
         : await loadRunnerAnimationManifest(model);
-      if (this.disposed || animations.length === 0) {
+      const requiredMotions = [
+        "Jog_Fwd_Loop",
+        "Sprint_Loop",
+        "Jump_Start",
+        "Jump_Loop",
+        "Jump_Land",
+        "Crouch_Fwd_Loop",
+        "Slide_Start",
+        "Slide_Loop",
+        "Slide_Exit",
+      ];
+      const availableMotions = new Set(animations.map((clip) => clip.name.toLowerCase()));
+      const missingMotions = requiredMotions.filter((name) => !availableMotions.has(name.toLowerCase()));
+      if (this.disposed || missingMotions.length > 0) {
+        console.warn("Rigged footballer kept in fallback mode; required motions are missing", missingMotions);
         disposeRunnerCharacterModel(model);
         return;
       }
