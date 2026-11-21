@@ -3,7 +3,7 @@ import { RUNNER_CONFIG } from "./config";
 import { clamp, getDemoReward, getRunSpeed } from "./math";
 import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
-import { createCollectible, createObstacle } from "./EntityFactory";
+import { animateCollectionEffect, createCollectible, createCollectionEffect, createObstacle } from "./EntityFactory";
 import { createPlayerCharacter } from "./PlayerCharacter";
 import { PlayerAnimator } from "./PlayerAnimator";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
@@ -20,6 +20,9 @@ export class RunnerEngine {
   private readonly performance = new RunnerPerformanceMonitor();
   private readonly objects: ActiveObject[] = [];
   private readonly pools = new Map<string, ObjectPool<ActiveObject>>();
+  private readonly effectPool = new ObjectPool<ActiveObject>(createCollectionEffect);
+  private readonly activeEffects: { object: ActiveObject; elapsed: number }[] = [];
+  private readonly allEffects = new Set<ActiveObject>();
   private readonly allPooledObjects = new Set<ActiveObject>();
   private readonly input: InputController;
   private readonly resizeObserver: ResizeObserver;
@@ -57,6 +60,7 @@ export class RunnerEngine {
   start = (): void => {
     if (this.disposed) return;
     this.releaseAllObjects();
+    this.releaseAllEffects();
     this.targetLane = 0;
     this.jumpProgress = 0;
     this.slideRemaining = 0;
@@ -116,6 +120,10 @@ export class RunnerEngine {
     this.releaseAllObjects();
     this.pools.forEach((pool) => pool.clear());
     this.pools.clear();
+    this.releaseAllEffects();
+    this.effectPool.clear();
+    this.allEffects.forEach((object) => this.disposeObject(object));
+    this.allEffects.clear();
     this.bundle.scene.remove(this.playerCharacter.root);
     this.disposeObject(this.playerCharacter.root);
     this.allPooledObjects.forEach((object) => this.disposeObject(object));
@@ -168,6 +176,41 @@ export class RunnerEngine {
   private releaseAllObjects(): void {
     for (const object of this.objects) this.releaseObject(object);
     this.objects.length = 0;
+  }
+
+  private releaseAllEffects(): void {
+    for (const effect of this.activeEffects) {
+      this.bundle.scene.remove(effect.object);
+      effect.object.visible = false;
+      this.effectPool.release(effect.object);
+    }
+    this.activeEffects.length = 0;
+  }
+
+  private spawnCollectionEffect(position: THREE.Vector3): void {
+    const effect = this.effectPool.acquire();
+    effect.visible = true;
+    effect.position.copy(position);
+    effect.scale.setScalar(1);
+    effect.rotation.set(0, 0, 0);
+    this.bundle.scene.add(effect);
+    this.activeEffects.push({ object: effect, elapsed: 0 });
+    this.allEffects.add(effect);
+  }
+
+  private updateCollectionEffects(delta: number): void {
+    for (let index = this.activeEffects.length - 1; index >= 0; index--) {
+      const effect = this.activeEffects[index];
+      effect.elapsed += delta;
+      const progress = Math.min(1, effect.elapsed / 0.38);
+      animateCollectionEffect(effect.object, progress);
+      if (progress >= 1) {
+        this.bundle.scene.remove(effect.object);
+        effect.object.visible = false;
+        this.effectPool.release(effect.object);
+        this.activeEffects.splice(index, 1);
+      }
+    }
   }
 
   private finish(): void {
