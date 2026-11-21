@@ -80,15 +80,16 @@ export class RunnerEngine {
         return;
       }
 
-      // Promote the approved visual model as soon as its GLB is ready. Do not
-      // make the player wait for several large, optional animation packs.
-      this.installRiggedPlayer(model, embeddedAnimations);
+      // Install the approved visual model immediately. Animation setup is kept
+      // separate so an empty embedded-clip list cannot abort manifest loading.
+      this.installRiggedPlayer(model);
       console.info("Sports Male 03 model installed", {
         embeddedClips: embeddedAnimations.map((clip) => clip.name),
+        bones: this.countRiggedBones(model),
       });
 
-      // Load the separate animation manifest after the model is already visible.
-      // The animator can then upgrade from its built-in rigged run fallback.
+      // Load the local motion library after the model is visible, then bind it
+      // once. This includes the in-place Mixamo run and Quaternius action clips.
       const manifestAnimations = await loadRunnerAnimationManifest(model);
       if (this.disposed || this.loadedPlayerModel !== model) return;
       const animations = [...embeddedAnimations, ...manifestAnimations];
@@ -108,7 +109,15 @@ export class RunnerEngine {
     }
   }
 
-  private installRiggedPlayer(model: THREE.Group, animations: THREE.AnimationClip[]): void {
+  private countRiggedBones(model: THREE.Object3D): number {
+    let count = 0;
+    model.traverse((object) => {
+      if (object instanceof THREE.Bone) count++;
+    });
+    return count;
+  }
+
+  private installRiggedPlayer(model: THREE.Group): void {
     if (this.disposed) {
       disposeRunnerCharacterModel(model);
       return;
@@ -121,7 +130,6 @@ export class RunnerEngine {
     model.rotation.y = Math.PI;
     this.playerCharacter.root.add(model);
     this.loadedPlayerModel = model;
-    this.playerAnimator.attachRiggedModel(model, animations);
   }
 
   start = (): void => {
@@ -149,7 +157,8 @@ export class RunnerEngine {
     if (this.pendingRiggedPlayer) {
       const pending = this.pendingRiggedPlayer;
       this.pendingRiggedPlayer = undefined;
-      this.installRiggedPlayer(pending.model, pending.animations);
+      this.installRiggedPlayer(pending.model);
+      this.playerAnimator.attachRiggedModel(pending.model, pending.animations);
     }
     void this.audio.unlock();
     this.audio.setRunning(true);
