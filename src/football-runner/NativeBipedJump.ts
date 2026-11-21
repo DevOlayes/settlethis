@@ -2,13 +2,18 @@ import * as THREE from "three";
 
 type EulerPose = readonly [number, number, number];
 
+function normalizeBoneName(value: string): string {
+  return value.trim().replace(/_/g, " ").replace(/\\s+/g, " ").toLowerCase();
+}
+
 function collectBones(model: THREE.Object3D): Map<string, THREE.Bone> {
   const bones = new Map<string, THREE.Bone>();
   model.traverse((object) => {
     if (!(object instanceof THREE.Bone) || !object.name.trim()) return;
-    // Keep the developer's exact Bip01 names. The approved run clip binds
-    // directly to these names; no Mixamo aliases or retargeting are involved.
-    bones.set(object.name, object);
+    // The native GLB stores track targets with underscores while the avatar
+    // exposes the same Bip01 names with spaces. Match their normalized names,
+    // but always bind the generated track to the avatar's exact bone name.
+    bones.set(normalizeBoneName(object.name), object);
   });
   return bones;
 }
@@ -27,11 +32,12 @@ export function createNativeBipedJumpClips(
   // its 52 direct quaternion tracks actually drive on this same character.
   const runTrackNames = new Set(referenceRunClip.tracks
     .filter((track) => track.name.endsWith(".quaternion"))
-    .map((track) => track.name.slice(0, -".quaternion".length)));
+    .map((track) => normalizeBoneName(track.name.slice(0, -".quaternion".length))));
   const find = (...names: string[]): THREE.Bone | undefined => {
     for (const name of names) {
-      if (!runTrackNames.has(name)) continue;
-      const bone = bones.get(name);
+      const key = normalizeBoneName(name);
+      if (!runTrackNames.has(key)) continue;
+      const bone = bones.get(key);
       if (bone) return bone;
     }
     return undefined;
