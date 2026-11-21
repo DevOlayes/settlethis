@@ -208,6 +208,7 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   scene.add(new THREE.HemisphereLight(0xe5dff0, 0x252b2d, 1.65));
   const keyLight = new THREE.DirectionalLight(0xffe2d5, 2.15);
   keyLight.position.set(-8, 15, 7);
+  keyLight.userData.runnerShadowLight = true;
   keyLight.castShadow = renderQuality !== "low";
   if (shadowMapSize > 0) keyLight.shadow.mapSize.set(shadowMapSize, shadowMapSize);
   keyLight.shadow.bias = -0.00018;
