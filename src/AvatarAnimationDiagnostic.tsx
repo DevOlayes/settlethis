@@ -65,7 +65,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
       if (disposed || !renderer) return;
       const delta = previousTime ? Math.min(0.05, (now - previousTime) / 1000) : 0;
       previousTime = now;
-      if (action?.isRunning() && mixer) mixer.update(delta);
+      if (mixer && action) mixer.update(delta);
       renderer.render(scene, camera);
       frame = requestAnimationFrame(render);
     };
