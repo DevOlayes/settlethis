@@ -4,6 +4,7 @@ import App from "./App";
 import BrandMark from "./BrandMark";
 import AdminPortal from "./Admin";
 const FootballRunner=lazy(()=>import("./FootballRunner"));
+const AvatarAnimationDiagnostic=lazy(()=>import("./AvatarAnimationDiagnostic"));
 import {authenticateTelegram,initializeTelegramApp,type TelegramUser} from "./telegram";
 import "./index.css";
 
@@ -42,6 +43,7 @@ function Root(){
  const isFootballRunner=window.location.pathname==="/football-runner";
  const isRunnerPreview=window.location.pathname==="/football-runner-preview";
  const isAvatarDiagnostic=window.location.pathname==="/avatar-diagnostic";
+ const isAvatarAnimationDiagnostic=window.location.pathname==="/avatar-animation-test";
  const [telegramUser,setTelegramUser]=useState<TelegramUser|null>(null);
  const [authStatus,setAuthStatus]=useState<"checking"|"ready"|"outside"|"failed">("checking");
  const [authError,setAuthError]=useState("");
@@ -65,6 +67,7 @@ function Root(){
   return()=>{active=false;};
  },[retry,isAdmin]);
  if(isAdmin)return <AdminPortal/>;
+ if(isAvatarAnimationDiagnostic)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the animation test</h1><p>Loading Sports Male 03 and its run cycle…</p></div></main>}><AvatarAnimationDiagnostic onBack={()=>{window.location.href="/avatar-diagnostic";}}/></Suspense>;
  if(isAvatarDiagnostic)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the avatar test</h1><p>Loading Sports Male 03 directly…</p></div></main>}><FootballRunner telegramUser={null} preview onBack={()=>{window.location.href="/";}}/></Suspense>;
  if(isRunnerPreview)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the pitch</h1><p>Loading browser preview…</p></div></main>}><FootballRunner telegramUser={null} preview onBack={()=>{window.location.href="/";}}/></Suspense>;
  if(authStatus==="outside")return <TelegramLanding/>;
