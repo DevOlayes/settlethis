@@ -2,24 +2,13 @@ import * as THREE from "three";
 
 type EulerPose = readonly [number, number, number];
 
-function boneKey(name: unknown): string {
-  if (typeof name !== "string" || !name.trim()) return "";
-  // Use local string normalisation here. The retarget library's canonical
-  // name helper assumes metadata that may be absent on helper bones.
-  return name.trim().split(":").pop()!.toLowerCase().replace(/[^a-z0-9]/g, "");
-}
-
 function collectBones(model: THREE.Object3D): Map<string, THREE.Bone> {
   const bones = new Map<string, THREE.Bone>();
   model.traverse((object) => {
-    if (!(object instanceof THREE.Bone)) return;
-    // Some imported rigs contain unnamed helper bones. They are not
-    // addressable by animation tracks, so skip them without failing setup.
-    if (typeof object.name !== "string" || !object.name.trim()) return;
-    const canonicalName = boneKey(object.name);
-    if (!canonicalName) return;
-    bones.set(canonicalName, object);
-    bones.set(object.name.toLowerCase().replace(/[^a-z0-9]/g, ""), object);
+    if (!(object instanceof THREE.Bone) || !object.name.trim()) return;
+    // Keep the developer's exact Bip01 names. The approved run clip binds
+    // directly to these names; no Mixamo aliases or retargeting are involved.
+    bones.set(object.name, object);
   });
   return bones;
 }
@@ -29,11 +18,19 @@ function collectBones(model: THREE.Object3D): Map<string, THREE.Bone> {
  * existing Biped bind pose. No bone is renamed, reparented or translated.
  * The game root owns vertical travel; these clips only animate the body.
  */
-export function createNativeBipedJumpClips(model: THREE.Object3D): THREE.AnimationClip[] {
+export function createNativeBipedJumpClips(
+  model: THREE.Object3D,
+  referenceRunClip: THREE.AnimationClip,
+): THREE.AnimationClip[] {
   const bones = collectBones(model);
+  // The approved native run is the source of truth: only animate bones that
+  // its 52 direct quaternion tracks actually drive on this same character.
+  const runTrackNames = new Set(referenceRunClip.tracks
+    .filter((track) => track.name.endsWith(".quaternion"))
+    .map((track) => track.name.slice(0, -".quaternion".length)));
   const find = (...names: string[]) => names
-    .map((name) => bones.get(name.toLowerCase().replace(/[^a-z0-9]/g, "")) ?? bones.get(boneKey(name)))
-    .find((bone): bone is THREE.Bone => Boolean(bone));
+    .find((name) => runTrackNames.has(name) && bones.has(name))
+    ?.replace(/^/, "") && bones.get(names.find((name) => runTrackNames.has(name) && bones.has(name))!);
 
   const tracksFor = (
     times: number[],
@@ -54,19 +51,19 @@ export function createNativeBipedJumpClips(model: THREE.Object3D): THREE.Animati
     return tracks;
   };
 
-  const hips = find("Hips", "Pelvis");
-  const spine = find("Spine");
-  const spine2 = find("Spine2", "Spine1");
-  const leftThigh = find("LeftUpLeg", "LeftThigh");
-  const rightThigh = find("RightUpLeg", "RightThigh");
-  const leftCalf = find("LeftLeg", "LeftCalf");
-  const rightCalf = find("RightLeg", "RightCalf");
-  const leftFoot = find("LeftFoot");
-  const rightFoot = find("RightFoot");
-  const leftArm = find("LeftArm", "LeftUpperArm");
-  const rightArm = find("RightArm", "RightUpperArm");
-  const leftForearm = find("LeftForeArm", "LeftForearm");
-  const rightForearm = find("RightForeArm", "RightForearm");
+  const hips = find("Bip01 Pelvis");
+  const spine = find("Bip01 Spine");
+  const spine2 = find("Bip01 Spine2", "Bip01 Spine1");
+  const leftThigh = find("Bip01 L Thigh");
+  const rightThigh = find("Bip01 R Thigh");
+  const leftCalf = find("Bip01 L Calf");
+  const rightCalf = find("Bip01 R Calf");
+  const leftFoot = find("Bip01 L Foot");
+  const rightFoot = find("Bip01 R Foot");
+  const leftArm = find("Bip01 L UpperArm");
+  const rightArm = find("Bip01 R UpperArm");
+  const leftForearm = find("Bip01 L Forearm");
+  const rightForearm = find("Bip01 R Forearm");
 
   const required = [
     ["pelvis", hips], ["left thigh", leftThigh], ["right thigh", rightThigh],
