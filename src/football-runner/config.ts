@@ -41,8 +41,10 @@ export const RUNNER_CONFIG = {
     initialSpacing: 13,
   },
   collision: {
-    depth: 0.85,
-    width: 1.05,
+    playerHalfWidth: 0.34,
+    playerHalfDepth: 0.32,
+    clearanceMargin: 0.12,
+    slidingPlayerHeight: 1.08,
   },
   ui: {
     updateInterval: 0.18,
