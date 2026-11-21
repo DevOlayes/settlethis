@@ -135,7 +135,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
           const laneSign = phase === "laneLeft" ? 1 : phase === "laneRight" ? -1 : 0;
           const laneBank = laneSign * Math.sin(phaseProgress * Math.PI) * 0.17;
           model.position.set(modelBaseX + lateralOffset, modelBaseY + verticalOffset, modelBaseZ + slideProgress * 0.24);
-          model.rotation.x = slideProgress * 1.12;
+          model.rotation.x = 0; // Let the Biped pose recline naturally; no head-first root pitch.
           model.rotation.z = laneBank;
         }
         if (phaseElapsed >= phaseDurations[phaseIndex]) {
@@ -203,7 +203,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         addCheck("Landing: " + land.tracks.length + " tracks · " + land.duration.toFixed(2) + "s");
         addCheck("Jump root arc: 1.02s · 1.5m preview; running gait remains blended underneath so the stride does not restart.");
         maneuverClips.forEach((clip) => addCheck("Native manoeuvre: " + clip.name + " · " + clip.tracks.length + " tracks · " + clip.duration.toFixed(2) + "s"));
-        addCheck("Slide sequence: extended lead leg + folded trailing leg + forward ground-slide pitch → recovery.");
+        addCheck("Slide sequence: lead leg extended forward, torso/head reclined, one hand bracing behind → recovery.");
         addCheck("Lane sequence: uninterrupted run stride + smooth lateral travel + directional body bank.");
         mixer = new THREE.AnimationMixer(model);
         modelBaseX = model.position.x;
