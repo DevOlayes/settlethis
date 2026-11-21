@@ -61,6 +61,11 @@ export const RUNNER_CONFIG = {
     clearanceMargin: 0.12,
     slidingPlayerHeight: 1.08,
   },
+  scoring: {
+    distancePointsPerMetre: 12,
+    footballPickupPoints: 100,
+    historyLimit: 20,
+  },
   ui: {
     updateInterval: 0.18,
   },
