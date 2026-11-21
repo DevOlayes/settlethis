@@ -6,6 +6,7 @@ import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
 import { animateCollectionEffect, createCollectible, createCollectionEffect, createObstacle } from "./EntityFactory";
 import { createPlayerCharacter } from "./PlayerCharacter";
+import { disposeRunnerCharacterModel, loadRunnerCharacter } from "./RiggedPlayerAsset";
 import { PlayerAnimator } from "./PlayerAnimator";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
 import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
@@ -19,6 +20,7 @@ export class RunnerEngine {
   private readonly host: HTMLElement;
   private readonly playerCharacter = createPlayerCharacter();
   private readonly playerAnimator = new PlayerAnimator(this.playerCharacter);
+  private loadedPlayerModel?: THREE.Group;
   private readonly performance = new RunnerPerformanceMonitor();
   private readonly audio = new RunnerAudioFeedback();
   private readonly objects: ActiveObject[] = [];
@@ -59,6 +61,7 @@ export class RunnerEngine {
     this.host = host;
     this.bundle = createRunnerScene(host);
     this.bundle.scene.add(this.playerCharacter.root);
+    void this.loadRiggedPlayer();
     this.input = new InputController(this.bundle.renderer.domElement, (action) => this.handleAction(action));
     this.input.attach();
     this.resizeObserver = new ResizeObserver(() => resizeRunnerScene(this.bundle, this.host));
@@ -66,6 +69,29 @@ export class RunnerEngine {
     this.lastFrameTime = performance.now();
     this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
     document.addEventListener("visibilitychange", this.onVisibilityChange);
+  }
+
+  private async loadRiggedPlayer(): Promise<void> {
+    try {
+      const { model, animations } = await loadRunnerCharacter();
+      if (this.disposed) {
+        disposeRunnerCharacterModel(model);
+        return;
+      }
+
+      // Keep the gameplay root/pivots stable; replace only its visual child meshes.
+      for (const child of [...this.playerCharacter.root.children]) {
+        this.playerCharacter.root.remove(child);
+        disposeRunnerCharacterModel(child);
+      }
+      // Most glTF humanoid assets face +Z; the runner travels toward -Z.
+      model.rotation.y = Math.PI;
+      this.playerCharacter.root.add(model);
+      this.loadedPlayerModel = model;
+      this.playerAnimator.attachRiggedModel(model, animations);
+    } catch {
+      // The procedural character remains a safe fallback until a reviewed GLB is supplied.
+    }
   }
 
   start = (): void => {
