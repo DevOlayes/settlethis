@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { RUNNER_CONFIG } from "./config";
 import { RunnerAudioFeedback } from "./AudioFeedback";
-import { clamp, getDemoReward, getRunSpeed } from "./math";
+import { clamp, getDemoRewardBreakdown, getRunSpeed } from "./math";
 import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
 import { animateCollectionEffect, createCollectible, createCollectionEffect, createObstacle } from "./EntityFactory";
@@ -252,14 +252,17 @@ export class RunnerEngine {
     this.over = true;
     this.paused = true;
     this.audio.collision();
-    const sethis = getDemoReward(this.balls, this.distance, this.points);
+    const reward = getDemoRewardBreakdown(this.balls, this.distance, this.points);
     const summary: RunnerSummary = {
       distance: Math.floor(this.distance),
       points: this.points,
       balls: this.balls,
       distancePoints: Math.floor(this.distance * RUNNER_CONFIG.scoring.distancePointsPerMetre),
       footballPoints: this.balls * RUNNER_CONFIG.scoring.footballPickupPoints,
-      sethis,
+      rewardFootball: reward.footballReward,
+      rewardDistance: reward.distanceBonus,
+      rewardPerformance: reward.performanceBonus,
+      sethis: reward.grossEstimate,
     };
     cancelAnimationFrame(this.frame);
     this.frame = 0;
