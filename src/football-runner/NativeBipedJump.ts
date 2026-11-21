@@ -28,9 +28,14 @@ export function createNativeBipedJumpClips(
   const runTrackNames = new Set(referenceRunClip.tracks
     .filter((track) => track.name.endsWith(".quaternion"))
     .map((track) => track.name.slice(0, -".quaternion".length)));
-  const find = (...names: string[]) => names
-    .find((name) => runTrackNames.has(name) && bones.has(name))
-    ?.replace(/^/, "") && bones.get(names.find((name) => runTrackNames.has(name) && bones.has(name))!);
+  const find = (...names: string[]): THREE.Bone | undefined => {
+    for (const name of names) {
+      if (!runTrackNames.has(name)) continue;
+      const bone = bones.get(name);
+      if (bone) return bone;
+    }
+    return undefined;
+  };
 
   const tracksFor = (
     times: number[],
