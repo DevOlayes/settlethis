@@ -14,6 +14,7 @@ export default function FootballRunner({ onBack }: Props) {
   const [summary, setSummary] = useState<RunnerSummary | null>(null);
   const [hud, setHud] = useState<RunnerHud>(EMPTY_HUD);
   const [engineError, setEngineError] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
 
   useEffect(() => {
     const host = mountRef.current;
@@ -26,6 +27,7 @@ export default function FootballRunner({ onBack }: Props) {
         onHud: setHud,
         onSummary: setSummary,
       });
+      engine.setSoundEnabled(soundEnabled);
       engineRef.current = engine;
     } catch {
       setEngineError(true);
@@ -41,6 +43,11 @@ export default function FootballRunner({ onBack }: Props) {
   const start = () => engineRef.current?.start();
   const pause = () => engineRef.current?.pause();
   const resume = () => engineRef.current?.resume();
+  const toggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    engineRef.current?.setSoundEnabled(next);
+  };
 
   return (
     <main className="football-runner-page">
@@ -48,6 +55,7 @@ export default function FootballRunner({ onBack }: Props) {
         <button onClick={onBack} aria-label="Back to SETHIS introduction">←</button>
         <div><b>SETHIS</b><span>FOOTBALL RUNNER</span></div>
         <span className="runner-prototype-tag">WEB PROTOTYPE</span>
+        <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"}>{soundEnabled ? "♫ SOUND ON" : "♪ SOUND OFF"}</button>
       </header>
 
       <section className="runner-stage-wrap">
