@@ -24,3 +24,28 @@
 .runner-result-best{margin:0 0 10px}
 .runner-new-record{margin:0 0 9px;color:#e98272;font-size:9px;font-weight:900;letter-spacing:.13em}
 @media(max-height:760px){.runner-recent-runs{display:none}.runner-personal-best{padding:7px 10px}}
+
+/* Stage 13 — complete game flow and responsive overlays */
+.runner-overlay{overflow-y:auto;overscroll-behavior:contain;justify-content:flex-start;padding-top:clamp(20px,5vh,52px);padding-bottom:22px}
+.runner-ready-actions{display:flex;flex-direction:column;align-items:center;gap:7px;width:min(100%,260px)}
+.runner-ready-actions>button{width:100%}
+.runner-instructions{width:min(100%,350px);margin:0 0 12px;padding:12px 13px;border:1px solid #e9827244;border-radius:10px;background:#211e2b;text-align:left}
+.runner-instructions-heading{margin-bottom:8px;color:#e98272;font-size:8px;font-weight:900;letter-spacing:.16em}
+.runner-instruction-row{display:grid;grid-template-columns:92px 1fr;gap:9px;padding:6px 0;border-bottom:1px solid #ffffff12;font-size:9px;line-height:1.5}
+.runner-instruction-row b{color:#f4f1f7;font-size:8px;letter-spacing:.04em}
+.runner-instruction-row span{color:#c7c0ce}
+.runner-instructions p{margin:9px 0 0;font-size:8px;line-height:1.6;color:#aaa3b5}
+.runner-text-action{margin-top:10px;border:0;background:transparent;color:#aaa3b5;font:800 8px Manrope,Arial,sans-serif;letter-spacing:.13em;padding:8px 12px}
+.runner-rescue-notice{width:min(100%,360px);display:grid;gap:5px;padding:10px 12px;margin:0 0 12px;border:1px solid #e9827255;border-radius:8px;background:#30232d;text-align:left}
+.runner-rescue-notice b{color:#e98272;font-size:7px;letter-spacing:.11em}
+.runner-rescue-notice span{color:#c7c0ce;font-size:8px;line-height:1.55}
+.runner-confirm-backdrop{position:absolute;inset:0;z-index:8;display:grid;place-items:center;padding:18px;background:#0c0a12bb;backdrop-filter:blur(5px)}
+.runner-confirm-dialog{width:min(100%,370px);padding:22px;border:1px solid #e9827266;border-radius:13px;background:#211e2b;box-shadow:0 18px 60px #0009;text-align:left}
+.runner-confirm-dialog h2{margin:9px 0 7px;font-size:22px;letter-spacing:-.04em}
+.runner-confirm-dialog p{margin:0 0 18px;color:#c7c0ce;font-size:10px;line-height:1.65}
+.runner-confirm-actions{display:flex;gap:8px}
+.runner-confirm-actions button{flex:1;min-height:42px;border:1px solid #ffffff22;border-radius:8px;background:#302b3d;color:#f4f1f7;font:900 8px Manrope,Arial,sans-serif;letter-spacing:.08em}
+.runner-confirm-actions .runner-confirm-primary{border-color:#e98272;background:#e98272;color:#211725}
+.runner-result-grid{max-height:min(34vh,270px);overflow-y:auto;overscroll-behavior:contain;padding-right:3px}
+@media(max-height:760px){.runner-overlay{padding-top:14px;padding-bottom:14px}.runner-overlay h1{font-size:32px;margin:7px 0}.runner-overlay p{margin-bottom:10px}.runner-result-grid{max-height:27vh}.runner-confirm-dialog{padding:17px}}
+@media(max-width:540px){.runner-instruction-row{grid-template-columns:82px 1fr}.runner-confirm-actions{gap:6px}.runner-confirm-actions button{font-size:7px;padding:0 7px}}
