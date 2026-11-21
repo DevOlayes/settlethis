@@ -172,3 +172,37 @@ The prototype character has been replaced by a reusable articulated footballer r
 - **Important prototype boundary:** challenge links contain self-reported client scores. They can be copied, edited or fabricated and are not signed by a trusted server. The UI explicitly marks received results as unverified. They are suitable for friendly web-preview challenges only—not prizes, SETHIS payouts, CT stakes, official rankings or anti-cheat decisions.
 - Global cross-player rankings and trusted challenge records are intentionally deferred until authenticated Telegram identity, server-side run verification, persistent D1 records, challenge ownership/expiry rules and anti-cheat are available in the later Telegram/release integration stage. No unauthenticated score-submission endpoint or wallet/reward path was introduced.
 - No live browser, share-sheet, gameplay or Android device test was run. Challenge-link handoff, mobile sharing behaviour, result comparison and local leaderboard layout remain for the authorised final validation stage.
+
+## Stage 15 — performance optimisation and final-validation preparation
+
+### Runtime optimisations implemented
+
+- Added device-aware render profiles in `RenderQuality.ts`. Initial quality uses available device memory, CPU core count and coarse-pointer detection: low-capability devices start at Low, touch-first and mid-range devices start at Balanced, and stronger desktop-class devices start at High.
+- Added adaptive quality control using five-second frame-performance samples. Two consecutive struggling samples step rendering down; three consecutive healthy samples allow it to step back up. Hysteresis avoids changing quality on every brief frame-time fluctuation.
+- Render profiles cap device pixel ratio (Low 0.85, Balanced 1.05, High 1.30) and use no shadow map on Low, a 512px shadow map on Balanced and a 1024px map on High. Antialiasing is disabled only for devices initially classified Low.
+- Changed the WebGL power preference from an unconditional high-performance request to the browser's default choice, allowing the platform to balance performance and power.
+- Reduced static scenery shadow work: environmental box geometry no longer casts dynamic shadows by default, while the footballer and active gameplay entities retain their own shadow behaviour. The main directional key light is the only light managed by adaptive shadow quality.
+- Performance snapshots now include sampled frame count and slow-frame ratio in addition to average/worst frame time, FPS and slow-frame count. The engine uses these metrics internally; no unsupported performance claim or public telemetry upload is made.
+- Hardened responsive resizing by ignoring unchanged dimensions and preventing zero-sized camera/renderer dimensions.
+- Hardened teardown for future textured assets: scene and entity disposal now deduplicates and releases geometries, materials and texture maps, avoiding repeated disposal of shared resources.
+- Adaptive quality counters reset at the beginning of each run. Existing object pooling, lazy-loaded game bundle, tab-hidden pause and Web Audio cleanup remain in place.
+
+### Final validation plan — deliberately not run yet
+
+The following checks are prepared for the final validation window after all development stages are complete and the user explicitly authorises testing:
+
+1. **Android device coverage:** ordinary/low-memory Android, mid-range Android and a stronger Android device; test current Chrome and Telegram Mini App WebView separately.
+2. **Frame pacing:** capture repeated 60-second samples at the start, middle and later difficulty; record average FPS, average/worst frame time, slow-frame ratio and quality-profile transitions. Check for sustained stalls, overheating and battery drain over a longer session.
+3. **Gameplay correctness:** lane boundaries, diagonal swipes, jump/slide clearance, collision timing, safe obstacle patterns, collectible pickup, score totals, pause/resume, restart and exit.
+4. **Memory/GPU lifecycle:** repeat start/end/restart cycles, navigate away and back, inspect renderer resource counts and memory growth, and verify cleanup after disposal.
+5. **Browser lifecycle:** background/foreground, screen lock/unlock, orientation/viewport changes, WebGL context loss/recovery where supported, and low-memory tab recovery.
+6. **Audio and sharing:** mute/unmute, pause/resume sound, supported/unsupported share-sheet and clipboard fallback, challenge link round-trip and result comparison.
+7. **Compatibility and network:** current Android Chrome, desktop Chrome/Firefox/Safari where available, slow connection, offline/return-online behaviour and direct-link route refresh.
+8. **Economy/security:** verify no client-only challenge score or preview reward can credit a wallet; verify authenticated server-side score/reward controls during the later integration stage.
+
+### Validation boundary
+
+- Stage 15 changes are implementation and build preparation, not proof of measured device performance.
+- No automated test suite, live gameplay, browser interaction, Android device test, GPU profiling, WebGL context-loss test, or audio/share-sheet test was run during this stage.
+- TypeScript compilation and production bundling are permitted and will be checked through the GitHub build workflow. Automated test suites remain deferred until the user authorises final validation.
+- No real CT charge, SETHIS payout, rewarded-ad callback, Telegram identity integration or public leaderboard endpoint is introduced here.
