@@ -23,6 +23,7 @@ export class InputController {
 
   private readonly onPointerDown = (event: PointerEvent) => {
     this.pointerStart = { x: event.clientX, y: event.clientY };
+    this.element.setPointerCapture?.(event.pointerId);
   };
 
   private readonly onPointerUp = (event: PointerEvent) => {
