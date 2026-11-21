@@ -80,14 +80,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         model = loaded.model;
         if (disposed) { disposeRunnerCharacterModel(model); return; }
         scene.add(model);
-        const hierarchy = model.userData.runnerRigHierarchy as
-          | { normalized?: boolean; changes?: string[]; verified?: number }
-          | undefined;
-        addCheck("Sports Male 03 loaded: " + model.name);
-        addCheck(hierarchy?.normalized
-          ? `Sports Male 03 rig hierarchy corrected and verified: ${hierarchy.verified ?? 0} limb branches.`
-          : "Sports Male 03 rig hierarchy was not normalized.");
-        if (hierarchy?.changes?.length) addCheck("Rig branch corrections: " + hierarchy.changes.join("; "));
+        addCheck("Sports Male 03 loaded with its original, unchanged Bip01 skeleton.");
         const bounds = new THREE.Box3().setFromObject(model);
         const center = bounds.getCenter(new THREE.Vector3());
         const height = Math.max(0.1, bounds.max.y - bounds.min.y);
@@ -109,8 +102,10 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         addCheck("Selected motion: " + run.name);
         addCheck("Animation duration: " + run.duration.toFixed(2) + " seconds");
         addCheck("Animation tracks: " + run.tracks.length + " · driven bones: " + trackBones.size);
-        const required = ["Hips", "LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg", "LeftArm", "RightArm"];
-        const missing = required.filter((bone) => !trackBones.has(bone));
+        const normalize = (value: string) => value.replace(/_/g, " ").toLowerCase();
+        const normalizedTracks = new Set([...trackBones].map(normalize));
+        const required = ["Bip01 Pelvis", "Bip01 L Thigh", "Bip01 R Thigh", "Bip01 L Calf", "Bip01 R Calf", "Bip01 L UpperArm", "Bip01 R UpperArm"];
+        const missing = required.filter((bone) => !normalizedTracks.has(normalize(bone)));
         addCheck(missing.length ? "Missing key locomotion bones: " + missing.join(", ") : "All key leg, hip and arm tracks are present.");
         mixer = new THREE.AnimationMixer(model);
         action = mixer.clipAction(run);
