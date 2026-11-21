@@ -33,6 +33,7 @@ export type RunnerControls = {
   resume: () => void;
   restart: () => void;
   act: (action: RunnerAction) => void;
+  setSoundEnabled: (enabled: boolean) => void;
 };
 export type RunnerSceneBundle = {
   scene: THREE.Scene;
