@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { MIN_COVERAGE, retargetClipToObject } from "@three-ws/retarget";
+import { canonicalizeGLBBones, MIN_COVERAGE, retargetClipToObject } from "@three-ws/retarget";
 
 export type LoadedRunnerCharacter = {
   model: THREE.Group;
@@ -16,7 +16,11 @@ export async function loadRunnerCharacter(
   url = "/assets/football-runner/player.glb",
 ): Promise<LoadedRunnerCharacter> {
   const loader = new GLTFLoader();
-  const gltf = await loader.loadAsync(url);
+  const response = await fetch(url, { cache: "force-cache" });
+  if (!response.ok) throw new Error(`Unable to load footballer asset (${response.status})`);
+  const raw = await response.arrayBuffer();
+  const { buffer } = canonicalizeGLBBones(raw);
+  const gltf = await loader.parseAsync(buffer, new URL(".", window.location.href).href);
   const model = gltf.scene;
   model.name = "sethis-rigged-footballer";
 
@@ -83,7 +87,11 @@ export async function loadRunnerAnimationClips(
 
   for (const url of urls) {
     try {
-      const source = await loader.loadAsync(url);
+      const response = await fetch(url, { cache: "force-cache" });
+      if (!response.ok) continue;
+      const raw = await response.arrayBuffer();
+      const { buffer } = canonicalizeGLBBones(raw);
+      const source = await loader.parseAsync(buffer, new URL(".", window.location.href).href);
       for (const sourceClip of source.animations) {
         const result = retargetClipToObject(sourceClip, target);
         if (!result.clip || result.coverage < MIN_COVERAGE) continue;
