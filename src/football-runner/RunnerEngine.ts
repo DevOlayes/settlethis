@@ -41,7 +41,7 @@ export class RunnerEngine {
   private points = 0;
   private balls = 0;
   private spawnDistance = 0;
-  private nextSpawnGap = RUNNER_CONFIG.spawning.initialGap;
+  private nextSpawnGap: number = RUNNER_CONFIG.spawning.initialGap;
   private lastObstacleType = -1;
   private uiElapsed = 0;
   private performanceElapsed = 0;
