@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { RUNNER_CONFIG } from "./config";
-import { clamp, damp, getDemoReward, getRunSpeed } from "./math";
+import { clamp, getDemoReward, getRunSpeed } from "./math";
 import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
 import { createCollectible, createObstacle } from "./EntityFactory";
