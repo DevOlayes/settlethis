@@ -15,10 +15,18 @@ export type RunnerHud = {
   speed: number;
 };
 export type RunnerEngineCallbacks = {
+  onPerformance?: (metrics: RunnerPerformanceSnapshot) => void;
   onPhase: (phase: RunnerPhase) => void;
   onHud: (hud: RunnerHud) => void;
   onSummary: (summary: RunnerSummary) => void;
 };
+export type RunnerPerformanceSnapshot = {
+  fps: number;
+  averageFrameMs: number;
+  worstFrameMs: number;
+  slowFrames: number;
+};
+
 export type RunnerControls = {
   start: () => void;
   pause: () => void;
