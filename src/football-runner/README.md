@@ -96,3 +96,13 @@ The prototype character has been replaced by a reusable articulated footballer r
 - Added a short pooled coral-and-warm-white collection burst with expanding rings and outward particles. Effects are reused and disposed with the engine rather than creating a fresh GPU object for every pickup.
 - Collection feedback is independent of the reward calculation. Prototype SETHIS remains display-only; this stage does not introduce real CT deductions or token payouts.
 - The football model, collection timing, kick pose and visual effects still require authorised gameplay and visual validation on browser and ordinary Android hardware.
+
+
+## Stage 8 — chase camera, lighting and visual polish
+
+- Added a third-person chase camera behind the footballer with delta-time damping. It responds subtly to lane changes and jumps while preserving a stable forward look-ahead.
+- Reset camera position and look target at the start of each run for consistent restart framing.
+- Tuned perspective, clipping distance and fog for greater depth across the connected stadium, training and facilities world.
+- Refined the light rig with a warm key light, broad non-shadow-casting fill and restrained violet rim light. Shadow bias and camera bounds were tightened while retaining one 1024px shadow map.
+- Capped device pixel ratio at 1.35; added fill lights do not cast shadows as a mobile-conscious rendering baseline.
+- Code/build/deployment milestone only. Camera feel, lighting, shadow stability, frame pacing and ordinary Android appearance remain unverified until authorised final validation.
