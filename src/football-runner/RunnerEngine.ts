@@ -112,7 +112,7 @@ export class RunnerEngine {
         // library jumps; keep the unrelated run, slide, crouch and kick clips.
         const genericJump = /^(jump_start|jump_loop|jump_land)$/i;
         const compatibleAnimations = animations.filter((clip) => !genericJump.test(clip.name.trim()));
-        this.playerAnimator.attachRiggedModel(model, [...compatibleAnimations, ...nativeJumpClips]);
+        this.playerAnimator.attachRiggedModel(model, [...nativeJumpClips, ...compatibleAnimations]);
         this.nativeJumpEnabled = true;
         console.info("Approved native Biped jump integrated into Football Runner", {
           takeoff: NATIVE_BIPED_JUMP_PHASES.takeoff,
