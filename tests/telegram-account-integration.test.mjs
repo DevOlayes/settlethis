@@ -194,7 +194,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const referralCode = await api(env, "/api/referrals", firstInit);
   assert.equal(referralCode.response.status, 200);
   assert.ok(referralCode.data.code);
-  assert.ok(referralCode.data.invite_link.includes("startapp=ref_"));
+  assert.ok(referralCode.data.invite_link.includes("?start=ref_"));
 
   const secondUser = { id: 700002, first_name: "Arsenal", username: "arsenal_fan" };
   const secondInit = signedInitData(secondUser, { start_param: "ref_" + referralCode.data.code });
