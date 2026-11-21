@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import BrandMark from "./BrandMark";
 import AdminPortal from "./Admin";
+import FootballRunner from "./FootballRunner";
 import {authenticateTelegram,initializeTelegramApp,type TelegramUser} from "./telegram";
 import "./index.css";
 
@@ -27,6 +28,7 @@ function TelegramLanding(){
    <div className="telegram-landing-kicker">THE FOOTBALL REWARD ARENA</div>
    <h1>Think you know football? <em>Prove it.</em></h1>
    <p className="telegram-landing-intro">Take on football challenges, complete eligible tasks and invite your crew. Build your record and earn SETHIS rewards along the way.</p>
+   <a className="runner-landing-link" href="/football-runner"><span className="runner-link-ball">⚽</span><span><b>PLAY FOOTBALL RUNNER</b><small>Try the new 3D endless football run · Web prototype</small></span><strong>↗</strong></a>
    <div className="telegram-landing-rule"><span>MORE THAN JUST A GAME</span><i/></div>
    <div className="telegram-earning-points"><div><b>01</b><span><strong>PLAY THE CHALLENGES</strong><small>Take on Guess Who? and earn game points for your football knowledge.</small></span></div><div><b>02</b><span><strong>EARN SETHIS REWARDS</strong><small>Complete eligible community tasks and referral milestones to earn SETHIS.</small></span></div><div><b>03</b><span><strong>GET CT. GET IN THE GAME.</strong><small>Earn CT through available rewarded ads and use it to enter eligible games.</small></span></div></div>
    <p className="telegram-landing-disclaimer">SETHIS rewards are subject to each published task or referral rule. CT is the separate in-app participation currency — it is not SETHIS.</p>
@@ -37,6 +39,7 @@ function TelegramLanding(){
 }
 
 function Root(){
+ const isFootballRunner=window.location.pathname==="/football-runner";
  const [telegramUser,setTelegramUser]=useState<TelegramUser|null>(null);
  const [authStatus,setAuthStatus]=useState<"checking"|"ready"|"outside"|"failed">("checking");
  const [authError,setAuthError]=useState("");
@@ -60,6 +63,7 @@ function Root(){
   return()=>{active=false;};
  },[retry,isAdmin]);
  if(isAdmin)return <AdminPortal/>;
+ if(isFootballRunner)return <FootballRunner onBack={()=>{window.location.href="/";}}/>;
  if(authStatus==="outside")return <TelegramLanding/>;
  if(authStatus==="checking")return <main className="telegram-app-loading"><div><div className="telegram-app-mark"><span className="telegram-loader-orbit"/><BrandMark className="telegram-loader-logo"/><span className="telegram-loader-word">SETHIS</span></div><h1>Getting your game ready</h1><p>Verifying your Telegram account…</p></div></main>;
  if(authStatus==="failed")return <main className="telegram-app-loading"><div className="telegram-app-error"><div className="telegram-app-mark telegram-app-mark-static"><BrandMark className="telegram-loader-logo"/><span className="telegram-loader-word">SETHIS</span></div><h1>Telegram sign-in needs attention</h1><p>{authError}</p><button onClick={()=>setRetry(value=>value+1)}>TRY AGAIN</button><a href={APP_ORIGIN+"/"}>Return to the SETHIS introduction</a></div></main>;
