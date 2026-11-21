@@ -73,3 +73,5 @@
 .runner-share-notice{max-width:330px;margin:7px 0 0!important;padding:7px 10px;border:1px solid #e9827244;border-radius:7px;background:#30232d;color:#f4f1f7!important;font-size:8px!important}
 @media(max-height:760px){.runner-challenge-banner,.runner-challenge-outcome{padding:9px 11px;margin-bottom:8px}.runner-challenge-banner>b,.runner-challenge-outcome>b{font-size:15px}.runner-local-leaderboard{gap:4px;padding:8px 10px}}
 @media(max-width:540px){.runner-local-leaderboard>div{grid-template-columns:23px 1fr auto;gap:5px}.runner-challenge-outcome>div strong{font-size:15px}}
+
+.runner-challenge-outcome>small{display:block;color:#aaa3b5;font-size:7px;line-height:1.5}
