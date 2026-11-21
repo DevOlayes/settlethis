@@ -103,7 +103,7 @@ export default function FootballRunner({ onBack }: Props) {
       </section>
 
       <footer className="runner-controls">
-        <div className="runner-control-pad" aria-label="Touch game controls">
+        <div className="runner-control-pad" role="group" aria-label="Touch game controls">
           <button type="button" aria-label="Move left" disabled={phase !== "running"} onClick={() => engineRef.current?.act("left")}>←</button>
           <button type="button" aria-label="Move right" disabled={phase !== "running"} onClick={() => engineRef.current?.act("right")}>→</button>
           <button type="button" aria-label="Jump" disabled={phase !== "running"} onClick={() => engineRef.current?.act("jump")}>↑</button>
