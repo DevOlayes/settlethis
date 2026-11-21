@@ -24,6 +24,9 @@ export class RunnerEngine {
   private readonly activeEffects: { object: ActiveObject; elapsed: number }[] = [];
   private readonly allEffects = new Set<ActiveObject>();
   private readonly allPooledObjects = new Set<ActiveObject>();
+  private readonly cameraPositionTarget = new THREE.Vector3();
+  private readonly cameraLookTarget = new THREE.Vector3();
+  private readonly cameraLookCurrent = new THREE.Vector3();
   private readonly input: InputController;
   private readonly resizeObserver: ResizeObserver;
   private frame = 0;
@@ -78,6 +81,9 @@ export class RunnerEngine {
     this.playerCharacter.root.position.set(0, 0, RUNNER_CONFIG.playerStartZ);
     this.playerAnimator.reset();
     this.bundle.world.position.z = 0;
+    this.bundle.camera.position.set(...RUNNER_CONFIG.camera.start);
+    this.cameraLookCurrent.set(...RUNNER_CONFIG.camera.lookAt);
+    this.bundle.camera.lookAt(this.cameraLookCurrent);
 
     for (let index = 0; index < RUNNER_CONFIG.spawning.initialObjects; index++) {
       const z = -13 - index * RUNNER_CONFIG.spawning.initialSpacing;
@@ -294,6 +300,7 @@ export class RunnerEngine {
       sliding: this.slideRemaining > 0,
       laneLean: clamp(this.targetLane - player.position.x / config.laneWidth, -1, 1),
     });
+    this.updateChaseCamera(delta, player.position);
 
     if (this.spawnElapsed > Math.max(
       config.spawning.intervalMinimum,
@@ -371,6 +378,25 @@ export class RunnerEngine {
         speed: Math.round((speed / config.movement.initialSpeed) * 10) / 10,
       });
     }
+  }
+
+  private updateChaseCamera(delta: number, playerPosition: THREE.Vector3): void {
+    const cameraConfig = RUNNER_CONFIG.camera;
+    const positionBlend = 1 - Math.exp(-cameraConfig.positionDamping * delta);
+    const targetBlend = 1 - Math.exp(-cameraConfig.targetDamping * delta);
+    this.cameraPositionTarget.set(
+      playerPosition.x * 0.28,
+      cameraConfig.followHeight + playerPosition.y * 0.16,
+      playerPosition.z + cameraConfig.followDistance,
+    );
+    this.bundle.camera.position.lerp(this.cameraPositionTarget, positionBlend);
+    this.cameraLookTarget.set(
+      playerPosition.x * 0.12,
+      1.22 + playerPosition.y * 0.22,
+      playerPosition.z - cameraConfig.lookAhead,
+    );
+    this.cameraLookCurrent.lerp(this.cameraLookTarget, targetBlend);
+    this.bundle.camera.lookAt(this.cameraLookCurrent);
   }
 
   private disposeObject(root: THREE.Object3D): void {
