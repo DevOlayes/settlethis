@@ -221,8 +221,8 @@ The following checks are prepared for the final validation window after all deve
 
 ### Bundled animation packs
 
-- `UAL1_Standard.glb`: Quaternius Universal Animation Library 1 Standard, CC0 1.0. Selected clips: `Jog_Fwd_Loop`, `Sprint_Loop`, `Jump_Start`, `Jump_Loop`, `Jump_Land`, `Crouch_Fwd_Loop` and `Crouch_Idle_Loop`.
-- `UAL2_Standard.glb`: Quaternius Universal Animation Library 2 Standard, CC0 1.0. Selected clips: `Slide_Start`, `Slide_Loop`, `Slide_Exit` and the optional Ninja Jump chain.
+- `UAL1_Standard.pack`: gzip-compressed Quaternius Universal Animation Library 1 Standard GLB, CC0 1.0. Selected clips: `Jog_Fwd_Loop`, `Sprint_Loop`, `Jump_Start`, `Jump_Loop`, `Jump_Land`, `Crouch_Fwd_Loop` and `Crouch_Idle_Loop`.
+- `UAL2_Standard.pack`: gzip-compressed Quaternius Universal Animation Library 2 Standard GLB, CC0 1.0. Selected clips: `Slide_Start`, `Slide_Loop`, `Slide_Exit` and the optional Ninja Jump chain.
 - The `_Standard` variants are in-place clips. The game simulation, not the animation, owns forward movement and lane position.
 - Original Quaternius licence text and checksums/source records are preserved in `public/assets/football-runner/animations/` and `manifest.json`.
 - The import workflow obtains the public Standard releases, verifies their hashes, checks the exact clip names and commits the resulting local assets. Gameplay does not call Quaternius, KinemIQ or any external animation API.
@@ -239,6 +239,6 @@ The following checks are prepared for the final validation window after all deve
 ### Technical and validation boundary
 
 - `@three-ws/retarget` (Apache-2.0) handles canonical humanoid mapping, rest-pose/hip-axis correction and clip coverage checks. Clips below the 50% coverage gate are rejected rather than forced onto the model.
-- Animation assets are local and same-origin; no remote animation service is called during play.
+- Animation assets are local and same-origin; no remote animation service is called during play. Gzip-packed `.pack` files are decompressed with the browser's native `DecompressionStream` API.
 - The football kick is original game-authored animation. The current bundle does not claim to contain a captured professional soccer-kick performance.
 - GitHub build and Cloudflare deployment checks are separate from visual validation. No browser preview, live gameplay, Android device test or final animation quality sign-off has been performed during development.
