@@ -260,6 +260,7 @@ export class RunnerEngine {
   private update(delta: number): void {
     const config = RUNNER_CONFIG;
     this.elapsed += delta;
+    this.updateCollectionEffects(delta);
     const speed = Math.min(config.movement.maximumSpeed, getRunSpeed(this.elapsed));
     this.distance += speed * delta;
     this.points += Math.floor(speed * delta * 12);
@@ -329,6 +330,13 @@ export class RunnerEngine {
           this.balls++;
           this.points += 100;
           this.playerAnimator.triggerKick();
+          this.spawnCollectionEffect(object.position);
+          this.callbacks.onHud({
+            distance: Math.floor(this.distance),
+            points: this.points,
+            balls: this.balls,
+            speed: Math.round((speed / config.movement.initialSpeed) * 10) / 10,
+          });
           this.releaseObject(object);
           this.objects.splice(index, 1);
         } else {
