@@ -78,22 +78,23 @@ export class RunnerEngine {
       const animations = embeddedAnimations.length
         ? embeddedAnimations
         : await loadRunnerAnimationManifest(model);
-      const requiredMotions = [
-        "xbot-run",
-        "Jump_Start",
-        "Jump_Loop",
-        "Jump_Land",
-        "Crouch_Fwd_Loop",
-        "Slide_Start",
-        "Slide_Loop",
-        "Slide_Exit",
-      ];
+      // Sports Male 03 is the approved player model and must not be rejected
+      // merely because optional action clips are unavailable. Only the in-place
+      // run cycle is required for promotion; jump/slide/crouch can fall back to
+      // the existing procedural actions until their clips are tuned separately.
       const availableMotions = new Set(animations.map((clip) => clip.name.toLowerCase()));
-      const missingMotions = requiredMotions.filter((name) => !availableMotions.has(name.toLowerCase()));
-      if (this.disposed || missingMotions.length > 0) {
-        console.warn("Rigged footballer kept in fallback mode; required motions are missing", missingMotions);
+      const hasRunCycle = [...availableMotions].some((name) => /run|jog|walk|locomotion/.test(name));
+      if (this.disposed || !hasRunCycle) {
+        console.warn("Sports Male 03 could not be promoted because its in-place run cycle is unavailable", {
+          availableMotions: [...availableMotions],
+        });
         disposeRunnerCharacterModel(model);
         return;
+      }
+      const optionalMotions = ["Jump_Start", "Jump_Loop", "Jump_Land", "Crouch_Fwd_Loop", "Slide_Start", "Slide_Loop", "Slide_Exit"];
+      const missingOptionalMotions = optionalMotions.filter((name) => !availableMotions.has(name.toLowerCase()));
+      if (missingOptionalMotions.length) {
+        console.info("Sports Male 03 loaded; optional action clips will use existing fallbacks", missingOptionalMotions);
       }
 
       // Never swap the visual rig during an active run or over the results screen.
@@ -103,8 +104,8 @@ export class RunnerEngine {
         return;
       }
       this.installRiggedPlayer(model, animations);
-    } catch {
-      // The procedural character remains a safe fallback until a reviewed GLB is supplied.
+    } catch (error) {
+      console.error("Sports Male 03 failed to load; keeping the existing player model", error);
     }
   }
 
