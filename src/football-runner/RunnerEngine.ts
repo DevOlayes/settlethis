@@ -6,7 +6,7 @@ import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
 import { animateCollectionEffect, createCollectible, createCollectionEffect, createObstacle } from "./EntityFactory";
 import { createPlayerCharacter } from "./PlayerCharacter";
-import { disposeRunnerCharacterModel, loadRunnerCharacter } from "./RiggedPlayerAsset";
+import { disposeRunnerCharacterModel, loadRunnerAnimationManifest, loadRunnerCharacter } from "./RiggedPlayerAsset";
 import { PlayerAnimator } from "./PlayerAnimator";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
 import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
@@ -73,12 +73,17 @@ export class RunnerEngine {
 
   private async loadRiggedPlayer(): Promise<void> {
     try {
-      const { model, animations } = await loadRunnerCharacter();
-      if (this.disposed) {
+      const { model, animations: embeddedAnimations } = await loadRunnerCharacter();
+      const animations = embeddedAnimations.length
+        ? embeddedAnimations
+        : await loadRunnerAnimationManifest(model);
+      if (this.disposed || animations.length === 0) {
         disposeRunnerCharacterModel(model);
         return;
       }
 
+      // Do not replace the live fallback with an unanimated T-pose. Only promote
+      // the authored player after at least one compatible motion clip is available.
       // Keep the gameplay root/pivots stable; replace only its visual child meshes.
       for (const child of [...this.playerCharacter.root.children]) {
         this.playerCharacter.root.remove(child);
