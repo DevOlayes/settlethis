@@ -257,6 +257,8 @@ export class RunnerEngine {
       distance: Math.floor(this.distance),
       points: this.points,
       balls: this.balls,
+      distancePoints: Math.floor(this.distance * RUNNER_CONFIG.scoring.distancePointsPerMetre),
+      footballPoints: this.balls * RUNNER_CONFIG.scoring.footballPickupPoints,
       sethis,
     };
     cancelAnimationFrame(this.frame);
@@ -309,7 +311,7 @@ export class RunnerEngine {
       this.lastSpeedTier = speedTier;
       this.audio.milestone("speed");
     }
-    this.points += Math.floor(speed * delta * 12);
+    this.points = Math.floor(this.distance * config.scoring.distancePointsPerMetre) + this.balls * config.scoring.footballPickupPoints;
     this.spawnDistance += speed * delta;
     this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % config.world.length;
 
@@ -372,7 +374,7 @@ export class RunnerEngine {
       if (depth < depthLimit && width < widthLimit) {
         if (object.userData.kind === "ball") {
           this.balls++;
-          this.points += 100;
+          this.points = Math.floor(this.distance * config.scoring.distancePointsPerMetre) + this.balls * config.scoring.footballPickupPoints;
           this.playerAnimator.triggerKick();
           this.audio.collect();
           this.spawnCollectionEffect(object.position);
