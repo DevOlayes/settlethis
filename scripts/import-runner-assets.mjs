@@ -251,6 +251,6 @@ const assetReadme = [
   "- https://quaternius.com/packs/universalanimationlibrary2.html",
   "",
   "The football collection kick is an original game-authored clip, not a third-party motion-capture asset."
-].join("\\n");
+].join(String.fromCharCode(10));
 await writeFile(path.join(assetRoot, "README.md"), assetReadme);
 console.log("Runner asset import complete.");
