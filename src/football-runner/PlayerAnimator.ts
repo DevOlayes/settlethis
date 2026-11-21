@@ -26,25 +26,39 @@ const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
 
 const ONESHOT_MOTIONS = new Set<RunnerMotion>(["jumpTakeoff", "jumpLand", "slideStart", "slideEnd", "kick"]);
 
+function normalizedBoneKey(name: string): string {
+  // canonicalizeBoneName may return a normalized alias (and may retain a
+  // Mixamo namespace depending on the source naming); compare the final bone
+  // segment case-insensitively so Bip01 and mixamorig rigs resolve identically.
+  const canonical = canonicalizeBoneName(name);
+  return canonical.split(":").pop()!.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
 function createUprightRunClip(model: THREE.Object3D, sprint = false): THREE.AnimationClip {
   const bones = new Map<string, THREE.Bone>();
   model.traverse((object) => {
-    if (object instanceof THREE.Bone) bones.set(canonicalizeBoneName(object.name), object);
+    if (!(object instanceof THREE.Bone)) return;
+    const names = [object.name, object.name.split(":").pop() ?? object.name];
+    for (const name of names) bones.set(normalizedBoneKey(name), object);
   });
 
   // Avatar-specific in-place locomotion. The retargeted jog was producing a
   // horizontal, swimming-like stroke on this Biped, so run/sprint are authored
   // directly against its canonical humanoid joints instead.
-  const duration = 0.84;
-  const sampleCount = 9;
+  // A complete, brisk running cycle. The earlier clip could silently contain
+  // no tracks because its lookup keys ("LeftUpLeg") did not match the
+  // retargeter's canonicalized, lower-case bone names; that left the avatar
+  // upright but motionless while the world scrolled beneath him.
+  const duration = sprint ? 0.52 : 0.62;
+  const sampleCount = 13;
   const times = Array.from({ length: sampleCount }, (_, index) => duration * index / (sampleCount - 1));
-  const stride = sprint ? 0.76 : 0.62;
-  const armSwing = sprint ? 0.58 : 0.48;
-  const kneeLift = sprint ? 0.82 : 0.68;
+  const stride = sprint ? 0.98 : 0.82;
+  const armSwing = sprint ? 0.78 : 0.66;
+  const kneeLift = sprint ? 1.08 : 0.94;
   const tracks: THREE.KeyframeTrack[] = [];
 
   const addRotation = (name: string, valuesAtPhase: (phase: number) => [number, number, number]) => {
-    const bone = bones.get(name);
+    const bone = bones.get(normalizedBoneKey(name));
     if (!bone) return;
     const base = bone.quaternion.clone();
     const values: number[] = [];
@@ -74,8 +88,25 @@ function createUprightRunClip(model: THREE.Object3D, sprint = false): THREE.Anim
   // Upright chest, a slight athletic forward lean and restrained hip counter-rotation.
   addRotation("Spine", (phase) => [-0.075, 0, Math.sin(phase) * 0.012]);
   addRotation("Spine1", (phase) => [-0.025, 0, -Math.sin(phase) * 0.01]);
-  addRotation("Hips", (phase) => [0, 0, -Math.sin(phase) * 0.018]);
+  addRotation("Hips", (phase) => [0, 0, -Math.sin(phase) * 0.035]);
 
+  // Subtle vertical hip travel makes the footfalls read as running rather than
+  // skating. The doubled frequency creates a small rise on each step.
+  const hips = bones.get(normalizedBoneKey("Hips"));
+  if (hips) {
+    const base = hips.position.clone();
+    const values: number[] = [];
+    for (let index = 0; index < sampleCount; index++) {
+      const phase = (index / (sampleCount - 1)) * Math.PI * 2;
+      const bounce = Math.abs(Math.sin(phase)) * (sprint ? 0.045 : 0.035);
+      values.push(base.x, base.y + bounce, base.z);
+    }
+    tracks.push(new THREE.VectorKeyframeTrack(hips.name + ".position", times, values));
+  }
+
+  if (tracks.length < 8) {
+    throw new Error(`Upright runner animation resolved only ${tracks.length} bone tracks`);
+  }
   return new THREE.AnimationClip(sprint ? "SETHIS Upright Sprint" : "SETHIS Upright Run", duration, tracks);
 }
 
