@@ -12,6 +12,7 @@ function setup() {
     CREATE TABLE pool_positions (user_id TEXT, pool_id TEXT, side TEXT, status TEXT);
     CREATE TABLE pool_adjudications (pool_id TEXT PRIMARY KEY, winner_side TEXT);
     CREATE TABLE wallet_ledger (user_id TEXT, token TEXT, amount INTEGER, transaction_type TEXT);
+    CREATE TABLE mystery_game_rounds (user_id TEXT, status TEXT, points INTEGER);
   `);
   const addUser = db.prepare("INSERT INTO telegram_users(telegram_user_id,username,first_name) VALUES(?,?,?)");
   const addCourt = db.prepare("INSERT INTO court_participants(telegram_user_id,court_id,side,status) VALUES(?,?,?,?)");

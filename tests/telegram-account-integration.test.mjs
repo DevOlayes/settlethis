@@ -20,9 +20,9 @@ class TestD1Statement {
   params = [];
   constructor(db, sql) { this.db = db; this.sql = sql; }
   bind(...params) { this.params = params; return this; }
-  first() { return this.db.prepare(this.sql).get(...this.params) ?? null; }
-  all() { return { results: this.db.prepare(this.sql).all(...this.params) }; }
-  run() {
+  async first() { return this.db.prepare(this.sql).get(...this.params) ?? null; }
+  async all() { return { results: this.db.prepare(this.sql).all(...this.params) }; }
+  async run() {
     const result = this.db.prepare(this.sql).run(...this.params);
     return { meta: { changes: Number(result.changes), last_row_id: Number(result.lastInsertRowid) || 0 } };
   }
@@ -37,10 +37,11 @@ function createEnvironment() {
   }
   const DB = {
     prepare(sql) { return new TestD1Statement(sqlite, sql); },
-    batch(statements) {
+    async batch(statements) {
       sqlite.exec("BEGIN");
       try {
-        const results = statements.map(statement => statement.run());
+        const results = [];
+        for (const statement of statements) results.push(await statement.run());
         sqlite.exec("COMMIT");
         return results;
       } catch (error) {
@@ -148,6 +149,38 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const duplicateCheckin = await api(env, "/api/checkin", firstInit, "POST");
   assert.equal(duplicateCheckin.response.status, 200);
   assert.equal(duplicateCheckin.data.total_checkins, 1);
+
+  const runnerConfig = await api(env, "/api/runner/config", firstInit);
+  assert.equal(runnerConfig.response.status, 200);
+  assert.equal(runnerConfig.data.access_mode, "free_early_access");
+  assert.equal(runnerConfig.data.entry_ct, 0);
+  assert.equal(runnerConfig.data.rewards_enabled, false);
+
+  const runnerBefore = await api(env, "/api/runner/records", firstInit);
+  assert.equal(runnerBefore.response.status, 200);
+  assert.equal(runnerBefore.data.records.totalRuns, 0);
+
+  const runnerStart = await api(env, "/api/runner/start", firstInit, "POST", {});
+  assert.equal(runnerStart.response.status, 201);
+  assert.ok(runnerStart.data.run_id);
+  env.testDb.prepare("UPDATE runner_game_runs SET started_at=datetime('now','-10 seconds') WHERE id=?")
+    .run(runnerStart.data.run_id);
+  const runnerFinish = await api(env, "/api/runner/finish", firstInit, "POST", {
+    run_id: runnerStart.data.run_id, distance: 100, points: 1200, footballs: 0
+  });
+  assert.equal(runnerFinish.response.status, 200);
+  assert.equal(runnerFinish.data.saved, true);
+  assert.equal(runnerFinish.data.records.bestDistance, 100);
+  assert.equal(runnerFinish.data.rewards_enabled, false);
+  const duplicateRunnerFinish = await api(env, "/api/runner/finish", firstInit, "POST", {
+    run_id: runnerStart.data.run_id, distance: 100, points: 1200, footballs: 0
+  });
+  assert.equal(duplicateRunnerFinish.response.status, 409);
+  const runnerWallet = await api(env, "/api/wallet", firstInit);
+  assert.equal(runnerWallet.data.wallet.ct_balance, 3500);
+  assert.equal(runnerWallet.data.wallet.sethis_balance, 0);
+  const unauthenticatedRunnerRecords = await worker.fetch(new Request("https://settlethis.test/api/runner/records"), env);
+  assert.equal(unauthenticatedRunnerRecords.status, 401);
 
   const notifications = await api(env, "/api/notifications", firstInit);
   assert.equal(notifications.response.status, 200);
