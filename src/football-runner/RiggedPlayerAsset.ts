@@ -12,6 +12,7 @@ type RunnerAnimationAsset = {
   name?: string;
   url: string;
   includeAnimations?: string[];
+  compression?: "gzip";
   source?: string;
   license?: string;
 };
@@ -127,6 +128,15 @@ function canonicalizeAvatarBuffer(raw: ArrayBuffer): ArrayBuffer {
   return canonicalizeGLBBones(mapped).buffer;
 }
 
+async function decompressAnimationAsset(input: ArrayBuffer): Promise<ArrayBuffer> {
+  if (typeof DecompressionStream === "undefined") {
+    throw new Error("This browser does not support gzip animation asset decoding");
+  }
+  const compressed = new Blob([input]).stream();
+  const decompressed = compressed.pipeThrough(new DecompressionStream("gzip"));
+  return new Response(decompressed).arrayBuffer();
+}
+
 function createLoader(): GLTFLoader {
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
@@ -208,7 +218,10 @@ export async function loadRunnerAnimationClips(
         console.warn(`Runner animation asset unavailable: ${asset.url} (${response.status})`);
         continue;
       }
-      const raw = await response.arrayBuffer();
+      const downloaded = await response.arrayBuffer();
+      const raw = asset.compression === "gzip"
+        ? await decompressAnimationAsset(downloaded)
+        : downloaded;
       const { buffer } = canonicalizeGLBBones(raw);
       const source = await loader.parseAsync(buffer, new URL(".", window.location.href).href);
       const allowed = asset.includeAnimations
