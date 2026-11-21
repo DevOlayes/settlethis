@@ -3,8 +3,8 @@
 
 .runner-controls{display:flex;flex-direction:column;align-items:center;gap:9px;padding:10px 0 14px}
 .runner-control-pad{display:flex;align-items:center;justify-content:center;gap:9px}
-.runner-control-pad button{width:44px;height:38px;border:1px solid #e9827266;border-radius:9px;background:#302b3d;color:#f4f1f7;font-size:19px;font-weight:800;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}
+.runner-control-pad button{width:44px;height:44px;border:1px solid #e9827266;border-radius:9px;background:#302b3d;color:#f4f1f7;font-size:19px;font-weight:800;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}
 .runner-control-pad button:active:not(:disabled){background:#e98272;color:#211725;transform:translateY(1px)}
 .runner-control-pad button:disabled{opacity:.35}
 .runner-controls>span{font-size:7px;color:#aaa3b5;letter-spacing:.13em;text-align:center}
-@media(max-width:540px){.runner-control-pad{gap:12px}.runner-control-pad button{width:52px;height:42px;font-size:21px}.runner-controls{padding:8px 0 calc(12px + env(safe-area-inset-bottom,0))}}
+@media(max-width:540px){.runner-control-pad{gap:12px}.runner-control-pad button{width:52px;height:46px;font-size:21px}.runner-controls{padding:8px 0 calc(12px + env(safe-area-inset-bottom,0))}}
