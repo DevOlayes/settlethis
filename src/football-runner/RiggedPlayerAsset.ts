@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-import { canonicalizeGLBBones, MIN_COVERAGE, retargetClipToObject } from "@three-ws/retarget";
+import { canonicalizeBoneName, canonicalizeGLBBones, MIN_COVERAGE, retargetClipToObject } from "@three-ws/retarget";
 
 export type LoadedRunnerCharacter = {
   model: THREE.Group;
@@ -129,6 +129,64 @@ function canonicalizeAvatarBuffer(raw: ArrayBuffer): ArrayBuffer {
   return canonicalizeGLBBones(mapped).buffer;
 }
 
+/**
+ * Sports Male 03 uses a valid Biped rig, but its branch hierarchy is not the
+ * canonical humanoid hierarchy expected by the retargeter: the thigh roots are
+ * children of Spine, and the clavicles are children of Neck. Canonical motion
+ * assumes thighs descend from Hips and shoulders descend from Spine2. Reparent
+ * those four branch roots while preserving their bind-pose world transforms.
+ * This changes animation inheritance without changing the approved mesh or
+ * its bind-pose placement.
+ */
+function normalizeSportsMale03Hierarchy(model: THREE.Object3D): string[] {
+  const bones = new Map<string, THREE.Bone>();
+  model.traverse((object) => {
+    if (!(object instanceof THREE.Bone)) return;
+    const canonical = canonicalizeBoneName(object.name);
+    if (canonical && !bones.has(canonical)) bones.set(canonical, object);
+  });
+
+  model.updateMatrixWorld(true);
+  const changes: string[] = [];
+  const reparent = (boneName: string, parentName: string) => {
+    const bone = bones.get(boneName);
+    const parent = bones.get(parentName);
+    if (!bone || !parent) {
+      throw new Error(`Sports Male 03 rig is missing ${boneName} or its expected parent ${parentName}`);
+    }
+    if (bone.parent === parent) return;
+    const previousParent = bone.parent;
+    parent.attach(bone);
+    model.updateMatrixWorld(true);
+    changes.push(`${boneName}: ${canonicalizeBoneName(previousParent?.name || "root")} → ${parentName}`);
+  };
+
+  reparent("LeftUpLeg", "Hips");
+  reparent("RightUpLeg", "Hips");
+  reparent("LeftShoulder", "Spine2");
+  reparent("RightShoulder", "Spine2");
+
+  const expected: Array<[string, string]> = [
+    ["LeftUpLeg", "Hips"],
+    ["RightUpLeg", "Hips"],
+    ["LeftShoulder", "Spine2"],
+    ["RightShoulder", "Spine2"],
+  ];
+  for (const [boneName, parentName] of expected) {
+    const actual = canonicalizeBoneName(bones.get(boneName)?.parent?.name || "");
+    if (actual !== parentName) {
+      throw new Error(`Sports Male 03 hierarchy check failed: ${boneName} is parented to ${actual || "unknown"}, expected ${parentName}`);
+    }
+  }
+
+  model.userData.runnerRigHierarchy = {
+    normalized: true,
+    changes,
+    verified: expected.length,
+  };
+  return changes;
+}
+
 async function decompressAnimationAsset(input: ArrayBuffer): Promise<ArrayBuffer> {
   if (typeof DecompressionStream === "undefined") {
     throw new Error("This browser does not support gzip animation asset decoding");
@@ -159,7 +217,12 @@ export async function loadRunnerCharacter(
   const buffer = canonicalizeAvatarBuffer(raw);
   const gltf = await createLoader().parseAsync(buffer, new URL(".", window.location.href).href);
   const model = gltf.scene;
+  const hierarchyChanges = normalizeSportsMale03Hierarchy(model);
   model.name = "sethis-rigged-footballer";
+  console.info("Normalized Sports Male 03 canonical rig hierarchy", {
+    changes: hierarchyChanges,
+    verifiedBranches: model.userData.runnerRigHierarchy?.verified ?? 0,
+  });
 
   model.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return;
