@@ -52,6 +52,28 @@ export async function loadRunnerCharacter(
  * Store approved source clips under public/assets/football-runner/animations/
  * and pass their same-origin paths here. No third-party runtime API is needed.
  */
+export type RunnerAnimationManifest = {
+  clips: Array<{ url: string; source: string; license: string; credit?: string }>;
+};
+
+export async function loadRunnerAnimationManifest(
+  target: THREE.Object3D,
+  manifestUrl = "/assets/football-runner/animations/manifest.json",
+): Promise<THREE.AnimationClip[]> {
+  try {
+    const response = await fetch(manifestUrl, { cache: "force-cache" });
+    if (!response.ok) return [];
+    const manifest = await response.json() as RunnerAnimationManifest;
+    if (!Array.isArray(manifest.clips)) return [];
+    const urls = manifest.clips
+      .filter((clip) => typeof clip.url === "string" && clip.url.startsWith("/assets/football-runner/animations/"))
+      .map((clip) => clip.url);
+    return loadRunnerAnimationClips(target, urls);
+  } catch {
+    return [];
+  }
+}
+
 export async function loadRunnerAnimationClips(
   target: THREE.Object3D,
   urls: string[],
