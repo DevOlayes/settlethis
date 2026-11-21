@@ -28,6 +28,39 @@ function capsuleBetween(radius: number, length: number, material: THREE.Material
   return mesh;
 }
 
+function createAthleticTorsoGeometry(): THREE.BufferGeometry {
+  const rings: Array<[number, number, number]> = [
+    [-0.43, 0.22, 0.145],
+    [-0.31, 0.265, 0.16],
+    [-0.13, 0.29, 0.17],
+    [0.04, 0.325, 0.18],
+    [0.2, 0.36, 0.17],
+    [0.34, 0.32, 0.15],
+    [0.43, 0.19, 0.125],
+  ];
+  const segments = 20;
+  const positions: number[] = [];
+  const indices: number[] = [];
+  for (const [y, radiusX, radiusZ] of rings) {
+    for (let segment = 0; segment <= segments; segment++) {
+      const angle = (segment / segments) * Math.PI * 2;
+      positions.push(Math.cos(angle) * radiusX, y, Math.sin(angle) * radiusZ);
+    }
+  }
+  for (let ring = 0; ring < rings.length - 1; ring++) {
+    for (let segment = 0; segment < segments; segment++) {
+      const a = ring * (segments + 1) + segment;
+      const b = a + segments + 1;
+      indices.push(a, b, a + 1, b, b + 1, a + 1);
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
 function addMesh(parent: THREE.Object3D, geometry: THREE.BufferGeometry, material: THREE.Material, position: [number, number, number]): THREE.Mesh {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(...position);
@@ -71,8 +104,7 @@ export function createPlayerCharacter(): PlayerCharacter {
   const torso = new THREE.Group();
   torso.position.set(0, 1.52, 0);
   root.add(torso);
-  const chest = addMesh(torso, new THREE.CapsuleGeometry(0.31, 0.55, 6, 14), kit, [0, 0.02, 0]);
-  chest.scale.set(1.16, 1.04, 0.84);
+  const chest = addMesh(torso, createAthleticTorsoGeometry(), kit, [0, 0.02, 0]);
   // Rounded shoulder and upper-back volume gives the kit a recognisable athletic silhouette.
   for (const side of [-1, 1]) {
     const shoulderMass = addMesh(torso, new THREE.SphereGeometry(0.19, 14, 12), kit, [side * 0.285, 0.27, 0]);
@@ -136,14 +168,14 @@ export function createPlayerCharacter(): PlayerCharacter {
     const thigh = new THREE.Group();
     thigh.position.set(side * 0.19, 0.91, 0);
     root.add(thigh);
-    const upper = capsuleBetween(0.145, 0.39, shortsMat, 12);
+    const upper = capsuleBetween(0.135, 0.39, skin, 12);
     upper.position.y = -0.22;
     thigh.add(upper);
 
     const knee = new THREE.Group();
     knee.position.y = -0.43;
     thigh.add(knee);
-    addMesh(knee, new THREE.SphereGeometry(0.115, 12, 10), skin, [0, 0, 0]);
+    addMesh(knee, new THREE.SphereGeometry(0.12, 12, 10), skin, [0, 0, 0]);
     const shin = capsuleBetween(0.096, 0.41, sock, 12);
     shin.position.y = -0.25;
     knee.add(shin);
