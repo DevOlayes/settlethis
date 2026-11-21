@@ -45,7 +45,6 @@ export class RunnerEngine {
   private lastObstacleType = -1;
   private uiElapsed = 0;
   private performanceElapsed = 0;
-  private obstacleIndex = 0;
   private lastObstacleLane = 2;
   private lastDistanceMilestone = 0;
   private lastSpeedTier = 4;
@@ -82,7 +81,6 @@ export class RunnerEngine {
     this.lastObstacleType = -1;
     this.uiElapsed = 0;
     this.performanceElapsed = 0;
-    this.obstacleIndex = 0;
     this.lastObstacleLane = 2;
     this.lastDistanceMilestone = 0;
     this.lastSpeedTier = 4;
@@ -441,7 +439,8 @@ export class RunnerEngine {
     const doubleObstacleChance = config.doubleObstacleChanceStart
       + (config.doubleObstacleChanceMaximum - config.doubleObstacleChanceStart) * difficulty;
     const obstacleCount = Math.random() < doubleObstacleChance ? 2 : 1;
-    const shuffled = [...lanes].sort(() => Math.random() - 0.5);
+    const laneOptions = obstacleCount === 1 ? lanes.filter((lane) => lane !== this.lastObstacleLane) : lanes;
+    const shuffled = [...laneOptions].sort(() => Math.random() - 0.5);
     const blockedLanes = shuffled.slice(0, obstacleCount);
 
     // One or two lanes may be challenged, but at least one complete lane stays open.
