@@ -38,20 +38,17 @@ export class PlayerAnimator {
 
   private findRiggedAction(state: string): THREE.AnimationAction | undefined {
     const patterns: Record<string, RegExp[]> = {
-      run: [/\\brun\\b/, /sprint/, /jog/],
-      jump: [/jump/, /hop/],
+      run: [/\brun\b/, /sprint/, /jog/, /\bwalk\b/],
+      jump: [/jump/, /hop/, /take.?off/, /airborne/],
       slide: [/slide/, /sliding/, /crouch/, /roll/],
-      kick: [/kick/, /shoot/, /pass/, /dribble/],
+      kick: [/kick/, /shoot/, /pass/, /strike/, /dribble/],
     };
     const candidates = patterns[state] || [];
     for (const [name, action] of this.riggedActions) {
       if (candidates.some((pattern) => pattern.test(name))) return action;
     }
     if (state !== "run") return this.findRiggedAction("run");
-    for (const [name, action] of this.riggedActions) {
-      if (/walk/.test(name)) return action;
-    }
-    return this.riggedActions.values().next().value;
+    return undefined;
   }
 
   private playRiggedState(state: string): void {
@@ -70,9 +67,9 @@ export class PlayerAnimator {
       next.setLoop(THREE.LoopRepeat, Infinity);
       next.clampWhenFinished = false;
     }
-    next.fadeIn(previous ? 0.18 : 0);
+    next.fadeIn(previous ? 0.2 : 0);
     next.play();
-    previous?.fadeOut(0.18);
+    previous?.fadeOut(0.2);
     this.activeRiggedAction = next;
     this.activeRiggedState = state;
   }
@@ -150,7 +147,6 @@ export class PlayerAnimator {
     const jumpWeight = input.jumping ? 1 : 0;
     const slideWeight = input.sliding ? 1 : 0;
 
-    // Alternating leg drive with knee lift and trailing-foot recovery.
     c.leftThigh.rotation.x = gait * 0.58 * (1 - jumpWeight * 0.5) + jumpWeight * -0.28;
     c.rightThigh.rotation.x = opposite * 0.58 * (1 - jumpWeight * 0.5) + jumpWeight * -0.28;
     c.leftKnee.rotation.x = Math.max(0, -gait) * 0.82 + jumpWeight * 0.72 + slideWeight * 1.18;
@@ -160,7 +156,6 @@ export class PlayerAnimator {
     c.leftFoot.rotation.x = -Math.max(0, gait) * 0.2;
     c.rightFoot.rotation.x = -Math.max(0, opposite) * 0.2;
 
-    // Arms counter-swing against the legs, with elbows slightly flexed.
     c.leftArm.rotation.x = -gait * 0.42 - jumpWeight * 0.28 + slideWeight * 0.42;
     c.rightArm.rotation.x = -opposite * 0.42 - jumpWeight * 0.28 + slideWeight * 0.42;
     c.leftArm.rotation.z = -0.08 - slideWeight * 0.15;
@@ -168,7 +163,6 @@ export class PlayerAnimator {
     c.leftForearm.rotation.x = -0.32 - Math.max(0, gait) * 0.2 - slideWeight * 0.28;
     c.rightForearm.rotation.x = -0.32 - Math.max(0, opposite) * 0.2 - slideWeight * 0.28;
 
-    // The body leans into lane changes and lowers into a compact slide pose.
     c.root.rotation.z = THREE.MathUtils.damp(c.root.rotation.z, -input.laneLean * 0.13, 8, delta);
     c.torso.rotation.x = THREE.MathUtils.damp(c.torso.rotation.x, slideWeight * 0.72 - jumpWeight * 0.12, 10, delta);
     c.pelvis.rotation.x = THREE.MathUtils.damp(c.pelvis.rotation.x, slideWeight * -0.3, 10, delta);
@@ -182,7 +176,6 @@ export class PlayerAnimator {
     c.torso.scale.y = 1 - this.landingPulse * 0.07;
     c.torso.scale.x = 1 + this.landingPulse * 0.025;
 
-    // Automatic right-foot strike when a football is collected.
     if (kickActive) {
       const strike = kickWeight;
       c.rightThigh.rotation.x = THREE.MathUtils.lerp(c.rightThigh.rotation.x, -1.05, strike);
