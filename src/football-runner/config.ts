@@ -29,7 +29,7 @@ export const RUNNER_CONFIG = {
     initialSpeed: 9,
     maximumSpeed: 20,
     speedRampPerSecond: 0.085,
-    laneResponse: 11,
+    laneResponse: 13,
     laneSnapTolerance: 0.035,
     inputSwipeThreshold: 34,
     jumpDuration: 1.02,
