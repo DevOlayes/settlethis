@@ -98,18 +98,6 @@ function addStadium(world: THREE.Group, materials: Record<string, THREE.Material
   box(world, [3.2, 0.09, 0.1], [0, 8.85, -52.7], coral, false);
 }
 
-function addTransitionTunnel(world: THREE.Group, z: number, materials: Record<string, THREE.Material>): void {
-  const length = 8;
-  for (const side of [-1, 1]) {
-    box(world, [0.55, 5.2, length], [side * 5.65, 2.6, z], materials.concrete);
-    box(world, [0.14, 5.2, length], [side * 5.32, 2.6, z], materials.coral, false);
-  }
-  box(world, [11.8, 0.7, length], [0, 5.05, z], materials.concrete);
-  box(world, [9.5, 0.08, length - 1], [0, 4.68, z], materials.tunnelLight, false);
-  for (const offset of [-2.6, 0, 2.6]) {
-    box(world, [0.06, 0.04, 0.5], [0, 4.59, z + offset], materials.lampGlow, false);
-  }
-}
 
 function addTrainingComplex(world: THREE.Group, materials: Record<string, THREE.Material>): void {
   const turf = materials.trainingTurf;
@@ -275,9 +263,7 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   addPitchMarkings(world, materials.marking);
   addGoal(world, -54, 7.2, 2.6, materials.post, materials.net);
   addStadium(world, materials);
-  addTransitionTunnel(world, -61, materials);
   addTrainingComplex(world, materials);
-  addTransitionTunnel(world, -111, materials);
   addFacilities(world, materials);
 
   // Perimeter lamps keep the full 180m loop visually continuous at its distant seam.
