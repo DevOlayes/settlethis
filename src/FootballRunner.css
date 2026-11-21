@@ -49,3 +49,27 @@
 .runner-result-grid{max-height:min(34vh,270px);overflow-y:auto;overscroll-behavior:contain;padding-right:3px}
 @media(max-height:760px){.runner-overlay{padding-top:14px;padding-bottom:14px}.runner-overlay h1{font-size:32px;margin:7px 0}.runner-overlay p{margin-bottom:10px}.runner-result-grid{max-height:27vh}.runner-confirm-dialog{padding:17px}}
 @media(max-width:540px){.runner-instruction-row{grid-template-columns:82px 1fr}.runner-confirm-actions{gap:6px}.runner-confirm-actions button{font-size:7px;padding:0 7px}}
+
+/* Stage 14 — asynchronous challenges and personal rankings */
+.runner-challenge-banner,.runner-challenge-outcome{width:min(100%,390px);display:grid;gap:6px;padding:12px 14px;margin:0 0 12px;border:1px solid #e9827277;border-radius:10px;background:linear-gradient(115deg,#38232e,#25202f);text-align:left}
+.runner-challenge-banner>span,.runner-challenge-outcome>span{font-size:7px;font-weight:900;letter-spacing:.16em;color:#e98272}
+.runner-challenge-banner>b,.runner-challenge-outcome>b{font-size:17px;letter-spacing:-.025em;color:#f4f1f7}
+.runner-challenge-banner>small{font-size:9px;color:#e98272;font-weight:800}
+.runner-challenge-banner>i{font-size:8px;line-height:1.5;color:#c7c0ce;font-style:normal}
+.runner-challenge-result-banner{border-color:#9b8acb77;background:linear-gradient(115deg,#2c263b,#25202f)}
+.runner-challenge-result-banner>span{color:#b7a6e5}
+.runner-challenge-outcome>div{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0}
+.runner-challenge-outcome>div>span{display:grid;gap:3px;color:#aaa3b5;font-size:7px;font-weight:800;letter-spacing:.1em}
+.runner-challenge-outcome>div strong{font-size:17px;color:#f4f1f7;letter-spacing:0}
+.runner-challenge-outcome .runner-secondary{width:100%;height:38px;margin:0;background:#302b3d;border:1px solid #e9827266;color:#e98272}
+.runner-leaderboard-toggle{width:min(100%,360px);display:flex;justify-content:space-between;align-items:center;margin:0 0 9px;padding:9px 11px;border:1px solid #ffffff20;border-radius:8px;background:#302b3d;color:#f4f1f7;font:900 8px Manrope,Arial,sans-serif;letter-spacing:.1em}
+.runner-leaderboard-toggle span{color:#e98272;font-size:7px}
+.runner-local-leaderboard{width:min(100%,360px);display:grid;gap:7px;margin:0 0 12px;padding:11px 12px;border:1px solid #ffffff1c;border-radius:9px;background:#211e2b;text-align:left}
+.runner-local-leaderboard>div{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #ffffff12}
+.runner-local-leaderboard>div>b{color:#e98272;font-size:9px}
+.runner-local-leaderboard>div>span{font-size:10px;font-weight:900}
+.runner-local-leaderboard>div>small,.runner-local-leaderboard>small{color:#aaa3b5;font-size:7px}
+.runner-local-leaderboard>p{margin:0;color:#aaa3b5;font-size:8px}
+.runner-share-notice{max-width:330px;margin:7px 0 0!important;padding:7px 10px;border:1px solid #e9827244;border-radius:7px;background:#30232d;color:#f4f1f7!important;font-size:8px!important}
+@media(max-height:760px){.runner-challenge-banner,.runner-challenge-outcome{padding:9px 11px;margin-bottom:8px}.runner-challenge-banner>b,.runner-challenge-outcome>b{font-size:15px}.runner-local-leaderboard{gap:4px;padding:8px 10px}}
+@media(max-width:540px){.runner-local-leaderboard>div{grid-template-columns:23px 1fr auto;gap:5px}.runner-challenge-outcome>div strong{font-size:15px}}
