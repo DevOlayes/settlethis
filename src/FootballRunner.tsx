@@ -124,6 +124,10 @@ export default function FootballRunner({ onBack }: Props) {
     if (phase === "running") engineRef.current?.pause();
     setConfirmAction("exit");
   };
+  const requestRestart = () => {
+    if (phase === "running") engineRef.current?.pause();
+    setConfirmAction("restart");
+  };
   const confirmPendingAction = () => {
     const action = confirmAction;
     setConfirmAction(null);
@@ -211,7 +215,7 @@ export default function FootballRunner({ onBack }: Props) {
                 <h1>Run paused</h1>
                 <p>Your distance and collected footballs are safe.</p>
                 <button onClick={resume}>RESUME RUN <span>→</span></button>
-                <button className="runner-secondary" onClick={() => setConfirmAction("restart")}>RESTART RUN</button>
+                <button className="runner-secondary" onClick={requestRestart}>RESTART RUN</button>
                 <button className="runner-text-action" onClick={requestExit}>EXIT TO GAMES</button>
               </>}
               {phase === "over" && summary && <>
