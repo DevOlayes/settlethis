@@ -34,10 +34,13 @@ export default function FootballRunner({ onBack }: Props) {
   const [engineError, setEngineError] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [records, setRecords] = useState<RunnerRecords>(EMPTY_RECORDS);
+  const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
   const [recordFlags, setRecordFlags] = useState({ distance: false, points: false });
 
   useEffect(() => {
-    setRecords(readRecords());
+    const saved = readRecords();
+    recordsRef.current = saved;
+    setRecords(saved);
   }, []);
 
   useEffect(() => {
@@ -51,9 +54,10 @@ export default function FootballRunner({ onBack }: Props) {
         onHud: setHud,
         onSummary: (result) => {
           setSummary(result);
+          const previous = recordsRef.current;
           setRecordFlags({
-            distance: result.distance > records.bestDistance,
-            points: result.points > records.bestPoints,
+            distance: result.distance > previous.bestDistance,
+            points: result.points > previous.bestPoints,
           });
           const run: RunnerRunRecord = {
             playedAt: Date.now(),
@@ -62,11 +66,12 @@ export default function FootballRunner({ onBack }: Props) {
             balls: result.balls,
           };
           const next: RunnerRecords = {
-            bestDistance: Math.max(records.bestDistance, result.distance),
-            bestPoints: Math.max(records.bestPoints, result.points),
-            totalRuns: records.totalRuns + 1,
-            recentRuns: [run, ...records.recentRuns].slice(0, 20),
+            bestDistance: Math.max(previous.bestDistance, result.distance),
+            bestPoints: Math.max(previous.bestPoints, result.points),
+            totalRuns: previous.totalRuns + 1,
+            recentRuns: [run, ...previous.recentRuns].slice(0, 20),
           };
+          recordsRef.current = next;
           setRecords(next);
           try { localStorage.setItem(RECORDS_KEY, JSON.stringify(next)); } catch { /* Records remain available for this session. */ }
         },
