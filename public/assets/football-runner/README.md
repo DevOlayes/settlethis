@@ -12,7 +12,7 @@ The asset importer verifies the model's Microsoft copyright metadata, 80-joint s
 
 - Quaternius Universal Animation Library 1 Standard: CC0 1.0.
 - Quaternius Universal Animation Library 2 Standard: CC0 1.0.
-- The bundled _Standard GLBs are in-place variants, not root-motion (_RM) variants. Game code owns the character's world movement.
+- The bundled _Standard GLBs are in-place variants, not root-motion (_RM) variants. The selected clips are gzip-packed into local .pack files to reduce mobile download size. Game code owns character world movement.
 - Only the required movement clips are retargeted at runtime: jog/run, sprint, jump take-off/air/landing, crouch and slide start/loop/exit.
 - The full source pack ZIP hashes and selected clip names are recorded in animations/manifest.json.
 
