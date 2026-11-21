@@ -75,19 +75,17 @@ export class RunnerEngine {
   private async loadRiggedPlayer(): Promise<void> {
     try {
       const { model, animations: embeddedAnimations } = await loadRunnerCharacter();
-      const animations = embeddedAnimations.length
-        ? embeddedAnimations
-        : await loadRunnerAnimationManifest(model);
-      // Sports Male 03 is the approved player model and must not be rejected
-      // merely because optional action clips are unavailable. Only the in-place
-      // run cycle is required for promotion; jump/slide/crouch can fall back to
-      // the existing procedural actions until their clips are tuned separately.
+      // Load the separate animation manifest as well as any clips embedded in
+      // the avatar. The approved Sports Male 03 GLB has no locomotion of its own.
+      const manifestAnimations = await loadRunnerAnimationManifest(model);
+      const animations = [...embeddedAnimations, ...manifestAnimations];
       const availableMotions = new Set(animations.map((clip) => clip.name.toLowerCase()));
-      const hasRunCycle = [...availableMotions].some((name) => /run|jog|walk|locomotion/.test(name));
-      if (this.disposed || !hasRunCycle) {
-        console.warn("Sports Male 03 could not be promoted because its in-place run cycle is unavailable", {
-          availableMotions: [...availableMotions],
-        });
+      console.info("Sports Male 03 asset loaded", {
+        embeddedClips: embeddedAnimations.map((clip) => clip.name),
+        manifestClips: manifestAnimations.map((clip) => clip.name),
+        availableMotions: [...availableMotions],
+      });
+      if (this.disposed) {
         disposeRunnerCharacterModel(model);
         return;
       }
