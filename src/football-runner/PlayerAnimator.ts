@@ -62,6 +62,8 @@ export class PlayerAnimator {
   constructor(private readonly character: PlayerCharacter) {}
 
   attachRiggedModel(model: THREE.Object3D, sourceClips: THREE.AnimationClip[]): void {
+    this.riggedModel = model;
+    this.riggedModelBaseY = model.position.y;
     const clips = [...sourceClips];
     if (!clips.some((clip) => /run|jog|walk|locomotion/i.test(clip.name))) {
       const fallbackRun = this.createProceduralRiggedRunClip(model);
@@ -134,7 +136,9 @@ export class PlayerAnimator {
     next.enabled = true;
     next.paused = false;
     const blendingJump = motion.startsWith("jump");
-    next.setEffectiveWeight(blendingJump ? 0.82 : 1);
+    const blendingLane = motion === "laneLeft" || motion === "laneRight";
+    const blendingOverlay = blendingJump || blendingLane;
+    next.setEffectiveWeight(blendingOverlay ? 0.82 : 1);
     next.setEffectiveTimeScale(1);
     const loopOnce = ONESHOT_MOTIONS.has(motion) && !(motion.startsWith("slide") && next === this.actionByMotion.get("crouch"));
     if (loopOnce && next !== this.actionByMotion.get("run")) {
@@ -186,7 +190,15 @@ export class PlayerAnimator {
 
   private updateRigged(delta: number, input: PlayerAnimationInput): void {
     if (!this.riggedMixer) return;
-    this.riggedKickRemaining = Math.max(0, this.riggedKickRemaining - delta);\n    this.laneChangeRemaining = Math.max(0, this.laneChangeRemaining - delta);\n    if (Math.abs(input.laneLean) > 0.18 && !this.laneLeanActive) {\n      this.laneLeanActive = true;\n      this.laneChangeMotion = input.laneLean > 0 ? "laneRight" : "laneLeft";\n      this.laneChangeRemaining = 0.52;\n    } else if (Math.abs(input.laneLean) < 0.07) {\n      this.laneLeanActive = false;\n    }
+    this.riggedKickRemaining = Math.max(0, this.riggedKickRemaining - delta);
+    this.laneChangeRemaining = Math.max(0, this.laneChangeRemaining - delta);
+    if (Math.abs(input.laneLean) > 0.18 && !this.laneLeanActive) {
+      this.laneLeanActive = true;
+      this.laneChangeMotion = input.laneLean > 0 ? "laneRight" : "laneLeft";
+      this.laneChangeRemaining = 0.52;
+    } else if (Math.abs(input.laneLean) < 0.07) {
+      this.laneLeanActive = false;
+    }
 
     if (input.sliding && !this.previousSliding) {
       this.slideElapsed = 0;
@@ -198,6 +210,12 @@ export class PlayerAnimator {
       this.slideExitRemaining = Math.max(0.24, Math.min(0.65, exitDuration));
     }
     this.previousSliding = input.sliding;
+    if (this.riggedModel) {
+      const targetY = this.riggedModelBaseY - (input.sliding ? 0.24 : 0);
+      this.riggedModel.position.y = THREE.MathUtils.damp(
+        this.riggedModel.position.y, targetY, input.sliding ? 18 : 12, delta,
+      );
+    }
     this.slideExitRemaining = Math.max(0, this.slideExitRemaining - (input.sliding ? 0 : delta));
 
     if (input.jumping && !this.riggedJumping) this.jumpPhaseElapsed = 0;
@@ -240,6 +258,9 @@ export class PlayerAnimator {
     this.riggedJumping = false;
     this.jumpPhaseElapsed = 0;
     this.landingRemaining = 0;
+    this.laneChangeRemaining = 0;
+    this.laneLeanActive = false;
+    if (this.riggedModel) this.riggedModel.position.y = this.riggedModelBaseY;
     this.activeRiggedMotion = undefined;
     this.activeRiggedAction = undefined;
     this.riggedMixer?.stopAllAction();
