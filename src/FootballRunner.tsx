@@ -22,7 +22,7 @@ const EMPTY_RECORDS: RunnerRecords = { bestDistance: 0, bestPoints: 0, totalRuns
 
 export default function FootballRunner({ telegramUser, onBack, preview = false }: Props) {
   const initData = window.Telegram?.WebApp?.initData || "";
-  const avatarDiagnostic = new URLSearchParams(window.location.search).get("avatar-test") === "1";
+  const avatarDiagnostic = window.location.pathname === "/avatar-diagnostic" || new URLSearchParams(window.location.search).get("avatar-test") === "1";
   const mountRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<RunnerControls | null>(null);
   const [phase, setPhase] = useState<RunnerPhase>("ready");
