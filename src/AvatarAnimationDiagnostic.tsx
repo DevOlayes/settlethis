@@ -121,9 +121,9 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         } else if (model) {
           let verticalOffset = 0;
           let lateralOffset = 0;
-          if (phase === "slideStart") verticalOffset = 0.02 * eased;
-          if (phase === "slideLoop") verticalOffset = 0.02;
-          if (phase === "slideRecovery") verticalOffset = 0.02 * (1 - eased);
+          if (phase === "slideStart") verticalOffset = -0.24 * eased;
+          if (phase === "slideLoop") verticalOffset = -0.24;
+          if (phase === "slideRecovery") verticalOffset = -0.24 * (1 - eased);
           if (phase === "laneLeft") lateralOffset = -0.62 * eased;
           if (phase === "runAfterLeft") lateralOffset = -0.62 * (1 - eased);
           if (phase === "laneRight") lateralOffset = 0.62 * eased;
