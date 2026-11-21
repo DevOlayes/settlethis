@@ -32,6 +32,7 @@ export type RunnerControls = {
   pause: () => void;
   resume: () => void;
   restart: () => void;
+  act: (action: RunnerAction) => void;
 };
 export type RunnerSceneBundle = {
   scene: THREE.Scene;
