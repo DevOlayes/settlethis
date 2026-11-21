@@ -20,7 +20,6 @@ export class RunnerEngine {
   private readonly resizeObserver: ResizeObserver;
   private frame = 0;
   private lastFrameTime = 0;
-  private lane = 0;
   private targetLane = 0;
   private jumpProgress = 0;
   private slideRemaining = 0;
@@ -29,7 +28,6 @@ export class RunnerEngine {
   private points = 0;
   private balls = 0;
   private spawnElapsed = 0;
-  private runElapsed = 0;
   private uiElapsed = 0;
   private obstacleIndex = 0;
   private paused = true;
@@ -45,13 +43,13 @@ export class RunnerEngine {
     this.resizeObserver = new ResizeObserver(() => resizeRunnerScene(this.bundle, this.host));
     this.resizeObserver.observe(host);
     this.lastFrameTime = performance.now();
-    this.frame = requestAnimationFrame(this.animate);
+    this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
+    document.addEventListener("visibilitychange", this.onVisibilityChange);
   }
 
   start = (): void => {
     if (this.disposed) return;
     this.releaseAllObjects();
-    this.lane = 0;
     this.targetLane = 0;
     this.jumpProgress = 0;
     this.slideRemaining = 0;
@@ -60,7 +58,6 @@ export class RunnerEngine {
     this.points = 0;
     this.balls = 0;
     this.spawnElapsed = 0;
-    this.runElapsed = 0;
     this.uiElapsed = 0;
     this.obstacleIndex = 0;
     this.over = false;
@@ -77,19 +74,22 @@ export class RunnerEngine {
     }
     this.callbacks.onHud({ distance: 0, points: 0, balls: 0, speed: 1 });
     this.callbacks.onPhase("running");
+    this.startLoop();
   };
 
   pause = (): void => {
     if (this.disposed || this.over || this.paused) return;
     this.paused = true;
+    cancelAnimationFrame(this.frame);
+    this.frame = 0;
     this.callbacks.onPhase("paused");
   };
 
   resume = (): void => {
     if (this.disposed || this.over || !this.paused) return;
     this.paused = false;
-    this.lastFrameTime = performance.now();
     this.callbacks.onPhase("running");
+    this.startLoop();
   };
 
   restart = (): void => this.start();
@@ -100,6 +100,7 @@ export class RunnerEngine {
     cancelAnimationFrame(this.frame);
     this.input.detach();
     this.resizeObserver.disconnect();
+    document.removeEventListener("visibilitychange", this.onVisibilityChange);
     this.releaseAllObjects();
     this.pools.forEach((pool) => pool.clear());
     this.pools.clear();
@@ -164,8 +165,20 @@ export class RunnerEngine {
       balls: this.balls,
       sethis,
     };
+    cancelAnimationFrame(this.frame);
+    this.frame = 0;
     this.callbacks.onSummary(summary);
     this.callbacks.onPhase("over");
+  }
+
+  private readonly onVisibilityChange = (): void => {
+    if (document.visibilityState === "hidden" && !this.paused && !this.over) this.pause();
+  };
+
+  private startLoop(): void {
+    if (this.disposed || this.paused || this.over || this.frame) return;
+    this.lastFrameTime = performance.now();
+    this.frame = requestAnimationFrame(this.animate);
   }
 
   private animate = (now: number): void => {
@@ -174,7 +187,8 @@ export class RunnerEngine {
     this.lastFrameTime = now;
     if (!this.paused && !this.over) this.update(delta);
     this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
-    this.frame = requestAnimationFrame(this.animate);
+    if (!this.paused && !this.over) this.frame = requestAnimationFrame(this.animate);
+    else this.frame = 0;
   };
 
   private update(delta: number): void {
@@ -183,13 +197,11 @@ export class RunnerEngine {
     const speed = Math.min(config.movement.maximumSpeed, getRunSpeed(this.elapsed));
     this.distance += speed * delta;
     this.points += Math.floor(speed * delta * 12);
-    this.runElapsed += delta;
     this.spawnElapsed += delta;
     this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % 15;
 
     const player = this.playerRig.root;
     player.position.x = damp(player.position.x, this.targetLane * config.laneWidth, config.movement.laneResponse, delta);
-    this.lane = this.targetLane;
 
     if (this.jumpProgress > 0) {
       this.jumpProgress = Math.max(0, this.jumpProgress - delta * 1.65);
