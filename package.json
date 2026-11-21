@@ -16,12 +16,14 @@
     "react-dom": "^19.1.0",
     "vite": "^7.0.0",
     "monetag-tg-sdk": "^1.0.4",
-    "iconoir-react": "^7.12.2"
+    "iconoir-react": "^7.12.2",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "typescript": "^5.8.0",
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.0.0",
+    "@types/three": "^0.180.0"
   }
 }
