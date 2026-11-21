@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-import { canonicalizeBoneName, canonicalizeGLBBones, MIN_COVERAGE, retargetClipToObject } from "@three-ws/retarget";
+import { canonicalizeGLBBones, MIN_COVERAGE, retargetClipToObject } from "@three-ws/retarget";
 
 export type LoadedRunnerCharacter = {
   model: THREE.Group;
@@ -21,171 +21,6 @@ type RunnerAnimationAsset = {
 type RunnerAnimationManifest = {
   clips: RunnerAnimationAsset[];
 };
-
-function mapBipedBoneName(name: string): string {
-  const prefix = "Bip01 ";
-  if (!name.startsWith(prefix)) return name;
-  const bone = name.slice(prefix.length);
-  const exact: Record<string, string> = {
-    Pelvis: "mixamorig:Hips",
-    Spine: "mixamorig:Spine",
-    Spine1: "mixamorig:Spine1",
-    Spine2: "mixamorig:Spine2",
-    Neck: "mixamorig:Neck",
-    Head: "mixamorig:Head",
-    "R Clavicle": "mixamorig:RightShoulder",
-    "R UpperArm": "mixamorig:RightArm",
-    "R Forearm": "mixamorig:RightForeArm",
-    "R Hand": "mixamorig:RightHand",
-    "L Clavicle": "mixamorig:LeftShoulder",
-    "L UpperArm": "mixamorig:LeftArm",
-    "L Forearm": "mixamorig:LeftForeArm",
-    "L Hand": "mixamorig:LeftHand",
-    "R Thigh": "mixamorig:RightUpLeg",
-    "R Calf": "mixamorig:RightLeg",
-    "R Foot": "mixamorig:RightFoot",
-    "R Toe0": "mixamorig:RightToeBase",
-    "L Thigh": "mixamorig:LeftUpLeg",
-    "L Calf": "mixamorig:LeftLeg",
-    "L Foot": "mixamorig:LeftFoot",
-    "L Toe0": "mixamorig:LeftToeBase",
-  };
-  if (exact[bone]) return exact[bone];
-
-  const finger = bone.match(/^([RL]) Finger(\d)(\d?)$/);
-  if (finger) {
-    const side = finger[1] === "R" ? "Right" : "Left";
-    const digit = ["Thumb", "Index", "Middle", "Ring", "Pinky"][Number(finger[2])];
-    const segment = finger[3] ? Number(finger[3]) + 1 : 1;
-    if (digit && segment <= 3) return `mixamorig:${side}Hand${digit}${segment}`;
-  }
-  return name;
-}
-
-function rewriteGlbJson(
-  input: ArrayBuffer,
-  transform: (json: Record<string, unknown>) => void,
-): ArrayBuffer {
-  const inputBytes = new Uint8Array(input);
-  const inputView = new DataView(input);
-  if (inputView.getUint32(0, true) !== 0x46546c67 || inputView.getUint32(4, true) !== 2) {
-    throw new Error(`Expected a glTF binary (GLB v2) asset; received magic 0x${inputView.getUint32(0, true).toString(16)} and version ${inputView.getUint32(4, true)} (${inputBytes.length} bytes)`);
-  }
-
-  const chunks: Array<{ type: number; bytes: Uint8Array }> = [];
-  let offset = 12;
-  let foundJson = false;
-  while (offset + 8 <= inputBytes.length) {
-    const length = inputView.getUint32(offset, true);
-    const type = inputView.getUint32(offset + 4, true);
-    offset += 8;
-    const bytes = inputBytes.slice(offset, offset + length);
-    offset += length;
-
-    if (type === 0x4e4f534a) {
-      const json = JSON.parse(new TextDecoder().decode(bytes).trim()) as Record<string, unknown>;
-      transform(json);
-      const encoded = new TextEncoder().encode(JSON.stringify(json));
-      const paddedLength = Math.ceil(encoded.length / 4) * 4;
-      const padded = new Uint8Array(paddedLength);
-      padded.fill(0x20);
-      padded.set(encoded);
-      chunks.push({ type, bytes: padded });
-      foundJson = true;
-    } else {
-      chunks.push({ type, bytes });
-    }
-  }
-  if (!foundJson) throw new Error("GLB JSON chunk is missing");
-
-  const totalLength = 12 + chunks.reduce((sum, chunk) => sum + 8 + chunk.bytes.length, 0);
-  const output = new ArrayBuffer(totalLength);
-  const outputBytes = new Uint8Array(output);
-  const outputView = new DataView(output);
-  outputView.setUint32(0, 0x46546c67, true);
-  outputView.setUint32(4, 2, true);
-  outputView.setUint32(8, totalLength, true);
-  let writeOffset = 12;
-  for (const chunk of chunks) {
-    outputView.setUint32(writeOffset, chunk.bytes.length, true);
-    outputView.setUint32(writeOffset + 4, chunk.type, true);
-    writeOffset += 8;
-    outputBytes.set(chunk.bytes, writeOffset);
-    writeOffset += chunk.bytes.length;
-  }
-  return output;
-}
-
-function canonicalizeAvatarBuffer(raw: ArrayBuffer): ArrayBuffer {
-  const mapped = rewriteGlbJson(raw, (json) => {
-    const nodes = json.nodes;
-    if (!Array.isArray(nodes)) return;
-    for (const node of nodes) {
-      if (!node || typeof node !== "object") continue;
-      const item = node as { name?: unknown };
-      if (typeof item.name === "string") item.name = mapBipedBoneName(item.name);
-    }
-  });
-  return canonicalizeGLBBones(mapped).buffer;
-}
-
-/**
- * Sports Male 03 uses a valid Biped rig, but its branch hierarchy is not the
- * canonical humanoid hierarchy expected by the retargeter: the thigh roots are
- * children of Spine, and the clavicles are children of Neck. Canonical motion
- * assumes thighs descend from Hips and shoulders descend from Spine2. Reparent
- * those four branch roots while preserving their bind-pose world transforms.
- * This changes animation inheritance without changing the approved mesh or
- * its bind-pose placement.
- */
-function normalizeSportsMale03Hierarchy(model: THREE.Object3D): string[] {
-  const bones = new Map<string, THREE.Bone>();
-  model.traverse((object) => {
-    if (!(object instanceof THREE.Bone)) return;
-    const canonical = canonicalizeBoneName(object.name);
-    if (canonical && !bones.has(canonical)) bones.set(canonical, object);
-  });
-
-  model.updateMatrixWorld(true);
-  const changes: string[] = [];
-  const reparent = (boneName: string, parentName: string) => {
-    const bone = bones.get(boneName);
-    const parent = bones.get(parentName);
-    if (!bone || !parent) {
-      throw new Error(`Sports Male 03 rig is missing ${boneName} or its expected parent ${parentName}`);
-    }
-    if (bone.parent === parent) return;
-    const previousParent = bone.parent;
-    parent.attach(bone);
-    model.updateMatrixWorld(true);
-    changes.push(`${boneName}: ${canonicalizeBoneName(previousParent?.name || "root")} → ${parentName}`);
-  };
-
-  reparent("LeftUpLeg", "Hips");
-  reparent("RightUpLeg", "Hips");
-  reparent("LeftShoulder", "Spine2");
-  reparent("RightShoulder", "Spine2");
-
-  const expected: Array<[string, string]> = [
-    ["LeftUpLeg", "Hips"],
-    ["RightUpLeg", "Hips"],
-    ["LeftShoulder", "Spine2"],
-    ["RightShoulder", "Spine2"],
-  ];
-  for (const [boneName, parentName] of expected) {
-    const actual = canonicalizeBoneName(bones.get(boneName)?.parent?.name || "");
-    if (actual !== parentName) {
-      throw new Error(`Sports Male 03 hierarchy check failed: ${boneName} is parented to ${actual || "unknown"}, expected ${parentName}`);
-    }
-  }
-
-  model.userData.runnerRigHierarchy = {
-    normalized: true,
-    changes,
-    verified: expected.length,
-  };
-  return changes;
-}
 
 async function decompressAnimationAsset(input: ArrayBuffer): Promise<ArrayBuffer> {
   if (typeof DecompressionStream === "undefined") {
@@ -214,15 +49,10 @@ export async function loadRunnerCharacter(
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) throw new Error(`Unable to load footballer asset (${response.status})`);
   const raw = await response.arrayBuffer();
-  const buffer = canonicalizeAvatarBuffer(raw);
-  const gltf = await createLoader().parseAsync(buffer, new URL(".", window.location.href).href);
+  const gltf = await createLoader().parseAsync(raw, new URL(".", window.location.href).href);
   const model = gltf.scene;
-  const hierarchyChanges = normalizeSportsMale03Hierarchy(model);
   model.name = "sethis-rigged-footballer";
-  console.info("Normalized Sports Male 03 canonical rig hierarchy", {
-    changes: hierarchyChanges,
-    verifiedBranches: model.userData.runnerRigHierarchy?.verified ?? 0,
-  });
+  console.info("Loaded original Sports Male 03 Biped hierarchy without bone renaming or reparenting.");
 
   model.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return;
@@ -286,6 +116,50 @@ export async function loadRunnerAnimationClips(
       const allowed = asset.includeAnimations
         ? new Set(asset.includeAnimations.map((name) => name.toLowerCase()))
         : undefined;
+
+      if (asset.format === "native-biped-glb") {
+        const source = await loader.parseAsync(downloaded, new URL(".", window.location.href).href);
+        const sourceClip = source.animations.find((clip) =>
+          !allowed || allowed.has(clip.name.toLowerCase()),
+        );
+        if (!sourceClip) {
+          disposeRunnerCharacterModel(source.scene);
+          throw new Error("Native Biped GLB does not contain the requested animation clip");
+        }
+        // Preserve the avatar's own root orientation and bind transform.
+        // The source clip's root channels belong to the export coordinate
+        // frame; the remaining Bip01 channels match this character directly.
+        const tracks = sourceClip.tracks.filter((track) =>
+          !/^Bip01(?:_| )?\.(?:position|quaternion)$/.test(track.name),
+        );
+        const normalize = (value: string) => value.replace(/_/g, " ").toLowerCase();
+        const driven = new Set(tracks.map((track) =>
+          normalize(track.name.slice(0, track.name.lastIndexOf("."))),
+        ));
+        const required = [
+          "Bip01 Pelvis", "Bip01 L Thigh", "Bip01 R Thigh",
+          "Bip01 L Calf", "Bip01 R Calf", "Bip01 L UpperArm", "Bip01 R UpperArm",
+        ];
+        const missing = required.filter((name) => !driven.has(normalize(name)));
+        if (missing.length) {
+          disposeRunnerCharacterModel(source.scene);
+          throw new Error("Native Biped run is missing matching Sports Male 03 bones: " + missing.join(", "));
+        }
+        const nativeClip = new THREE.AnimationClip(
+          asset.name || sourceClip.name || "sports-male-03-native-run",
+          sourceClip.duration,
+          tracks,
+        );
+        retargeted.push(nativeClip);
+        console.info("Loaded matching native Sports Male 03 Biped run", {
+          clip: nativeClip.name,
+          duration: nativeClip.duration,
+          tracks: tracks.length,
+          excludedRootTracks: sourceClip.tracks.length - tracks.length,
+        });
+        disposeRunnerCharacterModel(source.scene);
+        continue;
+      }
 
       if (asset.format === "canonical-json") {
         const json = JSON.parse(new TextDecoder().decode(downloaded)) as {
