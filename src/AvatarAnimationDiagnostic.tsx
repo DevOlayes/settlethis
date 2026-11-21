@@ -76,20 +76,32 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
 
     const playPhase = (index: number) => {
       const name = phaseNames[index];
-      const next = phaseActions[name];
+      const next = (name === "laneLeft" || name === "laneRight") ? phaseActions.run : phaseActions[name];
       if (!next) return;
       const previous = action;
-      next.reset();
+      const isRun = next === phaseActions.run;
+      // Keep the same run action advancing underneath jumps and reuse its
+      // current gait phase when returning; never restart the stride at a turn.
+      if (!isRun || !next.isRunning()) next.reset();
       next.enabled = true;
       next.paused = false;
-      next.setEffectiveWeight(1);
+      next.setEffectiveWeight(isRun && ["jumpTakeoff", "jumpAir", "jumpLand"].includes(name) ? 0.28 : 1);
       next.setEffectiveTimeScale(1);
       const looping = name === "run" || name === "jumpAir" || name === "slideLoop";
       next.setLoop(looping ? THREE.LoopRepeat : THREE.LoopOnce, looping ? Infinity : 1);
       next.clampWhenFinished = !looping;
-      next.fadeIn(previous ? 0.12 : 0);
+      next.fadeIn(previous ? 0.16 : 0);
       next.play();
-      if (previous && previous !== next) previous.fadeOut(0.12);
+      if (previous && previous !== next) {
+        if (previous === phaseActions.run && ["jumpTakeoff", "jumpAir", "jumpLand"].includes(name)) {
+          previous.fadeTo(0.28, 0.16);
+        } else if (next === phaseActions.run) {
+          previous.fadeOut(0.16);
+          next.fadeTo(1, 0.16);
+        } else {
+          previous.fadeOut(0.16);
+        }
+      }
       action = next;
       if (previewCycle === 0) addCheck("Preview phase: " + name);
     };
@@ -109,21 +121,29 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         } else if (model) {
           let verticalOffset = 0;
           let lateralOffset = 0;
-          if (phase === "slideStart") verticalOffset = -0.42 * eased;
-          if (phase === "slideLoop") verticalOffset = -0.42;
-          if (phase === "slideRecovery") verticalOffset = -0.42 * (1 - eased);
+          if (phase === "slideStart") verticalOffset = 0.02 * eased;
+          if (phase === "slideLoop") verticalOffset = 0.02;
+          if (phase === "slideRecovery") verticalOffset = 0.02 * (1 - eased);
           if (phase === "laneLeft") lateralOffset = -0.62 * eased;
           if (phase === "runAfterLeft") lateralOffset = -0.62 * (1 - eased);
           if (phase === "laneRight") lateralOffset = 0.62 * eased;
           if (phase === "runAfterRight") lateralOffset = 0.62 * (1 - eased);
-          model.position.set(modelBaseX + lateralOffset, modelBaseY + verticalOffset, modelBaseZ);
+          let slideProgress = 0;
+          if (phase === "slideStart") slideProgress = eased;
+          if (phase === "slideLoop") slideProgress = 1;
+          if (phase === "slideRecovery") slideProgress = 1 - eased;
+          const laneSign = phase === "laneLeft" ? 1 : phase === "laneRight" ? -1 : 0;
+          const laneBank = laneSign * Math.sin(phaseProgress * Math.PI) * 0.17;
+          model.position.set(modelBaseX + lateralOffset, modelBaseY + verticalOffset, modelBaseZ + slideProgress * 0.24);
+          model.rotation.x = slideProgress * 1.12;
+          model.rotation.z = laneBank;
         }
         if (phaseElapsed >= phaseDurations[phaseIndex]) {
           phaseElapsed = 0;
           phaseIndex = (phaseIndex + 1) % phaseNames.length;
           if (phaseIndex === 0) {
             previewCycle++;
-            if (model) model.position.set(modelBaseX, modelBaseY, modelBaseZ);
+            if (model) { model.position.set(modelBaseX, modelBaseY, modelBaseZ); model.rotation.set(0, 0, 0); }
           }
           if (phaseNames[phaseIndex] === "jumpTakeoff") jumpElapsed = 0;
           playPhase(phaseIndex);
@@ -181,10 +201,10 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         addCheck("Jump takeoff: " + takeoff.tracks.length + " tracks · " + takeoff.duration.toFixed(2) + "s");
         addCheck("Airborne loop: " + air.tracks.length + " tracks · " + air.duration.toFixed(2) + "s");
         addCheck("Landing: " + land.tracks.length + " tracks · " + land.duration.toFixed(2) + "s");
-        addCheck("Jump root arc: 1.02s · 1.5m preview, matching current gameplay physics.");
+        addCheck("Jump root arc: 1.02s · 1.5m preview; running gait remains blended underneath so the stride does not restart.");
         maneuverClips.forEach((clip) => addCheck("Native manoeuvre: " + clip.name + " · " + clip.tracks.length + " tracks · " + clip.duration.toFixed(2) + "s"));
-        addCheck("Slide sequence: crouched body flex + 0.42m vertical drop → sustained low slide → recovery.");
-        addCheck("Lane sequence: visible left lean + 0.62m lateral travel → centre → visible right lean + 0.62m lateral travel → centre.");
+        addCheck("Slide sequence: extended lead leg + folded trailing leg + forward ground-slide pitch → recovery.");
+        addCheck("Lane sequence: uninterrupted run stride + smooth lateral travel + directional body bank.");
         mixer = new THREE.AnimationMixer(model);
         modelBaseX = model.position.x;
         modelBaseY = model.position.y;
