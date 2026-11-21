@@ -3,9 +3,9 @@ import * as THREE from "three";
 type Pose = readonly [number, number, number];
 
 export const NATIVE_BIPED_MANEUVER_PHASES = {
-  slideStart: 0.24,
-  slideLoop: 0.62,
-  slideRecovery: 0.34,
+  slideStart: 0.22,
+  slideLoop: 0.58,
+  slideRecovery: 0.38,
   laneChange: 0.52,
 } as const;
 
@@ -78,19 +78,19 @@ export function createNativeBipedManeuverClips(
     return tracks;
   };
 
-  // Compact two-footed tuck: hips and torso fold, knees close sharply,
-  // feet tuck under, and arms stay close rather than flaring out.
+  // Football-style ground slide: the lead leg extends forward, the trailing
+  // leg folds underneath, the torso reclines, and the arms stay compact.
   const slideStart = new THREE.AnimationClip("sports-male-03-slide-start-native",
     NATIVE_BIPED_MANEUVER_PHASES.slideStart,
     makeTracks([0, 0.12, 0.24], [
-      { bone: pelvis, poses: [[0,0,0], [0,0,0.16], [0,0,0.24]] },
-      { bone: spine, poses: [[0,0,0], [0,0,0.52], [0,0,0.70]] },
-      { bone: chest, poses: [[0,0,0], [0,0,0.24], [0,0,0.34]] },
+      { bone: pelvis, poses: [[0,0,0], [0,0,0.08], [0,0,0.12]] },
+      { bone: spine, poses: [[0,0,0], [0,0,0.22], [0,0,0.30]] },
+      { bone: chest, poses: [[0,0,0], [0,0,0.12], [0,0,0.18]] },
       { bone: head, poses: [[0,0,0], [0,0,-0.12], [0,0,-0.18]] },
-      { bone: lThigh, poses: [[0,0,0], [0,0,0.54], [0,0,0.78]] },
-      { bone: rThigh, poses: [[0,0,0], [0,0,0.54], [0,0,0.78]] },
-      { bone: lCalf, poses: [[0,0,0], [0,0,-0.98], [0,0,-1.42]] },
-      { bone: rCalf, poses: [[0,0,0], [0,0,-0.98], [0,0,-1.42]] },
+      { bone: lThigh, poses: [[0,0,0], [0,0,0.18], [0,0,0.22]] },
+      { bone: rThigh, poses: [[0,0,0], [0,0,0.72], [0,0,0.92]] },
+      { bone: lCalf, poses: [[0,0,0], [0,0,-0.12], [0,0,-0.16]] },
+      { bone: rCalf, poses: [[0,0,0], [0,0,-1.18], [0,0,-1.52]] },
       { bone: lFoot, poses: [[0,0,0], [0,0,0.24], [0,0,0.38]] },
       { bone: rFoot, poses: [[0,0,0], [0,0,0.24], [0,0,0.38]] },
       { bone: lArm, poses: [[0,0,0], [0,0,-0.12], [0,0,-0.18]] },
@@ -106,10 +106,10 @@ export function createNativeBipedManeuverClips(
       { bone: spine, poses: [[0,0,0.70], [0,0,0.74], [0,0,0.70]] },
       { bone: chest, poses: [[0,0,0.34], [0,0,0.36], [0,0,0.34]] },
       { bone: head, poses: [[0,0,-0.18], [0,0,-0.16], [0,0,-0.18]] },
-      { bone: lThigh, poses: [[0,0,0.78], [0,0,0.82], [0,0,0.78]] },
-      { bone: rThigh, poses: [[0,0,0.78], [0,0,0.82], [0,0,0.78]] },
-      { bone: lCalf, poses: [[0,0,-1.42], [0,0,-1.48], [0,0,-1.42]] },
-      { bone: rCalf, poses: [[0,0,-1.42], [0,0,-1.48], [0,0,-1.42]] },
+      { bone: lThigh, poses: [[0,0,0.22], [0,0,0.24], [0,0,0.22]] },
+      { bone: rThigh, poses: [[0,0,0.92], [0,0,0.96], [0,0,0.92]] },
+      { bone: lCalf, poses: [[0,0,-0.16], [0,0,-0.18], [0,0,-0.16]] },
+      { bone: rCalf, poses: [[0,0,-1.52], [0,0,-1.56], [0,0,-1.52]] },
       { bone: lFoot, poses: [[0,0,0.38], [0,0,0.34], [0,0,0.38]] },
       { bone: rFoot, poses: [[0,0,0.38], [0,0,0.34], [0,0,0.38]] },
       { bone: lArm, poses: [[0,0,-0.18], [0,0,-0.16], [0,0,-0.18]] },
@@ -121,14 +121,14 @@ export function createNativeBipedManeuverClips(
   const slideRecovery = new THREE.AnimationClip("sports-male-03-slide-recovery-native",
     NATIVE_BIPED_MANEUVER_PHASES.slideRecovery,
     makeTracks([0, 0.11, 0.23, 0.34], [
-      { bone: pelvis, poses: [[0,0,0.24], [0,0,0.18], [0,0,0.06], [0,0,0]] },
-      { bone: spine, poses: [[0,0,0.70], [0,0,0.48], [0,0,0.20], [0,0,0]] },
-      { bone: chest, poses: [[0,0,0.34], [0,0,0.22], [0,0,0.08], [0,0,0]] },
+      { bone: pelvis, poses: [[0,0,0.12], [0,0,0.10], [0,0,0.04], [0,0,0]] },
+      { bone: spine, poses: [[0,0,0.30], [0,0,0.22], [0,0,0.10], [0,0,0]] },
+      { bone: chest, poses: [[0,0,0.18], [0,0,0.14], [0,0,0.06], [0,0,0]] },
       { bone: head, poses: [[0,0,-0.18], [0,0,-0.12], [0,0,-0.04], [0,0,0]] },
-      { bone: lThigh, poses: [[0,0,0.78], [0,0,0.54], [0,0,0.20], [0,0,0]] },
-      { bone: rThigh, poses: [[0,0,0.78], [0,0,0.54], [0,0,0.20], [0,0,0]] },
-      { bone: lCalf, poses: [[0,0,-1.42], [0,0,-0.98], [0,0,-0.34], [0,0,0]] },
-      { bone: rCalf, poses: [[0,0,-1.42], [0,0,-0.98], [0,0,-0.34], [0,0,0]] },
+      { bone: lThigh, poses: [[0,0,0.22], [0,0,0.18], [0,0,0.08], [0,0,0]] },
+      { bone: rThigh, poses: [[0,0,0.92], [0,0,0.66], [0,0,0.24], [0,0,0]] },
+      { bone: lCalf, poses: [[0,0,-0.16], [0,0,-0.12], [0,0,-0.04], [0,0,0]] },
+      { bone: rCalf, poses: [[0,0,-1.52], [0,0,-1.12], [0,0,-0.38], [0,0,0]] },
       { bone: lFoot, poses: [[0,0,0.38], [0,0,0.26], [0,0,0.08], [0,0,0]] },
       { bone: rFoot, poses: [[0,0,0.38], [0,0,0.26], [0,0,0.08], [0,0,0]] },
       { bone: lArm, poses: [[0,0,-0.18], [0,0,-0.12], [0,0,-0.04], [0,0,0]] },
