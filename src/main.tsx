@@ -1,9 +1,9 @@
-import React,{useEffect,useState} from "react";
+import React,{lazy,Suspense,useEffect,useState} from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import BrandMark from "./BrandMark";
 import AdminPortal from "./Admin";
-import FootballRunner from "./FootballRunner";
+const FootballRunner=lazy(()=>import("./FootballRunner"));
 import {authenticateTelegram,initializeTelegramApp,type TelegramUser} from "./telegram";
 import "./index.css";
 
@@ -63,7 +63,7 @@ function Root(){
   return()=>{active=false;};
  },[retry,isAdmin]);
  if(isAdmin)return <AdminPortal/>;
- if(isFootballRunner)return <FootballRunner onBack={()=>{window.location.href="/";}}/>;
+ if(isFootballRunner)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the pitch</h1><p>Loading Football Runner…</p></div></main>}><FootballRunner onBack={()=>{window.location.href="/";}}/></Suspense>;
  if(authStatus==="outside")return <TelegramLanding/>;
  if(authStatus==="checking")return <main className="telegram-app-loading"><div><div className="telegram-app-mark"><span className="telegram-loader-orbit"/><BrandMark className="telegram-loader-logo"/><span className="telegram-loader-word">SETHIS</span></div><h1>Getting your game ready</h1><p>Verifying your Telegram account…</p></div></main>;
  if(authStatus==="failed")return <main className="telegram-app-loading"><div className="telegram-app-error"><div className="telegram-app-mark telegram-app-mark-static"><BrandMark className="telegram-loader-logo"/><span className="telegram-loader-word">SETHIS</span></div><h1>Telegram sign-in needs attention</h1><p>{authError}</p><button onClick={()=>setRetry(value=>value+1)}>TRY AGAIN</button><a href={APP_ORIGIN+"/"}>Return to the SETHIS introduction</a></div></main>;
