@@ -64,15 +64,25 @@ export function createNativeBipedJumpClips(model: THREE.Object3D): THREE.Animati
   const leftForearm = find("LeftForeArm", "LeftForearm");
   const rightForearm = find("RightForeArm", "RightForearm");
 
+  const required = [
+    ["pelvis", hips], ["left thigh", leftThigh], ["right thigh", rightThigh],
+    ["left calf", leftCalf], ["right calf", rightCalf],
+    ["left upper arm", leftArm], ["right upper arm", rightArm],
+  ] as const;
+  const missing = required.filter(([, bone]) => !bone).map(([name]) => name);
+  if (missing.length) {
+    throw new Error("Sports Male 03 native Biped jump is missing required bones: " + missing.join(", "));
+  }
+
   const takeoffTimes = [0, 0.08, 0.22];
   const takeoff = tracksFor(takeoffTimes, [
-    { bone: hips, values: [[0, 0, 0], [0.08, 0, 0], [0.13, 0, 0]] },
-    { bone: spine, values: [[0, 0, 0], [-0.08, 0, 0], [-0.12, 0, 0]] },
-    { bone: spine2, values: [[0, 0, 0], [-0.04, 0, 0], [-0.08, 0, 0]] },
-    { bone: leftThigh, values: [[0, 0, 0], [-0.28, 0, 0], [-0.52, 0, 0]] },
-    { bone: rightThigh, values: [[0, 0, 0], [-0.28, 0, 0], [-0.52, 0, 0]] },
-    { bone: leftCalf, values: [[0, 0, 0], [0.16, 0, 0], [0.38, 0, 0]] },
-    { bone: rightCalf, values: [[0, 0, 0], [0.16, 0, 0], [0.38, 0, 0]] },
+    { bone: hips, values: [[0, 0, 0], [0.15, 0, 0], [0.04, 0, 0]] },
+    { bone: spine, values: [[0, 0, 0], [0.08, 0, 0], [-0.04, 0, 0]] },
+    { bone: spine2, values: [[0, 0, 0], [0.04, 0, 0], [-0.03, 0, 0]] },
+    { bone: leftThigh, values: [[0, 0, 0], [0.35, 0, 0], [-0.20, 0, 0]] },
+    { bone: rightThigh, values: [[0, 0, 0], [0.35, 0, 0], [-0.20, 0, 0]] },
+    { bone: leftCalf, values: [[0, 0, 0], [0.62, 0, 0], [0.05, 0, 0]] },
+    { bone: rightCalf, values: [[0, 0, 0], [0.62, 0, 0], [0.05, 0, 0]] },
     { bone: leftArm, values: [[0, 0, 0], [0.16, 0, -0.08], [-0.48, 0, -0.12]] },
     { bone: rightArm, values: [[0, 0, 0], [0.16, 0, 0.08], [-0.48, 0, 0.12]] },
     { bone: leftForearm, values: [[0, 0, 0], [-0.12, 0, 0], [-0.42, 0, 0]] },
