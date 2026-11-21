@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
+import { gzipSync } from "node:zlib";
 import { execFileSync } from "node:child_process";
-import { mkdir, readFile, readdir, copyFile, writeFile, stat } from "node:fs/promises";
+import { mkdir, readFile, readdir, copyFile, writeFile, stat, rm } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 
@@ -173,10 +174,14 @@ for (const pack of PACKS) {
   );
   if (!selected.length) throw new Error(`No selected clips found in ${pack.id}`);
 
-  await copyFile(glbPath, path.join(animationRoot, pack.destination));
+  const packedName = pack.destination.replace(/\.glb$/i, ".pack");
+  const packedBytes = gzipSync(glbBytes, { level: 9 });
+  await writeFile(path.join(animationRoot, packedName), packedBytes);
+  await rm(path.join(animationRoot, pack.destination), { force: true });
   manifestClips.push({
     name: pack.id,
-    url: `/assets/football-runner/animations/${pack.destination}`,
+    url: `/assets/football-runner/animations/${packedName}`,
+    compression: "gzip",
     includeAnimations: selected,
     source: pack.source,
     license: "CC0-1.0",
@@ -189,6 +194,7 @@ for (const pack of PACKS) {
     sha256: sourceHash,
     sourceBytes: sourceBytes.length,
     bundledGlbBytes: glbBytes.length,
+    bundledCompressedBytes: packedBytes.length,
     bundledAnimationNames: selected,
   });
   console.log(`${pack.id} verified:`, JSON.stringify({
