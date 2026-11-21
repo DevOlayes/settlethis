@@ -42,7 +42,7 @@ The web prototype is being organised as a reusable game engine. React owns the s
 
 ## Current prototype limitations
 
-The footballer is currently a self-contained, stylised procedural 3D character with articulated joints and procedural animation; it does not yet use a separately authored or motion-captured GLB character asset. The stadium and environment are still temporary procedural geometry. Collision profiles, fair obstacle sequencing, world streaming, production reward verification, rewarded-ad rescues and persistence are not complete. Prototype SETHIS figures are display-only and must never be treated as wallet credits. Those systems belong to later roadmap stages.
+The footballer is currently a self-contained, stylised procedural 3D character with articulated joints and procedural animation; it does not yet use a separately authored or motion-captured GLB character asset. The stadium, training grounds and player facilities are procedurally assembled from reusable Three.js geometry; authored high-detail environment assets and final art direction are still outstanding. Collision profiles, fair obstacle sequencing, world streaming, production reward verification, rewarded-ad rescues and persistence are not complete. Prototype SETHIS figures are display-only and must never be treated as wallet credits. Those systems belong to later roadmap stages.
 
 ## Stage 3 — player character and animation
 
@@ -75,3 +75,14 @@ The prototype character has been replaced by a reusable articulated footballer r
 - Collision dimensions, player footprint and clearance margins are centralised in configuration for later tuning.
 - Five obstacle families are available to the spawn pool. Visual models are built from reusable Three.js primitives and remain pooled between runs.
 - This is an implementation milestone, not a gameplay fairness certification: the reaction window, actual jump/slide clearance feel and obstacle combinations remain for the final authorised gameplay validation.
+
+
+## Stage 6 — connected football world
+
+- Replaced the single placeholder stadium shell with a connected football environment: a marked main stadium pitch and stands, goal and net, roof structure, floodlight banks and scoreboard.
+- Added a covered transition tunnel leading into adjacent training pitches, practice goals, benches, a glass-fronted training pavilion and recovery wing.
+- Added a second covered walkway into the players' facility zone, with connected buildings and glazed frontage. The route remains open through the centre; these are environmental landmarks, not gameplay barriers.
+- Built the environment as one continuous 180m world loop. The scene now advances over the full configured world length rather than recycling every 15m, keeping the stadium/training/facility sequence intact before it repeats.
+- Kept all scenery within the existing Three.js scene factory and shared engine world so the same game engine can later be reused in the Telegram Mini App.
+- Tuned renderer pixel ratio, shadow map size and shadow update behaviour for a more mobile-conscious baseline. Real-device performance still needs authorised validation.
+- Environment is currently procedural geometry and materials. This stage does not claim authored photogrammetry, finished production art, final lighting approval or verified seamless visual performance.
