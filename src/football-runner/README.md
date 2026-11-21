@@ -86,3 +86,13 @@ The prototype character has been replaced by a reusable articulated footballer r
 - Kept all scenery within the existing Three.js scene factory and shared engine world so the same game engine can later be reused in the Telegram Mini App.
 - Tuned renderer pixel ratio, shadow map size and shadow update behaviour for a more mobile-conscious baseline. Real-device performance still needs authorised validation.
 - Environment is currently procedural geometry and materials. This stage does not claim authored photogrammetry, finished production art, final lighting approval or verified seamless visual performance.
+
+
+## Stage 7 — football collectibles and kick feedback
+
+- Rebuilt the collectible as a recognisable association-football model with a light spherical body and dark five-sided panel details arranged around the surface.
+- Added a restrained SETHIS coral aura, a ground-level halo and local light so footballs remain readable against the pitch without changing the official logo colour.
+- Preserved automatic pickup: entering the collection range increments the football count and points, then triggers the footballer's right-foot strike animation. No per-ball tap is required.
+- Added a short pooled coral-and-warm-white collection burst with expanding rings and outward particles. Effects are reused and disposed with the engine rather than creating a fresh GPU object for every pickup.
+- Collection feedback is independent of the reward calculation. Prototype SETHIS remains display-only; this stage does not introduce real CT deductions or token payouts.
+- The football model, collection timing, kick pose and visual effects still require authorised gameplay and visual validation on browser and ordinary Android hardware.
