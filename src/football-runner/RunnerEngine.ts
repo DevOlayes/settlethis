@@ -79,8 +79,7 @@ export class RunnerEngine {
         ? embeddedAnimations
         : await loadRunnerAnimationManifest(model);
       const requiredMotions = [
-        "Jog_Fwd_Loop",
-        "Sprint_Loop",
+        "xbot-run",
         "Jump_Start",
         "Jump_Loop",
         "Jump_Land",
