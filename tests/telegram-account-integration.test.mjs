@@ -360,9 +360,9 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(courtReport.response.status, 201);
 
   const immediateFirstNotifications = await api(env, "/api/notifications", firstInit);
-  assert.ok(immediateFirstNotifications.data.notifications.some(item => item.type === "reaction" && item.reference_id === argumentId));
+  assert.equal(immediateFirstNotifications.data.notifications.some(item => item.type === "reaction" && item.reference_id === argumentId), false);
   const immediateSecondNotifications = await api(env, "/api/notifications", secondInit);
-  assert.ok(immediateSecondNotifications.data.notifications.some(item => item.type === "new_argument" && item.reference_id === courtId));
+  assert.equal(immediateSecondNotifications.data.notifications.some(item => item.type === "new_argument" && item.reference_id === courtId), false);
 
   const additionalArgumentIds = [];
   for (let number = 2; number <= 20; number++) {
