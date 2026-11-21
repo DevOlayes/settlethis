@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { RunnerEngine } from "./football-runner/RunnerEngine";
+import AvatarDiagnostic from "./AvatarDiagnostic";
 import type { TelegramUser } from "./telegram";
 import {
   compareRunnerScores,
@@ -21,6 +22,7 @@ const EMPTY_RECORDS: RunnerRecords = { bestDistance: 0, bestPoints: 0, totalRuns
 
 export default function FootballRunner({ telegramUser, onBack, preview = false }: Props) {
   const initData = window.Telegram?.WebApp?.initData || "";
+  const avatarDiagnostic = new URLSearchParams(window.location.search).get("avatar-test") === "1";
   const mountRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<RunnerControls | null>(null);
   const [phase, setPhase] = useState<RunnerPhase>("ready");
@@ -73,6 +75,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   }, [telegramUser, initData, preview]);
 
   useEffect(() => {
+    if (avatarDiagnostic) return;
     const host = mountRef.current;
     if (!host) return;
 
@@ -146,7 +149,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       engine.dispose();
       engineRef.current = null;
     };
-  }, [preview, initData]);
+  }, [preview, initData, avatarDiagnostic]);
 
   const start = async () => {
     if (startBusy || savingRun) return;
@@ -244,6 +247,8 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     setSoundEnabled(next);
     engineRef.current?.setSoundEnabled(next);
   };
+
+  if (avatarDiagnostic) return <AvatarDiagnostic onBack={onBack} />;
 
   return (
     <main className="football-runner-page">
