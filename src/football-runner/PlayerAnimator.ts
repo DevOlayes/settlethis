@@ -127,7 +127,8 @@ export class PlayerAnimator {
     if (this.slideExitRemaining > 0 && this.actionByMotion.has("slideEnd")) return "slideEnd";
 
     if (input.jumping) {
-      if (this.jumpPhaseElapsed < 0.18 && this.actionByMotion.has("jumpTakeoff")) return "jumpTakeoff";
+      const takeoffDuration = this.actionByMotion.get("jumpTakeoff")?.getClip().duration ?? 0.3;
+      if (this.jumpPhaseElapsed < Math.min(0.38, Math.max(0.18, takeoffDuration * 0.35)) && this.actionByMotion.has("jumpTakeoff")) return "jumpTakeoff";
       if (this.actionByMotion.has("jumpAir")) return "jumpAir";
       if (this.actionByMotion.has("jumpTakeoff")) return "jumpTakeoff";
     }
