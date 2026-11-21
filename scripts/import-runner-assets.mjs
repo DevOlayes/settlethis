@@ -14,25 +14,27 @@ const UPLOADED_MODEL_SHA256 = "ad4b96ce02b6856c73cf3045631d49981b4f896898b1c1097
 const PACKS = [
   {
     id: "ual1",
-    uploadId: "17958403",
-    slug: "universal-animation-library",
-    sha256: "cc73fc4e495b82958207316596317a3f40b9fa38065bde1027937452da537724",
+    kind: "glb",
+    url: "https://github.com/WaviestSun/atelier-packs/releases/download/characters-1/UAL1_Standard.glb",
+    sha256: "69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997",
     file: "UAL1_Standard.glb",
     destination: "UAL1_Standard.glb",
     include: ["Jog_Fwd_Loop", "Sprint_Loop", "Jump_Start", "Jump_Loop", "Jump_Land", "Crouch_Fwd_Loop", "Crouch_Idle_Loop"],
     required: ["Jog_Fwd_Loop", "Sprint_Loop", "Jump_Start", "Jump_Loop", "Jump_Land", "Crouch_Fwd_Loop"],
     source: "Quaternius Universal Animation Library 1 Standard",
+    sourcePage: "https://quaternius.itch.io/universal-animation-library",
   },
   {
     id: "ual2",
-    uploadId: "17958478",
-    slug: "universal-animation-library-2",
+    kind: "zip",
+    url: "https://github.com/WaviestSun/atelier-packs/releases/download/packs-2/Universal-Animation-Library-2-Standard.zip",
     sha256: "4008ea208a604773a2b2177d965f0f5d3195498b5bf838c3f5785d68e95f2a68",
     file: "UAL2_Standard.glb",
     destination: "UAL2_Standard.glb",
     include: ["Slide_Start", "Slide_Loop", "Slide_Exit", "NinjaJump_Start", "NinjaJump_Idle_Loop", "NinjaJump_Land"],
     required: ["Slide_Start", "Slide_Loop", "Slide_Exit"],
     source: "Quaternius Universal Animation Library 2 Standard",
+    sourcePage: "https://quaternius.itch.io/universal-animation-library-2",
   },
 ];
 
@@ -140,41 +142,38 @@ await writeFile(path.join(assetRoot, "LICENSE-MICROSOFT.txt"), licenseText + "\n
 const manifestClips = [];
 const sourcePacks = [];
 for (const pack of PACKS) {
-  const endpoint = `https://quaternius.itch.io/${pack.slug}/file/${pack.uploadId}?source=game_download&as_props=1`;
-  const linkResponse = await fetch(endpoint, { method: "POST", headers: { Accept: "application/json" } });
-  const linkText = await linkResponse.text();
-  if (!linkResponse.ok) throw new Error(`Quaternius download-link request failed (${linkResponse.status}): ${linkText.slice(0, 300)}`);
-  let linkPayload;
-  try { linkPayload = JSON.parse(linkText); }
-  catch { throw new Error(`Unexpected Quaternius download-link response: ${linkText.slice(0, 500)}`); }
-  const downloadUrl = linkPayload.url || linkPayload.download_url || linkPayload.download;
-  if (!downloadUrl) throw new Error(`No signed download URL returned for ${pack.id}: ${linkText.slice(0, 500)}`);
-
-  const zipPath = path.join(tempRoot, `${pack.id}.zip`);
-  const zipBytes = await download(downloadUrl, zipPath);
-  const zipHash = sha256(zipBytes);
-  if (zipHash !== pack.sha256) {
-    throw new Error(`${pack.id} source ZIP checksum mismatch: expected ${pack.sha256}, got ${zipHash}`);
+  const sourcePath = path.join(tempRoot, pack.kind === "zip" ? `${pack.id}.zip` : pack.file);
+  const sourceBytes = await download(pack.url, sourcePath);
+  const sourceHash = sha256(sourceBytes);
+  if (sourceHash !== pack.sha256) {
+    throw new Error(`${pack.id} source checksum mismatch: expected ${pack.sha256}, got ${sourceHash}`);
   }
 
-  const extractPath = path.join(tempRoot, pack.id);
-  await mkdir(extractPath, { recursive: true });
-  execFileSync("unzip", ["-q", zipPath, "-d", extractPath]);
-  const files = await walk(extractPath);
-  const glbPath = files.find((file) => path.basename(file) === pack.file);
-  if (!glbPath) throw new Error(`Could not find ${pack.file} in official ${pack.id} archive`);
+  let glbPath = sourcePath;
+  if (pack.kind === "zip") {
+    const extractPath = path.join(tempRoot, pack.id);
+    await mkdir(extractPath, { recursive: true });
+    execFileSync("unzip", ["-q", sourcePath, "-d", extractPath]);
+    const files = await walk(extractPath);
+    glbPath = files.find((file) => path.basename(file) === pack.file) || "";
+    if (!glbPath) throw new Error(`Could not find ${pack.file} in ${pack.id} archive`);
+  }
+
   const glbBytes = await readFile(glbPath);
   const glbJson = parseGlb(glbBytes);
   const animationNames = (glbJson.animations || []).map((animation) => animation.name).filter(Boolean);
-  const missing = pack.required.filter((required) => !animationNames.some((name) => name.toLowerCase() === required.toLowerCase()));
+  const missing = pack.required.filter((required) =>
+    !animationNames.some((name) => name.toLowerCase() === required.toLowerCase()),
+  );
   if (missing.length) {
     throw new Error(`${pack.id} is missing required animation clips: ${missing.join(", ")}. Available: ${animationNames.join(", ")}`);
   }
-  const selected = animationNames.filter((name) => pack.include.some((include) => name.toLowerCase() === include.toLowerCase()));
+  const selected = animationNames.filter((name) =>
+    pack.include.some((include) => name.toLowerCase() === include.toLowerCase()),
+  );
   if (!selected.length) throw new Error(`No selected clips found in ${pack.id}`);
 
-  const destination = path.join(animationRoot, pack.destination);
-  await copyFile(glbPath, destination);
+  await copyFile(glbPath, path.join(animationRoot, pack.destination));
   manifestClips.push({
     name: pack.id,
     url: `/assets/football-runner/animations/${pack.destination}`,
@@ -184,31 +183,27 @@ for (const pack of PACKS) {
   });
   sourcePacks.push({
     name: pack.source,
-    source: pack.id === "ual1"
-      ? "https://quaternius.itch.io/universal-animation-library"
-      : "https://quaternius.itch.io/universal-animation-library-2",
+    source: pack.sourcePage,
+    mirror: pack.url,
     license: "CC0-1.0",
-    sha256: zipHash,
-    originalArchiveBytes: zipBytes.length,
+    sha256: sourceHash,
+    sourceBytes: sourceBytes.length,
     bundledGlbBytes: glbBytes.length,
     bundledAnimationNames: selected,
   });
   console.log(`${pack.id} verified:`, JSON.stringify({
-    archiveBytes: zipBytes.length, archiveSha256: zipHash,
-    glbBytes: glbBytes.length, availableAnimations: animationNames.length,
+    sourceBytes: sourceBytes.length,
+    sourceSha256: sourceHash,
+    glbBytes: glbBytes.length,
+    availableAnimations: animationNames.length,
     selectedAnimations: selected,
   }));
 }
 
-const quaterniusLicense = (await walk(tempRoot)).find((file) =>
-  /license/i.test(path.basename(file)) && /ual1|ual2/i.test(file),
-);
-if (quaterniusLicense) {
-  await copyFile(quaterniusLicense, path.join(animationRoot, "LICENSE-QUATERNIUS.txt"));
-} else {
-  await writeFile(path.join(animationRoot, "LICENSE-QUATERNIUS.txt"),
-    "Quaternius Universal Animation Library 1 and 2 Standard assets are released under CC0 1.0 Universal.\n" +
-    "Source: https://quaternius.com/packs/universalanimationlibrary.html and https://quaternius.com/packs/universalanimationlibrary2.html\n");
+const licenseUrl = "https://github.com/WaviestSun/atelier-packs/releases/download/characters-1/License.txt";
+const licenseBytes = await download(licenseUrl, path.join(animationRoot, "LICENSE-QUATERNIUS.txt"));
+if (sha256(licenseBytes) !== "6d01f55c6e4c49a2c9963e147e561945ae2c83958c8ca667d90a6bffdbfac061") {
+  throw new Error("Quaternius CC0 licence file checksum mismatch");
 }
 
 const manifest = {
