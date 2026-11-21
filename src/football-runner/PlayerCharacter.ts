@@ -12,8 +12,6 @@ export type PlayerCharacter = {
   rightForearm: THREE.Group;
   leftThigh: THREE.Group;
   rightThigh: THREE.Group;
-  leftShin: THREE.Group;
-  rightShin: THREE.Group;
   leftFoot: THREE.Group;
   rightFoot: THREE.Group;
   leftKnee: THREE.Group;
@@ -180,8 +178,6 @@ export function createPlayerCharacter(): PlayerCharacter {
     rightThigh: rightLeg.thigh,
     leftKnee: leftLeg.knee,
     rightKnee: rightLeg.knee,
-    leftShin: leftLeg.knee,
-    rightShin: rightLeg.knee,
     leftFoot: leftLeg.foot,
     rightFoot: rightLeg.foot,
   };
