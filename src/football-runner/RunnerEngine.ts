@@ -3,7 +3,9 @@ import { RUNNER_CONFIG } from "./config";
 import { clamp, damp, getDemoReward, getRunSpeed } from "./math";
 import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
-import { createCollectible, createObstacle, createPlayer } from "./EntityFactory";
+import { createCollectible, createObstacle } from "./EntityFactory";
+import { createPlayerCharacter } from "./PlayerCharacter";
+import { PlayerAnimator } from "./PlayerAnimator";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
 import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
 import type { RunnerEngineCallbacks, RunnerPhase, RunnerSceneBundle, RunnerSummary } from "./types";
@@ -13,7 +15,8 @@ type ActiveObject = THREE.Group;
 export class RunnerEngine {
   private readonly bundle: RunnerSceneBundle;
   private readonly host: HTMLElement;
-  private readonly playerRig = createPlayer();
+  private readonly playerCharacter = createPlayerCharacter();
+  private readonly playerAnimator = new PlayerAnimator(this.playerCharacter);
   private readonly performance = new RunnerPerformanceMonitor();
   private readonly objects: ActiveObject[] = [];
   private readonly pools = new Map<string, ObjectPool<ActiveObject>>();
@@ -40,7 +43,7 @@ export class RunnerEngine {
   constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks) {
     this.host = host;
     this.bundle = createRunnerScene(host);
-    this.bundle.scene.add(this.playerRig.root);
+    this.bundle.scene.add(this.playerCharacter.root);
     this.input = new InputController(this.bundle.renderer.domElement, (action) => this.handleAction(action));
     this.input.attach();
     this.resizeObserver = new ResizeObserver(() => resizeRunnerScene(this.bundle, this.host));
@@ -66,9 +69,8 @@ export class RunnerEngine {
     this.obstacleIndex = 0;
     this.over = false;
     this.paused = false;
-    this.playerRig.root.position.set(0, 0, RUNNER_CONFIG.playerStartZ);
-    this.playerRig.root.rotation.set(0, 0, 0);
-    this.playerRig.legs.forEach((leg) => { leg.rotation.set(0, 0, 0); });
+    this.playerCharacter.root.position.set(0, 0, RUNNER_CONFIG.playerStartZ);
+    this.playerAnimator.reset();
     this.bundle.world.position.z = 0;
 
     for (let index = 0; index < RUNNER_CONFIG.spawning.initialObjects; index++) {
@@ -108,8 +110,8 @@ export class RunnerEngine {
     this.releaseAllObjects();
     this.pools.forEach((pool) => pool.clear());
     this.pools.clear();
-    this.bundle.scene.remove(this.playerRig.root);
-    this.disposeObject(this.playerRig.root);
+    this.bundle.scene.remove(this.playerCharacter.root);
+    this.disposeObject(this.playerCharacter.root);
     this.allPooledObjects.forEach((object) => this.disposeObject(object));
     this.allPooledObjects.clear();
     disposeRunnerScene(this.bundle, this.host);
@@ -211,7 +213,7 @@ export class RunnerEngine {
     this.spawnElapsed += delta;
     this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % 15;
 
-    const player = this.playerRig.root;
+    const player = this.playerCharacter.root;
     player.position.x = damp(player.position.x, this.targetLane * config.laneWidth, config.movement.laneResponse, delta);
 
     if (this.jumpProgress > 0) {
@@ -221,9 +223,12 @@ export class RunnerEngine {
       player.position.y = 0;
     }
     this.slideRemaining = Math.max(0, this.slideRemaining - delta);
-    const stride = Math.sin(this.elapsed * speed * 0.65) * 0.7;
-    this.playerRig.legs[0].rotation.x = stride;
-    this.playerRig.legs[1].rotation.x = -stride;
+    this.playerAnimator.update(delta, {
+      speedRatio: speed / config.movement.initialSpeed,
+      jumping: this.jumpProgress > 0.25,
+      sliding: this.slideRemaining > 0,
+      laneLean: clamp(this.targetLane - player.position.x / config.laneWidth, -1, 1),
+    });
 
     if (this.spawnElapsed > Math.max(
       config.spawning.intervalMinimum,
@@ -254,6 +259,7 @@ export class RunnerEngine {
         if (object.userData.kind === "ball") {
           this.balls++;
           this.points += 100;
+          this.playerAnimator.triggerKick();
           this.releaseObject(object);
           this.objects.splice(index, 1);
         } else if (!(this.jumpProgress > 0.25 && object.userData.obstacleType === "hurdle") && this.slideRemaining <= 0) {
