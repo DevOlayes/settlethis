@@ -51,18 +51,20 @@ export class PlayerAnimator {
     // Alternating leg drive with knee lift and trailing-foot recovery.
     c.leftThigh.rotation.x = gait * 0.58 * (1 - jumpWeight * 0.5) + jumpWeight * -0.28;
     c.rightThigh.rotation.x = opposite * 0.58 * (1 - jumpWeight * 0.5) + jumpWeight * -0.28;
-    c.leftKnee.rotation.x = Math.max(0, -gait) * 0.82 + jumpWeight * 0.72;
-    c.rightKnee.rotation.x = Math.max(0, -opposite) * 0.82 + jumpWeight * 0.72;
+    c.leftKnee.rotation.x = Math.max(0, -gait) * 0.82 + jumpWeight * 0.72 + slideWeight * 1.18;
+    c.rightKnee.rotation.x = Math.max(0, -opposite) * 0.82 + jumpWeight * 0.72 + slideWeight * 1.18;
+    c.leftThigh.rotation.x = THREE.MathUtils.lerp(c.leftThigh.rotation.x, -0.82, slideWeight * 0.9);
+    c.rightThigh.rotation.x = THREE.MathUtils.lerp(c.rightThigh.rotation.x, -0.82, slideWeight * 0.9);
     c.leftFoot.rotation.x = -Math.max(0, gait) * 0.2;
     c.rightFoot.rotation.x = -Math.max(0, opposite) * 0.2;
 
     // Arms counter-swing against the legs, with elbows slightly flexed.
-    c.leftArm.rotation.x = -gait * 0.42 - jumpWeight * 0.28;
-    c.rightArm.rotation.x = -opposite * 0.42 - jumpWeight * 0.28;
+    c.leftArm.rotation.x = -gait * 0.42 - jumpWeight * 0.28 + slideWeight * 0.42;
+    c.rightArm.rotation.x = -opposite * 0.42 - jumpWeight * 0.28 + slideWeight * 0.42;
     c.leftArm.rotation.z = -0.08 - slideWeight * 0.15;
     c.rightArm.rotation.z = 0.08 + slideWeight * 0.15;
-    c.leftForearm.rotation.x = -0.32 - Math.max(0, gait) * 0.2;
-    c.rightForearm.rotation.x = -0.32 - Math.max(0, opposite) * 0.2;
+    c.leftForearm.rotation.x = -0.32 - Math.max(0, gait) * 0.2 - slideWeight * 0.28;
+    c.rightForearm.rotation.x = -0.32 - Math.max(0, opposite) * 0.2 - slideWeight * 0.28;
 
     // The body leans into lane changes and lowers into a compact slide pose.
     c.root.rotation.z = THREE.MathUtils.damp(c.root.rotation.z, -input.laneLean * 0.13, 8, delta);
