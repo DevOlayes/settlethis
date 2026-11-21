@@ -65,3 +65,13 @@ The prototype character has been replaced by a reusable articulated footballer r
 - Lane changes use frame-rate-independent exponential easing and snap cleanly to lane centres.
 - Jump and slide are mutually exclusive, with the full jump airtime retained for the jump pose and hurdle clearance.
 - The browser tab automatically pauses an active run when it becomes hidden; resuming restarts the animation loop with a fresh frame timestamp.
+
+
+## Stage 5 — collision and obstacle system
+
+- Obstacles now carry explicit hitbox metadata (lane width, depth, physical height and permitted action clearance) alongside their visual geometry.
+- The engine resolves player/object overlap using the obstacle-specific footprint rather than one oversized global rectangle.
+- Cones and agility hurdles can be cleared by a sufficiently high jump; a raised training bar can be passed only during a slide; full-height mannequins and equipment carts require a lane change.
+- Collision dimensions, player footprint and clearance margins are centralised in configuration for later tuning.
+- Five obstacle families are available to the spawn pool. Visual models are built from reusable Three.js primitives and remain pooled between runs.
+- This is an implementation milestone, not a gameplay fairness certification: the reaction window, actual jump/slide clearance feel and obstacle combinations remain for the final authorised gameplay validation.
