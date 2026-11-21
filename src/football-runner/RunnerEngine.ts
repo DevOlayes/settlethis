@@ -4,6 +4,7 @@ import { clamp, damp, getDemoReward, getRunSpeed } from "./math";
 import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
 import { createCollectible, createObstacle, createPlayer } from "./EntityFactory";
+import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
 import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
 import type { RunnerEngineCallbacks, RunnerPhase, RunnerSceneBundle, RunnerSummary } from "./types";
 
@@ -13,6 +14,7 @@ export class RunnerEngine {
   private readonly bundle: RunnerSceneBundle;
   private readonly host: HTMLElement;
   private readonly playerRig = createPlayer();
+  private readonly performance = new RunnerPerformanceMonitor();
   private readonly objects: ActiveObject[] = [];
   private readonly pools = new Map<string, ObjectPool<ActiveObject>>();
   private readonly allPooledObjects = new Set<ActiveObject>();
@@ -29,6 +31,7 @@ export class RunnerEngine {
   private balls = 0;
   private spawnElapsed = 0;
   private uiElapsed = 0;
+  private performanceElapsed = 0;
   private obstacleIndex = 0;
   private paused = true;
   private over = false;
@@ -59,6 +62,7 @@ export class RunnerEngine {
     this.balls = 0;
     this.spawnElapsed = 0;
     this.uiElapsed = 0;
+    this.performanceElapsed = 0;
     this.obstacleIndex = 0;
     this.over = false;
     this.paused = false;
@@ -183,8 +187,15 @@ export class RunnerEngine {
 
   private animate = (now: number): void => {
     if (this.disposed) return;
-    const delta = Math.min(0.04, Math.max(0, (now - this.lastFrameTime) / 1000));
+    const rawDelta = Math.max(0, (now - this.lastFrameTime) / 1000);
+    const delta = Math.min(0.04, rawDelta);
     this.lastFrameTime = now;
+    this.performance.record(rawDelta);
+    this.performanceElapsed += rawDelta;
+    if (this.performanceElapsed >= 5) {
+      this.performanceElapsed = 0;
+      this.callbacks.onPerformance?.(this.performance.takeSnapshot());
+    }
     if (!this.paused && !this.over) this.update(delta);
     this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
     if (!this.paused && !this.over) this.frame = requestAnimationFrame(this.animate);
