@@ -49,7 +49,7 @@ export class PlayerAnimator {
   attachRiggedModel(model: THREE.Object3D, sourceClips: THREE.AnimationClip[]): void {
     const clips = [...sourceClips];
     if (!clips.some((clip) => /soccer.?kick|football.?kick/i.test(clip.name))) {
-      const authoredKick = createFootballKickClip(model);
+      const authoredKick = this.createFootballKickClip(model);
       if (authoredKick) clips.push(authoredKick);
     }
     this.riggedMixer?.stopAllAction();
@@ -223,7 +223,7 @@ export class PlayerAnimator {
     }
   }
 
-function createFootballKickClip(model: THREE.Object3D): THREE.AnimationClip | null {
+private createFootballKickClip(model: THREE.Object3D): THREE.AnimationClip | null {
   const bones = new Map<string, THREE.Bone>();
   model.traverse((object) => {
     if (object instanceof THREE.Bone) {
