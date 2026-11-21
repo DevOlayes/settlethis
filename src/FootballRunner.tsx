@@ -1,11 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import { RunnerEngine } from "./football-runner/RunnerEngine";
-import type { RunnerControls, RunnerHud, RunnerPhase, RunnerSummary } from "./football-runner/types";
+import type { RunnerControls, RunnerHud, RunnerPhase, RunnerRecords, RunnerRunRecord, RunnerSummary } from "./football-runner/types";
 import "./FootballRunner.css";
 
 type Props = { onBack: () => void };
 
 const EMPTY_HUD: RunnerHud = { distance: 0, points: 0, balls: 0, speed: 1 };
+const RECORDS_KEY = "sethis.runner.records.v1";
+const EMPTY_RECORDS: RunnerRecords = { bestDistance: 0, bestPoints: 0, totalRuns: 0, recentRuns: [] };
+
+function readRecords(): RunnerRecords {
+  try {
+    const raw = localStorage.getItem(RECORDS_KEY);
+    if (!raw) return EMPTY_RECORDS;
+    const parsed = JSON.parse(raw) as Partial<RunnerRecords>;
+    return {
+      bestDistance: Math.max(0, Number(parsed.bestDistance) || 0),
+      bestPoints: Math.max(0, Number(parsed.bestPoints) || 0),
+      totalRuns: Math.max(0, Number(parsed.totalRuns) || 0),
+      recentRuns: Array.isArray(parsed.recentRuns) ? parsed.recentRuns.slice(0, 20) as RunnerRunRecord[] : [],
+    };
+  } catch {
+    return EMPTY_RECORDS;
+  }
+}
 
 export default function FootballRunner({ onBack }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -15,6 +33,12 @@ export default function FootballRunner({ onBack }: Props) {
   const [hud, setHud] = useState<RunnerHud>(EMPTY_HUD);
   const [engineError, setEngineError] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [records, setRecords] = useState<RunnerRecords>(EMPTY_RECORDS);
+  const [recordFlags, setRecordFlags] = useState({ distance: false, points: false });
+
+  useEffect(() => {
+    setRecords(readRecords());
+  }, []);
 
   useEffect(() => {
     const host = mountRef.current;
@@ -25,7 +49,27 @@ export default function FootballRunner({ onBack }: Props) {
       engine = new RunnerEngine(host, {
         onPhase: setPhase,
         onHud: setHud,
-        onSummary: setSummary,
+        onSummary: (result) => {
+          setSummary(result);
+          setRecordFlags({
+            distance: result.distance > records.bestDistance,
+            points: result.points > records.bestPoints,
+          });
+          const run: RunnerRunRecord = {
+            playedAt: Date.now(),
+            distance: result.distance,
+            points: result.points,
+            balls: result.balls,
+          };
+          const next: RunnerRecords = {
+            bestDistance: Math.max(records.bestDistance, result.distance),
+            bestPoints: Math.max(records.bestPoints, result.points),
+            totalRuns: records.totalRuns + 1,
+            recentRuns: [run, ...records.recentRuns].slice(0, 20),
+          };
+          setRecords(next);
+          try { localStorage.setItem(RECORDS_KEY, JSON.stringify(next)); } catch { /* Records remain available for this session. */ }
+        },
       });
       engine.setSoundEnabled(soundEnabled);
       engineRef.current = engine;
@@ -80,6 +124,17 @@ export default function FootballRunner({ onBack }: Props) {
                 <span className="runner-overline">THREE LANES. ONE ENDLESS RUN.</span>
                 <h1>Own the pitch.</h1>
                 <p>Dodge the training obstacles, kick glowing footballs and see how far you can go.</p>
+                <div className="runner-personal-best">
+                  <span>PERSONAL BEST</span>
+                  <b>{records.bestDistance.toLocaleString()} m</b>
+                  <i>{records.bestPoints.toLocaleString()} points · {records.totalRuns} {records.totalRuns === 1 ? "run" : "runs"}</i>
+                </div>
+                {records.recentRuns.length > 0 && <div className="runner-recent-runs">
+                  <span>RECENT RUNS</span>
+                  {records.recentRuns.slice(0, 3).map((run) => <div key={run.playedAt}>
+                    <b>{run.distance.toLocaleString()} m</b><i>{run.points.toLocaleString()} pts · {run.balls} balls</i>
+                  </div>)}
+                </div>}
                 <button onClick={start}>START RUN <span>→</span></button>
                 <small>SWIPE OR USE THE CONTROLS BELOW · UP TO JUMP · DOWN TO SLIDE</small>
               </>}
@@ -95,9 +150,19 @@ export default function FootballRunner({ onBack }: Props) {
                 <h1>Run complete.</h1>
                 <div className="runner-result-grid">
                   <div><small>DISTANCE</small><b>{summary.distance.toLocaleString()} m</b></div>
-                  <div><small>POINTS</small><b>{summary.points.toLocaleString()}</b></div>
+                  <div><small>TOTAL POINTS</small><b>{summary.points.toLocaleString()}</b></div>
                   <div><small>FOOTBALLS</small><b>{summary.balls}</b></div>
+                  <div><small>DISTANCE POINTS</small><b>{summary.distancePoints.toLocaleString()}</b></div>
+                  <div><small>COLLECTION POINTS</small><b>{summary.footballPoints.toLocaleString()}</b></div>
                   <div><small>SIMULATED SETHIS</small><b>{summary.sethis.toLocaleString()}</b></div>
+                </div>
+                {(recordFlags.distance || recordFlags.points) && <div className="runner-new-record">
+                  NEW PERSONAL {recordFlags.distance && recordFlags.points ? "RECORD" : recordFlags.distance ? "DISTANCE RECORD" : "POINTS RECORD"}!
+                </div>}
+                <div className="runner-personal-best runner-result-best">
+                  <span>ALL-TIME BEST</span>
+                  <b>{records.bestDistance.toLocaleString()} m</b>
+                  <i>{records.bestPoints.toLocaleString()} points</i>
                 </div>
                 <p>Prototype rewards only. No real CT is charged and no SETHIS is credited.</p>
                 <button onClick={start}>RUN AGAIN <span>→</span></button>
