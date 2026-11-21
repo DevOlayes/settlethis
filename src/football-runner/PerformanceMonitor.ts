@@ -3,6 +3,8 @@ export type RunnerPerformanceSnapshot = {
   averageFrameMs: number;
   worstFrameMs: number;
   slowFrames: number;
+  slowFrameRatio: number;
+  framesSampled: number;
 };
 
 export class RunnerPerformanceMonitor {
@@ -28,6 +30,8 @@ export class RunnerPerformanceMonitor {
       averageFrameMs: Number((this.totalFrameMs / Math.max(1, this.frameCount)).toFixed(2)),
       worstFrameMs: Number(this.worstFrameMs.toFixed(2)),
       slowFrames: this.slowFrames,
+      slowFrameRatio: Number((this.slowFrames / Math.max(1, this.frameCount)).toFixed(3)),
+      framesSampled: this.frameCount,
     };
     this.elapsed = 0;
     this.frameCount = 0;
