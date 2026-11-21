@@ -8,7 +8,7 @@ import { createPlayerCharacter } from "./PlayerCharacter";
 import { PlayerAnimator } from "./PlayerAnimator";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
 import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
-import type { RunnerEngineCallbacks, RunnerPhase, RunnerSceneBundle, RunnerSummary } from "./types";
+import type { RunnerAction, RunnerEngineCallbacks, RunnerPhase, RunnerSceneBundle, RunnerSummary } from "./types";
 
 type ActiveObject = THREE.Group;
 
@@ -100,6 +100,8 @@ export class RunnerEngine {
 
   restart = (): void => this.start();
 
+  act = (action: RunnerAction): void => this.handleAction(action);
+
   dispose = (): void => {
     if (this.disposed) return;
     this.disposed = true;
@@ -121,8 +123,12 @@ export class RunnerEngine {
     if (this.paused || this.over || this.disposed) return;
     if (action === "left") this.targetLane = clamp(this.targetLane - 1, -1, 1);
     if (action === "right") this.targetLane = clamp(this.targetLane + 1, -1, 1);
-    if (action === "jump" && this.jumpProgress <= 0) this.jumpProgress = RUNNER_CONFIG.movement.jumpDuration;
-    if (action === "slide") this.slideRemaining = RUNNER_CONFIG.movement.slideDuration;
+    if (action === "jump" && this.jumpProgress <= 0 && this.slideRemaining <= 0) {
+      this.jumpProgress = RUNNER_CONFIG.movement.jumpDuration;
+    }
+    if (action === "slide" && this.jumpProgress <= 0) {
+      this.slideRemaining = RUNNER_CONFIG.movement.slideDuration;
+    }
   }
 
   private getPool(key: string): ObjectPool<ActiveObject> {
@@ -214,10 +220,13 @@ export class RunnerEngine {
     this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % 15;
 
     const player = this.playerCharacter.root;
-    player.position.x = damp(player.position.x, this.targetLane * config.laneWidth, config.movement.laneResponse, delta);
+    const laneTarget = this.targetLane * config.laneWidth;
+    const laneBlend = 1 - Math.exp(-config.movement.laneResponse * delta);
+    player.position.x += (laneTarget - player.position.x) * laneBlend;
+    if (Math.abs(laneTarget - player.position.x) < config.movement.laneSnapTolerance) player.position.x = laneTarget;
 
     if (this.jumpProgress > 0) {
-      this.jumpProgress = Math.max(0, this.jumpProgress - delta * 1.65);
+      this.jumpProgress = Math.max(0, this.jumpProgress - delta);
       player.position.y = Math.sin((config.movement.jumpDuration - this.jumpProgress) * Math.PI / config.movement.jumpDuration) * config.movement.jumpHeight;
     } else {
       player.position.y = 0;
