@@ -36,6 +36,7 @@ export class RunnerEngine {
   private uiElapsed = 0;
   private performanceElapsed = 0;
   private obstacleIndex = 0;
+  private lastObstacleLane = 2;
   private paused = true;
   private over = false;
   private disposed = false;
@@ -67,6 +68,7 @@ export class RunnerEngine {
     this.uiElapsed = 0;
     this.performanceElapsed = 0;
     this.obstacleIndex = 0;
+    this.lastObstacleLane = 2;
     this.over = false;
     this.paused = false;
     this.playerCharacter.root.position.set(0, 0, RUNNER_CONFIG.playerStartZ);
@@ -76,7 +78,9 @@ export class RunnerEngine {
     for (let index = 0; index < RUNNER_CONFIG.spawning.initialObjects; index++) {
       const z = -13 - index * RUNNER_CONFIG.spawning.initialSpacing;
       const lane = (index % 3) - 1;
-      this.spawnObject(index % 2 === 0 ? "collectible" : `obstacle-${this.obstacleIndex++ % 5}`, lane, z);
+      const isObstacle = index % 2 !== 0;
+      if (isObstacle) this.lastObstacleLane = lane;
+      this.spawnObject(isObstacle ? `obstacle-${this.obstacleIndex++ % 5}` : "collectible", lane, z);
     }
     this.callbacks.onHud({ distance: 0, points: 0, balls: 0, speed: 1 });
     this.callbacks.onPhase("running");
@@ -244,10 +248,13 @@ export class RunnerEngine {
       config.spawning.intervalStart - this.elapsed * config.spawning.intervalRamp,
     )) {
       this.spawnElapsed = 0;
-      const lane = Math.floor(Math.random() * 3) - 1;
+      let lane = Math.floor(Math.random() * 3) - 1;
       if (Math.random() < config.spawning.ballChance) {
         this.spawnObject("collectible", lane, -config.spawning.startDistance);
       } else {
+        // Keep each spawn row to one obstacle and avoid consecutive blocked lanes.
+        if (lane === this.lastObstacleLane) lane = lane === 1 ? -1 : lane + 1;
+        this.lastObstacleLane = lane;
         this.spawnObject(`obstacle-${this.obstacleIndex++ % 5}`, lane, -config.spawning.startDistance);
       }
     }
