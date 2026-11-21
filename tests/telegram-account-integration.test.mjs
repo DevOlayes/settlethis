@@ -316,17 +316,15 @@ test("Telegram accounts persist independently through onboarding, profile, check
 
   const memberProfile = await api(env, "/api/profile", firstInit);
   assert.equal(memberProfile.response.status, 200);
-  assert.equal(memberProfile.data.activity.entries, 1);
-  assert.equal(memberProfile.data.activity.arguments, 1);
-  assert.equal(memberProfile.data.activity.replies, 0);
+  assert.equal(memberProfile.data.activity.games_played, 0);
   assert.equal(memberProfile.data.activity.sethis_earned, 500);
   assert.equal(memberProfile.data.rank, null);
-  assert.equal(memberProfile.data.achievements.find(item => item.key === "first_position").earned, true);
-  assert.equal(memberProfile.data.achievements.find(item => item.key === "case_builder").earned, true);
-  assert.equal(memberProfile.data.achievements.find(item => item.key === "community_voice").earned, false);
+  assert.equal(memberProfile.data.achievements.find(item => item.key === "first_mystery").earned, false);
+  assert.equal(memberProfile.data.achievements.find(item => item.key === "game_regular").earned, false);
 
   const secondMemberProfile = await api(env, "/api/profile", secondInit);
-  assert.equal(secondMemberProfile.data.activity.replies, 1);
+  assert.equal(secondMemberProfile.data.activity.games_played, 0);
+  assert.equal(secondMemberProfile.data.activity.sethis_earned, 0);
 
   const replyReaction = await api(env, "/api/reactions", firstInit, "POST", {
     target_type: "reply", target_id: reply.data.reply_id, reaction: "insightful"
