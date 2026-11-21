@@ -80,7 +80,21 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         model = loaded.model;
         if (disposed) { disposeRunnerCharacterModel(model); return; }
         scene.add(model);
+        const hierarchy = model.userData.runnerRigHierarchy as
+          | { normalized?: boolean; changes?: string[]; verified?: number }
+          | undefined;
         addCheck("Sports Male 03 loaded: " + model.name);
+        addCheck(hierarchy?.normalized
+          ? `Sports Male 03 rig hierarchy corrected and verified: ${hierarchy.verified ?? 0} limb branches.`
+          : "Sports Male 03 rig hierarchy was not normalized.");
+        if (hierarchy?.changes?.length) addCheck("Rig branch corrections: " + hierarchy.changes.join("; "));
+        const bounds = new THREE.Box3().setFromObject(model);
+        const center = bounds.getCenter(new THREE.Vector3());
+        const height = Math.max(0.1, bounds.max.y - bounds.min.y);
+        const distance = height / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5))) * 1.28;
+        camera.position.set(center.x, center.y + height * 0.035, center.z + distance);
+        camera.lookAt(center.x, center.y, center.z);
+        addCheck("Diagnostic camera framed to the complete footballer.");
         addCheck("Embedded animation clips: " + loaded.animations.length);
         addCheck("Loading the locally bundled online motion library…");
         const imported = await loadRunnerAnimationManifest(model);
