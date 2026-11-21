@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-import { canonicalizeGLBBones, MIN_COVERAGE, retargetClipToObject } from "@three-ws/retarget";
+import { canonicalizeGLBBones, MIN_COVERAGE, parseClipJSON, retargetClipToObject } from "@three-ws/retarget";
 
 export type LoadedRunnerCharacter = {
   model: THREE.Group;
@@ -13,6 +13,7 @@ type RunnerAnimationAsset = {
   url: string;
   includeAnimations?: string[];
   compression?: "gzip";
+  format?: "canonical-json";
   source?: string;
   license?: string;
 };
@@ -219,14 +220,47 @@ export async function loadRunnerAnimationClips(
         continue;
       }
       const downloaded = await response.arrayBuffer();
+      const allowed = asset.includeAnimations
+        ? new Set(asset.includeAnimations.map((name) => name.toLowerCase()))
+        : undefined;
+
+      if (asset.format === "canonical-json") {
+        const json = JSON.parse(new TextDecoder().decode(downloaded));
+        const sourceClip = parseClipJSON(json, asset.name || "runner-motion");
+        const result = retargetClipToObject(sourceClip, target);
+        const requiredBones = [
+          "Hips", "LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg",
+          "LeftArm", "RightArm", "LeftForeArm", "RightForeArm",
+        ];
+        const trackNames = new Set(result.clip?.tracks.map((track) => track.name.split(".")[0]) ?? []);
+        const missing = requiredBones.filter((bone) => !trackNames.has(bone));
+        if (!result.clip || result.coverage < MIN_COVERAGE || missing.length > 0) {
+          console.warn("Rejected an incomplete canonical runner animation", {
+            clip: sourceClip.name,
+            coverage: result.coverage,
+            matched: result.matched,
+            total: result.total,
+            missing,
+          });
+          continue;
+        }
+        result.clip.name = asset.name || sourceClip.name || "runner-motion";
+        retargeted.push(result.clip);
+        console.info("Loaded canonical runner animation", {
+          clip: result.clip.name,
+          coverage: result.coverage,
+          matched: result.matched,
+          total: result.total,
+          tracks: result.clip.tracks.length,
+        });
+        continue;
+      }
+
       const raw = asset.compression === "gzip"
         ? await decompressAnimationAsset(downloaded)
         : downloaded;
       const { buffer } = canonicalizeGLBBones(raw);
       const source = await loader.parseAsync(buffer, new URL(".", window.location.href).href);
-      const allowed = asset.includeAnimations
-        ? new Set(asset.includeAnimations.map((name) => name.toLowerCase()))
-        : undefined;
 
       for (const sourceClip of source.animations) {
         if (allowed && !allowed.has(sourceClip.name.toLowerCase())) continue;

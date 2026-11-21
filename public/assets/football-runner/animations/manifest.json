@@ -48,6 +48,7 @@
     }
   ],
   "clips": [
+    {"name":"xbot-run","url":"/assets/football-runner/animations/xbot-run.json","format":"canonical-json","includeAnimations":["xbot-run"],"source":"Mixamo Run animation, canonicalized from three.ws Xbot.glb animation asset","license":"Mixamo terms: free commercial use as part of a product; see upstream licensing record"},
     {
       "name": "ual1",
       "url": "/assets/football-runner/animations/UAL1_Standard.pack",

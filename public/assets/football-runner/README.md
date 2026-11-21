@@ -23,3 +23,14 @@ Sources:
 - https://quaternius.com/packs/universalanimationlibrary2.html
 
 The football collection kick is an original game-authored clip, not a third-party motion-capture asset.
+
+## In-place running animation
+
+The primary runner gait is the locally bundled `xbot-run.json` canonical humanoid clip.
+It is derived from the Mixamo **Run** animation distributed in the three.js Xbot GLB
+and canonicalized by the three.ws animation pipeline. The source licensing record
+documents Mixamo's permission for free commercial use when the animation is
+incorporated into a product. The clip contains 156 skeletal tracks and has no
+forward root travel; game-world scrolling remains responsible for forward motion.
+At runtime it is retargeted to the Sports Male 03 avatar and accepted only when
+the expected hips, leg, arm and forearm tracks are all present.

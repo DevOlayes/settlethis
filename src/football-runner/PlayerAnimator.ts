@@ -12,7 +12,7 @@ export type PlayerAnimationInput = {
 type RunnerMotion = "run" | "sprint" | "jumpTakeoff" | "jumpAir" | "jumpLand" | "slideStart" | "slideLoop" | "slideEnd" | "crouch" | "kick";
 
 const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
-  run: [/\\brun\\b/, /jog/, /\\bwalk\\b/, /locomotion/],
+  run: [/run/, /jog/, /walk/, /locomotion/],
   sprint: [/sprint/, /fast.?run/, /run.?fast/],
   jumpTakeoff: [/jump.?take.?off/, /take.?off/, /jump.?start/],
   jumpAir: [/jump.?air/, /airborne/, /jump.?loop/, /in.?air/],
@@ -32,82 +32,6 @@ function normalizedBoneKey(name: string): string {
   // segment case-insensitively so Bip01 and mixamorig rigs resolve identically.
   const canonical = canonicalizeBoneName(name);
   return canonical.split(":").pop()!.toLowerCase().replace(/[^a-z0-9]/g, "");
-}
-
-function createUprightRunClip(model: THREE.Object3D, sprint = false): THREE.AnimationClip {
-  const bones = new Map<string, THREE.Bone>();
-  model.traverse((object) => {
-    if (!(object instanceof THREE.Bone)) return;
-    const names = [object.name, object.name.split(":").pop() ?? object.name];
-    for (const name of names) bones.set(normalizedBoneKey(name), object);
-  });
-
-  // Avatar-specific in-place locomotion. The retargeted jog was producing a
-  // horizontal, swimming-like stroke on this Biped, so run/sprint are authored
-  // directly against its canonical humanoid joints instead.
-  // A complete, brisk running cycle. The earlier clip could silently contain
-  // no tracks because its lookup keys ("LeftUpLeg") did not match the
-  // retargeter's canonicalized, lower-case bone names; that left the avatar
-  // upright but motionless while the world scrolled beneath him.
-  const duration = sprint ? 0.52 : 0.62;
-  const sampleCount = 13;
-  const times = Array.from({ length: sampleCount }, (_, index) => duration * index / (sampleCount - 1));
-  const stride = sprint ? 0.98 : 0.82;
-  const armSwing = sprint ? 0.78 : 0.66;
-  const kneeLift = sprint ? 1.08 : 0.94;
-  const tracks: THREE.KeyframeTrack[] = [];
-
-  const addRotation = (name: string, valuesAtPhase: (phase: number) => [number, number, number]) => {
-    const bone = bones.get(normalizedBoneKey(name));
-    if (!bone) return;
-    const base = bone.quaternion.clone();
-    const values: number[] = [];
-    for (let index = 0; index < sampleCount; index++) {
-      const phase = (index / (sampleCount - 1)) * Math.PI * 2;
-      const poseValues = valuesAtPhase(phase);
-      const delta = new THREE.Quaternion().setFromEuler(new THREE.Euler(poseValues[0], poseValues[1], poseValues[2], "XYZ"));
-      const pose = base.clone().multiply(delta).normalize();
-      values.push(pose.x, pose.y, pose.z, pose.w);
-    }
-    tracks.push(new THREE.QuaternionKeyframeTrack(bone.name + ".quaternion", times, values));
-  };
-
-  addRotation("LeftUpLeg", (phase) => [Math.sin(phase) * stride, 0, 0.015]);
-  addRotation("RightUpLeg", (phase) => [-Math.sin(phase) * stride, 0, -0.015]);
-  addRotation("LeftLeg", (phase) => [Math.max(0, -Math.sin(phase)) * kneeLift, 0, 0]);
-  addRotation("RightLeg", (phase) => [Math.max(0, Math.sin(phase)) * kneeLift, 0, 0]);
-  addRotation("LeftFoot", (phase) => [-Math.sin(phase) * 0.12, 0, 0]);
-  addRotation("RightFoot", (phase) => [Math.sin(phase) * 0.12, 0, 0]);
-
-  // Arms swing opposite their same-side leg, with a stable elbow bend.
-  addRotation("LeftArm", (phase) => [-Math.sin(phase) * armSwing, 0, -0.045]);
-  addRotation("RightArm", (phase) => [Math.sin(phase) * armSwing, 0, 0.045]);
-  addRotation("LeftForeArm", (phase) => [-0.58 - Math.max(0, Math.sin(phase)) * 0.12, 0, 0]);
-  addRotation("RightForeArm", (phase) => [-0.58 - Math.max(0, -Math.sin(phase)) * 0.12, 0, 0]);
-
-  // Upright chest, a slight athletic forward lean and restrained hip counter-rotation.
-  addRotation("Spine", (phase) => [-0.075, 0, Math.sin(phase) * 0.012]);
-  addRotation("Spine1", (phase) => [-0.025, 0, -Math.sin(phase) * 0.01]);
-  addRotation("Hips", (phase) => [0, 0, -Math.sin(phase) * 0.035]);
-
-  // Subtle vertical hip travel makes the footfalls read as running rather than
-  // skating. The doubled frequency creates a small rise on each step.
-  const hips = bones.get(normalizedBoneKey("Hips"));
-  if (hips) {
-    const base = hips.position.clone();
-    const values: number[] = [];
-    for (let index = 0; index < sampleCount; index++) {
-      const phase = (index / (sampleCount - 1)) * Math.PI * 2;
-      const bounce = Math.abs(Math.sin(phase)) * (sprint ? 0.045 : 0.035);
-      values.push(base.x, base.y + bounce, base.z);
-    }
-    tracks.push(new THREE.VectorKeyframeTrack(hips.name + ".position", times, values));
-  }
-
-  if (tracks.length < 8) {
-    throw new Error(`Upright runner animation resolved only ${tracks.length} bone tracks`);
-  }
-  return new THREE.AnimationClip(sprint ? "SETHIS Upright Sprint" : "SETHIS Upright Run", duration, tracks);
 }
 
 export class PlayerAnimator {
@@ -150,9 +74,10 @@ export class PlayerAnimator {
       this.riggedActions.set(key, action);
     }
 
-    // Keep retargeted jump/slide clips, but use an avatar-specific upright
-    // locomotion cycle: the imported jog reads like a swimming stroke on this Biped.
-    for (const motion of ["jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slideStart", "slideLoop", "slideEnd", "kick"] as RunnerMotion[]) {
+    // Use imported canonical-skeleton locomotion and action clips. Run and
+    // sprint resolve to the validated in-place Mixamo run; speed tiers alter
+    // playback rate without moving the character root.
+    for (const motion of ["run", "sprint", "jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slideStart", "slideLoop", "slideEnd", "kick"] as RunnerMotion[]) {
       const patterns = CLIP_PATTERNS[motion];
       for (const pattern of patterns) {
         const match = [...this.riggedActions].find(([name]) => pattern.test(name));
@@ -163,12 +88,14 @@ export class PlayerAnimator {
       }
     }
 
-    const uprightRun = this.riggedMixer.clipAction(createUprightRunClip(model));
-    const uprightSprint = this.riggedMixer.clipAction(createUprightRunClip(model, true));
-    this.actionByMotion.set("run", uprightRun);
-    this.actionByMotion.set("sprint", uprightSprint);
-    this.riggedActions.set("sethis upright run", uprightRun);
-    this.riggedActions.set("sethis upright sprint", uprightSprint);
+    const run = this.actionByMotion.get("run");
+    if (!run) {
+      throw new Error("The rigged footballer has no validated in-place run animation");
+    }
+    // The imported canonical run is in-place. The world scroll controls travel;
+    // the animation controls only the player's gait. Faster game tiers increase
+    // the animation playback rate rather than adding root motion.
+    this.actionByMotion.set("sprint", run);
     this.playRiggedMotion("run");
   }
 
