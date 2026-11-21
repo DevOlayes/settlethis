@@ -1,57 +1,6 @@
 import * as THREE from "three";
 import { RUNNER_CONFIG } from "./config";
 
-export type PlayerRig = { root: THREE.Group; legs: THREE.Group[] };
-
-export function createPlayer(): PlayerRig {
-  const player = new THREE.Group();
-  player.position.set(0, 0, RUNNER_CONFIG.playerStartZ);
-  const skin = new THREE.MeshStandardMaterial({ color: 0x9c6549, roughness: 0.85 });
-  const shirt = new THREE.MeshStandardMaterial({ color: RUNNER_CONFIG.colors.coral, roughness: 0.72 });
-  const shorts = new THREE.MeshStandardMaterial({ color: 0x242337, roughness: 0.8 });
-  const socks = new THREE.MeshStandardMaterial({ color: 0xf4f1ec });
-  const boots = new THREE.MeshStandardMaterial({ color: 0x18151f, roughness: 0.55 });
-
-  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.34, 0.72, 4, 8), shirt);
-  torso.position.y = 1.35;
-  torso.castShadow = true;
-  player.add(torso);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 12, 10), skin);
-  head.position.y = 2.12;
-  head.castShadow = true;
-  player.add(head);
-  const hair = new THREE.Mesh(
-    new THREE.SphereGeometry(0.245, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.48),
-    new THREE.MeshStandardMaterial({ color: 0x211b20 }),
-  );
-  hair.position.y = 2.2;
-  player.add(hair);
-
-  const legs: THREE.Group[] = [];
-  for (const x of [-0.16, 0.16]) {
-    const leg = new THREE.Group();
-    leg.position.set(x, 0.82, 0);
-    const thigh = new THREE.Mesh(new THREE.CapsuleGeometry(0.115, 0.48, 3, 7), shorts);
-    thigh.position.y = -0.1;
-    leg.add(thigh);
-    const shin = new THREE.Mesh(new THREE.CapsuleGeometry(0.085, 0.47, 3, 7), socks);
-    shin.position.y = -0.53;
-    leg.add(shin);
-    const boot = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.11, 0.34), boots);
-    boot.position.set(0, -0.81, -0.08);
-    leg.add(boot);
-    player.add(leg);
-    legs.push(leg);
-  }
-  for (const x of [-0.42, 0.42]) {
-    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 0.48, 3, 7), shirt);
-    arm.position.set(x, 1.42, 0);
-    arm.rotation.z = x > 0 ? -0.22 : 0.22;
-    player.add(arm);
-  }
-  return { root: player, legs };
-}
-
 export function createCollectible(): THREE.Group {
   const group = new THREE.Group();
   const core = new THREE.Mesh(
