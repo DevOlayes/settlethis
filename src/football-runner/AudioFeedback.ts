@@ -1,5 +1,3 @@
-import { RUNNER_CONFIG } from "./config";
-
 /**
  * Small procedural sound layer. No downloaded audio assets are required.
  * AudioContext is created/resumed only after a user gesture (Start/Resume).
@@ -10,7 +8,6 @@ export class RunnerAudioFeedback {
   private ambienceGain: GainNode | null = null;
   private noiseBuffer: AudioBuffer | null = null;
   private ambienceSource: AudioBufferSourceNode | null = null;
-  private ambienceFilter: BiquadFilterNode | null = null;
   private enabled = true;
   private running = false;
   private stepElapsed = 0;
@@ -102,7 +99,6 @@ export class RunnerAudioFeedback {
     this.master = null;
     this.ambienceGain = null;
     this.ambienceSource = null;
-    this.ambienceFilter = null;
     this.noiseBuffer = null;
   }
 
@@ -137,7 +133,6 @@ export class RunnerAudioFeedback {
     gain.connect(this.master);
     source.start();
     this.ambienceSource = source;
-    this.ambienceFilter = band;
     this.ambienceGain = gain;
     this.updateAmbienceLevel();
   }
@@ -150,7 +145,7 @@ export class RunnerAudioFeedback {
 
   private footstep(alternate: boolean): void {
     const frequency = alternate ? 76 : 92;
-    this.tone(frequency, frequency * 0.62, 0.075, "sine", 0.038);
+    this.tone(frequency, frequency * 0.62, 0.075, 0.038, "sine");
     this.noiseSweep(240, 110, 0.045, 0.012, "lowpass");
   }
 
