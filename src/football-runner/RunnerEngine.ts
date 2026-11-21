@@ -221,7 +221,7 @@ export class RunnerEngine {
     this.distance += speed * delta;
     this.points += Math.floor(speed * delta * 12);
     this.spawnElapsed += delta;
-    this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % 15;
+    this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % config.world.length;
 
     const player = this.playerCharacter.root;
     const laneTarget = this.targetLane * config.laneWidth;
