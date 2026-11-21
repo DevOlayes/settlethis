@@ -9,7 +9,9 @@ The web prototype is being organised as a reusable game engine. React owns the s
 | `FootballRunner.tsx` | React page, HUD, start/pause/result overlays and engine lifecycle |
 | `RunnerEngine.ts` | Coordinates the game loop, run state, player movement, object spawning, collision checks and score events |
 | `SceneFactory.ts` | Creates the Three.js scene, camera, renderer, stadium foundation, resizing and scene disposal |
-| `EntityFactory.ts` | Creates the player rig, football collectibles and obstacle models |
+| `EntityFactory.ts` | Creates football collectibles and obstacle models |
+| `PlayerCharacter.ts` | Builds the articulated full-kit footballer, including torso, numbered shirt, shorts, arms, jointed legs, socks and boots |
+| `PlayerAnimator.ts` | Drives procedural running, lane lean, jump, slide, landing recovery and automatic collection-kick poses |
 | `InputController.ts` | Converts keyboard and pointer swipes into game actions; owns and removes its event listeners |
 | `ObjectPool.ts` | Reuses spawned Three.js groups instead of allocating and discarding them every time |
 | `AssetLoader.ts` | Loads and caches GLB/GLTF assets, clones rigged scenes safely and reports asset progress |
@@ -40,4 +42,14 @@ The web prototype is being organised as a reusable game engine. React owns the s
 
 ## Current prototype limitations
 
-The player and environment are still temporary procedural geometry. Collision profiles, fair obstacle sequencing, advanced animation, world streaming, production reward verification, rewarded-ad rescues and persistence are not complete. Prototype SETHIS figures are display-only and must never be treated as wallet credits. Those systems belong to later roadmap stages.
+The footballer is currently a self-contained, stylised procedural 3D character with articulated joints and procedural animation; it does not yet use a separately authored or motion-captured GLB character asset. The stadium and environment are still temporary procedural geometry. Collision profiles, fair obstacle sequencing, world streaming, production reward verification, rewarded-ad rescues and persistence are not complete. Prototype SETHIS figures are display-only and must never be treated as wallet credits. Those systems belong to later roadmap stages.
+
+## Stage 3 — player character and animation
+
+The prototype character has been replaced by a reusable articulated footballer rig. The model is built from Three.js geometry and materials so the first web build has no external model download or asset licence dependency.
+
+- Full football kit silhouette: coral jersey with contrasting trim and rear shirt number, dark shorts, socks, sock bands and football boots with studs.
+- Separate head, torso, pelvis, shoulders, elbows, hips, knees, ankles and feet allow animation without moving the whole character as one rigid mesh.
+- Procedural animation controller supports alternating running strides, arm counter-swing, lane-change banking, jump/tuck pose, crouched slide, landing compression and a right-foot kick when a collectible is picked up.
+- Animation timing is driven by the engine delta time and can be reused by a future Telegram Mini App renderer.
+- A GLB/GLTF asset loader remains available for a later replacement or upgraded skinned character; this stage does not claim a motion-captured or photorealistic asset.
