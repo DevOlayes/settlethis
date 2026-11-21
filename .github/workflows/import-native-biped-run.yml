@@ -1,0 +1,25 @@
+name: Import Sports Male 03 native Biped run
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/import-native-biped-run.yml"
+      - "scripts/import-native-biped-run.mjs"
+permissions:
+  contents: write
+jobs:
+  import-native-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Download and verify the exact uploaded Biped run clip
+        run: node scripts/import-native-biped-run.mjs
+      - name: Commit the locally bundled native animation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/assets/football-runner/animations
+          git diff --cached --quiet || (git commit -m "Bundle native Sports Male 03 Biped run animation" && git fetch origin main && git rebase origin/main && git push)
