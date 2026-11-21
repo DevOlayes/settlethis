@@ -13,7 +13,7 @@ type RunnerAnimationAsset = {
   url: string;
   includeAnimations?: string[];
   compression?: "gzip";
-  format?: "canonical-json";
+  format?: "canonical-json" | "native-biped-glb";
   source?: string;
   license?: string;
 };
