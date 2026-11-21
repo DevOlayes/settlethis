@@ -84,6 +84,8 @@ export class RunnerEngine {
     this.lastObstacleType = -1;
     this.uiElapsed = 0;
     this.performanceElapsed = 0;
+    this.poorPerformanceSamples = 0;
+    this.strongPerformanceSamples = 0;
     this.lastObstacleLane = 2;
     this.lastDistanceMilestone = 0;
     this.lastSpeedTier = 4;
