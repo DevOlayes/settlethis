@@ -106,3 +106,13 @@ The prototype character has been replaced by a reusable articulated footballer r
 - Refined the light rig with a warm key light, broad non-shadow-casting fill and restrained violet rim light. Shadow bias and camera bounds were tightened while retaining one 1024px shadow map.
 - Capped device pixel ratio at 1.35; added fill lights do not cast shadows as a mobile-conscious rendering baseline.
 - Code/build/deployment milestone only. Camera feel, lighting, shadow stability, frame pacing and ordinary Android appearance remain unverified until authorised final validation.
+
+
+## Stage 9 — sound and game feedback
+
+- Added a dedicated AudioFeedback module using the browser Web Audio API; the first implementation uses procedural synthesis and generated noise, so no third-party audio files or external asset downloads are required.
+- Added a restrained, non-verbal stadium ambience bed, alternating running footfalls, jump and slide whooshes, a layered football collection/kick cue, collision impact and short distance/speed milestone chimes.
+- Sound is created and resumed only from the player's Start/Resume gesture to respect browser autoplay restrictions. If audio is unavailable or blocked, the game continues silently.
+- Added an always-visible sound on/off control. Muting fades the ambience and suppresses effects; pausing reduces the ambience, while a running session restores it.
+- Audio nodes and the ambience source are cleaned up when the game engine is disposed.
+- No external audio assets, music tracks or voice recordings are included. Sound levels and mix are an initial implementation and still require listening checks on desktop speakers, headphones and ordinary Android devices during authorised final validation.
