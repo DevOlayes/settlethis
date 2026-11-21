@@ -278,7 +278,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(thirdSignIn.status, 200);
 
   const courtId = "court-community-integration";
-  env.DB.prepare("INSERT INTO courts (id,title,category,incident_context,side_a_label,side_a_argument,side_b_label,side_b_argument,status,closes_at) VALUES (?,?,?,?,?,?,?,?,?,?)")
+  await env.DB.prepare("INSERT INTO courts (id,title,category,incident_context,side_a_label,side_a_argument,side_b_label,side_b_argument,status,closes_at) VALUES (?,?,?,?,?,?,?,?,?,?)")
     .bind(courtId, "Community integration test", "match_debate", "Synthetic test Court.", "Side A", "Case for A.", "Side B", "Case for B.", "open", new Date(Date.now() + 3600000).toISOString())
     .run();
 
@@ -330,7 +330,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
     target_type: "reply", target_id: reply.data.reply_id, reaction: "insightful"
   });
   assert.equal(replyReaction.response.status, 200);
-  const replyReactionCount = env.DB.prepare("SELECT COUNT(*) AS count FROM court_reactions WHERE target_type='reply' AND target_id=? AND telegram_user_id=?")
+  const replyReactionCount = await env.DB.prepare("SELECT COUNT(*) AS count FROM court_reactions WHERE target_type='reply' AND target_id=? AND telegram_user_id=?")
     .bind(reply.data.reply_id, String(firstUser.id)).first();
   assert.equal(Number(replyReactionCount.count), 1);
 
@@ -342,7 +342,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
     target_type: "argument", target_id: argumentId, reaction: "agree"
   });
   assert.equal(repeatedReaction.response.status, 200);
-  const reactionCount = env.DB.prepare("SELECT COUNT(*) AS count FROM court_reactions WHERE target_type='argument' AND target_id=? AND telegram_user_id=?")
+  const reactionCount = await env.DB.prepare("SELECT COUNT(*) AS count FROM court_reactions WHERE target_type='argument' AND target_id=? AND telegram_user_id=?")
     .bind(argumentId, String(secondUser.id)).first();
   assert.equal(Number(reactionCount.count), 1);
 
@@ -409,14 +409,14 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const secondNotificationsAfterCrossAccountRead = await api(env, "/api/notifications", secondInit);
   assert.equal(secondNotificationsAfterCrossAccountRead.data.notifications.find(item => item.id === secondUserNotification.id).read_at, null);
 
-  env.DB.prepare("INSERT INTO admin_setup_authorizations (id,expires_at) VALUES (1,datetime('now','+10 minutes'))").run();
-  env.DB.prepare("INSERT INTO admin_users (id,email,password_salt,password_hash,password_iterations) VALUES (1,?,?,?,?)")
+  await env.DB.prepare("INSERT INTO admin_setup_authorizations (id,expires_at) VALUES (1,datetime('now','+10 minutes'))").run();
+  await env.DB.prepare("INSERT INTO admin_users (id,email,password_salt,password_hash,password_iterations) VALUES (1,?,?,?,?)")
     .bind("admin@settlethis.test", "0123456789abcdef0123456789abcdef", "test-hash", 100000)
     .run();
   const adminToken = "a".repeat(64);
   const adminTokenHash = createHash("sha256").update(adminToken).digest("hex");
   env.testDb.prepare("INSERT INTO admin_sessions (token_hash,admin_id,expires_at) VALUES (?,1,datetime('now','+10 minutes'))").run(adminTokenHash);
-  env.DB.prepare("INSERT INTO user_restrictions (user_id,status,reason,updated_by) VALUES (?,?,?,?)")
+  await env.DB.prepare("INSERT INTO user_restrictions (user_id,status,reason,updated_by) VALUES (?,?,?,?)")
     .bind(String(secondUser.id), "restricted", "Repeated abusive posting in this integration test.", 1)
     .run();
 
@@ -429,7 +429,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   });
   assert.equal(blockedReaction.response.status, 403);
 
-  env.DB.prepare("UPDATE court_arguments SET moderation_status='hidden' WHERE id=?").bind(argumentId).run();
+  await env.DB.prepare("UPDATE court_arguments SET moderation_status='hidden' WHERE id=?").bind(argumentId).run();
   const hiddenReplies = await api(env, "/api/arguments/" + argumentId + "/replies", firstInit);
   assert.equal(hiddenReplies.response.status, 200);
   assert.equal(hiddenReplies.data.replies.length, 0);
