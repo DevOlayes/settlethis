@@ -1,6 +1,7 @@
 import type * as THREE from "three";
 
 export type RunnerPhase = "ready" | "running" | "paused" | "over";
+export type RunnerRenderQuality = "low" | "balanced" | "high";
 export type RunnerAction = "left" | "right" | "jump" | "slide";
 export type RunnerSummary = {
   distance: number;
@@ -45,6 +46,8 @@ export type RunnerPerformanceSnapshot = {
   averageFrameMs: number;
   worstFrameMs: number;
   slowFrames: number;
+  slowFrameRatio: number;
+  framesSampled: number;
 };
 
 export type RunnerControls = {
@@ -60,4 +63,5 @@ export type RunnerSceneBundle = {
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   world: THREE.Group;
+  renderQuality: RunnerRenderQuality;
 };
