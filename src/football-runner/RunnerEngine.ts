@@ -75,35 +75,36 @@ export class RunnerEngine {
   private async loadRiggedPlayer(): Promise<void> {
     try {
       const { model, animations: embeddedAnimations } = await loadRunnerCharacter();
-      // Load the separate animation manifest as well as any clips embedded in
-      // the avatar. The approved Sports Male 03 GLB has no locomotion of its own.
-      const manifestAnimations = await loadRunnerAnimationManifest(model);
-      const animations = [...embeddedAnimations, ...manifestAnimations];
-      const availableMotions = new Set(animations.map((clip) => clip.name.toLowerCase()));
-      console.info("Sports Male 03 asset loaded", {
-        embeddedClips: embeddedAnimations.map((clip) => clip.name),
-        manifestClips: manifestAnimations.map((clip) => clip.name),
-        availableMotions: [...availableMotions],
-      });
       if (this.disposed) {
         disposeRunnerCharacterModel(model);
         return;
       }
+
+      // Promote the approved visual model as soon as its GLB is ready. Do not
+      // make the player wait for several large, optional animation packs.
+      this.installRiggedPlayer(model, embeddedAnimations);
+      console.info("Sports Male 03 model installed", {
+        embeddedClips: embeddedAnimations.map((clip) => clip.name),
+      });
+
+      // Load the separate animation manifest after the model is already visible.
+      // The animator can then upgrade from its built-in rigged run fallback.
+      const manifestAnimations = await loadRunnerAnimationManifest(model);
+      if (this.disposed || this.loadedPlayerModel !== model) return;
+      const animations = [...embeddedAnimations, ...manifestAnimations];
+      const availableMotions = new Set(animations.map((clip) => clip.name.toLowerCase()));
+      console.info("Sports Male 03 animation loading finished", {
+        manifestClips: manifestAnimations.map((clip) => clip.name),
+        availableMotions: [...availableMotions],
+      });
       const optionalMotions = ["Jump_Start", "Jump_Loop", "Jump_Land", "Crouch_Fwd_Loop", "Slide_Start", "Slide_Loop", "Slide_Exit"];
       const missingOptionalMotions = optionalMotions.filter((name) => !availableMotions.has(name.toLowerCase()));
       if (missingOptionalMotions.length) {
         console.info("Sports Male 03 loaded; optional action clips will use existing fallbacks", missingOptionalMotions);
       }
-
-      // Never swap the visual rig during an active run or over the results screen.
-      // If loading finishes late, promote it at the next safe start boundary.
-      if (!this.paused || this.over) {
-        this.pendingRiggedPlayer = { model, animations };
-        return;
-      }
-      this.installRiggedPlayer(model, animations);
+      this.playerAnimator.attachRiggedModel(model, animations);
     } catch (error) {
-      console.error("Sports Male 03 failed to load; keeping the existing player model", error);
+      console.error("Sports Male 03 failed to load or animate; preserving the approved model where possible", error);
     }
   }
 
