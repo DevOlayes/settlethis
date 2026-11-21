@@ -156,7 +156,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         const required = ["Bip01 Pelvis", "Bip01 L Thigh", "Bip01 R Thigh", "Bip01 L Calf", "Bip01 R Calf", "Bip01 L UpperArm", "Bip01 R UpperArm"];
         const missing = required.filter((bone) => !normalizedTracks.has(normalize(bone)));
         addCheck(missing.length ? "Missing key locomotion bones: " + missing.join(", ") : "All key leg, hip and arm tracks are present.");
-        const jumpClips = createNativeBipedJumpClips(model);
+        const jumpClips = createNativeBipedJumpClips(model, run);
         const [takeoff, air, land] = jumpClips;
         if (!takeoff?.tracks.length || !air?.tracks.length || !land?.tracks.length) {
           throw new Error("The native Biped jump prototype could not find enough matching Sports Male 03 bones.");
