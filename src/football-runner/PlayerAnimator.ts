@@ -82,7 +82,10 @@ export class PlayerAnimator {
     c.root.rotation.z = THREE.MathUtils.damp(c.root.rotation.z, -input.laneLean * 0.13, 8, delta);
     c.torso.rotation.x = THREE.MathUtils.damp(c.torso.rotation.x, slideWeight * 0.72 - jumpWeight * 0.12, 10, delta);
     c.pelvis.rotation.x = THREE.MathUtils.damp(c.pelvis.rotation.x, slideWeight * -0.3, 10, delta);
-    c.torso.position.y = 1.52 - slideWeight * 0.22 + jumpWeight * 0.05;
+    const runningBounce = Math.abs(Math.sin(this.runClock * 2)) * 0.035;
+    c.torso.position.y = 1.52 + runningBounce - slideWeight * 0.22 + jumpWeight * 0.05;
+    c.pelvis.rotation.z = THREE.MathUtils.damp(c.pelvis.rotation.z, input.laneLean * 0.055, 9, delta);
+    c.head.rotation.z = THREE.MathUtils.damp(c.head.rotation.z, -input.laneLean * 0.035, 8, delta);
     c.head.rotation.x = slideWeight * -0.12;
     c.torso.scale.y = 1 - this.landingPulse * 0.07;
     c.torso.scale.x = 1 + this.landingPulse * 0.025;
