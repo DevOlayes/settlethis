@@ -17,6 +17,7 @@
       "sha256": "69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997",
       "sourceBytes": 7618436,
       "bundledGlbBytes": 7618436,
+      "bundledCompressedBytes": 2858633,
       "bundledAnimationNames": [
         "Crouch_Fwd_Loop",
         "Crouch_Idle_Loop",
@@ -35,6 +36,7 @@
       "sha256": "4008ea208a604773a2b2177d965f0f5d3195498b5bf838c3f5785d68e95f2a68",
       "sourceBytes": 18735003,
       "bundledGlbBytes": 8091444,
+      "bundledCompressedBytes": 3206027,
       "bundledAnimationNames": [
         "NinjaJump_Idle_Loop",
         "NinjaJump_Land",
@@ -48,7 +50,8 @@
   "clips": [
     {
       "name": "ual1",
-      "url": "/assets/football-runner/animations/UAL1_Standard.glb",
+      "url": "/assets/football-runner/animations/UAL1_Standard.pack",
+      "compression": "gzip",
       "includeAnimations": [
         "Crouch_Fwd_Loop",
         "Crouch_Idle_Loop",
@@ -63,7 +66,8 @@
     },
     {
       "name": "ual2",
-      "url": "/assets/football-runner/animations/UAL2_Standard.glb",
+      "url": "/assets/football-runner/animations/UAL2_Standard.pack",
+      "compression": "gzip",
       "includeAnimations": [
         "NinjaJump_Idle_Loop",
         "NinjaJump_Land",
