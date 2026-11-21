@@ -11,7 +11,8 @@ The web prototype is being organised as a reusable game engine. React owns the s
 | `SceneFactory.ts` | Creates the Three.js scene, camera, renderer, stadium foundation, resizing and scene disposal |
 | `EntityFactory.ts` | Creates football collectibles and obstacle models |
 | `PlayerCharacter.ts` | Builds the articulated full-kit footballer, including torso, numbered shirt, shorts, arms, jointed legs, socks and boots |
-| `PlayerAnimator.ts` | Crossfades rigged run, sprint, jump, slide, crouch and kick states; retains the procedural fallback controller |\n| `RiggedPlayerAsset.ts` | Loads the bundled Sports Male 03 GLB, canonicalizes its Biped skeleton, loads approved local animation packs and retargets clips |
+| `PlayerAnimator.ts` | Crossfades rigged run, sprint, jump, slide, crouch and kick states; retains the procedural fallback controller |
+| `RiggedPlayerAsset.ts` | Loads the bundled Sports Male 03 GLB, canonicalizes its Biped skeleton, loads approved local animation packs and retargets clips |
 | `InputController.ts` | Converts keyboard and pointer swipes into game actions; owns and removes its event listeners |
 | `ObjectPool.ts` | Reuses spawned Three.js groups instead of allocating and discarding them every time |
 | `AssetLoader.ts` | Loads and caches GLB/GLTF assets, clones rigged scenes safely and reports asset progress |
