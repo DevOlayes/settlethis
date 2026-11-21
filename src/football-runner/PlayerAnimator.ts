@@ -9,7 +9,7 @@ export type PlayerAnimationInput = {
   laneLean: number;
 };
 
-type RunnerMotion = "run" | "sprint" | "jumpTakeoff" | "jumpAir" | "jumpLand" | "slideStart" | "slideLoop" | "slideEnd" | "crouch" | "kick";
+type RunnerMotion = "run" | "sprint" | "jumpTakeoff" | "jumpAir" | "jumpLand" | "slideStart" | "slideLoop" | "slideEnd" | "laneLeft" | "laneRight" | "crouch" | "kick";
 
 const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
   run: [/run/, /jog/, /walk/, /locomotion/],
@@ -19,12 +19,14 @@ const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
   jumpLand: [/jump.?land/, /landing/, /land.?jump/],
   slideStart: [/slide.?start/],
   slideLoop: [/slide.?loop/, /sliding/],
-  slideEnd: [/slide.?exit/, /slide.?end/],
+  slideEnd: [/slide.?recovery/, /slide.?exit/, /slide.?end/],
+  laneLeft: [/lane.?left/],
+  laneRight: [/lane.?right/],
   crouch: [/crouch.?fwd/, /crouch.?walk/, /crouch/, /duck/, /low.?walk/, /sneak/],
   kick: [/soccer.?kick/, /football.?kick/, /kick/, /shoot/, /pass/, /strike/],
 };
 
-const ONESHOT_MOTIONS = new Set<RunnerMotion>(["jumpTakeoff", "jumpLand", "slideStart", "slideEnd", "kick"]);
+const ONESHOT_MOTIONS = new Set<RunnerMotion>(["jumpTakeoff", "jumpLand", "slideStart", "slideEnd", "laneLeft", "laneRight", "kick"]);
 
 function normalizedBoneKey(name: string): string {
   // canonicalizeBoneName may return a normalized alias (and may retain a
@@ -51,6 +53,11 @@ export class PlayerAnimator {
   private riggedJumping = false;
   private jumpPhaseElapsed = 0;
   private landingRemaining = 0;
+  private laneChangeRemaining = 0;
+  private laneChangeMotion: "laneLeft" | "laneRight" = "laneLeft";
+  private laneLeanActive = false;
+  private riggedModel?: THREE.Object3D;
+  private riggedModelBaseY = 0;
 
   constructor(private readonly character: PlayerCharacter) {}
 
@@ -84,7 +91,7 @@ export class PlayerAnimator {
     // Use imported canonical-skeleton locomotion and action clips. Run and
     // sprint resolve to the validated in-place Mixamo run; speed tiers alter
     // playback rate without moving the character root.
-    for (const motion of ["run", "sprint", "jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slideStart", "slideLoop", "slideEnd", "kick"] as RunnerMotion[]) {
+    for (const motion of ["run", "sprint", "jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slideStart", "slideLoop", "slideEnd", "laneLeft", "laneRight", "kick"] as RunnerMotion[]) {
       const patterns = CLIP_PATTERNS[motion];
       for (const pattern of patterns) {
         const match = [...this.riggedActions].find(([name]) => pattern.test(name));
@@ -140,7 +147,7 @@ export class PlayerAnimator {
     next.fadeIn(previous ? 0.16 : 0);
     next.play();
     if (previous && previous !== next) {
-      if (previous === runAction && blendingJump) {
+      if (previous === runAction && blendingOverlay) {
         // A quiet run layer keeps the legs cycling through takeoff, flight and
         // landing instead of freezing the stride while the jump pose plays.
         previous.setEffectiveWeight(0.28);
@@ -179,7 +186,7 @@ export class PlayerAnimator {
 
   private updateRigged(delta: number, input: PlayerAnimationInput): void {
     if (!this.riggedMixer) return;
-    this.riggedKickRemaining = Math.max(0, this.riggedKickRemaining - delta);
+    this.riggedKickRemaining = Math.max(0, this.riggedKickRemaining - delta);\n    this.laneChangeRemaining = Math.max(0, this.laneChangeRemaining - delta);\n    if (Math.abs(input.laneLean) > 0.18 && !this.laneLeanActive) {\n      this.laneLeanActive = true;\n      this.laneChangeMotion = input.laneLean > 0 ? "laneRight" : "laneLeft";\n      this.laneChangeRemaining = 0.52;\n    } else if (Math.abs(input.laneLean) < 0.07) {\n      this.laneLeanActive = false;\n    }
 
     if (input.sliding && !this.previousSliding) {
       this.slideElapsed = 0;
