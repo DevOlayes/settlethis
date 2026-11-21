@@ -2,6 +2,13 @@ import * as THREE from "three";
 
 type EulerPose = readonly [number, number, number];
 
+export const NATIVE_BIPED_JUMP_PHASES = {
+  takeoff: 0.22,
+  airborne: 0.48,
+  landing: 0.32,
+  total: 1.02,
+} as const;
+
 function normalizeBoneName(value: string): string {
   return value.trim().replace(/_/g, " ").replace(/\\s+/g, " ").toLowerCase();
 }
@@ -136,9 +143,9 @@ export function createNativeBipedJumpClips(
   ]);
 
   const clips = [
-    new THREE.AnimationClip("sports-male-03-jump-takeoff-native", 0.22, takeoff),
-    new THREE.AnimationClip("sports-male-03-jump-air-native", 0.48, air),
-    new THREE.AnimationClip("sports-male-03-jump-land-native", 0.32, landing),
+    new THREE.AnimationClip("sports-male-03-jump-takeoff-native", NATIVE_BIPED_JUMP_PHASES.takeoff, takeoff),
+    new THREE.AnimationClip("sports-male-03-jump-air-native", NATIVE_BIPED_JUMP_PHASES.airborne, air),
+    new THREE.AnimationClip("sports-male-03-jump-land-native", NATIVE_BIPED_JUMP_PHASES.landing, landing),
   ];
   for (const clip of clips) clip.optimize();
   return clips;
