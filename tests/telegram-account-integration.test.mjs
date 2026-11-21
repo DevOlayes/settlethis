@@ -242,7 +242,8 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const firstReferralSummary = await api(env, "/api/referrals", firstInit);
   assert.equal(firstReferralSummary.data.total, 3);
   assert.equal(firstReferralSummary.data.qualified, 3);
-  assert.equal(firstReferralSummary.data.reward, 500);
+  assert.equal(firstReferralSummary.data.reward, 750); // next milestone reward after the 500 SETHIS first tier
+  assert.equal(firstReferralSummary.data.rewards[0].amount, 500);
   const inviterWallet = await api(env, "/api/wallet", firstInit);
   assert.equal(inviterWallet.data.wallet.sethis_balance, 500);
 
