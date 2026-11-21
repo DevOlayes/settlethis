@@ -73,7 +73,7 @@ export default function FootballRunner({ onBack }: Props) {
                 <h1>Own the pitch.</h1>
                 <p>Dodge the training obstacles, kick glowing footballs and see how far you can go.</p>
                 <button onClick={start}>START RUN <span>→</span></button>
-                <small>SWIPE TO MOVE · UP TO JUMP · DOWN TO SLIDE</small>
+                <small>SWIPE OR USE THE CONTROLS BELOW · UP TO JUMP · DOWN TO SLIDE</small>
               </>}
               {phase === "paused" && <>
                 <span className="runner-overline">TAKE A BREATHER</span>
@@ -103,7 +103,13 @@ export default function FootballRunner({ onBack }: Props) {
       </section>
 
       <footer className="runner-controls">
-        <span>← → MOVE</span><span>↑ JUMP</span><span>↓ SLIDE</span><span>COLLECT BY KICKING</span>
+        <div className="runner-control-pad" aria-label="Touch game controls">
+          <button type="button" aria-label="Move left" disabled={phase !== "running"} onClick={() => engineRef.current?.act("left")}>←</button>
+          <button type="button" aria-label="Move right" disabled={phase !== "running"} onClick={() => engineRef.current?.act("right")}>→</button>
+          <button type="button" aria-label="Jump" disabled={phase !== "running"} onClick={() => engineRef.current?.act("jump")}>↑</button>
+          <button type="button" aria-label="Slide" disabled={phase !== "running"} onClick={() => engineRef.current?.act("slide")}>↓</button>
+        </div>
+        <span>SWIPE OR TAP · COLLECT BY KICKING</span>
       </footer>
     </main>
   );
