@@ -148,3 +148,14 @@ The prototype character has been replaced by a reusable articulated footballer r
 - **Security gate:** client-side distance, football counts, points, local daily totals and ad counters are untrusted. A secure production payout requires an authenticated Telegram session, a server-issued run ticket/nonce, server-verifiable gameplay evidence (or server-authoritative simulation), server-side reward calculation, D1 idempotency and daily-cap enforcement, plus a verified rewarded-ad provider callback before granting a rescue. A client-submitted score alone is not proof. No production reward endpoint or wallet-credit path is enabled in this stage because the current browser simulation cannot independently prove that a claimed run occurred.
 - The ~150 SETHIS figure is a balancing reference for a good first run, not a promise or guaranteed payout. All formula values remain provisional pending the final economy decision.
 - No live gameplay, rewarded-ad, Telegram-authentication or wallet-credit validation was performed. These checks remain reserved for the authorised final validation stage.
+
+## Stage 13 — complete game screens and gameplay UX
+
+- Completed the start flow with a concise game introduction, personal best/recent-run context, a collapsible How to Play guide, and a clear Start Run action.
+- Added a readable control guide for three-lane movement, jump, slide and automatic football collection. Existing swipe, keyboard and on-screen touch controls remain available.
+- Improved the pause flow with Resume, Restart and Exit to Games actions. Restart and exit now require confirmation so an accidental tap does not silently discard an active run.
+- Added an explicit collision/full-time results presentation with distance, score, football count, points breakdown, provisional reward breakdown, daily preview cap and personal-record feedback.
+- Added an honest rescue state: rewarded-ad rescue is unavailable in this standalone web prototype. The screen explains that provider verification is not connected rather than pretending an ad was watched or granting a rescue. The configured limits (two rescues per run / ten rewarded ads per day) remain design constraints only.
+- Added a confirmation dialog for restarting or leaving, an Escape-key pause/exit affordance, accessible labels and modal semantics, scrollable long-form results, and responsive overlay styling for shorter mobile screens.
+- Existing automatic pause when the browser tab is hidden is retained. Sound toggle and touch controls remain available and respect the active game phase.
+- This is an implementation/build milestone only. No live gameplay, browser interaction, audio, ad-provider, or Android device testing was performed. Collision feel, screen transitions, keyboard focus behaviour and small-screen layout remain for the authorised final validation stage.
