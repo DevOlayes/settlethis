@@ -274,7 +274,7 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
     }
   }
 
-  return { scene, camera, renderer, world };
+  // A second copy trails the active 180m segment so the ground and landmarks remain underfoot while the loop advances.\n  const loopCopy = world.clone(true);\n  loopCopy.position.z = -worldConfig.length;\n  world.add(loopCopy);\n\n  return { scene, camera, renderer, world };
 }
 
 export function resizeRunnerScene(bundle: RunnerSceneBundle, host: HTMLElement): void {
