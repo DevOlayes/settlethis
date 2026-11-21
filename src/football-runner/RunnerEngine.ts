@@ -108,7 +108,8 @@ export class RunnerEngine {
       }
       const nativeRun = animations.find((clip) => clip.name === "sports-male-03-native-run");
       if (nativeRun) {
-        const nativeJumpClips = createNativeBipedJumpClips(model, nativeRun);\n        const nativeManeuverClips = createNativeBipedManeuverClips(model, nativeRun);
+        const nativeJumpClips = createNativeBipedJumpClips(model, nativeRun);
+        const nativeManeuverClips = createNativeBipedManeuverClips(model, nativeRun);
         // Prefer the approved Sports Male 03-native jump phases over generic
         // library jumps; keep the unrelated run, slide, crouch and kick clips.
         const genericJump = /^(jump_start|jump_loop|jump_land)$/i;
@@ -119,7 +120,8 @@ export class RunnerEngine {
           takeoff: NATIVE_BIPED_JUMP_PHASES.takeoff,
           airborne: NATIVE_BIPED_JUMP_PHASES.airborne,
           landing: NATIVE_BIPED_JUMP_PHASES.landing,
-          total: NATIVE_BIPED_JUMP_PHASES.total,\n          nativeManeuvers: nativeManeuverClips.map((clip) => clip.name),
+          total: NATIVE_BIPED_JUMP_PHASES.total,
+          nativeManeuvers: nativeManeuverClips.map((clip) => clip.name),
         });
       } else {
         console.warn("Approved native Sports Male 03 run clip unavailable; retaining existing animation set");
