@@ -94,10 +94,10 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
       next.play();
       if (previous && previous !== next) {
         if (previous === phaseActions.run && ["jumpTakeoff", "jumpAir", "jumpLand"].includes(name)) {
-          previous.fadeTo(0.28, 0.16);
+          previous.setEffectiveWeight(0.28);
         } else if (next === phaseActions.run) {
           previous.fadeOut(0.16);
-          next.fadeTo(1, 0.16);
+          
         } else {
           previous.fadeOut(0.16);
         }
