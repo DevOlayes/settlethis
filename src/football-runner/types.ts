@@ -6,7 +6,21 @@ export type RunnerSummary = {
   distance: number;
   points: number;
   balls: number;
+  distancePoints: number;
+  footballPoints: number;
   sethis: number;
+};
+export type RunnerRunRecord = {
+  playedAt: number;
+  distance: number;
+  points: number;
+  balls: number;
+};
+export type RunnerRecords = {
+  bestDistance: number;
+  bestPoints: number;
+  totalRuns: number;
+  recentRuns: RunnerRunRecord[];
 };
 export type RunnerHud = {
   distance: number;
