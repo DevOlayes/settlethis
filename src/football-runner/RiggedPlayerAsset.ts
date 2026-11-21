@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MIN_COVERAGE, retargetClipToObject } from "@three-ws/retarget";
 
 export type LoadedRunnerCharacter = {
   model: THREE.Group;
@@ -41,6 +42,39 @@ export async function loadRunnerCharacter(
   model.position.y = -bounds.min.y * scale;
 
   return { model, animations: gltf.animations };
+}
+
+/**
+ * Loads motion clips from locally hosted GLB files and retargets them to the
+ * supplied footballer rig. Every clip is coverage-checked; incompatible clips
+ * are rejected instead of leaving the character partially animated.
+ *
+ * Store approved source clips under public/assets/football-runner/animations/
+ * and pass their same-origin paths here. No third-party runtime API is needed.
+ */
+export async function loadRunnerAnimationClips(
+  target: THREE.Object3D,
+  urls: string[],
+): Promise<THREE.AnimationClip[]> {
+  const loader = new GLTFLoader();
+  const retargeted: THREE.AnimationClip[] = [];
+
+  for (const url of urls) {
+    try {
+      const source = await loader.loadAsync(url);
+      for (const sourceClip of source.animations) {
+        const result = retargetClipToObject(sourceClip, target);
+        if (!result.clip || result.coverage < MIN_COVERAGE) continue;
+        result.clip.name = sourceClip.name || url.split("/").pop()?.replace(/\.glb$/i, "") || "motion";
+        retargeted.push(result.clip);
+      }
+      disposeRunnerCharacterModel(source.scene);
+    } catch {
+      // One missing or incompatible clip must not prevent other clips loading.
+    }
+  }
+
+  return retargeted;
 }
 
 export function disposeRunnerCharacterModel(model: THREE.Object3D): void {
