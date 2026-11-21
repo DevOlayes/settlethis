@@ -24,6 +24,7 @@ export class PlayerAnimator {
     this.character.root.rotation.set(0, 0, 0);
     this.character.torso.rotation.set(0, 0, 0);
     this.character.pelvis.rotation.set(0, 0, 0);
+    this.character.pelvis.position.y = 0.98;
     this.character.torso.scale.set(1, 1, 1);
     this.character.torso.position.y = 1.52;
     this.character.head.rotation.set(0, 0, 0);
@@ -82,6 +83,8 @@ export class PlayerAnimator {
     c.root.rotation.z = THREE.MathUtils.damp(c.root.rotation.z, -input.laneLean * 0.13, 8, delta);
     c.torso.rotation.x = THREE.MathUtils.damp(c.torso.rotation.x, slideWeight * 0.72 - jumpWeight * 0.12, 10, delta);
     c.pelvis.rotation.x = THREE.MathUtils.damp(c.pelvis.rotation.x, slideWeight * -0.3, 10, delta);
+    c.pelvis.position.y = THREE.MathUtils.damp(c.pelvis.position.y, 0.98 - slideWeight * 0.2, 12, delta);
+    c.root.rotation.y = THREE.MathUtils.damp(c.root.rotation.y, input.laneLean * 0.075, 9, delta);
     const runningBounce = Math.abs(Math.sin(this.runClock * 2)) * 0.035;
     c.torso.position.y = 1.52 + runningBounce - slideWeight * 0.22 + jumpWeight * 0.05;
     c.pelvis.rotation.z = THREE.MathUtils.damp(c.pelvis.rotation.z, input.laneLean * 0.055, 9, delta);
