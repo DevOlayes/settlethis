@@ -20,7 +20,7 @@ const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
   slideStart: [/slide.?start/],
   slideLoop: [/slide.?loop/, /sliding/],
   slideEnd: [/slide.?exit/, /slide.?end/],
-  crouch: [/crouch/, /duck/, /low.?walk/, /sneak/],
+  crouch: [/crouch.?fwd/, /crouch.?walk/, /crouch/, /duck/, /low.?walk/, /sneak/],
   kick: [/soccer.?kick/, /football.?kick/, /kick/, /shoot/, /pass/, /strike/],
 };
 
@@ -69,9 +69,10 @@ export class PlayerAnimator {
     // Prefer dedicated locomotion clips; never use a one-shot kick/slide as a run.
     for (const motion of ["run", "sprint", "jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slideStart", "slideLoop", "slideEnd", "kick"] as RunnerMotion[]) {
       const patterns = CLIP_PATTERNS[motion];
-      for (const [name, action] of this.riggedActions) {
-        if (patterns.some((pattern) => pattern.test(name))) {
-          this.actionByMotion.set(motion, action);
+      for (const pattern of patterns) {
+        const match = [...this.riggedActions].find(([name]) => pattern.test(name));
+        if (match) {
+          this.actionByMotion.set(motion, match[1]);
           break;
         }
       }
@@ -116,7 +117,8 @@ export class PlayerAnimator {
     if (this.riggedKickRemaining > 0 && this.actionByMotion.has("kick")) return "kick";
 
     if (input.sliding) {
-      if (this.slideElapsed < 0.2 && this.actionByMotion.has("slideStart")) return "slideStart";
+      const slideStartDuration = this.actionByMotion.get("slideStart")?.getClip().duration ?? 0.24;
+      if (this.slideElapsed < Math.min(0.36, Math.max(0.18, slideStartDuration * 0.42)) && this.actionByMotion.has("slideStart")) return "slideStart";
       if (this.actionByMotion.has("slideLoop")) return "slideLoop";
       if (this.actionByMotion.has("slideStart")) return "slideStart";
       if (this.actionByMotion.has("crouch")) return "crouch";
@@ -143,13 +145,19 @@ export class PlayerAnimator {
       this.slideExitRemaining = 0;
     }
     if (input.sliding) this.slideElapsed += delta;
-    if (!input.sliding && this.previousSliding) this.slideExitRemaining = 0.3;
+    if (!input.sliding && this.previousSliding) {
+      const exitDuration = this.actionByMotion.get("slideEnd")?.getClip().duration ?? 0.3;
+      this.slideExitRemaining = Math.max(0.24, Math.min(0.65, exitDuration));
+    }
     this.previousSliding = input.sliding;
     this.slideExitRemaining = Math.max(0, this.slideExitRemaining - (input.sliding ? 0 : delta));
 
     if (input.jumping && !this.riggedJumping) this.jumpPhaseElapsed = 0;
     if (input.jumping) this.jumpPhaseElapsed += delta;
-    if (!input.jumping && this.riggedJumping) this.landingRemaining = 0.32;
+    if (!input.jumping && this.riggedJumping) {
+      const landDuration = this.actionByMotion.get("jumpLand")?.getClip().duration ?? 0.32;
+      this.landingRemaining = Math.max(0.24, Math.min(0.55, landDuration));
+    }
     else this.landingRemaining = Math.max(0, this.landingRemaining - delta);
     this.riggedJumping = input.jumping;
 
@@ -209,7 +217,9 @@ export class PlayerAnimator {
 
   triggerKick(): void {
     this.kickElapsed = 0;
-    if (this.riggedMixer && this.actionByMotion.has("kick")) this.riggedKickRemaining = 0.48;
+    if (this.riggedMixer && this.actionByMotion.has("kick")) {
+      this.riggedKickRemaining = this.actionByMotion.get("kick")?.getClip().duration ?? 0.68;
+    }
   }
 
 function createFootballKickClip(model: THREE.Object3D): THREE.AnimationClip | null {
