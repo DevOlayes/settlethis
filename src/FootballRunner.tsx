@@ -51,7 +51,6 @@ export default function FootballRunner({ onBack }: Props) {
   const [confirmAction, setConfirmAction] = useState<"restart" | "exit" | null>(null);
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [shareNotice, setShareNotice] = useState("");
-  const [challengeResult, setChallengeResult] = useState<RunnerChallengeResult | null>(null);
   const [incomingChallenge] = useState(() => decodeRunnerChallenge(new URLSearchParams(window.location.search).get("challenge")));
   const [incomingChallengeResult] = useState(() => decodeRunnerChallengeResult(new URLSearchParams(window.location.search).get("challengeResult")));
 
@@ -193,7 +192,6 @@ export default function FootballRunner({ onBack }: Props) {
       result: { points: summary.points, distance: summary.distance, balls: summary.balls },
       completedAt: Date.now(),
     };
-    setChallengeResult(result);
     const url = createRunnerChallengeResultUrl(result);
     await shareUrl(url, "I took your Football Runner challenge", `I scored ${summary.points.toLocaleString()} points. Here's how I did against your challenge.`);
   };
