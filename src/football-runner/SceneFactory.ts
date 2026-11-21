@@ -61,6 +61,52 @@ function addGoal(world: THREE.Group, z: number, width: number, height: number, p
   world.add(goal);
 }
 
+function addCrowd(world: THREE.Group): void {
+  // Instanced spectator silhouettes add scale and life without thousands of draw calls.
+  const bodyGeometry = new THREE.CapsuleGeometry(0.062, 0.16, 2, 6);
+  const headGeometry = new THREE.SphereGeometry(0.061, 7, 6);
+  const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.94 });
+  const headMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.92 });
+  const count = 2 * 11 * 26;
+  const bodies = new THREE.InstancedMesh(bodyGeometry, bodyMaterial, count);
+  const heads = new THREE.InstancedMesh(headGeometry, headMaterial, count);
+  const dummy = new THREE.Object3D();
+  const palette = [0xddd5d2, 0x7b5360, 0x51465e, 0x9b8acb, 0x8d7770, 0x6f7770, 0xe98272, 0xaaa3b5];
+  let index = 0;
+  for (const side of [-1, 1]) {
+    for (let row = 0; row < 11; row++) {
+      for (let seat = 0; seat < 26; seat++) {
+        const x = side * (11.2 + row * 0.28);
+        const y = 0.78 + row * 0.34;
+        const z = -8 - seat * 1.78 + (row % 2) * 0.35;
+        const tone = palette[(seat * 3 + row * 5 + (side === 1 ? 2 : 0)) % palette.length];
+        dummy.position.set(x, y, z);
+        dummy.rotation.set(0, 0, ((seat + row) % 3 - 1) * 0.08);
+        dummy.scale.set(1, 0.9 + ((seat + row) % 4) * 0.06, 1);
+        dummy.updateMatrix();
+        bodies.setMatrixAt(index, dummy.matrix);
+        bodies.setColorAt(index, new THREE.Color(tone));
+        dummy.position.set(x, y + 0.205, z - 0.012);
+        dummy.rotation.set(0, 0, 0);
+        dummy.scale.setScalar(1);
+        dummy.updateMatrix();
+        heads.setMatrixAt(index, dummy.matrix);
+        heads.setColorAt(index, new THREE.Color(0x9a7969 + ((seat % 3) * 0x080604)));
+        index++;
+      }
+    }
+  }
+  bodies.instanceMatrix.needsUpdate = true;
+  heads.instanceMatrix.needsUpdate = true;
+  if (bodies.instanceColor) bodies.instanceColor.needsUpdate = true;
+  if (heads.instanceColor) heads.instanceColor.needsUpdate = true;
+  bodies.castShadow = false;
+  bodies.receiveShadow = false;
+  heads.castShadow = false;
+  heads.receiveShadow = false;
+  world.add(bodies, heads);
+}
+
 function addStadium(world: THREE.Group, materials: Record<string, THREE.Material>): void {
   const { stand, seatA, seatB, roof, metal, coral, light } = materials;
   for (const side of [-1, 1]) {
@@ -75,6 +121,17 @@ function addStadium(world: THREE.Group, materials: Record<string, THREE.Material
       box(world, [0.16, 5.5, 0.18], [side * (10.5 + brace * 1.8), 2.3, -7 - brace * 11], metal);
     }
     box(world, [0.22, 0.22, 51], [side * 10.6, 0.12, -31], coral, false);
+  }
+
+  addCrowd(world);
+
+  // Low LED perimeter boards give the pitch a recognisable professional match-day edge.
+  for (const side of [-1, 1]) {
+    for (let index = 0; index < 6; index++) {
+      const z = 30 - index * 15;
+      box(world, [0.28, 0.62, 12.5], [side * 10.85, 0.34, z], materials.adBoard, false);
+      box(world, [0.3, 0.045, 12.5], [side * 10.85, 0.68, z], materials.coral, false);
+    }
   }
 
   // Floodlight masts and banks sit outside the playing corridor.
@@ -228,6 +285,7 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
     light: new THREE.MeshStandardMaterial({ color: 0xd5c8b5, roughness: 0.35, emissive: 0x76634a, emissiveIntensity: 0.6 }),
     lampGlow: new THREE.MeshBasicMaterial({ color: 0xffe5bd }),
     scoreboard: new THREE.MeshBasicMaterial({ color: 0x201d2b }),
+    adBoard: new THREE.MeshStandardMaterial({ color: 0x211d2b, roughness: 0.6, metalness: 0.22 }),
     concrete: new THREE.MeshStandardMaterial({ color: 0x494453, roughness: 0.9 }),
     building: new THREE.MeshStandardMaterial({ color: 0x353342, roughness: 0.78, metalness: 0.12 }),
     glass: new THREE.MeshStandardMaterial({ color: 0x66717b, roughness: 0.22, metalness: 0.5, transparent: true, opacity: 0.62 }),
@@ -247,6 +305,19 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   floor.position.set(0, -0.12, worldConfig.centreZ);
   floor.receiveShadow = true;
   world.add(floor);
+
+  // Alternating mowing bands break up the flat green surface and add pitch depth.
+  const turfBands = [
+    new THREE.MeshStandardMaterial({ color: 0x2b4036, roughness: 1 }),
+    new THREE.MeshStandardMaterial({ color: 0x263a32, roughness: 1 }),
+  ];
+  for (let band = 0; band < 12; band++) {
+    const stripe = new THREE.Mesh(new THREE.PlaneGeometry(24, 15), turfBands[band % 2]);
+    stripe.rotation.x = -Math.PI / 2;
+    stripe.position.set(0, -0.113, 34.5 - band * 15);
+    stripe.receiveShadow = true;
+    world.add(stripe);
+  }
 
   // Subtle lane guides retain a readable route without turning the pitch into a road.
   const laneMaterial = new THREE.MeshBasicMaterial({ color: 0xe9e2d7, transparent: true, opacity: 0.2 });
