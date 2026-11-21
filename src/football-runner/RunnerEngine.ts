@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { RUNNER_CONFIG, RUNNER_REWARD_DEMO } from "./config";
+import { RUNNER_CONFIG } from "./config";
 import { clamp, damp, getDemoReward, getRunSpeed } from "./math";
 import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
