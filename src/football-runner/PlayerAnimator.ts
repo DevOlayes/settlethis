@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { PlayerCharacter } from "./PlayerCharacter";
+import { canonicalizeBoneName } from "@three-ws/retarget";
 
 export type PlayerAnimationInput = {
   speedRatio: number;
@@ -8,7 +9,7 @@ export type PlayerAnimationInput = {
   laneLean: number;
 };
 
-type RunnerMotion = "run" | "sprint" | "jumpTakeoff" | "jumpAir" | "jumpLand" | "slide" | "crouch" | "kick";
+type RunnerMotion = "run" | "sprint" | "jumpTakeoff" | "jumpAir" | "jumpLand" | "slideStart" | "slideLoop" | "slideEnd" | "crouch" | "kick";
 
 const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
   run: [/\\brun\\b/, /jog/, /\\bwalk\\b/, /locomotion/],
@@ -16,12 +17,14 @@ const CLIP_PATTERNS: Record<RunnerMotion, RegExp[]> = {
   jumpTakeoff: [/jump.?take.?off/, /take.?off/, /jump.?start/],
   jumpAir: [/jump.?air/, /airborne/, /jump.?loop/, /in.?air/],
   jumpLand: [/jump.?land/, /landing/, /land.?jump/],
-  slide: [/slide/, /sliding/, /low.?slide/, /roll/],
+  slideStart: [/slide.?start/],
+  slideLoop: [/slide.?loop/, /sliding/],
+  slideEnd: [/slide.?exit/, /slide.?end/],
   crouch: [/crouch/, /duck/, /low.?walk/, /sneak/],
   kick: [/soccer.?kick/, /football.?kick/, /kick/, /shoot/, /pass/, /strike/],
 };
 
-const ONESHOT_MOTIONS = new Set<RunnerMotion>(["jumpTakeoff", "jumpLand", "slide", "kick"]);
+const ONESHOT_MOTIONS = new Set<RunnerMotion>(["jumpTakeoff", "jumpLand", "slideStart", "slideEnd", "kick"]);
 
 export class PlayerAnimator {
   private runClock = 0;
@@ -34,14 +37,21 @@ export class PlayerAnimator {
   private activeRiggedAction?: THREE.AnimationAction;
   private activeRiggedMotion?: RunnerMotion;
   private riggedKickRemaining = 0;
-  private riggedSlideRemaining = 0;
+  private previousSliding = false;
+  private slideElapsed = 0;
+  private slideExitRemaining = 0;
   private riggedJumping = false;
   private jumpPhaseElapsed = 0;
   private landingRemaining = 0;
 
   constructor(private readonly character: PlayerCharacter) {}
 
-  attachRiggedModel(model: THREE.Object3D, clips: THREE.AnimationClip[]): void {
+  attachRiggedModel(model: THREE.Object3D, sourceClips: THREE.AnimationClip[]): void {
+    const clips = [...sourceClips];
+    if (!clips.some((clip) => /soccer.?kick|football.?kick/i.test(clip.name))) {
+      const authoredKick = createFootballKickClip(model);
+      if (authoredKick) clips.push(authoredKick);
+    }
     this.riggedMixer?.stopAllAction();
     this.riggedMixer = new THREE.AnimationMixer(model);
     this.riggedActions.clear();
@@ -57,7 +67,7 @@ export class PlayerAnimator {
     }
 
     // Prefer dedicated locomotion clips; never use a one-shot kick/slide as a run.
-    for (const motion of ["run", "sprint", "jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slide", "kick"] as RunnerMotion[]) {
+    for (const motion of ["run", "sprint", "jumpTakeoff", "jumpAir", "jumpLand", "crouch", "slideStart", "slideLoop", "slideEnd", "kick"] as RunnerMotion[]) {
       const patterns = CLIP_PATTERNS[motion];
       for (const [name, action] of this.riggedActions) {
         if (patterns.some((pattern) => pattern.test(name))) {
@@ -75,7 +85,7 @@ export class PlayerAnimator {
 
     // Missing special clips should preserve the active run cycle, not restart it
     // as a one-shot animation. A crouch can be used as a temporary slide fallback.
-    if (!next && motion === "slide") next = this.actionByMotion.get("crouch");
+    if (!next && (motion === "slideStart" || motion === "slideLoop" || motion === "slideEnd")) next = this.actionByMotion.get("crouch");
     if (!next && motion === "sprint") next = this.actionByMotion.get("run");
     if (!next && motion !== "run") return;
     if (!next) return;
@@ -87,7 +97,7 @@ export class PlayerAnimator {
     next.paused = false;
     next.setEffectiveWeight(1);
     next.setEffectiveTimeScale(1);
-    const loopOnce = ONESHOT_MOTIONS.has(motion) && !(motion === "slide" && next === this.actionByMotion.get("crouch"));
+    const loopOnce = ONESHOT_MOTIONS.has(motion) && !(motion.startsWith("slide") && next === this.actionByMotion.get("crouch"));
     if (loopOnce && next !== this.actionByMotion.get("run")) {
       next.setLoop(THREE.LoopOnce, 1);
       next.clampWhenFinished = true;
@@ -104,11 +114,16 @@ export class PlayerAnimator {
 
   private chooseRiggedMotion(input: PlayerAnimationInput): RunnerMotion {
     if (this.riggedKickRemaining > 0 && this.actionByMotion.has("kick")) return "kick";
+
     if (input.sliding) {
-      if (this.actionByMotion.has("slide")) return "slide";
+      if (this.slideElapsed < 0.2 && this.actionByMotion.has("slideStart")) return "slideStart";
+      if (this.actionByMotion.has("slideLoop")) return "slideLoop";
+      if (this.actionByMotion.has("slideStart")) return "slideStart";
       if (this.actionByMotion.has("crouch")) return "crouch";
       return "run";
     }
+    if (this.slideExitRemaining > 0 && this.actionByMotion.has("slideEnd")) return "slideEnd";
+
     if (input.jumping) {
       if (this.jumpPhaseElapsed < 0.18 && this.actionByMotion.has("jumpTakeoff")) return "jumpTakeoff";
       if (this.actionByMotion.has("jumpAir")) return "jumpAir";
@@ -122,6 +137,16 @@ export class PlayerAnimator {
   private updateRigged(delta: number, input: PlayerAnimationInput): void {
     if (!this.riggedMixer) return;
     this.riggedKickRemaining = Math.max(0, this.riggedKickRemaining - delta);
+
+    if (input.sliding && !this.previousSliding) {
+      this.slideElapsed = 0;
+      this.slideExitRemaining = 0;
+    }
+    if (input.sliding) this.slideElapsed += delta;
+    if (!input.sliding && this.previousSliding) this.slideExitRemaining = 0.3;
+    this.previousSliding = input.sliding;
+    this.slideExitRemaining = Math.max(0, this.slideExitRemaining - (input.sliding ? 0 : delta));
+
     if (input.jumping && !this.riggedJumping) this.jumpPhaseElapsed = 0;
     if (input.jumping) this.jumpPhaseElapsed += delta;
     if (!input.jumping && this.riggedJumping) this.landingRemaining = 0.32;
@@ -137,6 +162,7 @@ export class PlayerAnimator {
       );
     }
 
+    // The gameplay root remains on its lane; the upper body banks into the turn.
     this.character.root.rotation.z = THREE.MathUtils.damp(
       this.character.root.rotation.z, -input.laneLean * 0.15, 9, delta,
     );
@@ -152,7 +178,9 @@ export class PlayerAnimator {
     this.landingPulse = 0;
     this.previousJumping = false;
     this.riggedKickRemaining = 0;
-    this.riggedSlideRemaining = 0;
+    this.previousSliding = false;
+    this.slideElapsed = 0;
+    this.slideExitRemaining = 0;
     this.riggedJumping = false;
     this.jumpPhaseElapsed = 0;
     this.landingRemaining = 0;
@@ -183,6 +211,78 @@ export class PlayerAnimator {
     this.kickElapsed = 0;
     if (this.riggedMixer && this.actionByMotion.has("kick")) this.riggedKickRemaining = 0.48;
   }
+
+function createFootballKickClip(model: THREE.Object3D): THREE.AnimationClip | null {
+  const bones = new Map<string, THREE.Bone>();
+  model.traverse((object) => {
+    if (object instanceof THREE.Bone) {
+      bones.set(canonicalizeBoneName(object.name), object);
+    }
+  });
+
+  const times = [0, 0.12, 0.25, 0.37, 0.53, 0.68];
+  const tracks: THREE.KeyframeTrack[] = [];
+  const addRotation = (
+    canonicalName: string,
+    poses: Array<[number, number, number]>,
+  ) => {
+    const bone = bones.get(canonicalName);
+    if (!bone) return;
+    const base = bone.quaternion.clone();
+    const values: number[] = [];
+    for (const [x, y, z] of poses) {
+      const delta = new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z, "XYZ"));
+      const result = base.clone().multiply(delta).normalize();
+      values.push(result.x, result.y, result.z, result.w);
+    }
+    tracks.push(new THREE.QuaternionKeyframeTrack(
+      `${bone.name}.quaternion`, times, values,
+    ));
+  };
+
+  // Original in-place football collection kick: wind-up, strike, follow-through, recovery.
+  addRotation("RightUpLeg", [
+    [0, 0, 0], [0.48, 0, 0.08], [-0.92, 0, 0.04],
+    [-0.72, 0, 0.02], [-0.22, 0, 0], [0, 0, 0],
+  ]);
+  addRotation("RightLeg", [
+    [0, 0, 0], [0.72, 0, 0], [0.12, 0, 0],
+    [-0.16, 0, 0], [0.12, 0, 0], [0, 0, 0],
+  ]);
+  addRotation("RightFoot", [
+    [0, 0, 0], [0.12, 0, 0], [-0.24, 0, 0],
+    [-0.08, 0, 0], [0.08, 0, 0], [0, 0, 0],
+  ]);
+  addRotation("LeftUpLeg", [
+    [0, 0, 0], [0.05, 0, 0], [0.12, 0, 0],
+    [0.1, 0, 0], [0.03, 0, 0], [0, 0, 0],
+  ]);
+  addRotation("LeftLeg", [
+    [0, 0, 0], [0.08, 0, 0], [0.2, 0, 0],
+    [0.16, 0, 0], [0.04, 0, 0], [0, 0, 0],
+  ]);
+  addRotation("Hips", [
+    [0, 0, 0], [0, -0.08, 0], [0, 0.14, 0],
+    [0, 0.1, 0], [0, 0.03, 0], [0, 0, 0],
+  ]);
+  addRotation("Spine", [
+    [0, 0, 0], [0.02, 0.04, 0], [0.04, -0.08, 0],
+    [0.02, -0.06, 0], [0, -0.02, 0], [0, 0, 0],
+  ]);
+  addRotation("LeftArm", [
+    [0, 0, 0], [0.05, 0, -0.16], [0.12, 0, -0.42],
+    [0.08, 0, -0.5], [0.02, 0, -0.18], [0, 0, 0],
+  ]);
+  addRotation("RightArm", [
+    [0, 0, 0], [-0.05, 0, 0.16], [-0.12, 0, 0.42],
+    [-0.08, 0, 0.5], [-0.02, 0, 0.18], [0, 0, 0],
+  ]);
+
+  if (!bones.has("RightUpLeg") || !bones.has("RightLeg") || !bones.has("RightFoot") || tracks.length < 3) {
+    return null;
+  }
+  return new THREE.AnimationClip("Football Kick", 0.68, tracks);
+}
 
   update(delta: number, input: PlayerAnimationInput): void {
     if (this.riggedMixer) {
