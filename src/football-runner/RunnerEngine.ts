@@ -8,6 +8,7 @@ import { animateCollectionEffect, createCollectible, createCollectionEffect, cre
 import { createPlayerCharacter } from "./PlayerCharacter";
 import { disposeRunnerCharacterModel, loadRunnerAnimationManifest, loadRunnerCharacter } from "./RiggedPlayerAsset";
 import { PlayerAnimator } from "./PlayerAnimator";
+import { createNativeBipedJumpClips, NATIVE_BIPED_JUMP_PHASES } from "./NativeBipedJump";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
 import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
 import { applyRunnerRenderQuality } from "./RenderQuality";
@@ -22,6 +23,7 @@ export class RunnerEngine {
   private readonly playerAnimator = new PlayerAnimator(this.playerCharacter);
   private loadedPlayerModel?: THREE.Group;
   private pendingRiggedPlayer?: { model: THREE.Group; animations: THREE.AnimationClip[] };
+  private nativeJumpEnabled = false;
   private readonly performance = new RunnerPerformanceMonitor();
   private readonly audio = new RunnerAudioFeedback();
   private readonly objects: ActiveObject[] = [];
@@ -103,7 +105,25 @@ export class RunnerEngine {
       if (missingOptionalMotions.length) {
         console.info("Sports Male 03 loaded; optional action clips will use existing fallbacks", missingOptionalMotions);
       }
-      this.playerAnimator.attachRiggedModel(model, animations);
+      const nativeRun = animations.find((clip) => clip.name === "sports-male-03-native-run");
+      if (nativeRun) {
+        const nativeJumpClips = createNativeBipedJumpClips(model, nativeRun);
+        // Prefer the approved Sports Male 03-native jump phases over generic
+        // library jumps; keep the unrelated run, slide, crouch and kick clips.
+        const genericJump = /^(jump_start|jump_loop|jump_land)$/i;
+        const compatibleAnimations = animations.filter((clip) => !genericJump.test(clip.name.trim()));
+        this.playerAnimator.attachRiggedModel(model, [...compatibleAnimations, ...nativeJumpClips]);
+        this.nativeJumpEnabled = true;
+        console.info("Approved native Biped jump integrated into Football Runner", {
+          takeoff: NATIVE_BIPED_JUMP_PHASES.takeoff,
+          airborne: NATIVE_BIPED_JUMP_PHASES.airborne,
+          landing: NATIVE_BIPED_JUMP_PHASES.landing,
+          total: NATIVE_BIPED_JUMP_PHASES.total,
+        });
+      } else {
+        console.warn("Approved native Sports Male 03 run clip unavailable; retaining existing animation set");
+        this.playerAnimator.attachRiggedModel(model, animations);
+      }
     } catch (error) {
       console.error("Sports Male 03 failed to load or animate; preserving the approved model where possible", error);
     }
@@ -435,7 +455,9 @@ export class RunnerEngine {
     this.slideRemaining = Math.max(0, this.slideRemaining - delta);
     this.playerAnimator.update(delta, {
       speedRatio: speed / config.movement.initialSpeed,
-      jumping: this.jumpProgress > 0.05,
+      // Start the landing pose during the final 0.32s of the existing
+      // 1.02s root arc, so the animation finishes as the player reaches ground.
+      jumping: this.jumpProgress > (this.nativeJumpEnabled ? NATIVE_BIPED_JUMP_PHASES.landing : 0.05),
       sliding: this.slideRemaining > 0,
       laneLean: clamp(this.targetLane - player.position.x / config.laneWidth, -1, 1),
     });
