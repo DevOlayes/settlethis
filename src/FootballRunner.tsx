@@ -293,7 +293,7 @@ export default function FootballRunner({ onBack }: Props) {
               {phase === "over" && summary && <>
                 <div className="runner-result-heading">
                   <span className="runner-overline">FULL TIME · RUN SUMMARY</span>
-                  <h1>{recordFlags.distance || recordFlags.points ? "New personal best!" : "Run complete."}</h1>
+                  <h1>Run complete.</h1>
                   <p>Every metre counts. Here's how you performed.</p>
                 </div>
                 <section className="runner-score-showcase" aria-label="Final score">
