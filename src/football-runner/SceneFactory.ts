@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import { RUNNER_CONFIG } from "./config";
 import type { RunnerSceneBundle } from "./types";
+import { getInitialRunnerRenderQuality } from "./RenderQuality";
 
 type V3 = [number, number, number];
 
-function box(parent: THREE.Group, size: V3, position: V3, surface: THREE.Material, castShadow = true): THREE.Mesh {
+function box(parent: THREE.Group, size: V3, position: V3, surface: THREE.Material, castShadow = false): THREE.Mesh {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), surface);
   mesh.position.set(...position);
   mesh.castShadow = castShadow;
@@ -185,15 +186,18 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   camera.lookAt(...cameraConfig.lookAt);
   camera.updateProjectionMatrix();
 
+  const renderQuality = getInitialRunnerRenderQuality();
+  const pixelRatioCap = renderQuality === "high" ? 1.3 : renderQuality === "balanced" ? 1.05 : 0.85;
+  const shadowMapSize = renderQuality === "high" ? 1024 : renderQuality === "balanced" ? 512 : 0;
   const renderer = new THREE.WebGLRenderer({
-    antialias: true,
+    antialias: renderQuality !== "low",
     alpha: false,
-    powerPreference: "high-performance",
+    powerPreference: "default",
   });
-  // Cap render resolution to protect frame pacing on mid-range Android devices.
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
+  // Device-aware resolution keeps the drawing buffer proportional to available hardware.
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelRatioCap));
   renderer.setSize(host.clientWidth, host.clientHeight);
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = renderQuality !== "low";
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.shadowMap.autoUpdate = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -204,8 +208,8 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   scene.add(new THREE.HemisphereLight(0xe5dff0, 0x252b2d, 1.65));
   const keyLight = new THREE.DirectionalLight(0xffe2d5, 2.15);
   keyLight.position.set(-8, 15, 7);
-  keyLight.castShadow = true;
-  keyLight.shadow.mapSize.set(1024, 1024);
+  keyLight.castShadow = renderQuality !== "low";
+  if (shadowMapSize > 0) keyLight.shadow.mapSize.set(shadowMapSize, shadowMapSize);
   keyLight.shadow.bias = -0.00018;
   keyLight.shadow.normalBias = 0.025;
   keyLight.shadow.camera.left = -17;
@@ -291,7 +295,7 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   loopCopy.position.z = -worldConfig.length;
   world.add(loopCopy);
 
-  return { scene, camera, renderer, world };
+  return { scene, camera, renderer, world, renderQuality };
 }
 
 export function resizeRunnerScene(bundle: RunnerSceneBundle, host: HTMLElement): void {
