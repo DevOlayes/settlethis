@@ -90,7 +90,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
       const looping = name === "run" || name === "jumpAir" || name === "slideLoop";
       next.setLoop(looping ? THREE.LoopRepeat : THREE.LoopOnce, looping ? Infinity : 1);
       next.clampWhenFinished = !looping;
-      next.fadeIn(previous ? 0.16 : 0);
+      if (previous !== next) next.fadeIn(previous ? 0.16 : 0);
       next.play();
       if (previous && previous !== next) {
         if (previous === phaseActions.run && ["jumpTakeoff", "jumpAir", "jumpLand"].includes(name)) {
