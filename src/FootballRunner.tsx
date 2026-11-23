@@ -26,6 +26,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const mountRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<RunnerControls | null>(null);
   const [phase, setPhase] = useState<RunnerPhase>("ready");
+  const [selectedEnvironment, setSelectedEnvironment] = useState<"classic" | "club-ground">("classic");
   const [summary, setSummary] = useState<RunnerSummary | null>(null);
   const [hud, setHud] = useState<RunnerHud>(EMPTY_HUD);
   const [engineError, setEngineError] = useState(false);
@@ -137,7 +138,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             })
             .finally(() => setSavingRun(false));
         },
-      });
+      }, selectedEnvironment);
       engine.setSoundEnabled(soundEnabled);
       engineRef.current = engine;
     } catch {
@@ -149,7 +150,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       engine.dispose();
       engineRef.current = null;
     };
-  }, [preview, initData, avatarDiagnostic]);
+  }, [preview, initData, avatarDiagnostic, selectedEnvironment]);
 
   const start = async () => {
     if (startBusy || savingRun) return;
@@ -278,6 +279,14 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
           ) : phase !== "running" ? (
             <div className="runner-overlay">
               {phase === "ready" && <>
+                <div className="runner-environment-picker" style={{ display: "flex", gap: 8, width: "100%", margin: "0 0 14px" }}>
+                  <button type="button" onClick={() => { setEngineError(false); setSelectedEnvironment("classic"); }} aria-pressed={selectedEnvironment === "classic"} style={{ flex: 1, minWidth: 0, padding: "10px 9px", borderRadius: 11, border: selectedEnvironment === "classic" ? "1px solid #e98272" : "1px solid #ffffff2b", background: selectedEnvironment === "classic" ? "#e982721c" : "#ffffff08", color: "#f4f1f7", textAlign: "left", fontSize: 10, fontWeight: 850, letterSpacing: ".04em" }}>
+                    CURRENT ENVIRONMENT <span style={{ display: "block", marginTop: 4, color: "#aaa3b5", fontSize: 9, fontWeight: 600, letterSpacing: 0 }}>Original SETHIS stadium</span>
+                  </button>
+                  <button type="button" onClick={() => { setEngineError(false); setSelectedEnvironment("club-ground"); }} aria-pressed={selectedEnvironment === "club-ground"} style={{ flex: 1, minWidth: 0, padding: "10px 9px", borderRadius: 11, border: selectedEnvironment === "club-ground" ? "1px solid #e98272" : "1px solid #ffffff2b", background: selectedEnvironment === "club-ground" ? "#e982721c" : "#ffffff08", color: "#f4f1f7", textAlign: "left", fontSize: 10, fontWeight: 850, letterSpacing: ".04em" }}>
+                    CLUB GROUND <span style={{ display: "block", marginTop: 4, color: "#aaa3b5", fontSize: 9, fontWeight: 600, letterSpacing: 0 }}>New imported environment</span>
+                  </button>
+                </div>
                 <div className="runner-intro-art" aria-hidden="true">
                   <div className="runner-intro-pitch"><i/><i/><i/></div>
                   <div className="runner-intro-ball">⚽</div>
