@@ -91,7 +91,7 @@ export class RunnerEngine {
         this.tryStartWhenReady();
       }).catch((error) => {
         if (this.disposed) return;
-        console.error("Imported club ground could not load; retaining the original environment.", error);
+        console.error("Club Ground could not load; refusing to substitute another field.", error);
         this.environmentReady = true;
         this.callbacks.onEnvironmentStatus?.("error");
         this.tryStartWhenReady();
