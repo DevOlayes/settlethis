@@ -71,7 +71,7 @@ const height = Math.max(0.01, bounds.max.y - bounds.min.y);
 const scale = 2.18 / height;
 model.scale.setScalar(scale);
 const baseY = -bounds.min.y * scale;
-model.position.y = baseY - 0.46;
+model.position.y = baseY - 0.85;
 model.rotation.y = Math.PI;
 model.updateMatrixWorld(true);
 
@@ -174,7 +174,7 @@ console.log("SLIDE_CONTACT_AUDIT", JSON.stringify({
   modelHeight: Number(height.toFixed(4)),
   modelScale: Number(scale.toFixed(4)),
   baseY: Number(baseY.toFixed(4)),
-  rootDrop: 0.46,
+  rootDrop: 0.85,
   pitchY: -0.12,
   palmTargetY: -0.14,
   leadFootTargetY: -0.112,
