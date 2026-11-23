@@ -48,6 +48,8 @@ export function createNativeBipedManeuverClips(
   const head = profile("Bip01 Head");
   const lClavicle = profile("Bip01 L Clavicle");
   const rClavicle = profile("Bip01 R Clavicle");
+  const lHand = profile("Bip01 L Hand");
+  const rHand = profile("Bip01 R Hand");
   const neck = bones.get(normalizedName("Bip01 Neck"));
   const spine1 = bones.get(normalizedName("Bip01 Spine1"));
   const lThigh = profile("Bip01 L Thigh");
@@ -84,6 +86,8 @@ export function createNativeBipedManeuverClips(
       { profile: head, angles: [0, -0.06, -0.12] },
       { profile: lClavicle, angles: [0, 0.14, 0.28] },
       { profile: rClavicle, angles: [0, -0.10, -0.20] },
+      { profile: lHand, angles: [0, 0, 0] },
+      { profile: rHand, angles: [0, 0, 0] },
       { profile: lThigh, angles: [0, 0.48, 0.95] },
       { profile: rThigh, angles: [0, -0.20, -0.42] },
       { profile: lCalf, angles: [0, 0.04, 0.10] },
@@ -110,6 +114,8 @@ export function createNativeBipedManeuverClips(
       { profile: head, angles: [-0.12, -0.10, -0.12] },
       { profile: lClavicle, angles: [0.28, 0.30, 0.28] },
       { profile: rClavicle, angles: [-0.20, -0.18, -0.20] },
+      { profile: lHand, angles: [0, 0, 0] },
+      { profile: rHand, angles: [0, 0, 0] },
       { profile: lThigh, angles: [0.95, 0.98, 0.95] },
       { profile: rThigh, angles: [-0.42, -0.45, -0.42] },
       { profile: lCalf, angles: [0.10, 0.12, 0.10] },
@@ -136,6 +142,8 @@ export function createNativeBipedManeuverClips(
       { profile: head, angles: [-0.12, -0.08, -0.03, 0] },
       { profile: lClavicle, angles: [0.28, 0.18, 0.06, 0] },
       { profile: rClavicle, angles: [-0.20, -0.12, -0.04, 0] },
+      { profile: lHand, angles: [0, 0, 0, 0] },
+      { profile: rHand, angles: [0, 0, 0, 0] },
       { profile: lThigh, angles: [0.95, 0.62, 0.24, 0] },
       { profile: rThigh, angles: [-0.42, -0.28, -0.10, 0] },
       { profile: lCalf, angles: [0.10, 0.08, 0.03, 0] },
