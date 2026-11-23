@@ -228,17 +228,17 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   camera.updateProjectionMatrix();
 
   const renderQuality = getInitialRunnerRenderQuality();
-  const pixelRatioCap = renderQuality === "high" ? 1.3 : renderQuality === "balanced" ? 1.05 : 0.85;
-  const shadowMapSize = renderQuality === "high" ? 1024 : renderQuality === "balanced" ? 512 : 0;
+  const pixelRatioCap = renderQuality === "high" ? 1.08 : renderQuality === "balanced" ? 0.88 : 0.72;
+  const shadowMapSize = renderQuality === "high" ? 512 : 0;
   const renderer = new THREE.WebGLRenderer({
     antialias: renderQuality !== "low",
     alpha: false,
-    powerPreference: "default",
+    powerPreference: "low-power",
   });
   // Device-aware resolution keeps the drawing buffer proportional to available hardware.
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelRatioCap));
   renderer.setSize(host.clientWidth, host.clientHeight);
-  renderer.shadowMap.enabled = renderQuality !== "low";
+  renderer.shadowMap.enabled = renderQuality === "high";
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.shadowMap.autoUpdate = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -250,7 +250,7 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   const keyLight = new THREE.DirectionalLight(0xffedcf, 2.35);
   keyLight.position.set(-8, 15, 7);
   keyLight.userData.runnerShadowLight = true;
-  keyLight.castShadow = renderQuality !== "low";
+  keyLight.castShadow = renderQuality === "high";
   if (shadowMapSize > 0) keyLight.shadow.mapSize.set(shadowMapSize, shadowMapSize);
   keyLight.shadow.bias = -0.00018;
   keyLight.shadow.normalBias = 0.025;
@@ -467,10 +467,7 @@ function addClubGroundSideStands(root: THREE.Group, tileLength: number, sections
         bank.position.set(side * 13.9, 9.55, z);
         root.add(bank);
 
-        const floodlight = new THREE.PointLight(0xffe8c7, 1150, 42, 2);
-        floodlight.position.set(side * 13.5, 9.1, z);
-        floodlight.castShadow = false;
-        root.add(floodlight);
+        // Emissive floodlight banks provide the visible stadium-light effect; scene fill illuminates the pitch without many costly point lights.
       }
     }
   }
