@@ -144,9 +144,9 @@ export function createObstacle(type: number): THREE.Group {
     const hitboxes = [
       { halfWidth: 0.36, halfDepth: 0.36, height: 0.74, clearance: "jump" as const, clearanceHeight: 0.9 },
       { halfWidth: 0.78, halfDepth: 0.34, height: 0.88, clearance: "jump" as const, clearanceHeight: 1.08 },
-      { halfWidth: 0.42, halfDepth: 0.25, height: 1.82, clearance: "none" as const },
-      { halfWidth: 0.76, halfDepth: 0.2, height: 1.22, clearance: "none" as const },
-      { halfWidth: 0.2, halfDepth: 0.2, height: 1.68, clearance: "none" as const },
+      { halfWidth: 0.42, halfDepth: 0.25, height: 1.82, clearance: "jump" as const, clearanceHeight: 1.98 },
+      { halfWidth: 0.76, halfDepth: 0.2, height: 1.22, clearance: "jump" as const, clearanceHeight: 1.38 },
+      { halfWidth: 0.2, halfDepth: 0.2, height: 1.68, clearance: "jump" as const, clearanceHeight: 1.84 },
     ];
     group.name = `supplied-${obstacleNames[variant]}`;
     group.add(supplied.clone(true));
