@@ -27,6 +27,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const engineRef = useRef<RunnerControls | null>(null);
   const [phase, setPhase] = useState<RunnerPhase>("ready");
   const [selectedEnvironment, setSelectedEnvironment] = useState<"classic" | "club-ground">("classic");
+  const [environmentStatus, setEnvironmentStatus] = useState<"loading" | "ready" | "error">("ready");
   const [summary, setSummary] = useState<RunnerSummary | null>(null);
   const [hud, setHud] = useState<RunnerHud>(EMPTY_HUD);
   const [engineError, setEngineError] = useState(false);
@@ -85,6 +86,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       engine = new RunnerEngine(host, {
         onPhase: setPhase,
         onHud: setHud,
+        onEnvironmentStatus: setEnvironmentStatus,
         onSummary: (result) => {
           const previous = recordsRef.current;
           setRecordFlags({
@@ -279,14 +281,27 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
           ) : phase !== "running" ? (
             <div className="runner-overlay">
               {phase === "ready" && <>
-                <div className="runner-environment-picker" style={{ display: "flex", gap: 8, width: "100%", margin: "0 0 14px" }}>
-                  <button type="button" onClick={() => { setEngineError(false); setSelectedEnvironment("classic"); }} aria-pressed={selectedEnvironment === "classic"} style={{ flex: 1, minWidth: 0, padding: "10px 9px", borderRadius: 11, border: selectedEnvironment === "classic" ? "1px solid #e98272" : "1px solid #ffffff2b", background: selectedEnvironment === "classic" ? "#e982721c" : "#ffffff08", color: "#f4f1f7", textAlign: "left", fontSize: 10, fontWeight: 850, letterSpacing: ".04em" }}>
-                    CURRENT ENVIRONMENT <span style={{ display: "block", marginTop: 4, color: "#aaa3b5", fontSize: 9, fontWeight: 600, letterSpacing: "0" }}>Original SETHIS stadium</span>
-                  </button>
-                  <button type="button" onClick={() => { setEngineError(false); setSelectedEnvironment("club-ground"); }} aria-pressed={selectedEnvironment === "club-ground"} style={{ flex: 1, minWidth: 0, padding: "10px 9px", borderRadius: 11, border: selectedEnvironment === "club-ground" ? "1px solid #e98272" : "1px solid #ffffff2b", background: selectedEnvironment === "club-ground" ? "#e982721c" : "#ffffff08", color: "#f4f1f7", textAlign: "left", fontSize: 10, fontWeight: 850, letterSpacing: ".04em" }}>
-                    CLUB GROUND <span style={{ display: "block", marginTop: 4, color: "#aaa3b5", fontSize: 9, fontWeight: 600, letterSpacing: 0 }}>New imported environment</span>
-                  </button>
-                </div>
+                <section className="runner-environment-picker" aria-label="Choose your field">
+                  <div className="runner-environment-heading">
+                    <b>CHOOSE YOUR FIELD</b>
+                    <span>Switch the scenery before your run</span>
+                  </div>
+                  <div className="runner-environment-options">
+                    <button type="button" className={selectedEnvironment === "classic" ? "is-selected" : ""} onClick={() => { setEngineError(false); setSelectedEnvironment("classic"); setEnvironmentStatus("ready"); }} aria-pressed={selectedEnvironment === "classic"}>
+                      <span className="runner-environment-choice-title">{selectedEnvironment === "classic" ? "✓ " : ""}ORIGINAL STADIUM</span>
+                      <span className="runner-environment-choice-detail">Current SETHIS field</span>
+                      <span className="runner-environment-choice-state">{selectedEnvironment === "classic" ? "SELECTED" : "CHOOSE FIELD"}</span>
+                    </button>
+                    <button type="button" className={selectedEnvironment === "club-ground" ? "is-selected" : ""} onClick={() => { setEngineError(false); setSelectedEnvironment("club-ground"); setEnvironmentStatus("loading"); }} aria-pressed={selectedEnvironment === "club-ground"}>
+                      <span className="runner-environment-choice-title">{selectedEnvironment === "club-ground" ? "✓ " : ""}CLUB GROUND</span>
+                      <span className="runner-environment-choice-detail">Imported football complex</span>
+                      <span className="runner-environment-choice-state">{selectedEnvironment === "club-ground" ? "SELECTED" : "CHOOSE FIELD"}</span>
+                    </button>
+                  </div>
+                  <p className={"runner-environment-status is-" + environmentStatus} role="status">
+                    {selectedEnvironment === "classic" ? "ORIGINAL STADIUM SELECTED" : environmentStatus === "loading" ? "CLUB GROUND SELECTED · LOADING FIELD…" : environmentStatus === "ready" ? "CLUB GROUND READY · START YOUR RUN" : "CLUB GROUND COULD NOT LOAD · ORIGINAL FIELD WILL BE USED"}
+                  </p>
+                </section>
                 <div className="runner-intro-art" aria-hidden="true">
                   <div className="runner-intro-pitch"><i/><i/><i/></div>
                   <div className="runner-intro-ball">⚽</div>
