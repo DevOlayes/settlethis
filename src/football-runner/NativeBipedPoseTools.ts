@@ -240,7 +240,6 @@ export function createNativeBipedSlideContactRig(
   // manual rotations over successive frames.
   const solvedBones = [
     leftHand, leftForearm, leftUpperArm, leftClavicle,
-    neck, spine, spine1, spine2,
     leftFoot, leftCalf, leftThigh, rightFoot, rightCalf, rightThigh,
   ];
   const savedPose = new Map<THREE.Bone, THREE.Quaternion>();
@@ -265,12 +264,13 @@ export function createNativeBipedSlideContactRig(
     solve(groundY: number) {
       savedPose.clear();
       for (const bone of solvedBones) savedPose.set(bone, bone.quaternion.clone());
-      // First lower the shoulder girdle through the existing spine chain. This
-      // brings the arm's root within anatomical reach before hand IK runs.
-      const shoulderError = solveCcdChain(
-        model, leftClavicle, targetAtHeight(-0.35, -0.05, groundY + 0.72),
-        [neck, spine2, spine1, spine], 7,
-      );
+      // Keep the authored torso and head pose fixed. The previous solver
+      // dragged the neck and spine to reposition the shoulder, creating the
+      // twisted, head-bent slide. Measure shoulder reach without changing it.
+      model.updateMatrixWorld(true);
+      const shoulderTarget = targetAtHeight(-0.35, -0.05, groundY + 0.72);
+      const shoulderError = leftClavicle.getWorldPosition(new THREE.Vector3())
+        .distanceTo(shoulderTarget);
       const orientPalmDown = () => {
         model.updateMatrixWorld(true);
         const handWorld = leftHand.getWorldQuaternion(new THREE.Quaternion());
