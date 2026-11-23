@@ -18,80 +18,55 @@ function addMesh(
 ): THREE.Mesh {
   const mesh = new THREE.Mesh(geometry, surface);
   mesh.position.set(...position);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
+  mesh.castShadow = false;
+  mesh.receiveShadow = false;
   parent.add(mesh);
   return mesh;
-}
-
-function addBallPanel(group: THREE.Group, normal: THREE.Vector3, panelMaterial: THREE.Material): void {
-  const radius = 0.237;
-  const panel = addMesh(
-    group,
-    new THREE.CircleGeometry(0.066, 5),
-    panelMaterial,
-    [normal.x * radius, normal.y * radius, normal.z * radius],
-  );
-  panel.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
-  panel.position.addScaledVector(normal, 0.002);
 }
 
 export function createCollectible(): THREE.Group {
   const group = new THREE.Group();
   group.name = "sethis-football-collectible";
   const ballRadius = 0.235;
-  const ball = addMesh(
-    group,
-    new THREE.SphereGeometry(ballRadius, 24, 18),
-    material(0xf6f0e9, 0.48),
-    [0, 0, 0],
-  );
-  ball.castShadow = true;
-
-  // A recognisable football panel layout: two five-panel rings and polar panels.
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(ballRadius, 16, 12), new THREE.MeshStandardMaterial({ color: 0xf6f0e9, roughness: 0.48, emissive: RUNNER_CONFIG.colors.coral, emissiveIntensity: 0.045 }));
+  ball.castShadow = false;
+  ball.receiveShadow = false;
+  group.add(ball);
+  // One instanced panel mesh replaces twelve separate panel draw calls.
+  const panelGeometry = new THREE.CircleGeometry(0.066, 5);
   const panelMaterial = material(0x292431, 0.66);
-  addBallPanel(group, new THREE.Vector3(0, 1, 0), panelMaterial);
-  addBallPanel(group, new THREE.Vector3(0, -1, 0), panelMaterial);
+  const panels = new THREE.InstancedMesh(panelGeometry, panelMaterial, 12);
+  const dummy = new THREE.Object3D();
+  const normals: THREE.Vector3[] = [new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, -1, 0)];
   for (let ring = 0; ring < 2; ring++) {
     const polar = ring === 0 ? 0.88 : Math.PI - 0.88;
     const phase = ring * Math.PI / 5;
     for (let index = 0; index < 5; index++) {
       const angle = (index / 5) * Math.PI * 2 + phase;
-      addBallPanel(
-        group,
-        new THREE.Vector3(
-          Math.sin(polar) * Math.cos(angle),
-          Math.cos(polar),
-          Math.sin(polar) * Math.sin(angle),
-        ).normalize(),
-        panelMaterial,
-      );
+      normals.push(new THREE.Vector3(Math.sin(polar) * Math.cos(angle), Math.cos(polar), Math.sin(polar) * Math.sin(angle)).normalize());
     }
   }
-
-  // Coral aura and a restrained ground halo make the collectible readable at speed.
-  const aura = new THREE.Mesh(
-    new THREE.SphereGeometry(0.31, 16, 12),
-    new THREE.MeshBasicMaterial({ color: RUNNER_CONFIG.colors.coral, transparent: true, opacity: 0.12, depthWrite: false }),
-  );
+  normals.forEach((normal, index) => {
+    dummy.position.copy(normal).multiplyScalar(ballRadius + 0.002);
+    dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+    dummy.updateMatrix();
+    panels.setMatrixAt(index, dummy.matrix);
+  });
+  panels.instanceMatrix.needsUpdate = true;
+  panels.castShadow = false;
+  panels.receiveShadow = false;
+  group.add(panels);
+  const aura = new THREE.Mesh(new THREE.SphereGeometry(0.31, 10, 8), new THREE.MeshBasicMaterial({ color: RUNNER_CONFIG.colors.coral, transparent: true, opacity: 0.1, depthWrite: false }));
   group.add(aura);
-  const halo = new THREE.Mesh(
-    new THREE.TorusGeometry(0.34, 0.018, 6, 28),
-    new THREE.MeshBasicMaterial({ color: RUNNER_CONFIG.colors.coral, transparent: true, opacity: 0.78 }),
-  );
+  const halo = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.018, 5, 18), new THREE.MeshBasicMaterial({ color: RUNNER_CONFIG.colors.coral, transparent: true, opacity: 0.78 }));
   halo.rotation.x = Math.PI / 2;
   halo.position.y = -0.28;
   group.add(halo);
-
-  const glow = new THREE.PointLight(RUNNER_CONFIG.colors.coral, 1.25, 3.6);
-  glow.position.set(0, 0.18, 0);
-  group.add(glow);
   group.userData.kind = "ball";
   group.userData.poolKey = "collectible";
   group.userData.hitbox = { halfWidth: 0.38, halfDepth: 0.38, height: 0.55 };
   return group;
 }
-
 export function createCollectionEffect(): THREE.Group {
   const group = new THREE.Group();
   group.name = "football-collection-burst";
