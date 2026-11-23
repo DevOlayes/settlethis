@@ -63,5 +63,6 @@ export type RunnerSceneBundle = {
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   world: THREE.Group;
+  environmentRoot: THREE.Group;
   renderQuality: RunnerRenderQuality;
 };
