@@ -284,7 +284,9 @@ export function createNativeBipedSlideContactRig(
         leftHand.quaternion.copy(parentWorld.invert().multiply(nextWorld));
         model.updateMatrixWorld(true);
       };
-      const palmTarget = targetAt(-0.34, -0.16, groundY);
+      // The skinned hand surface sat 2.7cm above the pitch at the first
+      // measured pose; lower its palm target to bring the actual mesh into contact.
+      const palmTarget = targetAtHeight(-0.34, -0.16, groundY - 0.02);
       for (let pass = 0; pass < 4; pass++) {
         orientPalmDown();
         solveCcdChain(
@@ -299,7 +301,7 @@ export function createNativeBipedSlideContactRig(
         [leftFoot, leftCalf, leftThigh], 14,
       );
       const trailingFootError = solveCcdChain(
-        model, rightToe, targetAt(0.14, 0.04, groundY),
+        model, rightToe, targetAtHeight(0.14, 0.04, groundY + 0.087),
         [rightFoot, rightCalf, rightThigh], 10,
       );
       return { shoulder: shoulderError, palm: palmError, leadFoot: leadFootError, trailingFoot: trailingFootError };
