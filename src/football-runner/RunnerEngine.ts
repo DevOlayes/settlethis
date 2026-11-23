@@ -340,6 +340,7 @@ export class RunnerEngine {
     const object = this.getPool(poolKey).acquire();
     object.visible = true;
     object.position.set(lane * RUNNER_CONFIG.laneWidth, poolKey === "collectible" ? 0.48 : 0, z);
+    object.userData.previousZ = z;
     object.scale.setScalar(1);
     object.rotation.set(0, 0, 0);
     this.bundle.scene.add(object);
@@ -407,21 +408,32 @@ export class RunnerEngine {
     this.over = true;
     this.paused = true;
     this.audio.collision();
-    const summary: RunnerSummary = {
-      distance: Math.floor(this.distance),
-      points: this.points,
-      balls: this.balls,
-      distancePoints: Math.floor(this.distance * RUNNER_CONFIG.scoring.distancePointsPerMetre),
-      footballPoints: this.balls * RUNNER_CONFIG.scoring.footballPickupPoints,
-      rewardFootball: 0,
-      rewardDistance: 0,
-      rewardPerformance: 0,
-      sethis: 0,
-    };
     cancelAnimationFrame(this.frame);
     this.frame = 0;
-    this.callbacks.onSummary(summary);
-    this.callbacks.onPhase("over");
+    const player = this.playerCharacter.root;
+    const startRotation = player.rotation.clone();
+    const startY = player.position.y;
+    const startedAt = performance.now();
+    const fallDuration = 620;
+    const fall = (now: number) => {
+      if (this.disposed) return;
+      const progress = Math.min(1, (now - startedAt) / fallDuration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      player.rotation.set(startRotation.x - eased * 0.28, startRotation.y + eased * 0.12, startRotation.z - eased * 1.12);
+      player.position.y = startY + Math.sin(progress * Math.PI) * 0.2 - eased * 0.16;
+      this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
+      if (progress < 1) { this.frame = requestAnimationFrame(fall); return; }
+      this.frame = 0;
+      const summary: RunnerSummary = {
+        distance: Math.floor(this.distance), points: this.points, balls: this.balls,
+        distancePoints: Math.floor(this.distance * RUNNER_CONFIG.scoring.distancePointsPerMetre),
+        footballPoints: this.balls * RUNNER_CONFIG.scoring.footballPickupPoints,
+        rewardFootball: 0, rewardDistance: 0, rewardPerformance: 0, sethis: 0,
+      };
+      this.callbacks.onSummary(summary);
+      this.callbacks.onPhase("over");
+    };
+    this.frame = requestAnimationFrame(fall);
   }
 
   private readonly onVisibilityChange = (): void => {
@@ -534,7 +546,9 @@ export class RunnerEngine {
 
     for (let index = this.objects.length - 1; index >= 0; index--) {
       const object = this.objects[index];
+      const previousZ = Number.isFinite(object.userData.previousZ) ? Number(object.userData.previousZ) : object.position.z;
       object.position.z += speed * delta;
+      object.userData.previousZ = object.position.z;
       if (object.userData.kind === "ball") object.rotation.y += delta * 2.4;
       if (object.position.z > 3.2) {
         this.releaseObject(object);
@@ -554,7 +568,8 @@ export class RunnerEngine {
       const widthLimit = (hitbox?.halfWidth ?? 0.35) + config.collision.playerHalfWidth;
       const depth = Math.abs(object.position.z - player.position.z);
       const width = Math.abs(object.position.x - player.position.x);
-      if (depth < depthLimit && width < widthLimit) {
+      const crossedPlayerDepth = previousZ <= player.position.z + depthLimit && object.position.z >= player.position.z - depthLimit;
+      if ((depth < depthLimit || crossedPlayerDepth) && width < widthLimit) {
         if (object.userData.kind === "ball") {
           this.balls++;
           this.points = Math.floor(this.distance * config.scoring.distancePointsPerMetre) + this.balls * config.scoring.footballPickupPoints;
