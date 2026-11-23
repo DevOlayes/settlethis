@@ -213,9 +213,9 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   const { colors, camera: cameraConfig, world: worldConfig } = RUNNER_CONFIG;
   const scene = new THREE.Scene();
   // Daylight stadium atmosphere: a clear sky and pale distance haze replace the previous dark tunnel-like mood.
-  const skyBlue = new THREE.Color(0x83c8f2);
+  const skyBlue = new THREE.Color(0x18212c);
   scene.background = skyBlue;
-  scene.fog = new THREE.Fog(0xa8d9f4, worldConfig.fogNear + 18, worldConfig.fogFar + 55);
+  scene.fog = new THREE.Fog(0x202a35, worldConfig.fogNear + 12, worldConfig.fogFar + 32);
 
   const camera = new THREE.PerspectiveCamera(
     cameraConfig.fov,
@@ -243,11 +243,11 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   renderer.shadowMap.autoUpdate = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.32;
+  renderer.toneMappingExposure = 0.94;
   host.appendChild(renderer.domElement);
 
-  scene.add(new THREE.HemisphereLight(0xeaf7ff, 0x526f45, 2.05));
-  const keyLight = new THREE.DirectionalLight(0xfff2d8, 3.05);
+  scene.add(new THREE.HemisphereLight(0xc8d2df, 0x344032, 1.25));
+  const keyLight = new THREE.DirectionalLight(0xffe5c4, 2.0);
   keyLight.position.set(-8, 15, 7);
   keyLight.userData.runnerShadowLight = true;
   keyLight.castShadow = renderQuality !== "low";
@@ -263,10 +263,10 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   scene.add(keyLight);
 
   // Broad fill keeps the player's kit and obstacles legible in covered sections.
-  const frontFill = new THREE.DirectionalLight(0xf0f7ff, 1.05);
+  const frontFill = new THREE.DirectionalLight(0xdce5f0, 0.48);
   frontFill.position.set(7, 8, 10);
   scene.add(frontFill);
-  const coolRim = new THREE.DirectionalLight(0xb6ddf5, 0.32);
+  const coolRim = new THREE.DirectionalLight(0x9bb4cc, 0.12);
   coolRim.position.set(0, 8, -12);
   scene.add(coolRim);
 
@@ -390,7 +390,6 @@ export function disposeRunnerScene(bundle: RunnerSceneBundle, host: HTMLElement)
 
 
 const CLUB_GROUND_URL = "https://cdn.3dassets.dev/assets/19143/v1/model.glb";
-const TRAINING_CORNER_URL = "https://cdn.3dassets.dev/assets/19144/v1/model.glb";
 
 function disposeEnvironmentObject(root: THREE.Object3D): void {
   const geometries = new Set<THREE.BufferGeometry>();
@@ -412,21 +411,58 @@ function disposeEnvironmentObject(root: THREE.Object3D): void {
   textures.forEach((texture) => texture.dispose());
 }
 
-/** Replace the classic scenery with the imported CC0 club ground while retaining the same runner, lanes and gameplay world. */
+function addClubGroundSideStands(root: THREE.Group, tileLength: number, sections: number): void {
+  const concrete = new THREE.MeshStandardMaterial({ color: 0x252a34, roughness: 0.94 });
+  const darkSteel = new THREE.MeshStandardMaterial({ color: 0x343a46, roughness: 0.72, metalness: 0.28 });
+  const seatMaterials = [
+    new THREE.MeshStandardMaterial({ color: 0x4a3440, roughness: 0.82 }),
+    new THREE.MeshStandardMaterial({ color: 0x34384a, roughness: 0.82 }),
+    new THREE.MeshStandardMaterial({ color: 0x55434b, roughness: 0.82 }),
+  ];
+  const coral = new THREE.MeshStandardMaterial({ color: 0xe98272, roughness: 0.68, emissive: 0x4a1712, emissiveIntensity: 0.16 });
+  for (let section = 0; section < sections; section++) {
+    const z = -section * tileLength - tileLength / 2;
+    for (const side of [-1, 1]) {
+      // Tall side walls and a covered roof close off the exposed blue horizon.
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(0.55, 5.2, tileLength + 0.6), concrete);
+      wall.position.set(side * 17.4, 2.55, z);
+      wall.receiveShadow = true;
+      root.add(wall);
+      const roof = new THREE.Mesh(new THREE.BoxGeometry(7.4, 0.42, tileLength + 0.8), darkSteel);
+      roof.position.set(side * 14.0, 5.25, z);
+      roof.receiveShadow = true;
+      root.add(roof);
+      for (let row = 0; row < 8; row++) {
+        const seat = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.24, tileLength - 1.4), seatMaterials[(row + section) % seatMaterials.length]);
+        seat.position.set(side * (11.35 + row * 0.78), 0.72 + row * 0.43, z);
+        seat.receiveShadow = true;
+        root.add(seat);
+      }
+      // Structural columns, a front rail and a subtle coral fascia make the stands read as a stadium.
+      for (const postZ of [z - tileLength * 0.46, z + tileLength * 0.46]) {
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.32, 5.5, 0.34), darkSteel);
+        post.position.set(side * 14.1, 2.72, postZ);
+        root.add(post);
+      }
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.72, tileLength - 1.8), darkSteel);
+      rail.position.set(side * 10.75, 0.42, z);
+      root.add(rail);
+      const fascia = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.16, tileLength - 1.5), coral);
+      fascia.position.set(side * 10.88, 0.86, z);
+      root.add(fascia);
+    }
+  }
+}
+
+/** Load the imported club pitch and add enclosed, darker stadium stands along both touchlines. */
 export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle, shouldAbort: () => boolean = () => false): Promise<void> {
   const loader = new GLTFLoader();
-  const [groundAsset, trainingAsset] = await Promise.all([
-    loader.loadAsync(CLUB_GROUND_URL),
-    loader.loadAsync(TRAINING_CORNER_URL),
-  ]);
-
+  const groundAsset = await loader.loadAsync(CLUB_GROUND_URL);
   if (shouldAbort()) {
     disposeEnvironmentObject(groundAsset.scene);
-    disposeEnvironmentObject(trainingAsset.scene);
     return;
   }
 
-  // Remove the original scenery and its loop copy only after both new assets load successfully.
   for (const child of [...bundle.world.children]) {
     if (child !== bundle.environmentRoot) {
       bundle.world.remove(child);
@@ -438,10 +474,23 @@ export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle, shoul
     disposeEnvironmentObject(child);
   }
 
+  groundAsset.scene.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    const list = Array.isArray(object.material) ? object.material : [object.material];
+    list.forEach((surface) => {
+      if ("color" in surface && (surface as THREE.MeshStandardMaterial).color?.isColor) {
+        (surface as THREE.MeshStandardMaterial).color.multiplyScalar(0.74);
+      }
+      if ("emissive" in surface && (surface as THREE.MeshStandardMaterial).emissive?.isColor) {
+        (surface as THREE.MeshStandardMaterial).emissive.multiplyScalar(0.45);
+      }
+    });
+  });
+
   const tileLength = 36.2;
   for (let index = 0; index < 5; index++) {
     const ground = groundAsset.scene.clone(true);
-    ground.name = `SETHIS club ground section ${index + 1}`;
+    ground.name = `SETHIS darkened club ground section ${index + 1}`;
     ground.scale.setScalar(0.32);
     ground.position.set(0, 0, -index * tileLength);
     ground.traverse((object) => {
@@ -451,17 +500,7 @@ export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle, shoul
       }
     });
     bundle.environmentRoot.add(ground);
-
-    const training = trainingAsset.scene.clone(true);
-    training.name = `SETHIS training zone ${index + 1}`;
-    training.scale.setScalar(0.65);
-    training.position.set(17.5, 0.02, -index * tileLength - 12);
-    training.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        object.castShadow = bundle.renderQuality !== "low";
-        object.receiveShadow = true;
-      }
-    });
-    bundle.environmentRoot.add(training);
   }
+
+  addClubGroundSideStands(bundle.environmentRoot, tileLength, 5);
 }
