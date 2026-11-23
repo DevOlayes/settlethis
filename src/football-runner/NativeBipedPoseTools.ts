@@ -262,14 +262,16 @@ export function createNativeBipedSlideContactRig(
         leftHand.quaternion.copy(parentWorld.invert().multiply(nextWorld));
         model.updateMatrixWorld(true);
       };
+      const palmTarget = targetAt(-0.34, -0.16, groundY);
+      for (let pass = 0; pass < 4; pass++) {
+        orientPalmDown();
+        solveCcdChain(
+          model, palm, palmTarget,
+          [leftForearm, leftUpperArm, leftClavicle], 10,
+        );
+      }
       orientPalmDown();
-      solveCcdChain(model, palm, targetAt(-0.34, -0.16, groundY),
-        [leftForearm, leftUpperArm, leftClavicle], 8);
-      orientPalmDown();
-      const palmError = solveCcdChain(
-        model, palm, targetAt(-0.34, -0.16, groundY),
-        [leftForearm, leftUpperArm, leftClavicle], 14,
-      );
+      const palmError = palm.getWorldPosition(new THREE.Vector3()).distanceTo(palmTarget);
       const leadFootError = solveCcdChain(
         model, leftToe, targetAt(-0.14, 0.44, groundY),
         [leftFoot, leftCalf, leftThigh], 14,
