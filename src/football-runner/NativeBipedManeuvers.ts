@@ -39,7 +39,7 @@ export function createNativeBipedManeuverClips(
 ): THREE.AnimationClip[] {
   const bones = bonesByName(model);
   const profile = (name: string): NativeBipedJointProfile | undefined =>
-    getNativeBipedJointProfile(referenceRunClip, bones.get(normalizedName(name)));
+    getNativeBipedJointProfile(referenceRunClip, bones.get(normalizedName(name)), model);
 
   const pelvis = profile("Bip01 Pelvis");
   const spine = profile("Bip01 Spine");
