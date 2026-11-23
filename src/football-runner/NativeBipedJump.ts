@@ -22,9 +22,9 @@ function collectBones(model: THREE.Object3D): Map<string, THREE.Bone> {
 }
 
 /**
- * Jump poses are local-axis deltas measured from every keyframe of the
- * approved native run. They are converted to additive clips against frame 0
- * of that same run, preserving the live running gait beneath the jump.
+ * The exact native run supplies the source bone tracks and reference pose.
+ * Flexion axes come from the original Sports Male 03 parent/child geometry,
+ * not from the gait's dominant swing axes. Additive deltas preserve the run.
  */
 export function createNativeBipedJumpClips(
   model: THREE.Object3D,
@@ -33,12 +33,12 @@ export function createNativeBipedJumpClips(
   const bones = collectBones(model);
   const find = (name: string) => bones.get(name.toLowerCase());
   const profile = (name: string): NativeBipedJointProfile | undefined =>
-    getNativeBipedJointProfile(referenceRunClip, find(name));
+    getNativeBipedJointProfile(referenceRunClip, find(name), model);
 
   const pelvis = profile("bip01 pelvis");
   const spine = profile("bip01 spine");
   const chest = profile("bip01 spine2");
-  const head = profile("bip01 head");
+  const neck = profile("bip01 neck");
   const leftThigh = profile("bip01 l thigh");
   const rightThigh = profile("bip01 r thigh");
   const leftCalf = profile("bip01 l calf");
@@ -75,7 +75,7 @@ export function createNativeBipedJumpClips(
       { profile: pelvis, angles: [0, 0.03, 0.04, 0.03] },
       { profile: spine, angles: [0, 0.12, 0.25, 0.22] },
       { profile: chest, angles: [0, 0.08, 0.16, 0.15] },
-      { profile: head, angles: [0, -0.03, -0.07, -0.06] },
+      { profile: neck, angles: [0, -0.03, -0.07, -0.06] },
       { profile: leftThigh, angles: [0, 0.30, 0.65, 0.82] },
       { profile: rightThigh, angles: [0, 0.24, 0.55, 0.72] },
       { profile: leftCalf, angles: [0, 0.35, 0.70, 0.85] },
