@@ -24,7 +24,8 @@ function collectBones(model: THREE.Object3D): Map<string, THREE.Bone> {
 /**
  * The exact native run supplies the source bone tracks and reference pose.
  * Flexion axes come from the original Sports Male 03 parent/child geometry,
- * not from the gait's dominant swing axes. Additive deltas preserve the run.
+ * not from the gait's dominant swing axes. Each jump phase uses the run's
+ * first-frame pose as its base, then takes full control of the action bones.
  */
 export function createNativeBipedJumpClips(
   model: THREE.Object3D,
@@ -66,7 +67,7 @@ export function createNativeBipedJumpClips(
     duration: number,
     times: number[],
     entries: Array<{ profile?: NativeBipedJointProfile; angles: number[] }>,
-  ) => createNativeBipedPoseClip(name, duration, referenceRunClip, times, entries, true);
+  ) => createNativeBipedPoseClip(name, duration, referenceRunClip, times, entries, false);
 
   const takeoff = make(
     "sports-male-03-jump-takeoff-native",
