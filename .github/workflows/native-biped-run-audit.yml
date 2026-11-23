@@ -4,6 +4,10 @@ on:
     branches: [main]
     paths:
       - "scripts/analyze-native-biped-run.mjs"
+      - "scripts/analyze-native-biped-slide.mjs"
+      - "src/football-runner/NativeBipedPoseTools.ts"
+      - "src/football-runner/NativeBipedManeuvers.ts"
+      - "src/football-runner/NativeBipedJump.ts"
       - ".github/workflows/native-biped-run-audit.yml"
 permissions:
   contents: read
