@@ -239,7 +239,6 @@ export function createNativeBipedSlideContactRig(
   ];
   const savedPose = new Map<THREE.Bone, THREE.Quaternion>();
   const savedPositions = new Map<THREE.Bone, THREE.Vector3>();
-  const savedScales = new Map<THREE.Bone, THREE.Vector3>();
 
   const targetAtHeight = (x: number, z: number, worldY: number) => {
     model.updateMatrixWorld(true);
@@ -254,13 +253,11 @@ export function createNativeBipedSlideContactRig(
     restore() {
       for (const [bone, quaternion] of savedPose) bone.quaternion.copy(quaternion);
       for (const [bone, position] of savedPositions) bone.position.copy(position);
-      for (const [bone, scale] of savedScales) bone.scale.copy(scale);
       model.updateMatrixWorld(true);
     },
     clear() {
       savedPose.clear();
       savedPositions.clear();
-      savedScales.clear();
     },
     solve(groundY: number) {
       savedPose.clear();
@@ -269,20 +266,14 @@ export function createNativeBipedSlideContactRig(
       for (const bone of solvedBones) {
         savedPose.set(bone, bone.quaternion.clone());
         savedPositions.set(bone, bone.position.clone());
-        savedScales.set(bone, bone.scale.clone());
       }
-      // A small support-side shoulder drop is part of the slide brace. It
+      // A controlled support-side shoulder drop is part of the slide brace. It
       // closes the final palm gap without pulling the spine or head toward the
       // pitch, and is restored before the next mixer frame.
       const clavicleParentInverse = leftClavicle.parent
         ? leftClavicle.parent.getWorldQuaternion(new THREE.Quaternion()).invert()
         : new THREE.Quaternion();
-      leftClavicle.position.add(new THREE.Vector3(0, -0.026, 0).applyQuaternion(clavicleParentInverse));
-      // The native arm chain is just short of the pitch at this low slide
-      // height. A reversible 3.5% extension along each bone's measured local
-      // length axis closes that last gap without moving the torso or head.
-      leftUpperArm.scale.x = (savedScales.get(leftUpperArm)?.x ?? leftUpperArm.scale.x) * 1.035;
-      leftForearm.scale.x = (savedScales.get(leftForearm)?.x ?? leftForearm.scale.x) * 1.035;
+      leftClavicle.position.add(new THREE.Vector3(0, -0.05, 0).applyQuaternion(clavicleParentInverse));
       model.updateMatrixWorld(true);
       // Keep the authored torso and head pose fixed. The previous solver
       // dragged the neck and spine to reposition the shoulder, creating the
