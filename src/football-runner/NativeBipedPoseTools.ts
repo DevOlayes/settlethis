@@ -282,7 +282,7 @@ export function createNativeBipedSlideContactRig(
       };
       // The skinned hand surface sat 2.7cm above the pitch at the first
       // measured pose; lower its palm target to bring the actual mesh into contact.
-      const palmTarget = targetAtHeight(0.34, -0.16, groundY - 0.02);
+      const palmTarget = targetAtHeight(0.34, -0.16, groundY - 0.008);
       for (let pass = 0; pass < 4; pass++) {
         orientPalmDown();
         solveCcdChain(
@@ -293,11 +293,11 @@ export function createNativeBipedSlideContactRig(
       orientPalmDown();
       const palmError = palm.getWorldPosition(new THREE.Vector3()).distanceTo(palmTarget);
       const leadFootError = solveCcdChain(
-        model, leftToe, targetAtHeight(0.14, 0.44, groundY + 0.2725),
+        model, leftToe, targetAtHeight(0.14, 0.44, groundY + 0.167),
         [leftFoot, leftCalf, leftThigh], 14,
       );
       const trailingFootError = solveCcdChain(
-        model, rightToe, targetAtHeight(-0.14, 0.04, groundY + 0.112),
+        model, rightToe, targetAtHeight(-0.14, 0.04, groundY + 0.205),
         [rightFoot, rightCalf, rightThigh], 10,
       );
       return { shoulder: shoulderError, palm: palmError, leadFoot: leadFootError, trailingFoot: trailingFootError };
