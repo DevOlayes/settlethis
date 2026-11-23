@@ -147,6 +147,9 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
           if (phaseNames[phaseIndex] === "jumpTakeoff") jumpElapsed = 0;
           playPhase(phaseIndex);
         }
+        if (["slideStart", "slideLoop", "slideRecovery", "runAfterSlide"].includes(phase)) {
+          slideContactRig?.restore();
+        }
         mixer.update(delta);
         if ((phase === "slideStart" || phase === "slideLoop") && slideContactRig) {
           const errors = slideContactRig.solve(-0.025);
@@ -157,6 +160,8 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
               "m · trailing foot " + errors.trailingFoot.toFixed(3) + "m.");
             contactAuditLogged = true;
           }
+        } else if (phase === "runAfterSlide") {
+          slideContactRig?.clear();
         }
       }
       renderer.render(scene, camera);
