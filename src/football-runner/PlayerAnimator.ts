@@ -211,9 +211,12 @@ export class PlayerAnimator {
     }
     this.previousSliding = input.sliding;
     if (this.riggedModel) {
-      const targetY = this.riggedModelBaseY - (input.sliding ? 0.24 : 0);
+      // Lower the complete rig farther into the slide so the planted
+      // support hand and sliding leg meet the pitch instead of hovering.
+      // The recovery eases back to the exact imported model base height.
+      const targetY = this.riggedModelBaseY - (input.sliding ? 0.34 : 0);
       this.riggedModel.position.y = THREE.MathUtils.damp(
-        this.riggedModel.position.y, targetY, input.sliding ? 18 : 12, delta,
+        this.riggedModel.position.y, targetY, input.sliding ? 22 : 12, delta,
       );
     }
     this.slideExitRemaining = Math.max(0, this.slideExitRemaining - (input.sliding ? 0 : delta));
