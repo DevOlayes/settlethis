@@ -37,6 +37,7 @@ export type RunnerHud = {
 };
 export type RunnerEngineCallbacks = {
   onPerformance?: (metrics: RunnerPerformanceSnapshot) => void;
+  onEnvironmentStatus?: (status: "loading" | "ready" | "error") => void;
   onPhase: (phase: RunnerPhase) => void;
   onHud: (hud: RunnerHud) => void;
   onSummary: (summary: RunnerSummary) => void;
