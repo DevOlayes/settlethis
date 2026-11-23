@@ -413,12 +413,18 @@ function disposeEnvironmentObject(root: THREE.Object3D): void {
 }
 
 /** Replace the classic scenery with the imported CC0 club ground while retaining the same runner, lanes and gameplay world. */
-export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle): Promise<void> {
+export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle, shouldAbort: () => boolean = () => false): Promise<void> {
   const loader = new GLTFLoader();
   const [groundAsset, trainingAsset] = await Promise.all([
     loader.loadAsync(CLUB_GROUND_URL),
     loader.loadAsync(TRAINING_CORNER_URL),
   ]);
+
+  if (shouldAbort()) {
+    disposeEnvironmentObject(groundAsset.scene);
+    disposeEnvironmentObject(trainingAsset.scene);
+    return;
+  }
 
   // Remove the original scenery and its loop copy only after both new assets load successfully.
   for (const child of [...bundle.world.children]) {
