@@ -30,9 +30,9 @@ function bonesByName(model: THREE.Object3D): Map<string, THREE.Bone> {
 }
 
 /**
- * The slide is authored from the exact native run reference pose and the
- * measured local swing axes. The left leg leads, the right knee folds under,
- * and the left arm is reserved as the ground-bracing support.
+ * The run clip supplies the exact reference pose and bone mapping. Anatomical
+ * flexion axes are derived from the original rig hierarchy. The left leg leads,
+ * the right knee folds under, and the left arm braces without rotating the spine.
  */
 export function createNativeBipedManeuverClips(
   model: THREE.Object3D,
