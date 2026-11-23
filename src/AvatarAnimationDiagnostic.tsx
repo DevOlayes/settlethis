@@ -149,7 +149,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         }
         mixer.update(delta);
         if ((phase === "slideStart" || phase === "slideLoop") && slideContactRig) {
-          const errors = slideContactRig.solve(0);
+          const errors = slideContactRig.solve(-0.025);
           if (phase === "slideLoop" && !contactAuditLogged) {
             addCheck("Pitch contact residuals · palm " + errors.palm.toFixed(3) +
               "m · lead foot " + errors.leadFoot.toFixed(3) +
