@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import {
-  addNativeBipedStaticTracks,
   createNativeBipedPoseClip,
   getNativeBipedJointProfile,
   type NativeBipedJointProfile,
@@ -46,7 +45,6 @@ export function createNativeBipedManeuverClips(
   const spine = profile("Bip01 Spine");
   const chest = profile("Bip01 Spine2");
   const spine1Profile = profile("Bip01 Spine1");
-  const head = profile("Bip01 Head");
   const lClavicle = profile("Bip01 L Clavicle");
   const rClavicle = profile("Bip01 R Clavicle");
   const lHand = profile("Bip01 L Hand");
@@ -63,8 +61,7 @@ export function createNativeBipedManeuverClips(
     profile: joint,
     angles: progress.map((amount) => leftFingerOpen[index] * amount),
   }));
-  const neck = bones.get(normalizedName("Bip01 Neck"));
-  const spine1 = bones.get(normalizedName("Bip01 Spine1"));
+  const neckProfile = profile("Bip01 Neck");
   const lThigh = profile("Bip01 L Thigh");
   const rThigh = profile("Bip01 R Thigh");
   const lCalf = profile("Bip01 L Calf");
@@ -93,26 +90,26 @@ export function createNativeBipedManeuverClips(
     referenceRunClip,
     [0, 0.11, 0.22],
     [
-      { profile: pelvis, angles: [0, 0.02, 0.03] },
-      { profile: spine, angles: [0, 0.22, 0.46] },
-      { profile: chest, angles: [0, 0.16, 0.34] },
-      { profile: spine1Profile, angles: [0, 0.10, 0.22] },
-      { profile: head, angles: [0, -0.06, -0.12] },
-      { profile: lClavicle, angles: [0, 0.14, 0.28] },
-      { profile: rClavicle, angles: [0, -0.10, -0.20] },
+      { profile: pelvis, angles: [0, -0.015, -0.025] },
+      { profile: spine, angles: [0, -0.12, -0.22] },
+      { profile: chest, angles: [0, -0.07, -0.13] },
+      { profile: spine1Profile, angles: [0, -0.06, -0.10] },
+      { profile: neckProfile, angles: [0, 0.10, 0.18] },
+      { profile: lClavicle, angles: [0, -0.06, -0.10] },
+      { profile: rClavicle, angles: [0, 0.04, 0.08] },
       { profile: lHand, angles: [0, 0, 0] },
       { profile: rHand, angles: [0, 0, 0] },
       ...fingerEntries([0, 0.5, 1]),
-      { profile: lThigh, angles: [0, 0.48, 0.95] },
-      { profile: rThigh, angles: [0, -0.20, -0.42] },
-      { profile: lCalf, angles: [0, 0.04, 0.10] },
-      { profile: rCalf, angles: [0, 0.65, 1.22] },
+      { profile: lThigh, angles: [0, 0.38, 0.75] },
+      { profile: rThigh, angles: [0, 0.08, 0.15] },
+      { profile: lCalf, angles: [0, 0.03, 0.08] },
+      { profile: rCalf, angles: [0, 0.42, 0.85] },
       { profile: lFoot, angles: [0, 0.04, 0.08] },
-      { profile: rFoot, angles: [0, -0.06, -0.12] },
-      { profile: lArm, angles: [0, 0.18, 0.42] },
-      { profile: rArm, angles: [0, -0.10, -0.20] },
-      { profile: lForearm, angles: [0, 0.42, 0.82] },
-      { profile: rForearm, angles: [0, -0.10, -0.18] },
+      { profile: rFoot, angles: [0, 0.03, 0.06] },
+      { profile: lArm, angles: [0, -0.15, -0.30] },
+      { profile: rArm, angles: [0, 0.08, 0.16] },
+      { profile: lForearm, angles: [0, 0.38, 0.72] },
+      { profile: rForearm, angles: [0, 0.08, 0.16] },
     ],
     false,
   );
@@ -123,26 +120,26 @@ export function createNativeBipedManeuverClips(
     referenceRunClip,
     [0, 0.29, 0.58],
     [
-      { profile: pelvis, angles: [0.03, 0.03, 0.03] },
-      { profile: spine, angles: [0.46, 0.48, 0.46] },
-      { profile: chest, angles: [0.34, 0.36, 0.34] },
-      { profile: spine1Profile, angles: [0.22, 0.24, 0.22] },
-      { profile: head, angles: [-0.12, -0.10, -0.12] },
-      { profile: lClavicle, angles: [0.28, 0.30, 0.28] },
-      { profile: rClavicle, angles: [-0.20, -0.18, -0.20] },
+      { profile: pelvis, angles: [-0.025, -0.025, -0.025] },
+      { profile: spine, angles: [-0.22, -0.24, -0.22] },
+      { profile: chest, angles: [-0.13, -0.14, -0.13] },
+      { profile: spine1Profile, angles: [-0.10, -0.11, -0.10] },
+      { profile: neckProfile, angles: [0.18, 0.20, 0.18] },
+      { profile: lClavicle, angles: [-0.10, -0.11, -0.10] },
+      { profile: rClavicle, angles: [0.08, 0.07, 0.08] },
       { profile: lHand, angles: [0, 0, 0] },
       { profile: rHand, angles: [0, 0, 0] },
       ...fingerEntries([1, 1, 1]),
-      { profile: lThigh, angles: [0.95, 0.98, 0.95] },
-      { profile: rThigh, angles: [-0.42, -0.45, -0.42] },
-      { profile: lCalf, angles: [0.10, 0.12, 0.10] },
-      { profile: rCalf, angles: [1.22, 1.26, 1.22] },
+      { profile: lThigh, angles: [0.75, 0.77, 0.75] },
+      { profile: rThigh, angles: [0.15, 0.16, 0.15] },
+      { profile: lCalf, angles: [0.08, 0.10, 0.08] },
+      { profile: rCalf, angles: [0.85, 0.88, 0.85] },
       { profile: lFoot, angles: [0.08, 0.06, 0.08] },
-      { profile: rFoot, angles: [-0.12, -0.10, -0.12] },
-      { profile: lArm, angles: [0.42, 0.44, 0.42] },
-      { profile: rArm, angles: [-0.20, -0.18, -0.20] },
-      { profile: lForearm, angles: [0.82, 0.85, 0.82] },
-      { profile: rForearm, angles: [-0.18, -0.16, -0.18] },
+      { profile: rFoot, angles: [0.06, 0.05, 0.06] },
+      { profile: lArm, angles: [-0.30, -0.32, -0.30] },
+      { profile: rArm, angles: [0.16, 0.14, 0.16] },
+      { profile: lForearm, angles: [0.72, 0.74, 0.72] },
+      { profile: rForearm, angles: [0.16, 0.14, 0.16] },
     ],
     false,
   );
@@ -153,33 +150,30 @@ export function createNativeBipedManeuverClips(
     referenceRunClip,
     [0, 0.11, 0.23, 0.38],
     [
-      { profile: pelvis, angles: [0.03, 0.02, 0.01, 0] },
-      { profile: spine, angles: [0.46, 0.30, 0.12, 0] },
-      { profile: chest, angles: [0.34, 0.22, 0.08, 0] },
-      { profile: spine1Profile, angles: [0.22, 0.14, 0.05, 0] },
-      { profile: head, angles: [-0.12, -0.08, -0.03, 0] },
-      { profile: lClavicle, angles: [0.28, 0.18, 0.06, 0] },
-      { profile: rClavicle, angles: [-0.20, -0.12, -0.04, 0] },
+      { profile: pelvis, angles: [-0.025, -0.018, -0.008, 0] },
+      { profile: spine, angles: [-0.22, -0.15, -0.06, 0] },
+      { profile: chest, angles: [-0.13, -0.09, -0.03, 0] },
+      { profile: spine1Profile, angles: [-0.10, -0.07, -0.02, 0] },
+      { profile: neckProfile, angles: [0.18, 0.12, 0.04, 0] },
+      { profile: lClavicle, angles: [-0.10, -0.07, -0.02, 0] },
+      { profile: rClavicle, angles: [0.08, 0.05, 0.02, 0] },
       { profile: lHand, angles: [0, 0, 0, 0] },
       { profile: rHand, angles: [0, 0, 0, 0] },
       ...fingerEntries([1, 0.6, 0.2, 0]),
-      { profile: lThigh, angles: [0.95, 0.62, 0.24, 0] },
-      { profile: rThigh, angles: [-0.42, -0.28, -0.10, 0] },
-      { profile: lCalf, angles: [0.10, 0.08, 0.03, 0] },
-      { profile: rCalf, angles: [1.22, 0.84, 0.32, 0] },
+      { profile: lThigh, angles: [0.75, 0.50, 0.20, 0] },
+      { profile: rThigh, angles: [0.15, 0.10, 0.04, 0] },
+      { profile: lCalf, angles: [0.08, 0.05, 0.02, 0] },
+      { profile: rCalf, angles: [0.85, 0.56, 0.20, 0] },
       { profile: lFoot, angles: [0.08, 0.05, 0.02, 0] },
-      { profile: rFoot, angles: [-0.12, -0.08, -0.03, 0] },
-      { profile: lArm, angles: [0.42, 0.28, 0.10, 0] },
-      { profile: rArm, angles: [-0.20, -0.12, -0.04, 0] },
-      { profile: lForearm, angles: [0.82, 0.54, 0.18, 0] },
-      { profile: rForearm, angles: [-0.18, -0.12, -0.04, 0] },
+      { profile: rFoot, angles: [0.06, 0.04, 0.02, 0] },
+      { profile: lArm, angles: [-0.30, -0.20, -0.08, 0] },
+      { profile: rArm, angles: [0.16, 0.10, 0.04, 0] },
+      { profile: lForearm, angles: [0.72, 0.48, 0.16, 0] },
+      { profile: rForearm, angles: [0.16, 0.10, 0.04, 0] },
     ],
     false,
   );
 
-  addNativeBipedStaticTracks(slideStart, [neck], [0, 0.11, 0.22]);
-  addNativeBipedStaticTracks(slideLoop, [neck], [0, 0.29, 0.58]);
-  addNativeBipedStaticTracks(slideRecovery, [neck], [0, 0.11, 0.23, 0.38]);
 
   // Keep the existing lane-change behavior outside this jump/slide rebuild.
   const laneClip = (direction: "left" | "right") => {
