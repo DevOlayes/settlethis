@@ -28,7 +28,7 @@ export function applyRunnerRenderQuality(bundle: RunnerSceneBundle, quality: Run
   bundle.renderer.shadowMap.enabled = quality === "high";
   bundle.scene.traverse((object) => {
     if (!(object instanceof THREE.DirectionalLight) || object.userData.runnerShadowLight !== true) return;
-    object.castShadow = quality !== "low";
+    object.castShadow = quality === "high";
     object.shadow.map?.dispose();
     object.shadow.map = null;
     if (settings.shadowMapSize > 0) object.shadow.mapSize.set(settings.shadowMapSize, settings.shadowMapSize);
