@@ -243,11 +243,11 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   renderer.shadowMap.autoUpdate = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.94;
+  renderer.toneMappingExposure = 1.04;
   host.appendChild(renderer.domElement);
 
-  scene.add(new THREE.HemisphereLight(0xc8d2df, 0x344032, 1.25));
-  const keyLight = new THREE.DirectionalLight(0xffe5c4, 2.0);
+  scene.add(new THREE.HemisphereLight(0xdce8f4, 0x526047, 1.55));
+  const keyLight = new THREE.DirectionalLight(0xffedcf, 2.35);
   keyLight.position.set(-8, 15, 7);
   keyLight.userData.runnerShadowLight = true;
   keyLight.castShadow = renderQuality !== "low";
@@ -263,10 +263,10 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   scene.add(keyLight);
 
   // Broad fill keeps the player's kit and obstacles legible in covered sections.
-  const frontFill = new THREE.DirectionalLight(0xdce5f0, 0.48);
+  const frontFill = new THREE.DirectionalLight(0xe6edf6, 0.68);
   frontFill.position.set(7, 8, 10);
   scene.add(frontFill);
-  const coolRim = new THREE.DirectionalLight(0x9bb4cc, 0.12);
+  const coolRim = new THREE.DirectionalLight(0xb4cce0, 0.2);
   coolRim.position.set(0, 8, -12);
   scene.add(coolRim);
 
@@ -451,6 +451,28 @@ function addClubGroundSideStands(root: THREE.Group, tileLength: number, sections
       fascia.position.set(side * 10.88, 0.86, z);
       root.add(fascia);
     }
+
+    // Stadium floodlights are mounted above the stands and aimed across the pitch.
+    // A compact number of non-shadow-casting lights keeps the mobile render affordable.
+    if (section % 2 === 0) {
+      for (const side of [-1, 1]) {
+        const mast = new THREE.Mesh(new THREE.BoxGeometry(0.22, 4.1, 0.22), darkSteel);
+        mast.position.set(side * 13.9, 7.45, z);
+        root.add(mast);
+
+        const bank = new THREE.Mesh(
+          new THREE.BoxGeometry(1.7, 0.32, 0.62),
+          new THREE.MeshBasicMaterial({ color: 0xffedcf }),
+        );
+        bank.position.set(side * 13.9, 9.55, z);
+        root.add(bank);
+
+        const floodlight = new THREE.PointLight(0xffe8c7, 1150, 42, 2);
+        floodlight.position.set(side * 13.5, 9.1, z);
+        floodlight.castShadow = false;
+        root.add(floodlight);
+      }
+    }
   }
 }
 
@@ -479,10 +501,10 @@ export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle, shoul
     const list = Array.isArray(object.material) ? object.material : [object.material];
     list.forEach((surface) => {
       if ("color" in surface && (surface as THREE.MeshStandardMaterial).color?.isColor) {
-        (surface as THREE.MeshStandardMaterial).color.multiplyScalar(0.74);
+        (surface as THREE.MeshStandardMaterial).color.multiplyScalar(0.88);
       }
       if ("emissive" in surface && (surface as THREE.MeshStandardMaterial).emissive?.isColor) {
-        (surface as THREE.MeshStandardMaterial).emissive.multiplyScalar(0.45);
+        (surface as THREE.MeshStandardMaterial).emissive.multiplyScalar(0.65);
       }
     });
   });
@@ -503,4 +525,12 @@ export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle, shoul
   }
 
   addClubGroundSideStands(bundle.environmentRoot, tileLength, 5);
+
+  // Club Ground uses the same 180m world-wrap as the runner engine.
+  // Keep a fully prepared second copy one loop behind so the pitch,
+  // stands and lights remain continuous when world.position.z wraps.
+  const loopCopy = bundle.environmentRoot.clone(true);
+  loopCopy.name = "SETHIS club-ground seamless loop copy";
+  loopCopy.position.z = -RUNNER_CONFIG.world.length;
+  bundle.world.add(loopCopy);
 }
