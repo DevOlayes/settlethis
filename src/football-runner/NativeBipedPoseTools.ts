@@ -35,6 +35,7 @@ function readQuaternionAtFrame(track: THREE.QuaternionKeyframeTrack, frame: numb
 export function getNativeBipedJointProfile(
   referenceRunClip: THREE.AnimationClip,
   bone: THREE.Bone | undefined,
+  model: THREE.Object3D,
 ): NativeBipedJointProfile | undefined {
   if (!bone) return undefined;
   const target = normalizedName(bone.name);
@@ -46,46 +47,46 @@ export function getNativeBipedJointProfile(
   if (!track || track.times.length < 3) return undefined;
 
   const reference = readQuaternionAtFrame(track, 0);
-  const covariance = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
-  const dominantAxis = new THREE.Vector3(1, 0, 0);
-  let maxExcursion = 0;
 
+  // Use the actual Sports Male 03 hierarchy to derive anatomical flexion.
+  // The run clip supplies the reference pose and exact bone-track mapping;
+  // its gait's dominant rotational axis is NOT a joint hinge axis.
+  model.updateWorldMatrix(true, true);
+  const childBones = bone.children.filter((child): child is THREE.Bone => child instanceof THREE.Bone);
+  const child = normalizedName(bone.name) === "bip01 pelvis"
+    ? childBones.find((candidate) => /spine/i.test(candidate.name)) ?? childBones[0]
+    : childBones[0];
+  if (!child || child.position.lengthSq() < 1e-8) return undefined;
+
+  const modelWorld = model.getWorldQuaternion(new THREE.Quaternion());
+  const forwardWorld = new THREE.Vector3(0, 0, 1).applyQuaternion(modelWorld).normalize();
+  const upWorld = new THREE.Vector3(0, 1, 0).applyQuaternion(modelWorld).normalize();
+  const inverseBoneWorld = bone.getWorldQuaternion(new THREE.Quaternion()).invert();
+  const forwardLocal = forwardWorld.clone().applyQuaternion(inverseBoneWorld).normalize();
+  const upLocal = upWorld.clone().applyQuaternion(inverseBoneWorld).normalize();
+  const segmentLocal = child.position.clone().normalize();
+
+  // Positive flexion must move the child segment toward the player's forward
+  // direction. This is calculated from the real parent/child geometry, so
+  // mirrored left/right joints naturally receive opposite local axis signs.
+  let axis = segmentLocal.clone().cross(forwardLocal);
+  const footLike = axis.lengthSq() < 1e-8;
+  if (footLike) axis = forwardLocal.clone().cross(upLocal);
+  if (axis.lengthSq() < 1e-8) return undefined;
+  axis.normalize();
+  const positiveMotion = axis.clone().cross(segmentLocal);
+  const signReference = footLike ? upLocal : forwardLocal;
+  if (positiveMotion.dot(signReference) < 0) axis.negate();
+
+  let maxExcursion = 0;
   for (let frame = 0; frame < track.times.length; frame++) {
     const current = readQuaternionAtFrame(track, frame);
     const delta = reference.clone().invert().multiply(current).normalize();
-    if (delta.w < 0) delta.set(-delta.x, -delta.y, -delta.z, -delta.w);
-    const vector = new THREE.Vector3(delta.x, delta.y, delta.z);
-    const length = vector.length();
-    if (length < 1e-7) continue;
-    const angle = 2 * Math.atan2(length, THREE.MathUtils.clamp(delta.w, -1, 1));
-    const axis = vector.multiplyScalar(1 / length);
-    const weighted = axis.multiplyScalar(angle);
-    const values = [weighted.x, weighted.y, weighted.z];
-    for (let row = 0; row < 3; row++) {
-      for (let column = 0; column < 3; column++) covariance[row][column] += values[row] * values[column];
-    }
-    if (angle > maxExcursion) {
-      maxExcursion = angle;
-      dominantAxis.copy(axis);
-    }
+    const angle = 2 * Math.acos(THREE.MathUtils.clamp(Math.abs(delta.w), -1, 1));
+    maxExcursion = Math.max(maxExcursion, angle);
   }
 
-  if (maxExcursion < 0.025) return undefined;
-
-  // Power iteration obtains the dominant direction of the full-cycle
-  // rotational covariance. Align its sign to the largest observed swing.
-  let axis = dominantAxis.clone();
-  for (let iteration = 0; iteration < 32; iteration++) {
-    const next = new THREE.Vector3(
-      covariance[0][0] * axis.x + covariance[0][1] * axis.y + covariance[0][2] * axis.z,
-      covariance[1][0] * axis.x + covariance[1][1] * axis.y + covariance[1][2] * axis.z,
-      covariance[2][0] * axis.x + covariance[2][1] * axis.y + covariance[2][2] * axis.z,
-    );
-    if (next.lengthSq() > 1e-12) axis.copy(next.normalize());
-  }
-  if (axis.dot(dominantAxis) < 0) axis.negate();
-
-  return { bone, track, axis: axis.normalize(), reference, maxExcursion };
+  return { bone, track, axis, reference, maxExcursion };
 }
 
 /**
