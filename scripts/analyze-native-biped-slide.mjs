@@ -175,16 +175,16 @@ const leftClavicle = model.getObjectByName("Bip01_L_Clavicle");
 const leftHand = model.getObjectByName("Bip01_L_Hand");
 const worldPoint = (object) => object ? object.getWorldPosition(new THREE.Vector3()).toArray().map((value) => Number(value.toFixed(4))) : null;
 const palmTargetWorld = model.localToWorld(new THREE.Vector3(0.34, 0, -0.16));
-palmTargetWorld.y = -0.14;
+palmTargetWorld.y = -0.128;
 console.log("SLIDE_CONTACT_AUDIT", JSON.stringify({
   modelHeight: Number(height.toFixed(4)),
   modelScale: Number(scale.toFixed(4)),
   baseY: Number(baseY.toFixed(4)),
   rootDrop: 0.93,
   pitchY: -0.12,
-  palmTargetY: -0.14,
-  leadFootTargetY: 0.1525,
-  trailingFootTargetY: -0.008,
+  palmTargetY: -0.128,
+  leadFootTargetY: 0.047,
+  trailingFootTargetY: 0.085,
   pitchSurfaceY: -0.113,
   simulatedLoopFrames: 175,
   slideStart: Object.fromEntries(Object.entries(startErrors).map(([k,v])=>[k,Number(v.toFixed(4))])),
