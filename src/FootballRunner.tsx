@@ -236,11 +236,8 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
           ) : phase !== "running" ? (
             <div className="runner-overlay">
               {phase === "ready" && <>
-                <div className="runner-intro-art" aria-hidden="true">
-                  <div className="runner-intro-pitch"><i/><i/><i/></div>
-                  <div className="runner-intro-ball">⚽</div>
-                  <span className="runner-intro-speed">ENDLESS MODE</span>
-                  <span className="runner-intro-mark">SETHIS · FOOTBALL RUNNER</span>
+                <div className="runner-lobby-hero" aria-label="Club Ground football course">
+                  <span>CLUB GROUND · ENDLESS RUN</span>
                 </div>
                 <span className="runner-overline">THREE LANES. NO SECOND CHANCES.</span>
                 <h1>Own the pitch.</h1>
