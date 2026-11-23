@@ -301,7 +301,7 @@ export function createNativeBipedSlideContactRig(
         [leftFoot, leftCalf, leftThigh], 14,
       );
       const trailingFootError = solveCcdChain(
-        model, rightToe, targetAtHeight(0.14, 0.04, groundY + 0.087),
+        model, rightToe, targetAtHeight(0.14, 0.04, groundY + 0.112),
         [rightFoot, rightCalf, rightThigh], 10,
       );
       return { shoulder: shoulderError, palm: palmError, leadFoot: leadFootError, trailingFoot: trailingFootError };
