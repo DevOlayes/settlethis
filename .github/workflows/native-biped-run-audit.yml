@@ -1,0 +1,20 @@
+name: Native Biped run frame audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/analyze-native-biped-run.mjs"
+      - ".github/workflows/native-biped-run-audit.yml"
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Decode and inspect every native run keyframe
+        run: node scripts/analyze-native-biped-run.mjs
