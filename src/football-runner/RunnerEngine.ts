@@ -613,6 +613,7 @@ export class RunnerEngine {
     const ballRowChance = config.ballChanceStart
       - (config.ballChanceStart - config.ballChanceMinimum) * difficulty;
 
+    // Give players occasional clean football runs to aim for between obstacle sets.
     if (Math.random() < ballRowChance) {
       const lane = lanes[Math.floor(Math.random() * lanes.length)];
       const count = Math.random() < config.longBallLineChance ? 3 : 2;
@@ -626,25 +627,33 @@ export class RunnerEngine {
       + (config.doubleObstacleChanceMaximum - config.doubleObstacleChanceStart) * difficulty;
     const obstacleCount = Math.random() < doubleObstacleChance ? 2 : 1;
     const laneOptions = obstacleCount === 1 ? lanes.filter((lane) => lane !== this.lastObstacleLane) : lanes;
-    const shuffled = [...laneOptions].sort(() => Math.random() - 0.5);
+    // Fisher-Yates avoids the bias of sorting lanes with a random comparator.
+    const shuffled = [...laneOptions];
+    for (let index = shuffled.length - 1; index > 0; index--) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
     const blockedLanes = shuffled.slice(0, obstacleCount);
 
-    // One or two lanes may be challenged, but at least one complete lane stays open.
-    for (const lane of blockedLanes) {
+    // Paired obstacles are staggered, creating a readable slalom instead of a flat wall.
+    blockedLanes.forEach((lane, index) => {
       const variant = this.nextObstacleVariant();
-      this.spawnObject(`obstacle-${variant}`, lane, z);
+      const stagger = obstacleCount === 2 ? index * 6.5 : 0;
+      this.spawnObject(`obstacle-${variant}`, lane, z - stagger);
       this.lastObstacleLane = lane;
-    }
+    });
 
-    // A small football line sometimes rewards taking the remaining safe route.
+    // Reward the open route with a short, visible football line players can choose to chase.
     if (Math.random() < config.safeLaneBallChance) {
       const safeLane = lanes.find((lane) => !blockedLanes.includes(lane));
       if (safeLane !== undefined) {
         this.spawnObject("collectible", safeLane, z - config.safeLaneBallOffset);
+        if (Math.random() < 0.62) {
+          this.spawnObject("collectible", safeLane, z - config.safeLaneBallOffset - 2.9);
+        }
       }
     }
   }
-
   private updateChaseCamera(delta: number, playerPosition: THREE.Vector3): void {
     const cameraConfig = RUNNER_CONFIG.camera;
     const positionBlend = 1 - Math.exp(-cameraConfig.positionDamping * delta);
