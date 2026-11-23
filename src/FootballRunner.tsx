@@ -7,7 +7,7 @@ import {
   decodeRunnerChallenge,
   decodeRunnerChallengeResult,
 } from "./football-runner/challenges";
-import type { RunnerControls, RunnerHud, RunnerPhase, RunnerRecords, RunnerRunRecord, RunnerSummary } from "./football-runner/types";
+import type { RunnerControls, RunnerHud, RunnerPhase, RunnerRecords, RunnerSummary } from "./football-runner/types";
 import "./FootballRunner.css";
 
 type Props = { telegramUser: TelegramUser | null; onBack: () => void; preview?: boolean };
