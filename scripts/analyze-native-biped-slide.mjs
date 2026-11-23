@@ -89,16 +89,40 @@ const startAction = mixer.clipAction(slideStart);
 startAction.setLoop(THREE.LoopOnce, 1);
 startAction.clampWhenFinished = true;
 startAction.play();
-mixer.update(slideStart.duration);
 const contactRig = createNativeBipedSlideContactRig(model);
 if (!contactRig) throw new Error("Could not create the slide contact chains");
-const startErrors = contactRig.solve(-0.12);
+let startErrors;
+for (let frame = 0; frame < 14; frame++) {
+  mixer.update(slideStart.duration / 14);
+  startErrors = contactRig.solve(-0.12);
+}
+startAction.stop();
 
 const loopAction = mixer.clipAction(slideLoop);
+loopAction.reset();
 loopAction.setLoop(THREE.LoopRepeat, Infinity);
 loopAction.play();
-mixer.update(0.29);
-const loopErrors = contactRig.solve(-0.12);
+let loopErrors;
+const maxErrors = { shoulder: 0, palm: 0, leadFoot: 0, trailingFoot: 0 };
+const neck = model.getObjectByName("Bip01_Neck");
+const spine1 = model.getObjectByName("Bip01_Spine1");
+let firstNeck;
+let firstSpine1;
+let maxNeckCycleDrift = 0;
+let maxSpine1CycleDrift = 0;
+for (let frame = 0; frame < 175; frame++) {
+  mixer.update(1 / 60);
+  loopErrors = contactRig.solve(-0.12);
+  for (const key of Object.keys(maxErrors)) maxErrors[key] = Math.max(maxErrors[key], loopErrors[key]);
+  if (frame === 0) {
+    firstNeck = neck?.quaternion.clone();
+    firstSpine1 = spine1?.quaternion.clone();
+  }
+  if (frame % 35 === 0) {
+    if (firstNeck && neck) maxNeckCycleDrift = Math.max(maxNeckCycleDrift, firstNeck.angleTo(neck.quaternion));
+    if (firstSpine1 && spine1) maxSpine1CycleDrift = Math.max(maxSpine1CycleDrift, firstSpine1.angleTo(spine1.quaternion));
+  }
+}
 
 console.log("SLIDE_CONTACT_AUDIT", JSON.stringify({
   modelHeight: Number(height.toFixed(4)),
@@ -107,6 +131,10 @@ console.log("SLIDE_CONTACT_AUDIT", JSON.stringify({
   rootDrop: 0.46,
   pitchY: -0.12,
   targetY: -0.112,
+  simulatedLoopFrames: 175,
   slideStart: Object.fromEntries(Object.entries(startErrors).map(([k,v])=>[k,Number(v.toFixed(4))])),
-  slideLoop: Object.fromEntries(Object.entries(loopErrors).map(([k,v])=>[k,Number(v.toFixed(4))])),
+  slideLoopFinal: Object.fromEntries(Object.entries(loopErrors).map(([k,v])=>[k,Number(v.toFixed(4))])),
+  slideLoopMax: Object.fromEntries(Object.entries(maxErrors).map(([k,v])=>[k,Number(v.toFixed(4))])),
+  maxNeckCycleDriftDeg: Number(THREE.MathUtils.radToDeg(maxNeckCycleDrift).toFixed(3)),
+  maxSpine1CycleDriftDeg: Number(THREE.MathUtils.radToDeg(maxSpine1CycleDrift).toFixed(3)),
 }));
