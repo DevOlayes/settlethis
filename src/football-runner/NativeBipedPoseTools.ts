@@ -272,7 +272,7 @@ export function createNativeBipedSlideContactRig(
       const clavicleParentInverse = leftClavicle.parent
         ? leftClavicle.parent.getWorldQuaternion(new THREE.Quaternion()).invert()
         : new THREE.Quaternion();
-      leftClavicle.position.add(new THREE.Vector3(0, -0.05, 0).applyQuaternion(clavicleParentInverse));
+      leftClavicle.position.add(new THREE.Vector3(0, -0.026, 0).applyQuaternion(clavicleParentInverse));
       model.updateMatrixWorld(true);
       // Keep the authored torso and head pose fixed. The previous solver
       // dragged the neck and spine to reposition the shoulder, creating the
