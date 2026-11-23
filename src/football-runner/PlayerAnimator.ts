@@ -179,8 +179,8 @@ export class PlayerAnimator {
     if (this.riggedKickRemaining > 0 && this.actionByMotion.has("kick")) return "kick";
 
     if (input.sliding) {
-      const slideStartDuration = this.actionByMotion.get("slideStart")?.getClip().duration ?? 0.24;
-      if (this.slideElapsed < Math.min(0.36, Math.max(0.18, slideStartDuration * 0.42)) && this.actionByMotion.has("slideStart")) return "slideStart";
+      const slideStartDuration = this.actionByMotion.get("slideStart")?.getClip().duration ?? 0.22;
+      if (this.slideElapsed < slideStartDuration && this.actionByMotion.has("slideStart")) return "slideStart";
       if (this.actionByMotion.has("slideLoop")) return "slideLoop";
       if (this.actionByMotion.has("slideStart")) return "slideStart";
       if (this.actionByMotion.has("crouch")) return "crouch";
