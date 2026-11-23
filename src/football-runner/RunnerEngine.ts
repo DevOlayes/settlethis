@@ -504,7 +504,7 @@ export class RunnerEngine {
 
     if (this.jumpProgress > 0) {
       this.jumpProgress = Math.max(0, this.jumpProgress - delta);
-      player.position.y = Math.sin((config.movement.jumpDuration - this.jumpProgress) * Math.PI / config.movement.jumpDuration) * config.movement.jumpHeight;
+      player.position.y = Math.pow(Math.sin((config.movement.jumpDuration - this.jumpProgress) * Math.PI / config.movement.jumpDuration), 0.62) * config.movement.jumpHeight;
     } else {
       player.position.y = 0;
     }
