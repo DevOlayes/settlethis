@@ -151,7 +151,8 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         if ((phase === "slideStart" || phase === "slideLoop") && slideContactRig) {
           const errors = slideContactRig.solve(-0.025);
           if (phase === "slideLoop" && !contactAuditLogged) {
-            addCheck("Pitch contact residuals · palm " + errors.palm.toFixed(3) +
+            addCheck("Pitch contact residuals · shoulder " + errors.shoulder.toFixed(3) +
+              "m · palm " + errors.palm.toFixed(3) +
               "m · lead foot " + errors.leadFoot.toFixed(3) +
               "m · trailing foot " + errors.trailingFoot.toFixed(3) + "m.");
             contactAuditLogged = true;
