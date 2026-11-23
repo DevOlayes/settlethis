@@ -236,15 +236,15 @@ export function createNativeBipedSlideContactRig(
       );
       const palmError = solveCcdChain(
         model, palm, targetAt(-0.34, -0.16, groundY),
-        [leftForearm, leftUpperArm, leftClavicle], 10,
+        [leftForearm, leftUpperArm, leftClavicle], 14,
       );
       const leadFootError = solveCcdChain(
-        model, leftToe, targetAt(-0.14, 0.52, groundY),
-        [leftFoot, leftCalf, leftThigh], 8,
+        model, leftToe, targetAt(-0.14, 0.44, groundY),
+        [leftFoot, leftCalf, leftThigh], 14,
       );
       const trailingFootError = solveCcdChain(
         model, rightToe, targetAt(0.14, 0.04, groundY),
-        [rightFoot, rightCalf, rightThigh], 8,
+        [rightFoot, rightCalf, rightThigh], 10,
       );
       return { shoulder: shoulderError, palm: palmError, leadFoot: leadFootError, trailingFoot: trailingFootError };
     },
