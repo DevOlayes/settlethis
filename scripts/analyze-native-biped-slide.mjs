@@ -140,6 +140,7 @@ if (mesh?.geometry.getAttribute("skinIndex") && mesh.geometry.getAttribute("skin
   const groups = {
     leftFoot: ["Bip01_L_Thigh", "Bip01_L_Calf", "Bip01_L_Foot", "Bip01_L_Toe0"],
     rightFoot: ["Bip01_R_Thigh", "Bip01_R_Calf", "Bip01_R_Foot", "Bip01_R_Toe0"],
+    torso: ["Bip01_Pelvis", "Bip01_Spine", "Bip01_Spine1", "Bip01_Spine2", "Bip01_Neck", "Bip01_Head", "Bip01_L_Clavicle", "Bip01_R_Clavicle", "Bip01_L_UpperArm", "Bip01_R_UpperArm"],
     leftHand: ["Bip01_L_Hand", "Bip01_L_Finger0", "Bip01_L_Finger01", "Bip01_L_Finger02", "Bip01_L_Finger1", "Bip01_L_Finger11", "Bip01_L_Finger12", "Bip01_L_Finger2", "Bip01_L_Finger21", "Bip01_L_Finger22", "Bip01_L_Finger3", "Bip01_L_Finger31", "Bip01_L_Finger32", "Bip01_L_Finger4", "Bip01_L_Finger41", "Bip01_L_Finger42"],
   };
   for (const [group, names] of Object.entries(groups)) {
