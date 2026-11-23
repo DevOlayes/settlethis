@@ -33,7 +33,7 @@ export const RUNNER_CONFIG = {
     laneSnapTolerance: 0.035,
     inputSwipeThreshold: 34,
     jumpDuration: 1.02,
-    jumpHeight: 1.5,
+    jumpHeight: 1.65,
     slideDuration: 0.65,
   },
   spawning: {
