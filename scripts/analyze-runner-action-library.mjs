@@ -122,7 +122,8 @@ const targets = [
 ];
 for (const pack of targets) {
   const compressed = await readFile("public/assets/football-runner/animations/" + pack.file);
-  const raw = gunzipSync(compressed);
+  const rawBytes = gunzipSync(compressed);
+  const raw = rawBytes.buffer.slice(rawBytes.byteOffset, rawBytes.byteOffset + rawBytes.byteLength);
   const canonical = canonicalizeGLBBones(raw);
   const source = await loader.parseAsync(rewriteWithoutTextures(canonical.buffer), "file:///");
   for (const name of pack.names) {
