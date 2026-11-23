@@ -69,7 +69,7 @@ export class RunnerEngine {
     this.bundle = createRunnerScene(host);
     if (environment === "club-ground") {
       this.environmentReady = false;
-      void loadClubGroundEnvironment(this.bundle).then(() => {
+      void loadClubGroundEnvironment(this.bundle, () => this.disposed).then(() => {
         this.environmentReady = true;
         this.tryStartWhenReady();
       }).catch((error) => {
