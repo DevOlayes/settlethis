@@ -2,9 +2,9 @@ import * as THREE from "three";
 import type { RunnerSceneBundle, RunnerRenderQuality } from "./types";
 
 const QUALITY_SETTINGS: Record<RunnerRenderQuality, { pixelRatio: number; shadowMapSize: number }> = {
-  low: { pixelRatio: 0.85, shadowMapSize: 0 },
-  balanced: { pixelRatio: 1.05, shadowMapSize: 512 },
-  high: { pixelRatio: 1.3, shadowMapSize: 1024 },
+  low: { pixelRatio: 0.72, shadowMapSize: 0 },
+  balanced: { pixelRatio: 0.88, shadowMapSize: 0 },
+  high: { pixelRatio: 1.08, shadowMapSize: 512 },
 };
 
 export function getInitialRunnerRenderQuality(): RunnerRenderQuality {
@@ -25,7 +25,7 @@ export function applyRunnerRenderQuality(bundle: RunnerSceneBundle, quality: Run
   bundle.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, settings.pixelRatio));
   bundle.renderer.setSize(size.x, size.y, false);
 
-  bundle.renderer.shadowMap.enabled = quality !== "low";
+  bundle.renderer.shadowMap.enabled = quality === "high";
   bundle.scene.traverse((object) => {
     if (!(object instanceof THREE.DirectionalLight) || object.userData.runnerShadowLight !== true) return;
     object.castShadow = quality !== "low";
