@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import type { PlayerCharacter } from "./PlayerCharacter";
 import { canonicalizeBoneName } from "@three-ws/retarget";
+import {
+  createNativeBipedSlideContactRig,
+  type NativeBipedSlideContactRig,
+} from "./NativeBipedPoseTools";
 
 export type PlayerAnimationInput = {
   speedRatio: number;
@@ -58,12 +62,14 @@ export class PlayerAnimator {
   private laneLeanActive = false;
   private riggedModel?: THREE.Object3D;
   private riggedModelBaseY = 0;
+  private slideContactRig?: NativeBipedSlideContactRig;
 
   constructor(private readonly character: PlayerCharacter) {}
 
   attachRiggedModel(model: THREE.Object3D, sourceClips: THREE.AnimationClip[]): void {
     this.riggedModel = model;
     this.riggedModelBaseY = model.position.y;
+    this.slideContactRig = createNativeBipedSlideContactRig(model);
     const clips = [...sourceClips];
     if (!clips.some((clip) => /run|jog|walk|locomotion/i.test(clip.name))) {
       const fallbackRun = this.createProceduralRiggedRunClip(model);
@@ -138,7 +144,10 @@ export class PlayerAnimator {
     const blendingJump = motion.startsWith("jump");
     const blendingLane = motion === "laneLeft" || motion === "laneRight";
     const blendingOverlay = blendingJump || blendingLane;
-    next.setEffectiveWeight(blendingOverlay ? 0.82 : 1);
+    // Jump clips are true additive deltas derived from the native run. Keep
+    // the run at full weight beneath them; only lane turns retain the older
+    // weighted normal-blend overlay.
+    next.setEffectiveWeight(blendingLane ? 0.82 : 1);
     next.setEffectiveTimeScale(1);
     const loopOnce = ONESHOT_MOTIONS.has(motion) && !(motion.startsWith("slide") && next === this.actionByMotion.get("crouch"));
     if (loopOnce && next !== this.actionByMotion.get("run")) {
@@ -151,9 +160,12 @@ export class PlayerAnimator {
     next.fadeIn(previous ? 0.16 : 0);
     next.play();
     if (previous && previous !== next) {
-      if (previous === runAction && blendingOverlay) {
-        // A quiet run layer keeps the legs cycling through takeoff, flight and
-        // landing instead of freezing the stride while the jump pose plays.
+      if (previous === runAction && blendingJump) {
+        // Additive jump deltas sit on the uninterrupted native run at full
+        // weight, so the stride remains alive without diluting the action pose.
+        previous.setEffectiveWeight(1);
+        previous.play();
+      } else if (previous === runAction && blendingLane) {
         previous.setEffectiveWeight(0.28);
         previous.play();
       } else {
@@ -214,7 +226,7 @@ export class PlayerAnimator {
       // Lower the complete rig farther into the slide so the planted
       // support hand and sliding leg meet the pitch instead of hovering.
       // The recovery eases back to the exact imported model base height.
-      const targetY = this.riggedModelBaseY - (input.sliding ? 0.34 : 0);
+      const targetY = this.riggedModelBaseY - (input.sliding ? 0.46 : 0);
       this.riggedModel.position.y = THREE.MathUtils.damp(
         this.riggedModel.position.y, targetY, input.sliding ? 22 : 12, delta,
       );
@@ -247,6 +259,10 @@ export class PlayerAnimator {
       this.character.root.rotation.y, input.laneLean * 0.09, 9, delta,
     );
     this.riggedMixer.update(delta);
+    if (input.sliding && this.riggedModel && this.slideContactRig) {
+      const groundY = this.character.root.getWorldPosition(new THREE.Vector3()).y;
+      this.slideContactRig.solve(groundY);
+    }
   }
 
   reset(): void {
