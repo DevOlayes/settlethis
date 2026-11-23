@@ -126,6 +126,49 @@ for (let frame = 0; frame < 175; frame++) {
   }
 }
 
+model.updateMatrixWorld(true);
+const skinnedMeshes = [];
+model.traverse((object) => { if (object.isSkinnedMesh) skinnedMeshes.push(object); });
+const mesh = skinnedMeshes[0];
+let meshContact = {};
+if (mesh?.geometry.getAttribute("skinIndex") && mesh.geometry.getAttribute("skinWeight")) {
+  mesh.skeleton.update();
+  const skinIndex = mesh.geometry.getAttribute("skinIndex");
+  const skinWeight = mesh.geometry.getAttribute("skinWeight");
+  const position = mesh.geometry.getAttribute("position");
+  const boneIndices = new Map(mesh.skeleton.bones.map((bone, index) => [bone.name, index]));
+  const groups = {
+    leftFoot: ["Bip01_L_Thigh", "Bip01_L_Calf", "Bip01_L_Foot", "Bip01_L_Toe0"],
+    rightFoot: ["Bip01_R_Thigh", "Bip01_R_Calf", "Bip01_R_Foot", "Bip01_R_Toe0"],
+    leftHand: ["Bip01_L_Hand", "Bip01_L_Finger0", "Bip01_L_Finger01", "Bip01_L_Finger02", "Bip01_L_Finger1", "Bip01_L_Finger11", "Bip01_L_Finger12", "Bip01_L_Finger2", "Bip01_L_Finger21", "Bip01_L_Finger22", "Bip01_L_Finger3", "Bip01_L_Finger31", "Bip01_L_Finger32", "Bip01_L_Finger4", "Bip01_L_Finger41", "Bip01_L_Finger42"],
+  };
+  for (const [group, names] of Object.entries(groups)) {
+    const indices = new Set(names.map((name) => boneIndices.get(name)).filter((index) => index !== undefined));
+    let minY = Infinity;
+    let maxY = -Infinity;
+    let vertices = 0;
+    for (let vertex = 0; vertex < position.count; vertex++) {
+      let influenced = false;
+      for (let slot = 0; slot < 4; slot++) {
+        if (indices.has(skinIndex.getComponent(vertex, slot)) && skinWeight.getComponent(vertex, slot) > 0.15) influenced = true;
+      }
+      if (!influenced) continue;
+      const point = new THREE.Vector3().fromBufferAttribute(position, vertex);
+      mesh.applyBoneTransform(vertex, point);
+      mesh.localToWorld(point);
+      minY = Math.min(minY, point.y);
+      maxY = Math.max(maxY, point.y);
+      vertices++;
+    }
+    meshContact[group] = {
+      vertices,
+      minY: Number(minY.toFixed(4)),
+      maxY: Number(maxY.toFixed(4)),
+      minSurfaceDelta: Number((minY - (-0.113)).toFixed(4)),
+    };
+  }
+}
+
 console.log("SLIDE_CONTACT_AUDIT", JSON.stringify({
   modelHeight: Number(height.toFixed(4)),
   modelScale: Number(scale.toFixed(4)),
@@ -139,4 +182,5 @@ console.log("SLIDE_CONTACT_AUDIT", JSON.stringify({
   slideLoopMax: Object.fromEntries(Object.entries(maxErrors).map(([k,v])=>[k,Number(v.toFixed(4))])),
   maxNeckCycleDriftDeg: Number(THREE.MathUtils.radToDeg(maxNeckCycleDrift).toFixed(3)),
   maxSpine1CycleDriftDeg: Number(THREE.MathUtils.radToDeg(maxSpine1CycleDrift).toFixed(3)),
+  skinnedMeshContact: meshContact,
 }));
