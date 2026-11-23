@@ -479,6 +479,12 @@ export function disposeRunnerCharacterModel(model: THREE.Object3D): void {
       Object.values(surface).forEach((value) => {
         if (value instanceof THREE.Texture) textures.add(value);
       });
+      const kitTextures = surface.userData?.sethisKitTextures;
+      if (Array.isArray(kitTextures)) {
+        kitTextures.forEach((value: unknown) => {
+          if (value instanceof THREE.Texture) textures.add(value);
+        });
+      }
     });
   });
   textures.forEach((texture) => texture.dispose());
