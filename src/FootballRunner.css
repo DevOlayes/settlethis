@@ -168,6 +168,6 @@
 .runner-collect-fly span{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#fff4e9;font-size:16px;box-shadow:inset 0 0 0 2px #e98272}
 .runner-collect-fly b{font-size:10px;font-weight:1000;letter-spacing:.06em}
 .runner-points-value{display:inline-block;animation:runner-score-pop .42s cubic-bezier(.2,.85,.3,1.3)}
-@keyframes runner-coin-to-score{0%{opacity:0;transform:translate(-50%,18px) scale(.65)}14%{opacity:1;transform:translate(-50%,-10px) scale(1.08)}72%{opacity:1}100%{opacity:0;transform:translate(112px,-330px) scale(.38)}}
+@keyframes runner-coin-to-score{0%{opacity:0;transform:translate(-50%,18px) scale(.65)}14%{opacity:1;transform:translate(-50%,-10px) scale(1.08)}72%{opacity:1}100%{opacity:0;transform:translate(-48px,-330px) scale(.38)}}
 @keyframes runner-score-pop{0%{transform:scale(1);color:#f4f1f7}45%{transform:scale(1.24);color:#e98272;text-shadow:0 0 15px #e9827299}100%{transform:scale(1);color:#f4f1f7;text-shadow:none}}
 @media(prefers-reduced-motion:reduce){.runner-collect-fly,.runner-points-value{animation-duration:.01ms;animation-iteration-count:1}}
