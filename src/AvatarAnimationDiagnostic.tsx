@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { loadRunnerAnimationManifest, loadRunnerCharacter, disposeRunnerCharacterModel } from "./football-runner/RiggedPlayerAsset";
 import { createNativeBipedJumpClips } from "./football-runner/NativeBipedJump";
 import { createNativeBipedManeuverClips, NATIVE_BIPED_MANEUVER_PHASES } from "./football-runner/NativeBipedManeuvers";
+import { createNativeBipedSlideContactRig } from "./football-runner/NativeBipedPoseTools";
 
 type Props = { onBack: () => void };
 
@@ -27,6 +28,8 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
     let modelBaseX = 0;
     let modelBaseY = 0;
     let modelBaseZ = 0;
+    let slideContactRig: ReturnType<typeof createNativeBipedSlideContactRig>;
+    let contactAuditLogged = false;
     let playbackReady = false;
     let previewCycle = 0;
     const phaseNames = ["run", "jumpTakeoff", "jumpAir", "jumpLand", "runAfterJump", "slideStart", "slideLoop", "slideRecovery", "runAfterSlide", "laneLeft", "runAfterLeft", "laneRight", "runAfterRight"];
@@ -85,7 +88,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
       if (!isRun || !next.isRunning()) next.reset();
       next.enabled = true;
       next.paused = false;
-      next.setEffectiveWeight(isRun && ["jumpTakeoff", "jumpAir", "jumpLand"].includes(name) ? 0.28 : 1);
+      next.setEffectiveWeight(1);
       next.setEffectiveTimeScale(1);
       const looping = name === "run" || name === "jumpAir" || name === "slideLoop";
       next.setLoop(looping ? THREE.LoopRepeat : THREE.LoopOnce, looping ? Infinity : 1);
@@ -94,7 +97,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
       next.play();
       if (previous && previous !== next) {
         if (previous === phaseActions.run && ["jumpTakeoff", "jumpAir", "jumpLand"].includes(name)) {
-          previous.setEffectiveWeight(0.28);
+          previous.setEffectiveWeight(1);
         } else if (next === phaseActions.run) {
           previous.fadeOut(0.16);
           
@@ -121,20 +124,16 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         } else if (model) {
           let verticalOffset = 0;
           let lateralOffset = 0;
-          if (phase === "slideStart") verticalOffset = -0.24 * eased;
-          if (phase === "slideLoop") verticalOffset = -0.24;
-          if (phase === "slideRecovery") verticalOffset = -0.24 * (1 - eased);
+          if (phase === "slideStart") verticalOffset = -0.46 * eased;
+          if (phase === "slideLoop") verticalOffset = -0.46;
+          if (phase === "slideRecovery") verticalOffset = -0.46 * (1 - eased);
           if (phase === "laneLeft") lateralOffset = -0.62 * eased;
           if (phase === "runAfterLeft") lateralOffset = -0.62 * (1 - eased);
           if (phase === "laneRight") lateralOffset = 0.62 * eased;
           if (phase === "runAfterRight") lateralOffset = 0.62 * (1 - eased);
-          let slideProgress = 0;
-          if (phase === "slideStart") slideProgress = eased;
-          if (phase === "slideLoop") slideProgress = 1;
-          if (phase === "slideRecovery") slideProgress = 1 - eased;
           const laneSign = phase === "laneLeft" ? 1 : phase === "laneRight" ? -1 : 0;
           const laneBank = laneSign * Math.sin(phaseProgress * Math.PI) * 0.17;
-          model.position.set(modelBaseX + lateralOffset, modelBaseY + verticalOffset, modelBaseZ + slideProgress * 0.24);
+          model.position.set(modelBaseX + lateralOffset, modelBaseY + verticalOffset, modelBaseZ);
           model.rotation.x = 0; // Let the Biped pose recline naturally; no head-first root pitch.
           model.rotation.z = laneBank;
         }
@@ -149,6 +148,15 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
           playPhase(phaseIndex);
         }
         mixer.update(delta);
+        if ((phase === "slideStart" || phase === "slideLoop") && slideContactRig) {
+          const errors = slideContactRig.solve(0);
+          if (phase === "slideLoop" && !contactAuditLogged) {
+            addCheck("Pitch contact residuals · palm " + errors.palm.toFixed(3) +
+              "m · lead foot " + errors.leadFoot.toFixed(3) +
+              "m · trailing foot " + errors.trailingFoot.toFixed(3) + "m.");
+            contactAuditLogged = true;
+          }
+        }
       }
       renderer.render(scene, camera);
       frame = requestAnimationFrame(render);
@@ -164,6 +172,7 @@ export default function AvatarAnimationDiagnostic({ onBack }: Props) {
         model = loaded.model;
         if (disposed) { disposeRunnerCharacterModel(model); return; }
         scene.add(model);
+        slideContactRig = createNativeBipedSlideContactRig(model);
         addCheck("Sports Male 03 loaded with its original, unchanged Bip01 skeleton.");
         const bounds = new THREE.Box3().setFromObject(model);
         const center = bounds.getCenter(new THREE.Vector3());
