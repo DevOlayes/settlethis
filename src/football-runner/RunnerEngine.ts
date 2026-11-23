@@ -505,7 +505,8 @@ export class RunnerEngine {
         if (object.userData.kind === "ball") {
           this.balls++;
           this.points = Math.floor(this.distance * config.scoring.distancePointsPerMetre) + this.balls * config.scoring.footballPickupPoints;
-          this.playerAnimator.triggerKick();
+          // Collection is a score/effect event, not a locomotion action.
+          // Keep the native run cycle uninterrupted as the player passes through the ball.
           this.audio.collect();
           this.spawnCollectionEffect(object.position);
           this.callbacks.onHud({
