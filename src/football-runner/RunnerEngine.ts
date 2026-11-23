@@ -66,7 +66,7 @@ export class RunnerEngine {
   private over = false;
   private disposed = false;
 
-  constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks, environment: "classic" | "club-ground" = "classic") {
+  constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks, environment: "club-ground" = "club-ground") {
     this.host = host;
     this.bundle = createRunnerScene(host);
     void loadRunnerObstacleTemplates().then((templates) => {
