@@ -93,6 +93,7 @@ const contactRig = createNativeBipedSlideContactRig(model);
 if (!contactRig) throw new Error("Could not create the slide contact chains");
 let startErrors;
 for (let frame = 0; frame < 14; frame++) {
+  contactRig.restore();
   mixer.update(slideStart.duration / 14);
   startErrors = contactRig.solve(-0.12);
 }
@@ -111,6 +112,7 @@ let firstSpine1;
 let maxNeckCycleDrift = 0;
 let maxSpine1CycleDrift = 0;
 for (let frame = 0; frame < 175; frame++) {
+  contactRig.restore();
   mixer.update(1 / 60);
   loopErrors = contactRig.solve(-0.12);
   for (const key of Object.keys(maxErrors)) maxErrors[key] = Math.max(maxErrors[key], loopErrors[key]);
