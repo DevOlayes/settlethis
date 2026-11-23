@@ -786,3 +786,48 @@
 @media(prefers-reduced-motion:reduce){
   .runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button:first-child:before{animation:none}
 }
+
+/* Distinctive Football Runner mark and shareable achievement treatment */
+.runner-game-emblem{
+  position:absolute;z-index:2;top:12px;right:12px;width:clamp(76px,22vw,112px);
+  aspect-ratio:1;object-fit:contain;filter:drop-shadow(0 9px 20px #000b) drop-shadow(0 0 18px #f2a45b55);
+}
+.runner-lobby-hero{position:relative}
+.runner-share-trophy{
+  position:relative;overflow:hidden;width:min(100%,390px);margin:0 auto 10px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 13px 12px;
+  border:1px solid #ffd28b99;border-radius:8px 18px 8px 18px;
+  background:
+    radial-gradient(ellipse at 50% 0%,#8d5b55 0%,#503449 39%,#251e34 100%);
+  box-shadow:0 14px 30px #0008,0 0 24px #f0a46c25,inset 0 1px #fff5;
+}
+.runner-share-trophy:before{
+  content:"";position:absolute;inset:5px;border:1px solid #f8d5a233;border-radius:5px 14px 5px 14px;pointer-events:none;
+}
+.runner-share-trophy-brand{display:flex;align-items:center;gap:6px;color:#f9dfbd;font-size:7px;font-weight:1000;letter-spacing:.14em}
+.runner-share-trophy-brand img{width:24px;height:24px;object-fit:contain}
+.runner-share-trophy-brand b{padding:4px 7px;border:1px solid #ffd28b66;border-radius:99px;color:#ffdaa0;font-size:6px}
+.runner-share-trophy-stars{color:#ffd38b;font-size:13px;text-shadow:0 0 14px #ffd38b99}
+.runner-share-trophy>small{color:#f4c9a9;font-size:7px;font-weight:1000;letter-spacing:.24em}
+.runner-share-trophy>strong{
+  color:#fff5dc;font-size:clamp(35px,9vw,49px);font-weight:1000;line-height:1;
+  letter-spacing:-.065em;font-variant-numeric:tabular-nums;text-shadow:0 3px 0 #744b52,0 8px 18px #0009;
+}
+.runner-share-trophy>strong em{margin-left:5px;color:#ffc18b;font-size:.27em;font-style:normal;letter-spacing:.08em}
+.runner-share-trophy>span{color:#f5d8c6;font-size:7px;font-weight:900;letter-spacing:.13em;text-align:center}
+.runner-share-dare{
+  margin-top:2px;padding:6px 13px;border:1px solid #ffd28b77;border-radius:4px 12px 4px 12px;
+  background:linear-gradient(100deg,#f7c58f,#e98272);color:#261a2b;
+  font-size:8px;letter-spacing:.18em;text-shadow:0 1px #fff7;
+}
+.runner-result-actions button:first-child{
+  border-color:#ffd28b;background:linear-gradient(105deg,#ffe0a0,#f0a56f 50%,#e98272);
+}
+.runner-share-status{color:#ffd5a6!important;font-size:8px!important}
+@media(max-height:700px){
+  .runner-share-trophy{gap:3px;padding:7px 10px;margin-bottom:6px}
+  .runner-share-trophy>strong{font-size:36px}
+  .runner-share-trophy-brand img{width:19px;height:19px}
+  .runner-share-trophy-stars{font-size:10px}
+  .runner-share-dare{padding:4px 10px}
+}
