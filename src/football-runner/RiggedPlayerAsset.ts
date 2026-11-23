@@ -286,7 +286,6 @@ export async function loadRunnerCharacter(
   model.scale.setScalar(scale);
   model.position.y = -bounds.min.y * scale;
   model.updateMatrixWorld(true);
-  applySethisKit(model);
 
   return { model, animations: gltf.animations };
 }
