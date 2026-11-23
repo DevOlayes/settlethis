@@ -26,8 +26,6 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const mountRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<RunnerControls | null>(null);
   const [phase, setPhase] = useState<RunnerPhase>("ready");
-  const selectedEnvironment = "club-ground" as const;
-  const [environmentStatus, setEnvironmentStatus] = useState<"loading" | "ready" | "error">("ready");
   const [summary, setSummary] = useState<RunnerSummary | null>(null);
   const [hud, setHud] = useState<RunnerHud>(EMPTY_HUD);
   const [collectionPulse, setCollectionPulse] = useState(0);
@@ -88,7 +86,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       engine = new RunnerEngine(host, {
         onPhase: setPhase,
         onHud: setHud,
-        onEnvironmentStatus: setEnvironmentStatus,
+        onEnvironmentStatus: (status) => { if (status === "error") setEngineError(true); },
         onSummary: (result) => {
           const previous = recordsRef.current;
           setRecordFlags({
@@ -339,7 +337,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <h1>Run complete</h1>
                   <div className="runner-result-ball" aria-hidden="true">⚽</div>
                   <section className="runner-result-metrics" aria-label="Your run summary">
-                    <div><small>RUNS PLAYED</small><b>{preview ? "PRACTICE" : records.totalRuns.toLocaleString()}</b></div>
+                    <div><small>RUNS PLAYED</small><b>{preview ? "PRACTICE" : (records.totalRuns + (savingRun ? 1 : 0)).toLocaleString()}</b></div>
                     <div><small>FOOTBALLS COLLECTED</small><b>{summary.balls.toLocaleString()}</b></div>
                     <div><small>BEST DISTANCE</small><b>{Math.max(records.bestDistance, summary.distance).toLocaleString()}<em>m</em></b></div>
                     <div><small>SETHIS EARNED</small><b>{summary.sethis.toLocaleString()} <em>SETHIS</em></b></div>
