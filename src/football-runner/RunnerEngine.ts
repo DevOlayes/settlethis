@@ -4,7 +4,8 @@ import { RunnerAudioFeedback } from "./AudioFeedback";
 import { clamp, getRunSpeed } from "./math";
 import { InputController } from "./InputController";
 import { ObjectPool } from "./ObjectPool";
-import { animateCollectionEffect, createCollectible, createCollectionEffect, createObstacle } from "./EntityFactory";
+import { animateCollectionEffect, createCollectible, createCollectionEffect, createObstacle, setRunnerObstacleTemplates } from "./EntityFactory";
+import { loadRunnerObstacleTemplates } from "./RunnerObstacleAssets";
 import { createPlayerCharacter } from "./PlayerCharacter";
 import { disposeRunnerCharacterModel, loadRunnerAnimationManifest, loadRunnerCharacter } from "./RiggedPlayerAsset";
 import { PlayerAnimator } from "./PlayerAnimator";
@@ -25,6 +26,7 @@ export class RunnerEngine {
   private loadedPlayerModel?: THREE.Group;
   private characterReady = false;
   private environmentReady = true;
+  private obstacleAssetsReady = false;
   private startWhenCharacterReady = false;
   private pendingRiggedPlayer?: { model: THREE.Group; animations: THREE.AnimationClip[] };
   private nativeJumpEnabled = false;
@@ -67,6 +69,18 @@ export class RunnerEngine {
   constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks, environment: "classic" | "club-ground" = "classic") {
     this.host = host;
     this.bundle = createRunnerScene(host);
+    void loadRunnerObstacleTemplates().then((templates) => {
+      if (this.disposed) return;
+      setRunnerObstacleTemplates(templates);
+      this.obstacleAssetsReady = true;
+      this.tryStartWhenReady();
+      console.info("Original supplied Football Runner obstacle models loaded", templates.map((item) => item.name));
+    }).catch((error) => {
+      if (this.disposed) return;
+      console.error("Supplied Football Runner obstacle models could not load; using the local fallback set.", error);
+      this.obstacleAssetsReady = true;
+      this.tryStartWhenReady();
+    });
     if (environment === "club-ground") {
       this.environmentReady = false;
       this.callbacks.onEnvironmentStatus?.("loading");
@@ -183,7 +197,7 @@ export class RunnerEngine {
   }
 
   private tryStartWhenReady(): void {
-    if (this.disposed || !this.startWhenCharacterReady || !this.characterReady || !this.loadedPlayerModel || !this.environmentReady) return;
+    if (this.disposed || !this.startWhenCharacterReady || !this.characterReady || !this.loadedPlayerModel || !this.environmentReady || !this.obstacleAssetsReady) return;
     this.startWhenCharacterReady = false;
     this.start();
   }
@@ -191,7 +205,7 @@ export class RunnerEngine {
   start = (): void => {
     if (this.disposed) return;
     // Queue the start until both Sports Male 03 and the selected environment are ready.
-    if (!this.characterReady || !this.loadedPlayerModel || !this.environmentReady) {
+    if (!this.characterReady || !this.loadedPlayerModel || !this.environmentReady || !this.obstacleAssetsReady) {
       this.startWhenCharacterReady = true;
       return;
     }
