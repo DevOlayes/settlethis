@@ -69,14 +69,21 @@ export class RunnerEngine {
     this.bundle = createRunnerScene(host);
     if (environment === "club-ground") {
       this.environmentReady = false;
+      this.callbacks.onEnvironmentStatus?.("loading");
       void loadClubGroundEnvironment(this.bundle, () => this.disposed).then(() => {
+        if (this.disposed) return;
         this.environmentReady = true;
+        this.callbacks.onEnvironmentStatus?.("ready");
         this.tryStartWhenReady();
       }).catch((error) => {
+        if (this.disposed) return;
         console.error("Imported club ground could not load; retaining the original environment.", error);
         this.environmentReady = true;
+        this.callbacks.onEnvironmentStatus?.("error");
         this.tryStartWhenReady();
       });
+    } else {
+      this.callbacks.onEnvironmentStatus?.("ready");
     }
     // Never render the procedural placeholder. Sports Male 03 is the only approved player.
     this.playerCharacter.root.visible = false;
