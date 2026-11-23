@@ -228,7 +228,7 @@ export function createNativeBipedSlideContactRig(
 
   const palm = new THREE.Object3D();
   palm.name = "sethis-slide-palm-contact";
-  palm.position.set(0.12, 0, 0);
+  palm.position.set(0.12, -0.035, 0);
   leftHand.add(palm);
 
   const targetAtHeight = (x: number, z: number, worldY: number) => {
@@ -248,6 +248,24 @@ export function createNativeBipedSlideContactRig(
         model, leftClavicle, targetAtHeight(-0.35, -0.05, groundY + 0.72),
         [neck, spine2, spine1, spine], 7,
       );
+      const orientPalmDown = () => {
+        model.updateMatrixWorld(true);
+        const handWorld = leftHand.getWorldQuaternion(new THREE.Quaternion());
+        const currentNormal = new THREE.Vector3(0, -1, 0).applyQuaternion(handWorld).normalize();
+        const correction = new THREE.Quaternion().setFromUnitVectors(
+          currentNormal, new THREE.Vector3(0, -1, 0),
+        );
+        const nextWorld = correction.multiply(handWorld);
+        const parentWorld = leftHand.parent
+          ? leftHand.parent.getWorldQuaternion(new THREE.Quaternion())
+          : new THREE.Quaternion();
+        leftHand.quaternion.copy(parentWorld.invert().multiply(nextWorld));
+        model.updateMatrixWorld(true);
+      };
+      orientPalmDown();
+      solveCcdChain(model, palm, targetAt(-0.34, -0.16, groundY),
+        [leftForearm, leftUpperArm, leftClavicle], 8);
+      orientPalmDown();
       const palmError = solveCcdChain(
         model, palm, targetAt(-0.34, -0.16, groundY),
         [leftForearm, leftUpperArm, leftClavicle], 14,
