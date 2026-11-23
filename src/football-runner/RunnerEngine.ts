@@ -23,6 +23,7 @@ export class RunnerEngine {
   private readonly playerCharacter = createPlayerCharacter();
   private readonly playerAnimator = new PlayerAnimator(this.playerCharacter);
   private loadedPlayerModel?: THREE.Group;
+  private startWhenCharacterReady = false;
   private pendingRiggedPlayer?: { model: THREE.Group; animations: THREE.AnimationClip[] };
   private nativeJumpEnabled = false;
   private readonly performance = new RunnerPerformanceMonitor();
@@ -64,6 +65,8 @@ export class RunnerEngine {
   constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks) {
     this.host = host;
     this.bundle = createRunnerScene(host);
+    // Never render the procedural placeholder. Sports Male 03 is the only approved player.
+    this.playerCharacter.root.visible = false;
     this.bundle.scene.add(this.playerCharacter.root);
     void this.loadRiggedPlayer();
     this.input = new InputController(this.bundle.renderer.domElement, (action) => this.handleAction(action));
@@ -127,8 +130,13 @@ export class RunnerEngine {
         console.warn("Approved native Sports Male 03 run clip unavailable; retaining existing animation set");
         this.playerAnimator.attachRiggedModel(model, animations);
       }
+
+      if (this.startWhenCharacterReady) {
+        this.startWhenCharacterReady = false;
+        this.start();
+      }
     } catch (error) {
-      console.error("Sports Male 03 failed to load or animate; preserving the approved model where possible", error);
+      console.error("Sports Male 03 failed to load. The game will not substitute the procedural placeholder.", error);
     }
   }
 
@@ -153,10 +161,18 @@ export class RunnerEngine {
     model.rotation.y = Math.PI;
     this.playerCharacter.root.add(model);
     this.loadedPlayerModel = model;
+    this.playerCharacter.root.visible = true;
   }
 
   start = (): void => {
     if (this.disposed) return;
+    // Queue the user's start request until the approved Sports Male 03 model
+    // and its animation set are ready. Never start with a substitute character.
+    if (!this.loadedPlayerModel || !this.playerAnimator.hasRiggedModel()) {
+      this.startWhenCharacterReady = true;
+      return;
+    }
+    this.startWhenCharacterReady = false;
     this.releaseAllObjects();
     this.releaseAllEffects();
     this.targetLane = 0;
