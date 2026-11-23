@@ -30,6 +30,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [environmentStatus, setEnvironmentStatus] = useState<"loading" | "ready" | "error">("ready");
   const [summary, setSummary] = useState<RunnerSummary | null>(null);
   const [hud, setHud] = useState<RunnerHud>(EMPTY_HUD);
+  const [collectionPulse, setCollectionPulse] = useState(0);
   const [engineError, setEngineError] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [records, setRecords] = useState<RunnerRecords>(EMPTY_RECORDS);
@@ -40,6 +41,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [runSaveStatus, setRunSaveStatus] = useState("");
   const activeRunIdRef = useRef<string | null>(null);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
+  useEffect(() => { setCollectionPulse(hud.balls); }, [hud.balls]);
   const [recordFlags, setRecordFlags] = useState({ distance: false, points: false });
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<"restart" | "exit" | null>(null);
@@ -265,7 +267,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       <section className="runner-stage-wrap">
         <div className="runner-hud" aria-label="Live game statistics" aria-live="off">
           <div><small>DISTANCE</small><b>{hud.distance.toLocaleString()} m</b></div>
-          <div><small>POINTS</small><b>{hud.points.toLocaleString()}</b></div>
+          <div><small>POINTS</small><b key={collectionPulse} className="runner-points-value">{hud.points.toLocaleString()}</b></div>
           <div><small>FOOTBALLS</small><b>{hud.balls}</b></div>
           <div><small>SPEED</small><b>{hud.speed.toFixed(1)}×</b></div>
         </div>
@@ -411,6 +413,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
               </>}
             </div>
           ) : null}
+          {phase === "running" && collectionPulse > 0 && <div key={collectionPulse} className="runner-collect-fly" aria-hidden="true"><span>⚽</span><b>+100 PTS</b></div>}
         </div>
 
         {phase === "running" && <button className="runner-pause" onClick={pause} aria-label="Pause run">Ⅱ PAUSE</button>}
