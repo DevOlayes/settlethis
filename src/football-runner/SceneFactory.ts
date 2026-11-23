@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RUNNER_CONFIG } from "./config";
 import type { RunnerSceneBundle } from "./types";
 import { getInitialRunnerRenderQuality } from "./RenderQuality";
@@ -275,6 +276,9 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
 
   const world = new THREE.Group();
   scene.add(world);
+  const environmentRoot = new THREE.Group();
+  environmentRoot.name = "runner-environment-root";
+  world.add(environmentRoot);
 
   const materials: Record<string, THREE.Material> = {
     pitch: new THREE.MeshStandardMaterial({ color: 0x3c9d43, roughness: 0.96 }),
@@ -306,7 +310,7 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   floor.rotation.x = -Math.PI / 2;
   floor.position.set(0, -0.12, worldConfig.centreZ);
   floor.receiveShadow = true;
-  world.add(floor);
+  environmentRoot.add(floor);
 
   // Alternating mowing bands break up the flat green surface and add pitch depth.
   const turfBands = [
@@ -318,19 +322,19 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
     stripe.rotation.x = -Math.PI / 2;
     stripe.position.set(0, -0.113, 34.5 - band * 15);
     stripe.receiveShadow = true;
-    world.add(stripe);
+    environmentRoot.add(stripe);
   }
 
   // Subtle lane guides retain a readable route without turning the pitch into a road.
   const laneMaterial = new THREE.MeshBasicMaterial({ color: 0xe9e2d7, transparent: true, opacity: 0.2 });
   for (const x of [-RUNNER_CONFIG.laneWidth / 2, RUNNER_CONFIG.laneWidth / 2]) {
-    groundLine(world, 0.035, worldConfig.length, [x, -0.095, worldConfig.centreZ], laneMaterial);
+    groundLine(environmentRoot, 0.035, worldConfig.length, [x, -0.095, worldConfig.centreZ], laneMaterial);
   }
-  addPitchMarkings(world, materials.marking);
-  addGoal(world, -54, 7.2, 2.6, materials.post, materials.net);
-  addStadium(world, materials);
-  addTrainingComplex(world, materials);
-  addFacilities(world, materials);
+  addPitchMarkings(environmentRoot, materials.marking);
+  addGoal(environmentRoot, -54, 7.2, 2.6, materials.post, materials.net);
+  addStadium(environmentRoot, materials);
+  addTrainingComplex(environmentRoot, materials);
+  addFacilities(environmentRoot, materials);
 
   // Perimeter lamps keep the full 180m loop visually continuous at its distant seam.
   for (const side of [-1, 1]) {
@@ -338,17 +342,18 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
       const z = 35 - index * 15;
       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 3.8, 6), materials.metal);
       post.position.set(side * 11.65, 1.9, z);
-      world.add(post);
-      box(world, [0.7, 0.08, 0.12], [side * 11.65, 3.85, z], materials.lampGlow, false);
+      environmentRoot.add(post);
+      box(environmentRoot, [0.7, 0.08, 0.12], [side * 11.65, 3.85, z], materials.lampGlow, false);
     }
   }
 
   // A second copy trails the active 180m segment so the ground and landmarks remain underfoot while the loop advances.
-  const loopCopy = world.clone(true);
+  const loopCopy = environmentRoot.clone(true);
+  loopCopy.name = "runner-environment-loop-copy";
   loopCopy.position.z = -worldConfig.length;
   world.add(loopCopy);
 
-  return { scene, camera, renderer, world, renderQuality };
+  return { scene, camera, renderer, world, renderQuality, environmentRoot };
 }
 
 export function resizeRunnerScene(bundle: RunnerSceneBundle, host: HTMLElement): void {
@@ -381,4 +386,76 @@ export function disposeRunnerScene(bundle: RunnerSceneBundle, host: HTMLElement)
   textures.forEach((texture) => texture.dispose());
   bundle.renderer.dispose();
   if (bundle.renderer.domElement.parentElement === host) host.removeChild(bundle.renderer.domElement);
+}
+
+
+const CLUB_GROUND_URL = "https://cdn.3dassets.dev/assets/19143/v1/model.glb";
+const TRAINING_CORNER_URL = "https://cdn.3dassets.dev/assets/19144/v1/model.glb";
+
+function disposeEnvironmentObject(root: THREE.Object3D): void {
+  const geometries = new Set<THREE.BufferGeometry>();
+  const materials = new Set<THREE.Material>();
+  const textures = new Set<THREE.Texture>();
+  root.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    geometries.add(object.geometry);
+    const list = Array.isArray(object.material) ? object.material : [object.material];
+    list.forEach((surface) => {
+      materials.add(surface);
+      Object.values(surface).forEach((value) => {
+        if (value instanceof THREE.Texture) textures.add(value);
+      });
+    });
+  });
+  geometries.forEach((geometry) => geometry.dispose());
+  materials.forEach((material) => material.dispose());
+  textures.forEach((texture) => texture.dispose());
+}
+
+/** Replace the classic scenery with the imported CC0 club ground while retaining the same runner, lanes and gameplay world. */
+export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle): Promise<void> {
+  const loader = new GLTFLoader();
+  const [groundAsset, trainingAsset] = await Promise.all([
+    loader.loadAsync(CLUB_GROUND_URL),
+    loader.loadAsync(TRAINING_CORNER_URL),
+  ]);
+
+  // Remove the original scenery and its loop copy only after both new assets load successfully.
+  for (const child of [...bundle.world.children]) {
+    if (child !== bundle.environmentRoot) {
+      bundle.world.remove(child);
+      disposeEnvironmentObject(child);
+    }
+  }
+  for (const child of [...bundle.environmentRoot.children]) {
+    bundle.environmentRoot.remove(child);
+    disposeEnvironmentObject(child);
+  }
+
+  const tileLength = 36.2;
+  for (let index = 0; index < 5; index++) {
+    const ground = groundAsset.scene.clone(true);
+    ground.name = `SETHIS club ground section ${index + 1}`;
+    ground.scale.setScalar(0.32);
+    ground.position.set(0, 0, -index * tileLength);
+    ground.traverse((object) => {
+      if (object instanceof THREE.Mesh) {
+        object.castShadow = bundle.renderQuality !== "low";
+        object.receiveShadow = true;
+      }
+    });
+    bundle.environmentRoot.add(ground);
+
+    const training = trainingAsset.scene.clone(true);
+    training.name = `SETHIS training zone ${index + 1}`;
+    training.scale.setScalar(0.65);
+    training.position.set(17.5, 0.02, -index * tileLength - 12);
+    training.traverse((object) => {
+      if (object instanceof THREE.Mesh) {
+        object.castShadow = bundle.renderQuality !== "low";
+        object.receiveShadow = true;
+      }
+    });
+    bundle.environmentRoot.add(training);
+  }
 }
