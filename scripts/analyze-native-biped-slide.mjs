@@ -178,7 +178,7 @@ console.log("SLIDE_CONTACT_AUDIT", JSON.stringify({
   pitchY: -0.12,
   palmTargetY: -0.14,
   leadFootTargetY: -0.112,
-  trailingFootTargetY: -0.033,
+  trailingFootTargetY: -0.008,
   pitchSurfaceY: -0.113,
   simulatedLoopFrames: 175,
   slideStart: Object.fromEntries(Object.entries(startErrors).map(([k,v])=>[k,Number(v.toFixed(4))])),
