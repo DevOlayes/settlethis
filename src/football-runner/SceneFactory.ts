@@ -278,6 +278,7 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   scene.add(world);
   const environmentRoot = new THREE.Group();
   environmentRoot.name = "runner-environment-root";
+  environmentRoot.visible = false;
   world.add(environmentRoot);
 
   const materials: Record<string, THREE.Material> = {
@@ -350,6 +351,7 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   // A second copy trails the active 180m segment so the ground and landmarks remain underfoot while the loop advances.
   const loopCopy = environmentRoot.clone(true);
   loopCopy.name = "runner-environment-loop-copy";
+  loopCopy.visible = false;
   loopCopy.position.z = -worldConfig.length;
   world.add(loopCopy);
 
@@ -522,6 +524,7 @@ export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle, shoul
   }
 
   addClubGroundSideStands(bundle.environmentRoot, tileLength, 5);
+  bundle.environmentRoot.visible = true;
 
   // Club Ground uses the same 180m world-wrap as the runner engine.
   // Keep a fully prepared second copy one loop behind so the pitch,
