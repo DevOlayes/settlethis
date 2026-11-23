@@ -108,21 +108,24 @@ export function createNativeBipedJumpClips(
     { bone: rightForearm, values: [[0, 0, 0], [-0.12, 0, 0], [-0.42, 0, 0]] },
   ]);
 
-  const airTimes = [0, 0.24, 0.48];
+  // A compact forward-running leap: the torso inclines slightly into the
+  // travel direction while both thighs lift and the knees tuck underneath.
+  // A small left/right phase offset keeps the pose athletic rather than rigid.
+  const airTimes = [0, 0.12, 0.24, 0.36, 0.48];
   const air = tracksFor(airTimes, [
-    { bone: hips, values: [[0.13, 0, 0], [0.10, 0, 0], [0.13, 0, 0]] },
-    { bone: spine, values: [[-0.12, 0, 0], [-0.08, 0, 0], [-0.12, 0, 0]] },
-    { bone: spine2, values: [[-0.08, 0, 0], [-0.04, 0, 0], [-0.08, 0, 0]] },
-    { bone: leftThigh, values: [[-0.52, 0, 0], [-0.46, 0, 0], [-0.52, 0, 0]] },
-    { bone: rightThigh, values: [[-0.52, 0, 0], [-0.46, 0, 0], [-0.52, 0, 0]] },
-    { bone: leftCalf, values: [[0.38, 0, 0], [0.52, 0, 0], [0.38, 0, 0]] },
-    { bone: rightCalf, values: [[0.38, 0, 0], [0.52, 0, 0], [0.38, 0, 0]] },
-    { bone: leftFoot, values: [[-0.10, 0, 0], [-0.16, 0, 0], [-0.10, 0, 0]] },
-    { bone: rightFoot, values: [[-0.10, 0, 0], [-0.16, 0, 0], [-0.10, 0, 0]] },
-    { bone: leftArm, values: [[-0.48, 0, -0.12], [-0.42, 0, -0.12], [-0.48, 0, -0.12]] },
-    { bone: rightArm, values: [[-0.48, 0, 0.12], [-0.42, 0, 0.12], [-0.48, 0, 0.12]] },
-    { bone: leftForearm, values: [[-0.42, 0, 0], [-0.52, 0, 0], [-0.42, 0, 0]] },
-    { bone: rightForearm, values: [[-0.42, 0, 0], [-0.52, 0, 0], [-0.42, 0, 0]] },
+    { bone: hips, values: [[0.16, 0, 0], [0.18, 0, 0], [0.16, 0, 0], [0.18, 0, 0], [0.16, 0, 0]] },
+    { bone: spine, values: [[-0.18, 0, 0], [-0.22, 0, 0], [-0.20, 0, 0], [-0.22, 0, 0], [-0.18, 0, 0]] },
+    { bone: spine2, values: [[-0.12, 0, 0], [-0.16, 0, 0], [-0.14, 0, 0], [-0.16, 0, 0], [-0.12, 0, 0]] },
+    { bone: leftThigh, values: [[-0.92, 0, 0], [-1.02, 0, 0], [-0.96, 0, 0], [-1.02, 0, 0], [-0.92, 0, 0]] },
+    { bone: rightThigh, values: [[-0.82, 0, 0], [-0.92, 0, 0], [-0.86, 0, 0], [-0.92, 0, 0], [-0.82, 0, 0]] },
+    { bone: leftCalf, values: [[1.05, 0, 0], [1.18, 0, 0], [1.12, 0, 0], [1.18, 0, 0], [1.05, 0, 0]] },
+    { bone: rightCalf, values: [[0.92, 0, 0], [1.08, 0, 0], [1.00, 0, 0], [1.08, 0, 0], [0.92, 0, 0]] },
+    { bone: leftFoot, values: [[-0.16, 0, 0], [-0.22, 0, 0], [-0.18, 0, 0], [-0.22, 0, 0], [-0.16, 0, 0]] },
+    { bone: rightFoot, values: [[-0.12, 0, 0], [-0.18, 0, 0], [-0.14, 0, 0], [-0.18, 0, 0], [-0.12, 0, 0]] },
+    { bone: leftArm, values: [[-0.42, 0, -0.12], [-0.38, 0, -0.12], [-0.40, 0, -0.12], [-0.38, 0, -0.12], [-0.42, 0, -0.12]] },
+    { bone: rightArm, values: [[-0.42, 0, 0.12], [-0.38, 0, 0.12], [-0.40, 0, 0.12], [-0.38, 0, 0.12], [-0.42, 0, 0.12]] },
+    { bone: leftForearm, values: [[-0.46, 0, 0], [-0.50, 0, 0], [-0.48, 0, 0], [-0.50, 0, 0], [-0.46, 0, 0]] },
+    { bone: rightForearm, values: [[-0.46, 0, 0], [-0.50, 0, 0], [-0.48, 0, 0], [-0.50, 0, 0], [-0.46, 0, 0]] },
   ]);
 
   const landingTimes = [0, 0.08, 0.20, 0.32];
