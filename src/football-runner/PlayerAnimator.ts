@@ -282,6 +282,8 @@ export class PlayerAnimator {
     this.landingRemaining = 0;
     this.laneChangeRemaining = 0;
     this.laneLeanActive = false;
+    this.slideContactRig?.restore();
+    this.slideContactRig?.clear();
     if (this.riggedModel) this.riggedModel.position.y = this.riggedModelBaseY;
     this.activeRiggedMotion = undefined;
     this.activeRiggedAction = undefined;
