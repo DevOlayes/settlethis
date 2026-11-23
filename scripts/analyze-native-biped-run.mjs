@@ -17,7 +17,18 @@ const wanted = [
   "Bip01 L Clavicle", "Bip01 R Clavicle", "Bip01 L UpperArm", "Bip01 R UpperArm",
   "Bip01 L Forearm", "Bip01 R Forearm", "Bip01 L Hand", "Bip01 R Hand",
   "Bip01 L Thigh", "Bip01 R Thigh", "Bip01 L Calf", "Bip01 R Calf",
-  "Bip01 L Foot", "Bip01 R Foot"
+  "Bip01 L Foot", "Bip01 R Foot", "Bip01 L Toe0", "Bip01 R Toe0",
+  "Bip01 Spine1", "Bip01 Neck",
+  "Bip01 L Finger0", "Bip01 L Finger01", "Bip01 L Finger02",
+  "Bip01 L Finger1", "Bip01 L Finger11", "Bip01 L Finger12",
+  "Bip01 L Finger2", "Bip01 L Finger21", "Bip01 L Finger22",
+  "Bip01 L Finger3", "Bip01 L Finger31", "Bip01 L Finger32",
+  "Bip01 L Finger4", "Bip01 L Finger41", "Bip01 L Finger42",
+  "Bip01 R Finger0", "Bip01 R Finger01", "Bip01 R Finger02",
+  "Bip01 R Finger1", "Bip01 R Finger11", "Bip01 R Finger12",
+  "Bip01 R Finger2", "Bip01 R Finger21", "Bip01 R Finger22",
+  "Bip01 R Finger3", "Bip01 R Finger31", "Bip01 R Finger32",
+  "Bip01 R Finger4", "Bip01 R Finger41", "Bip01 R Finger42"
 ];
 const normalize = (s) => s.replace(/_/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
 const selected = new Map();
@@ -28,6 +39,9 @@ for (const track of clip.tracks) {
 }
 const round = (n) => Math.round(n * 10000) / 10000;
 const deg = (r) => round(THREE.MathUtils.radToDeg(r));
+console.log("AUDIT_ALL_TRACKS", JSON.stringify(clip.tracks.map((track) => ({
+  name: track.name, keys: track.times.length, type: track.ValueTypeName
+}))));
 console.log("AUDIT_META", JSON.stringify({
   source: path, animation: clip.name, duration: clip.duration,
   tracks: clip.tracks.length, selectedBones: selected.size,
