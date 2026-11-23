@@ -33,7 +33,7 @@ export function createNativeBipedJumpClips(
   const bones = collectBones(model);
   const find = (name: string) => bones.get(name.toLowerCase());
   const profile = (name: string): NativeBipedJointProfile | undefined =>
-    getNativeBipedJointProfile(model, referenceRunClip, find(name));
+    getNativeBipedJointProfile(referenceRunClip, find(name));
 
   const pelvis = profile("bip01 pelvis");
   const spine = profile("bip01 spine");
