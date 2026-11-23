@@ -17,9 +17,14 @@ function normalizedName(value: string): string {
   return value.trim().replace(/_/g, " ").replace(/\s+/g, " ").toLowerCase();
 }
 
-function readQuaternion(track: THREE.QuaternionKeyframeTrack, time: number): THREE.Quaternion {
-  const value = track.createInterpolant().evaluate(time);
-  return new THREE.Quaternion(value[0], value[1], value[2], value[3]).normalize();
+function readQuaternionAtFrame(track: THREE.QuaternionKeyframeTrack, frame: number): THREE.Quaternion {
+  const offset = frame * 4;
+  return new THREE.Quaternion(
+    track.values[offset],
+    track.values[offset + 1],
+    track.values[offset + 2],
+    track.values[offset + 3],
+  ).normalize();
 }
 
 /**
@@ -41,13 +46,13 @@ export function getNativeBipedJointProfile(
   ) as THREE.QuaternionKeyframeTrack | undefined;
   if (!track || track.times.length < 3) return undefined;
 
-  const reference = readQuaternion(track, track.times[0]);
+  const reference = readQuaternionAtFrame(track, 0);
   const covariance = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
   const dominantAxis = new THREE.Vector3(1, 0, 0);
   let maxExcursion = 0;
 
-  for (const time of track.times) {
-    const current = readQuaternion(track, time);
+  for (let frame = 0; frame < track.times.length; frame++) {
+    const current = readQuaternionAtFrame(track, frame);
     const delta = reference.clone().invert().multiply(current).normalize();
     if (delta.w < 0) delta.set(-delta.x, -delta.y, -delta.z, -delta.w);
     const vector = new THREE.Vector3(delta.x, delta.y, delta.z);
