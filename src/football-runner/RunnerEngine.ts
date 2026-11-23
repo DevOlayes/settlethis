@@ -23,6 +23,7 @@ export class RunnerEngine {
   private readonly playerCharacter = createPlayerCharacter();
   private readonly playerAnimator = new PlayerAnimator(this.playerCharacter);
   private loadedPlayerModel?: THREE.Group;
+  private characterReady = false;
   private startWhenCharacterReady = false;
   private pendingRiggedPlayer?: { model: THREE.Group; animations: THREE.AnimationClip[] };
   private nativeJumpEnabled = false;
@@ -131,6 +132,7 @@ export class RunnerEngine {
         this.playerAnimator.attachRiggedModel(model, animations);
       }
 
+      this.characterReady = true;
       if (this.startWhenCharacterReady) {
         this.startWhenCharacterReady = false;
         this.start();
@@ -168,7 +170,7 @@ export class RunnerEngine {
     if (this.disposed) return;
     // Queue the user's start request until the approved Sports Male 03 model
     // and its animation set are ready. Never start with a substitute character.
-    if (!this.loadedPlayerModel || !this.playerAnimator.hasRiggedModel()) {
+    if (!this.characterReady || !this.loadedPlayerModel) {
       this.startWhenCharacterReady = true;
       return;
     }
