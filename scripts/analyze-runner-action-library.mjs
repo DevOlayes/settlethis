@@ -8,9 +8,54 @@ import { canonicalizeGLBBones, retargetClipToObject } from "@three-ws/retarget";
 const normalize = (name) => name.replace(/_/g, " ").replace(/\\s+/g, " ").trim().toLowerCase();
 const loader = new GLTFLoader();
 loader.setMeshoptDecoder(MeshoptDecoder);
+function rewriteWithoutTextures(input) {
+  const bytes = Buffer.from(input);
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const chunks = [];
+  let offset = 12;
+  while (offset + 8 <= bytes.length) {
+    const length = view.getUint32(offset, true);
+    const type = view.getUint32(offset + 4, true);
+    const start = offset + 8;
+    const end = start + length;
+    if (type === 0x4e4f534a) {
+      const json = JSON.parse(bytes.subarray(start, end).toString("utf8").replace(/\\0+$/g, "").trim());
+      delete json.images;
+      delete json.textures;
+      delete json.samplers;
+      delete json.materials;
+      for (const mesh of json.meshes ?? []) {
+        for (const primitive of mesh.primitives ?? []) delete primitive.material;
+      }
+      json.extensionsUsed = (json.extensionsUsed ?? []).filter((name) => name !== "EXT_texture_webp");
+      json.extensionsRequired = (json.extensionsRequired ?? []).filter((name) => name !== "EXT_texture_webp");
+      const encoded = Buffer.from(JSON.stringify(json));
+      const padded = Buffer.alloc((encoded.length + 3) & ~3, 0x20);
+      encoded.copy(padded);
+      chunks.push({ type, data: padded });
+    } else {
+      chunks.push({ type, data: bytes.subarray(start, end) });
+    }
+    offset = end;
+  }
+  const total = 12 + chunks.reduce((sum, chunk) => sum + 8 + chunk.data.length, 0);
+  const output = Buffer.alloc(total);
+  output.writeUInt32LE(0x46546c67, 0);
+  output.writeUInt32LE(2, 4);
+  output.writeUInt32LE(total, 8);
+  let cursor = 12;
+  for (const chunk of chunks) {
+    output.writeUInt32LE(chunk.data.length, cursor);
+    output.writeUInt32LE(chunk.type, cursor + 4);
+    chunk.data.copy(output, cursor + 8);
+    cursor += 8 + chunk.data.length;
+  }
+  return output.buffer.slice(output.byteOffset, output.byteOffset + output.byteLength);
+}
+
 const modelBytes = await readFile("public/assets/football-runner/player.glb");
 const modelBuffer = modelBytes.buffer.slice(modelBytes.byteOffset, modelBytes.byteOffset + modelBytes.byteLength);
-const modelGltf = await loader.parseAsync(modelBuffer, "file:///");
+const modelGltf = await loader.parseAsync(rewriteWithoutTextures(modelBuffer), "file:///");
 const model = modelGltf.scene;
 const bounds = new THREE.Box3().setFromObject(model);
 const scale = 2.18 / Math.max(0.01, bounds.max.y - bounds.min.y);
@@ -79,7 +124,7 @@ for (const pack of targets) {
   const compressed = await readFile("public/assets/football-runner/animations/" + pack.file);
   const raw = gunzipSync(compressed);
   const canonical = canonicalizeGLBBones(raw);
-  const source = await loader.parseAsync(canonical.buffer, "file:///");
+  const source = await loader.parseAsync(rewriteWithoutTextures(canonical.buffer), "file:///");
   for (const name of pack.names) {
     resetPose();
     const sourceClip = source.animations.find((clip) => normalize(clip.name) === normalize(name));
