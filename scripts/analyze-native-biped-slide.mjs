@@ -170,6 +170,12 @@ if (mesh?.geometry.getAttribute("skinIndex") && mesh.geometry.getAttribute("skin
   }
 }
 
+const palmObject = model.getObjectByName("sethis-slide-palm-contact");
+const leftClavicle = model.getObjectByName("Bip01_L_Clavicle");
+const leftHand = model.getObjectByName("Bip01_L_Hand");
+const worldPoint = (object) => object ? object.getWorldPosition(new THREE.Vector3()).toArray().map((value) => Number(value.toFixed(4))) : null;
+const palmTargetWorld = model.localToWorld(new THREE.Vector3(-0.34, 0, -0.16));
+palmTargetWorld.y = -0.14;
 console.log("SLIDE_CONTACT_AUDIT", JSON.stringify({
   modelHeight: Number(height.toFixed(4)),
   modelScale: Number(scale.toFixed(4)),
@@ -187,4 +193,8 @@ console.log("SLIDE_CONTACT_AUDIT", JSON.stringify({
   maxNeckCycleDriftDeg: Number(THREE.MathUtils.radToDeg(maxNeckCycleDrift).toFixed(3)),
   maxSpine1CycleDriftDeg: Number(THREE.MathUtils.radToDeg(maxSpine1CycleDrift).toFixed(3)),
   skinnedMeshContact: meshContact,
+  palmHelperWorld: worldPoint(palmObject),
+  handBoneWorld: worldPoint(leftHand),
+  clavicleWorld: worldPoint(leftClavicle),
+  palmTargetWorld: palmTargetWorld.toArray().map((value) => Number(value.toFixed(4))),
 }));
