@@ -45,7 +45,6 @@ function createSethisChestMark(back: boolean): THREE.CanvasTexture {
   context.font = back ? "900 252px Arial, sans-serif" : "900 164px Arial, sans-serif";
   context.fillText("10", 256, back ? 220 : 214);
   context.font = back ? "800 48px Arial, sans-serif" : "800 38px Arial, sans-serif";
-  context.letterSpacing = "4px";
   context.fillText("SETHIS", 256, back ? 405 : 365);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -155,25 +154,25 @@ function applySethisKit(model: THREE.Group): void {
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        \`#include <common>
+        `#include <common>
 attribute float sethisTorsoWeight;
 attribute float sethisShoulderWeight;
 uniform mat4 uSethisMeshToModel;
 varying vec3 vSethisLocalPosition;
 varying float vSethisTorsoWeight;
-varying float vSethisShoulderWeight;\`,
+varying float vSethisShoulderWeight;`,
       )
       .replace(
         "#include <skinning_vertex>",
-        \`#include <skinning_vertex>
+        `#include <skinning_vertex>
 vSethisLocalPosition = (uSethisMeshToModel * vec4(transformed, 1.0)).xyz;
 vSethisTorsoWeight = sethisTorsoWeight;
-vSethisShoulderWeight = sethisShoulderWeight;\`,
+vSethisShoulderWeight = sethisShoulderWeight;`,
       );
     shader.fragmentShader = shader.fragmentShader
       .replace(
         "#include <common>",
-        \`#include <common>
+        `#include <common>
 uniform vec3 uSethisKitColor;
 uniform vec3 uSethisCoral;
 uniform sampler2D uSethisChestFront;
@@ -187,11 +186,11 @@ uniform float uSethisShoulderHalfWidth;
 uniform float uSethisChestHalfWidth;
 varying vec3 vSethisLocalPosition;
 varying float vSethisTorsoWeight;
-varying float vSethisShoulderWeight;\`,
+varying float vSethisShoulderWeight;`,
       )
       .replace(
         "#include <map_fragment>",
-        \`#include <map_fragment>
+        `#include <map_fragment>
 float sethisY = vSethisLocalPosition.y;
 float sethisX = abs(vSethisLocalPosition.x);
 float sethisTorsoRange = smoothstep(uSethisShirtMinY - 0.025, uSethisShirtMinY + 0.035, sethisY)
@@ -225,7 +224,7 @@ float sethisChestRegion = sethisTorsoMask
 vec4 sethisChestMark = vSethisLocalPosition.z < 0.0
   ? texture2D(uSethisChestBack, sethisChestUv)
   : texture2D(uSethisChestFront, sethisChestUv);
-diffuseColor.rgb = mix(diffuseColor.rgb, sethisChestMark.rgb, sethisChestMark.a * sethisChestRegion);\`,
+diffuseColor.rgb = mix(diffuseColor.rgb, sethisChestMark.rgb, sethisChestMark.a * sethisChestRegion);`,
       );
   };
   body.customProgramCacheKey = () => "sethis-football-kit-v1";
