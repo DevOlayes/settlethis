@@ -4,6 +4,12 @@ import { RUNNER_CONFIG } from "./config";
 const material = (color: number, roughness = 0.78, metalness = 0) =>
   new THREE.MeshStandardMaterial({ color, roughness, metalness });
 
+let suppliedObstacleTemplates: THREE.Group[] = [];
+
+export function setRunnerObstacleTemplates(templates: THREE.Group[]): void {
+  suppliedObstacleTemplates = templates;
+}
+
 function addMesh(
   parent: THREE.Group,
   geometry: THREE.BufferGeometry,
@@ -131,13 +137,30 @@ export function animateCollectionEffect(group: THREE.Group, progress: number): v
 
 export function createObstacle(type: number): THREE.Group {
   const group = new THREE.Group();
+  const variant = ((type % 5) + 5) % 5;
+  const supplied = suppliedObstacleTemplates[variant];
+  if (supplied) {
+    const obstacleNames = ["training-cone", "training-hurdle", "free-kick-mannequin", "passing-gate", "slalom-pole"];
+    const hitboxes = [
+      { halfWidth: 0.36, halfDepth: 0.36, height: 0.74, clearance: "jump" as const, clearanceHeight: 0.9 },
+      { halfWidth: 0.78, halfDepth: 0.34, height: 0.88, clearance: "jump" as const, clearanceHeight: 1.08 },
+      { halfWidth: 0.42, halfDepth: 0.25, height: 1.82, clearance: "none" as const },
+      { halfWidth: 0.76, halfDepth: 0.2, height: 1.22, clearance: "none" as const },
+      { halfWidth: 0.2, halfDepth: 0.2, height: 1.68, clearance: "none" as const },
+    ];
+    group.name = `supplied-${obstacleNames[variant]}`;
+    group.add(supplied.clone(true));
+    group.userData.obstacleType = obstacleNames[variant];
+    group.userData.hitbox = hitboxes[variant];
+    group.userData.kind = "obstacle";
+    group.userData.poolKey = `obstacle-${variant}`;
+    return group;
+  }
   const coral = material(RUNNER_CONFIG.colors.coral, 0.8);
   const dark = material(0x242337, 0.82);
   const metal = material(0x8d8795, 0.48, 0.5);
   const pale = material(0xd7d1db, 0.78);
   const grey = material(0x81778c, 0.84);
-  const variant = ((type % 5) + 5) % 5;
-
   if (variant === 0) {
     const cone = addMesh(group, new THREE.ConeGeometry(0.34, 0.78, 8), coral, [0, 0.39, 0]);
     cone.castShadow = true;
