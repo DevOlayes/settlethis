@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-const PACK_URL = "/assets/football-runner/obstacles.pack";
+const PACK_URLS = ["/assets/football-runner/obstacles-a.pack", "/assets/football-runner/obstacles-b.pack"];
 
 type ObstacleAsset = {
   file: string;
@@ -20,8 +20,8 @@ const OBSTACLE_ASSETS: ObstacleAsset[] = [
 
 let templatesPromise: Promise<THREE.Group[]> | undefined;
 
-async function unpackAssetTar(): Promise<Map<string, ArrayBuffer>> {
-  const response = await fetch(PACK_URL);
+async function unpackAssetTar(url: string): Promise<Map<string, ArrayBuffer>> {
+  const response = await fetch(url);
   if (!response.ok) throw new Error(`Could not load supplied obstacle pack (${response.status})`);
   const compressed = await response.arrayBuffer();
   const stream = new Blob([compressed]).stream().pipeThrough(new DecompressionStream("gzip"));
@@ -52,7 +52,8 @@ function parseGltf(loader: GLTFLoader, bytes: ArrayBuffer): Promise<THREE.Group>
 }
 
 async function loadTemplates(): Promise<THREE.Group[]> {
-  const files = await unpackAssetTar();
+  const packedFiles = await Promise.all(PACK_URLS.map((url) => unpackAssetTar(url)));
+  const files = new Map<string, ArrayBuffer>(packedFiles.flatMap((entries) => [...entries.entries()]));
   const loader = new GLTFLoader();
   return Promise.all(OBSTACLE_ASSETS.map(async (asset) => {
     const bytes = files.get(asset.file);
