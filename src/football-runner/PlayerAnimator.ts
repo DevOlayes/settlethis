@@ -225,7 +225,7 @@ export class PlayerAnimator {
       // Lower the complete rig farther into the slide so the planted
       // support hand and sliding leg meet the pitch instead of hovering.
       // The recovery eases back to the exact imported model base height.
-      const targetY = this.riggedModelBaseY - (input.sliding ? 1.05 : 0);
+      const targetY = this.riggedModelBaseY - (input.sliding ? 1.06 : 0);
       this.riggedModel.position.y = THREE.MathUtils.damp(
         this.riggedModel.position.y, targetY, input.sliding ? 22 : 12, delta,
       );
