@@ -28,9 +28,9 @@ function readQuaternionAtFrame(track: THREE.QuaternionKeyframeTrack, frame: numb
 }
 
 /**
- * Derive the actual local swing axis from every decoded keyframe in the
- * approved native run. The largest excursion fixes the sign; covariance
- * across the complete cycle stabilizes the axis against small frame noise.
+ * Use the exact run clip for bone-track identity and the first-frame reference
+ * pose. Derive each flexion axis from the actual parent/child geometry of the
+ * Sports Male 03 skeleton, with positive rotation defined as forward flexion.
  */
 export function getNativeBipedJointProfile(
   referenceRunClip: THREE.AnimationClip,
@@ -211,10 +211,6 @@ export function createNativeBipedSlideContactRig(
   const leftForearm = findBone(model, "Bip01 L Forearm");
   const leftUpperArm = findBone(model, "Bip01 L UpperArm");
   const leftClavicle = findBone(model, "Bip01 L Clavicle");
-  const neck = findBone(model, "Bip01 Neck");
-  const spine = findBone(model, "Bip01 Spine");
-  const spine1 = findBone(model, "Bip01 Spine1");
-  const spine2 = findBone(model, "Bip01 Spine2");
   const leftToe = findBone(model, "Bip01 L Toe0");
   const rightToe = findBone(model, "Bip01 R Toe0");
   const leftFoot = findBone(model, "Bip01 L Foot");
@@ -225,7 +221,6 @@ export function createNativeBipedSlideContactRig(
   const rightThigh = findBone(model, "Bip01 R Thigh");
 
   if (!leftHand || !leftForearm || !leftUpperArm || !leftClavicle ||
-      !neck || !spine || !spine1 || !spine2 ||
       !leftToe || !rightToe || !leftFoot || !leftCalf || !leftThigh ||
       !rightFoot || !rightCalf || !rightThigh) return undefined;
 
