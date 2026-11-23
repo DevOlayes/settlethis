@@ -79,8 +79,8 @@
 /* Pre-release polish 01 — premium game entrance and match-style results */
 .runner-stage{background:radial-gradient(ellipse at 50% 8%,#49364b 0%,#241e31 48%,#171522 100%);border-color:#e9827240;box-shadow:0 18px 55px #0006,inset 0 1px #ffffff12}
 .runner-overlay{background:linear-gradient(180deg,#17152245 0%,#171522dc 42%,#171522f5 100%);backdrop-filter:blur(0)}
-.runner-overlay:has(.runner-intro-art){justify-content:flex-start;padding-top:clamp(16px,3vh,32px)}
-.runner-intro-art{position:relative;width:min(100%,390px);height:clamp(118px,21vh,190px);flex:none;margin:0 auto 13px;overflow:hidden;border:1px solid #e9827240;border-radius:13px;background:radial-gradient(ellipse at 50% 48%,#543b4c 0%,#30243a 55%,#201b2b 100%);box-shadow:0 12px 35px #0005}
+.runner-overlay:has(.runner-lobby-hero){justify-content:flex-start;padding-top:clamp(16px,3vh,32px)}
+.runner-lobby-hero{position:relative;width:min(100%,390px);height:clamp(118px,21vh,190px);flex:none;margin:0 auto 13px;overflow:hidden;border:1px solid #e9827240;border-radius:13px;background:radial-gradient(ellipse at 50% 48%,#543b4c 0%,#30243a 55%,#201b2b 100%);box-shadow:0 12px 35px #0005}
 .runner-intro-pitch{position:absolute;inset:12px 17%;border:1px solid #f4f1f733;border-radius:3px;transform:perspective(220px) rotateX(35deg) scale(1.3);transform-origin:center}
 .runner-intro-pitch:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #f4f1f733}
 .runner-intro-pitch:after{content:"";position:absolute;left:50%;top:50%;width:48px;height:48px;border:1px solid #f4f1f733;border-radius:50%;transform:translate(-50%,-50%)}
@@ -90,11 +90,11 @@
 .runner-intro-speed{position:absolute;top:12px;right:12px;padding:6px 8px;border:1px solid #e9827266;border-radius:4px;background:#171522aa;color:#e98272;font-size:7px;font-weight:900;letter-spacing:.14em}
 .runner-intro-mark{position:absolute;bottom:11px;left:13px;color:#f4f1f7aa;font-size:7px;font-weight:900;letter-spacing:.2em}
 @keyframes runnerBallFloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
-.runner-overlay:has(.runner-intro-art) .runner-overline{font-size:7px}
-.runner-overlay:has(.runner-intro-art) h1{margin:7px 0 5px;font-size:clamp(32px,8vw,48px)}
-.runner-overlay:has(.runner-intro-art)>p{max-width:330px;margin-bottom:13px}
-.runner-overlay:has(.runner-intro-art) .runner-personal-best{max-width:390px;background:linear-gradient(110deg,#34283c,#242031);border-color:#e9827244}
-.runner-overlay:has(.runner-intro-art) .runner-ready-actions{max-width:390px}
+.runner-overlay:has(.runner-lobby-hero) .runner-overline{font-size:7px}
+.runner-overlay:has(.runner-lobby-hero) h1{margin:7px 0 5px;font-size:clamp(32px,8vw,48px)}
+.runner-overlay:has(.runner-lobby-hero)>p{max-width:330px;margin-bottom:13px}
+.runner-overlay:has(.runner-lobby-hero) .runner-personal-best{max-width:390px;background:linear-gradient(110deg,#34283c,#242031);border-color:#e9827244}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions{max-width:390px}
 .runner-ready-actions>button:first-child{height:49px;border-radius:8px;box-shadow:0 7px 20px #e9827230;font-size:10px}
 .runner-ready-actions>button:first-child:active{transform:translateY(1px)}
 .runner-result-heading{width:min(100%,390px);text-align:center;margin-bottom:9px}
@@ -135,14 +135,14 @@
 .runner-overlay:has(.runner-score-showcase)>p{width:min(100%,390px);font-size:8px;line-height:1.5;margin:0 0 9px}
 .runner-overlay:has(.runner-score-showcase) .runner-ready-actions{width:min(100%,390px)}
 .runner-overlay:has(.runner-score-showcase) .runner-ready-actions>button{min-height:40px}
-@media(max-height:760px){.runner-intro-art{height:105px;margin-bottom:8px}.runner-overlay:has(.runner-intro-art){padding-top:10px}.runner-score-showcase{padding:8px 12px}.runner-score-showcase>strong{font-size:36px}.runner-stat-strip>div{padding:6px}.runner-breakdown-panel{padding:7px 10px}.runner-breakdown-row{padding:4px 0}.runner-overlay:has(.runner-score-showcase){padding-top:8px}}
+@media(max-height:760px){.runner-lobby-hero{height:105px;margin-bottom:8px}.runner-overlay:has(.runner-lobby-hero){padding-top:10px}.runner-score-showcase{padding:8px 12px}.runner-score-showcase>strong{font-size:36px}.runner-stat-strip>div{padding:6px}.runner-breakdown-panel{padding:7px 10px}.runner-breakdown-row{padding:4px 0}.runner-overlay:has(.runner-score-showcase){padding-top:8px}}
 @media(max-width:380px){.runner-stat-strip small{font-size:5px;letter-spacing:.06em}.runner-breakdown-row>span{font-size:6px}.runner-breakdown-title span{font-size:5px}}
 
 /* Start-screen hierarchy: keep the game lobby focused on the next run */
-.runner-overlay:has(.runner-intro-art) .runner-recent-runs{display:none}
-.runner-overlay:has(.runner-intro-art) .runner-leaderboard-toggle{margin-bottom:8px}
-.runner-overlay:has(.runner-intro-art) .runner-personal-best{padding:9px 13px}
-.runner-overlay:has(.runner-intro-art)>small{margin-top:10px}
+.runner-overlay:has(.runner-lobby-hero) .runner-recent-runs{display:none}
+.runner-overlay:has(.runner-lobby-hero) .runner-leaderboard-toggle{margin-bottom:8px}
+.runner-overlay:has(.runner-lobby-hero) .runner-personal-best{padding:9px 13px}
+.runner-overlay:has(.runner-lobby-hero)>small{margin-top:10px}
 
 
 /* Clear, touch-friendly field selection with visible load feedback */
@@ -174,88 +174,88 @@
 
 
 /* Lobby redesign 01 — football-first home screen hierarchy */
-.runner-overlay:has(.runner-intro-art){gap:0;padding:clamp(14px,2.5vh,26px) 18px 22px;background:linear-gradient(180deg,#17152228 0%,#171522a8 28%,#171522f0 72%,#171522 100%)}
-.runner-overlay:has(.runner-intro-art) .runner-intro-art{order:1;width:min(100%,470px);height:clamp(154px,25vh,218px);margin:0 auto 17px;border-radius:15px;border-color:#e9827270;background:radial-gradient(ellipse at 50% 70%,#536b55 0%,#314b43 35%,#292238 76%,#201b2b 100%);box-shadow:0 16px 38px #0008,inset 0 1px #ffffff20}
-.runner-overlay:has(.runner-intro-art) .runner-intro-art:before{content:"";position:absolute;inset:0;background:linear-gradient(112deg,transparent 12%,#fff1 27%,transparent 39%),linear-gradient(248deg,transparent 18%,#fff2 32%,transparent 46%),linear-gradient(0deg,#171522b8 0%,transparent 46%);pointer-events:none}
-.runner-overlay:has(.runner-intro-art) .runner-intro-art:after{content:"";position:absolute;left:50%;bottom:-44%;width:145%;height:75%;border:1px solid #f4f1f744;border-radius:50%;transform:translateX(-50%);box-shadow:0 0 0 18px #f4f1f70a,0 0 0 42px #f4f1f708;pointer-events:none}
-.runner-overlay:has(.runner-intro-art) .runner-intro-pitch{inset:14px 20% 8px;border-color:#f4f1f788;transform:perspective(260px) rotateX(39deg) scale(1.35)}
-.runner-overlay:has(.runner-intro-art) .runner-intro-pitch:after{width:58px;height:58px;border-color:#f4f1f788}
-.runner-overlay:has(.runner-intro-art) .runner-intro-ball{top:47%;font-size:clamp(48px,12vw,76px);filter:drop-shadow(0 10px 15px #000b) drop-shadow(0 0 14px #e9827266)}
-.runner-overlay:has(.runner-intro-art) .runner-intro-speed{top:12px;right:12px;padding:7px 10px;background:#171522c9;border-color:#e98272a6}
-.runner-overlay:has(.runner-intro-art) .runner-intro-mark{bottom:12px;left:13px;color:#fff;font-size:7px;text-shadow:0 2px 5px #000}
-.runner-overlay:has(.runner-intro-art)>.runner-overline{order:2;margin-bottom:3px;color:#f3a294;font-size:8px;letter-spacing:.2em}
-.runner-overlay:has(.runner-intro-art)>h1{order:3;margin:4px 0 6px;font-size:clamp(36px,9vw,52px);line-height:.98;letter-spacing:-.065em;text-shadow:0 5px 24px #0008}
-.runner-overlay:has(.runner-intro-art)>p{order:4;max-width:340px;margin:0 auto 13px;color:#e1dbe5;font-size:10px;line-height:1.65}
-.runner-overlay:has(.runner-intro-art) .runner-challenge-banner{order:5}
-.runner-overlay:has(.runner-intro-art) .runner-environment-picker{order:6;width:min(100%,470px);gap:7px;margin:0 auto 11px;padding:10px 11px;border-color:#ffffff27;background:linear-gradient(115deg,#30283aeb,#211e2deF);box-shadow:0 8px 22px #0004}
-.runner-overlay:has(.runner-intro-art) .runner-environment-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.runner-overlay:has(.runner-intro-art) .runner-environment-heading b{font-size:8px}
-.runner-overlay:has(.runner-intro-art) .runner-environment-heading span{font-size:8px;text-align:right}
-.runner-overlay:has(.runner-intro-art) .runner-environment-options button{min-height:59px;padding:8px 9px;gap:3px}
-.runner-overlay:has(.runner-intro-art) .runner-environment-choice-title{font-size:8px}
-.runner-overlay:has(.runner-intro-art) .runner-environment-choice-detail{font-size:7px}
-.runner-overlay:has(.runner-intro-art) .runner-environment-choice-state{font-size:6px}
-.runner-overlay:has(.runner-intro-art) .runner-environment-status{padding:5px 7px;font-size:6px}
-.runner-overlay:has(.runner-intro-art) .runner-ready-actions{order:7;width:min(100%,470px);gap:7px;margin:0 auto 11px}
-.runner-overlay:has(.runner-intro-art) .runner-ready-actions>button:first-child{height:54px;border-radius:10px;background:linear-gradient(105deg,#f19a88 0%,#e98272 52%,#d96e66 100%);box-shadow:0 9px 24px #e9827240,inset 0 1px #ffffff66;color:#241824;font-size:11px;letter-spacing:.13em}
-.runner-overlay:has(.runner-intro-art) .runner-ready-actions>button:first-child span{font-size:19px;margin-left:20px}
-.runner-overlay:has(.runner-intro-art) .runner-ready-actions .runner-secondary{height:37px;margin:0;border-color:#ffffff26;background:#302b3d;color:#e9e3ee}
-.runner-overlay:has(.runner-intro-art) .runner-personal-best{order:8;width:min(100%,470px);max-width:none;margin:0 auto 8px;padding:9px 12px;border-color:#e9827244;background:linear-gradient(105deg,#34283c,#242031)}
-.runner-overlay:has(.runner-intro-art) .runner-leaderboard-toggle{order:9;width:min(100%,470px);margin:0 auto 8px}
-.runner-overlay:has(.runner-intro-art) .runner-instructions{order:10;width:min(100%,470px)}
-.runner-overlay:has(.runner-intro-art) .runner-local-leaderboard{order:11;width:min(100%,470px)}
-.runner-overlay:has(.runner-intro-art)>.runner-recent-runs{order:12}
-.runner-overlay:has(.runner-intro-art)>small{order:13;margin:2px 0 0;color:#aaa3b5;font-size:6px;letter-spacing:.1em}
+.runner-overlay:has(.runner-lobby-hero){gap:0;padding:clamp(14px,2.5vh,26px) 18px 22px;background:linear-gradient(180deg,#17152228 0%,#171522a8 28%,#171522f0 72%,#171522 100%)}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{order:1;width:min(100%,470px);height:clamp(154px,25vh,218px);margin:0 auto 17px;border-radius:15px;border-color:#e9827270;background:radial-gradient(ellipse at 50% 70%,#536b55 0%,#314b43 35%,#292238 76%,#201b2b 100%);box-shadow:0 16px 38px #0008,inset 0 1px #ffffff20}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(112deg,transparent 12%,#fff1 27%,transparent 39%),linear-gradient(248deg,transparent 18%,#fff2 32%,transparent 46%),linear-gradient(0deg,#171522b8 0%,transparent 46%);pointer-events:none}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero:after{content:"";position:absolute;left:50%;bottom:-44%;width:145%;height:75%;border:1px solid #f4f1f744;border-radius:50%;transform:translateX(-50%);box-shadow:0 0 0 18px #f4f1f70a,0 0 0 42px #f4f1f708;pointer-events:none}
+.runner-overlay:has(.runner-lobby-hero) .runner-intro-pitch{inset:14px 20% 8px;border-color:#f4f1f788;transform:perspective(260px) rotateX(39deg) scale(1.35)}
+.runner-overlay:has(.runner-lobby-hero) .runner-intro-pitch:after{width:58px;height:58px;border-color:#f4f1f788}
+.runner-overlay:has(.runner-lobby-hero) .runner-intro-ball{top:47%;font-size:clamp(48px,12vw,76px);filter:drop-shadow(0 10px 15px #000b) drop-shadow(0 0 14px #e9827266)}
+.runner-overlay:has(.runner-lobby-hero) .runner-intro-speed{top:12px;right:12px;padding:7px 10px;background:#171522c9;border-color:#e98272a6}
+.runner-overlay:has(.runner-lobby-hero) .runner-intro-mark{bottom:12px;left:13px;color:#fff;font-size:7px;text-shadow:0 2px 5px #000}
+.runner-overlay:has(.runner-lobby-hero)>.runner-overline{order:2;margin-bottom:3px;color:#f3a294;font-size:8px;letter-spacing:.2em}
+.runner-overlay:has(.runner-lobby-hero)>h1{order:3;margin:4px 0 6px;font-size:clamp(36px,9vw,52px);line-height:.98;letter-spacing:-.065em;text-shadow:0 5px 24px #0008}
+.runner-overlay:has(.runner-lobby-hero)>p{order:4;max-width:340px;margin:0 auto 13px;color:#e1dbe5;font-size:10px;line-height:1.65}
+.runner-overlay:has(.runner-lobby-hero) .runner-challenge-banner{order:5}
+.runner-overlay:has(.runner-lobby-hero) .runner-environment-picker{order:6;width:min(100%,470px);gap:7px;margin:0 auto 11px;padding:10px 11px;border-color:#ffffff27;background:linear-gradient(115deg,#30283aeb,#211e2deF);box-shadow:0 8px 22px #0004}
+.runner-overlay:has(.runner-lobby-hero) .runner-environment-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.runner-overlay:has(.runner-lobby-hero) .runner-environment-heading b{font-size:8px}
+.runner-overlay:has(.runner-lobby-hero) .runner-environment-heading span{font-size:8px;text-align:right}
+.runner-overlay:has(.runner-lobby-hero) .runner-environment-options button{min-height:59px;padding:8px 9px;gap:3px}
+.runner-overlay:has(.runner-lobby-hero) .runner-environment-choice-title{font-size:8px}
+.runner-overlay:has(.runner-lobby-hero) .runner-environment-choice-detail{font-size:7px}
+.runner-overlay:has(.runner-lobby-hero) .runner-environment-choice-state{font-size:6px}
+.runner-overlay:has(.runner-lobby-hero) .runner-environment-status{padding:5px 7px;font-size:6px}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions{order:7;width:min(100%,470px);gap:7px;margin:0 auto 11px}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button:first-child{height:54px;border-radius:10px;background:linear-gradient(105deg,#f19a88 0%,#e98272 52%,#d96e66 100%);box-shadow:0 9px 24px #e9827240,inset 0 1px #ffffff66;color:#241824;font-size:11px;letter-spacing:.13em}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button:first-child span{font-size:19px;margin-left:20px}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions .runner-secondary{height:37px;margin:0;border-color:#ffffff26;background:#302b3d;color:#e9e3ee}
+.runner-overlay:has(.runner-lobby-hero) .runner-personal-best{order:8;width:min(100%,470px);max-width:none;margin:0 auto 8px;padding:9px 12px;border-color:#e9827244;background:linear-gradient(105deg,#34283c,#242031)}
+.runner-overlay:has(.runner-lobby-hero) .runner-leaderboard-toggle{order:9;width:min(100%,470px);margin:0 auto 8px}
+.runner-overlay:has(.runner-lobby-hero) .runner-instructions{order:10;width:min(100%,470px)}
+.runner-overlay:has(.runner-lobby-hero) .runner-local-leaderboard{order:11;width:min(100%,470px)}
+.runner-overlay:has(.runner-lobby-hero)>.runner-recent-runs{order:12}
+.runner-overlay:has(.runner-lobby-hero)>small{order:13;margin:2px 0 0;color:#aaa3b5;font-size:6px;letter-spacing:.1em}
 @media(max-width:540px){
- .runner-overlay:has(.runner-intro-art){padding:12px 13px 18px}
- .runner-overlay:has(.runner-intro-art) .runner-intro-art{height:clamp(142px,22vh,180px);margin-bottom:13px}
- .runner-overlay:has(.runner-intro-art)>h1{font-size:clamp(35px,10vw,45px)}
- .runner-overlay:has(.runner-intro-art)>p{font-size:9px;margin-bottom:10px}
- .runner-overlay:has(.runner-intro-art) .runner-environment-picker{padding:8px;margin-bottom:9px}
- .runner-overlay:has(.runner-intro-art) .runner-ready-actions>button:first-child{height:51px}
+ .runner-overlay:has(.runner-lobby-hero){padding:12px 13px 18px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{height:clamp(142px,22vh,180px);margin-bottom:13px}
+ .runner-overlay:has(.runner-lobby-hero)>h1{font-size:clamp(35px,10vw,45px)}
+ .runner-overlay:has(.runner-lobby-hero)>p{font-size:9px;margin-bottom:10px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-environment-picker{padding:8px;margin-bottom:9px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button:first-child{height:51px}
 }
 @media(max-height:700px){
- .runner-overlay:has(.runner-intro-art){padding-top:8px}
- .runner-overlay:has(.runner-intro-art) .runner-intro-art{height:112px;margin-bottom:9px}
- .runner-overlay:has(.runner-intro-art)>h1{font-size:32px}
- .runner-overlay:has(.runner-intro-art) .runner-environment-options button{min-height:50px}
- .runner-overlay:has(.runner-intro-art) .runner-ready-actions>button:first-child{height:45px}
+ .runner-overlay:has(.runner-lobby-hero){padding-top:8px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{height:112px;margin-bottom:9px}
+ .runner-overlay:has(.runner-lobby-hero)>h1{font-size:32px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-environment-options button{min-height:50px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button:first-child{height:45px}
 }
-@media(prefers-reduced-motion:reduce){.runner-overlay:has(.runner-intro-art) .runner-intro-ball{animation:none}}
+@media(prefers-reduced-motion:reduce){.runner-overlay:has(.runner-lobby-hero) .runner-intro-ball{animation:none}}
 
 
 /* Lobby redesign 02 — pause intermission and full-time presentation */
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase)){
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase)){
   overflow-y:auto;justify-content:center;gap:0;padding:clamp(22px,5vh,48px) 20px;
   background:radial-gradient(ellipse at 50% 24%,#493647b8 0%,#282235ed 46%,#171522fa 82%),linear-gradient(180deg,#17152266,#171522f5);
 }
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase)):before{
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase)):before{
   content:"";position:absolute;left:50%;top:12%;width:min(76%,420px);height:36%;transform:translateX(-50%);
   border:1px solid #f4f1f71b;border-radius:50%;box-shadow:0 0 0 22px #f4f1f708,0 0 0 48px #f4f1f706;pointer-events:none;
 }
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>*{position:relative}
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>.runner-overline{
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase))>*{position:relative}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase))>.runner-overline{
   display:inline-flex;align-items:center;gap:9px;margin-bottom:10px;color:#f3a294;font-size:8px;letter-spacing:.22em
 }
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>.runner-overline:before,
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>.runner-overline:after{
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase))>.runner-overline:before,
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase))>.runner-overline:after{
   content:"";width:22px;height:1px;background:#e9827288
 }
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>h1{
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase))>h1{
   margin:3px 0 7px;font-size:clamp(34px,8vw,48px);line-height:1;letter-spacing:-.065em;text-shadow:0 6px 24px #0008
 }
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>p{
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase))>p{
   max-width:300px;margin:0 auto 22px;color:#d6cfdb;font-size:10px;line-height:1.7
 }
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>button{
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase))>button{
   width:min(100%,310px);height:52px;margin:0 0 9px;border-radius:10px;
   background:linear-gradient(105deg,#f19a88,#e98272 55%,#d96e66);color:#241824;
   box-shadow:0 9px 24px #e9827235,inset 0 1px #ffffff66;font-size:10px;letter-spacing:.14em
 }
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>button.runner-secondary{
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase))>button.runner-secondary{
   height:43px;margin-top:1px;background:#302b3d;border:1px solid #ffffff26;color:#f4f1f7;box-shadow:none
 }
-.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>button.runner-text-action{
+.runner-overlay:has(> .runner-overline):not(:has(.runner-lobby-hero)):not(:has(.runner-score-showcase))>button.runner-text-action{
   width:auto;height:36px;margin:5px 0 0;padding:0 14px;background:transparent;border:1px solid #e9827240;color:#c7c0ce;box-shadow:none;font-size:8px
 }
 
@@ -358,21 +358,21 @@
 .runner-control-pad{gap:clamp(8px,3vw,18px)}
 .runner-control-pad button{width:clamp(46px,12vw,58px);height:clamp(42px,10vw,52px);border-radius:12px;background:linear-gradient(145deg,#3b3047,#211d2d);box-shadow:0 5px 13px #0005}
 .runner-overlay{z-index:3;justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain;padding:clamp(14px,3vh,28px) clamp(13px,4vw,28px) 22px;background:linear-gradient(180deg,#17152235 0%,#171522c9 32%,#171522f5 100%);backdrop-filter:blur(1px)}
-.runner-overlay:has(.runner-intro-art){justify-content:flex-start;gap:0;padding:clamp(12px,2.6vh,26px) clamp(13px,4vw,28px) 22px;background:linear-gradient(180deg,#17152220 0%,#171522b8 34%,#171522f5 100%)}
-.runner-overlay:has(.runner-intro-art) .runner-intro-art{width:min(100%,540px);height:clamp(150px,27vh,250px);margin:0 auto 17px;border-radius:17px;border:1px solid #f2a18b88;background:radial-gradient(ellipse at 50% 85%,#7e8e58 0%,#3d654d 33%,#30243b 72%,#171522 100%);box-shadow:0 18px 42px #0009,inset 0 1px #ffffff28}
-.runner-overlay:has(.runner-intro-art) .runner-intro-art:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#17152210 0%,transparent 40%,#171522b8 100%),linear-gradient(110deg,transparent 15%,#fff2 28%,transparent 40%);pointer-events:none}
-.runner-overlay:has(.runner-intro-art) .runner-intro-ball{font-size:clamp(54px,13vw,82px);filter:drop-shadow(0 12px 18px #000b) drop-shadow(0 0 16px #e9827280)}
-.runner-overlay:has(.runner-intro-art)>h1{font-size:clamp(39px,10vw,58px);letter-spacing:-.07em;text-shadow:0 7px 26px #0009}
-.runner-overlay:has(.runner-intro-art)>p{font-size:clamp(10px,2.6vw,12px);max-width:360px;color:#eee8f1}
+.runner-overlay:has(.runner-lobby-hero){justify-content:flex-start;gap:0;padding:clamp(12px,2.6vh,26px) clamp(13px,4vw,28px) 22px;background:linear-gradient(180deg,#17152220 0%,#171522b8 34%,#171522f5 100%)}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{width:min(100%,540px);height:clamp(150px,27vh,250px);margin:0 auto 17px;border-radius:17px;border:1px solid #f2a18b88;background:radial-gradient(ellipse at 50% 85%,#7e8e58 0%,#3d654d 33%,#30243b 72%,#171522 100%);box-shadow:0 18px 42px #0009,inset 0 1px #ffffff28}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#17152210 0%,transparent 40%,#171522b8 100%),linear-gradient(110deg,transparent 15%,#fff2 28%,transparent 40%);pointer-events:none}
+.runner-overlay:has(.runner-lobby-hero) .runner-intro-ball{font-size:clamp(54px,13vw,82px);filter:drop-shadow(0 12px 18px #000b) drop-shadow(0 0 16px #e9827280)}
+.runner-overlay:has(.runner-lobby-hero)>h1{font-size:clamp(39px,10vw,58px);letter-spacing:-.07em;text-shadow:0 7px 26px #0009}
+.runner-overlay:has(.runner-lobby-hero)>p{font-size:clamp(10px,2.6vw,12px);max-width:360px;color:#eee8f1}
 .runner-lobby-records{width:min(100%,470px);display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px auto 13px}
 .runner-lobby-records>div{display:grid;gap:5px;padding:12px 13px;border:1px solid #e9827255;border-radius:11px;background:linear-gradient(145deg,#3b2b40ed,#211e2dec);box-shadow:0 8px 20px #0004;text-align:left}
 .runner-lobby-records small{font-size:7px;font-weight:950;letter-spacing:.14em;color:#eaa091}
 .runner-lobby-records b{font-size:clamp(18px,5vw,25px);font-weight:950;font-variant-numeric:tabular-nums;color:#fff}
 .runner-lobby-records .runner-record-error{grid-column:1/-1}
-.runner-overlay:has(.runner-intro-art) .runner-ready-actions{width:min(100%,470px);margin:0 auto 10px}
-.runner-overlay:has(.runner-intro-art) .runner-ready-actions>button:first-child{height:clamp(52px,8vh,62px);border-radius:12px;font-size:12px;letter-spacing:.16em}
-.runner-overlay:has(.runner-intro-art) .runner-ready-actions .runner-secondary{height:42px;border-radius:10px}
-.runner-overlay:has(.runner-intro-art)>small{font-size:7px;line-height:1.5;text-align:center}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions{width:min(100%,470px);margin:0 auto 10px}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button:first-child{height:clamp(52px,8vh,62px);border-radius:12px;font-size:12px;letter-spacing:.16em}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions .runner-secondary{height:42px;border-radius:10px}
+.runner-overlay:has(.runner-lobby-hero)>small{font-size:7px;line-height:1.5;text-align:center}
 .runner-result-screen{width:min(100%,460px);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto}
 .runner-result-screen>.runner-overline{font-size:9px;letter-spacing:.22em}
 .runner-result-screen>h1{margin:7px 0 3px;font-size:clamp(34px,8vw,48px);letter-spacing:-.06em}
@@ -402,8 +402,8 @@
  .runner-pause{top:7px;right:7px;height:33px;padding:0 8px;font-size:7px}
  .runner-controls{padding-top:6px}
  .runner-control-pad button{width:clamp(44px,11vw,54px);height:43px}
- .runner-overlay:has(.runner-intro-art){padding:10px 11px 16px}
- .runner-overlay:has(.runner-intro-art) .runner-intro-art{height:clamp(125px,21vh,175px);margin-bottom:12px}
+ .runner-overlay:has(.runner-lobby-hero){padding:10px 11px 16px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{height:clamp(125px,21vh,175px);margin-bottom:12px}
  .runner-lobby-records{gap:6px;margin-bottom:10px}
  .runner-lobby-records>div{padding:9px 10px}
  .runner-result-metrics{gap:6px}
@@ -413,9 +413,9 @@
 @media(max-height:680px){
  .runner-topbar{height:40px;flex-basis:40px}
  .runner-controls{padding-top:5px;padding-bottom:calc(5px + env(safe-area-inset-bottom,0))}
- .runner-overlay:has(.runner-intro-art){padding-top:7px;padding-bottom:10px}
- .runner-overlay:has(.runner-intro-art) .runner-intro-art{height:100px;margin-bottom:8px}
- .runner-overlay:has(.runner-intro-art)>h1{font-size:30px}
+ .runner-overlay:has(.runner-lobby-hero){padding-top:7px;padding-bottom:10px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{height:100px;margin-bottom:8px}
+ .runner-overlay:has(.runner-lobby-hero)>h1{font-size:30px}
  .runner-lobby-records>div{padding:7px 9px}
  .runner-result-screen{justify-content:flex-start}
  .runner-result-ball{width:52px;height:52px;margin:3px 0 8px;font-size:28px}
@@ -423,3 +423,11 @@
  .runner-result-metrics>div{gap:4px;padding:7px 9px}
  .runner-result-actions button{min-height:42px}
 }
+
+/* Let the actual 3D Club Ground and the approved player model be the lobby artwork. */
+.runner-overlay:has(.runner-lobby-hero){background:linear-gradient(180deg,#17152210 0%,#17152222 30%,#1715229c 60%,#171522f2 100%)}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{position:relative;width:min(100%,540px);height:clamp(150px,29vh,260px);flex:none;margin:0 auto 10px;overflow:visible;border:0;border-radius:0;background:transparent;box-shadow:none}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero:before,.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero:after{display:none}
+.runner-lobby-hero>span{position:absolute;left:12px;top:12px;padding:7px 10px;border:1px solid #e98272a6;border-radius:7px;background:#171522d9;color:#f4b1a1;font-size:7px;font-weight:950;letter-spacing:.16em;box-shadow:0 5px 16px #0006;backdrop-filter:blur(10px)}
+@media(max-width:540px){.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{height:clamp(130px,23vh,180px);margin-bottom:8px}}
+@media(max-height:680px){.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{height:105px;margin-bottom:5px}}
