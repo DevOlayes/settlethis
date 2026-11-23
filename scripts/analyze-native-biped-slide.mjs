@@ -1,12 +1,14 @@
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { createRequire } from "node:module";
+import { readFile, writeFile } from "node:fs/promises";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 
-const require = createRequire(import.meta.url);
-const { createNativeBipedManeuverClips } = require("../.tmp-audit/NativeBipedManeuvers.js");
-const { createNativeBipedSlideContactRig } = require("../.tmp-audit/NativeBipedPoseTools.js");
+await writeFile(new URL("../.tmp-audit/package.json", import.meta.url), '{"type":"module"}');
+const compiledManeuvers = new URL("../.tmp-audit/NativeBipedManeuvers.js", import.meta.url);
+const maneuversSource = await readFile(compiledManeuvers, "utf8");
+await writeFile(compiledManeuvers, maneuversSource.replace('from "./NativeBipedPoseTools"', 'from "./NativeBipedPoseTools.js"'));
+const { createNativeBipedManeuverClips } = await import("../.tmp-audit/NativeBipedManeuvers.js");
+const { createNativeBipedSlideContactRig } = await import("../.tmp-audit/NativeBipedPoseTools.js");
 
 function rewriteWithoutTextures(input) {
   const bytes = Buffer.from(input);
