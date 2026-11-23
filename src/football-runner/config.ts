@@ -52,7 +52,7 @@ export const RUNNER_CONFIG = {
     doubleObstacleChanceMaximum: 0.42,
     longBallLineChance: 0.42,
     ballLineSpacing: 2.5,
-    safeLaneBallChance: 0.28,
+    safeLaneBallChance: 0.38,
     safeLaneBallOffset: 3.2,
   },
   collision: {
