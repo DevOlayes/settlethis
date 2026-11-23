@@ -162,3 +162,12 @@
 .runner-environment-status.is-ready{color:#9fe0b0;background:#9fe0b012}
 .runner-environment-status.is-error{color:#ffb0a6;background:#e9827218}
 @media(max-width:380px){.runner-environment-picker{padding:8px}.runner-environment-options{gap:6px}.runner-environment-options button{padding:8px;min-height:72px}.runner-environment-choice-title{font-size:8px}}
+
+/* Football collection: the pickup flies into the score area while the total pulses. */
+.runner-collect-fly{position:absolute;left:50%;top:55%;z-index:5;display:flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid #f6b2a4;border-radius:999px;background:linear-gradient(110deg,#e98272,#f4b19c);color:#241824;box-shadow:0 0 0 5px #e9827225,0 8px 28px #0007;pointer-events:none;white-space:nowrap;animation:runner-coin-to-score .82s cubic-bezier(.18,.72,.24,1) forwards}
+.runner-collect-fly span{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#fff4e9;font-size:16px;box-shadow:inset 0 0 0 2px #e98272}
+.runner-collect-fly b{font-size:10px;font-weight:1000;letter-spacing:.06em}
+.runner-points-value{display:inline-block;animation:runner-score-pop .42s cubic-bezier(.2,.85,.3,1.3)}
+@keyframes runner-coin-to-score{0%{opacity:0;transform:translate(-50%,18px) scale(.65)}14%{opacity:1;transform:translate(-50%,-10px) scale(1.08)}72%{opacity:1}100%{opacity:0;transform:translate(112px,-330px) scale(.38)}}
+@keyframes runner-score-pop{0%{transform:scale(1);color:#f4f1f7}45%{transform:scale(1.24);color:#e98272;text-shadow:0 0 15px #e9827299}100%{transform:scale(1);color:#f4f1f7;text-shadow:none}}
+@media(prefers-reduced-motion:reduce){.runner-collect-fly,.runner-points-value{animation-duration:.01ms;animation-iteration-count:1}}
