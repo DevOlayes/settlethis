@@ -26,13 +26,13 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const mountRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<RunnerControls | null>(null);
   const [phase, setPhase] = useState<RunnerPhase>("ready");
-  const [selectedEnvironment, setSelectedEnvironment] = useState<"classic" | "club-ground">("classic");
+  const selectedEnvironment = "club-ground" as const;
   const [environmentStatus, setEnvironmentStatus] = useState<"loading" | "ready" | "error">("ready");
   const [summary, setSummary] = useState<RunnerSummary | null>(null);
   const [hud, setHud] = useState<RunnerHud>(EMPTY_HUD);
   const [collectionPulse, setCollectionPulse] = useState(0);
   const [engineError, setEngineError] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const [records, setRecords] = useState<RunnerRecords>(EMPTY_RECORDS);
   const [recordsLoading, setRecordsLoading] = useState(!preview);
   const [recordsError, setRecordsError] = useState("");
@@ -142,7 +142,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             })
             .finally(() => setSavingRun(false));
         },
-      }, selectedEnvironment);
+      }, "club-ground");
       engine.setSoundEnabled(soundEnabled);
       engineRef.current = engine;
     } catch {
@@ -154,7 +154,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       engine.dispose();
       engineRef.current = null;
     };
-  }, [preview, initData, avatarDiagnostic, selectedEnvironment]);
+  }, [preview, initData, avatarDiagnostic]);
 
   const start = async () => {
     if (startBusy || savingRun) return;
@@ -265,14 +265,15 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       </header>
 
       <section className="runner-stage-wrap">
-        <div className="runner-hud" aria-label="Live game statistics" aria-live="off">
+
+
+        <div className="runner-stage" ref={mountRef}>
+          {phase === "running" && <div className="runner-hud" aria-label="Live game statistics" aria-live="off">
           <div><small>DISTANCE</small><b>{hud.distance.toLocaleString()} m</b></div>
           <div><small>POINTS</small><b key={collectionPulse} className="runner-points-value">{hud.points.toLocaleString()}</b></div>
           <div><small>FOOTBALLS</small><b>{hud.balls}</b></div>
           <div><small>SPEED</small><b>{hud.speed.toFixed(1)}×</b></div>
-        </div>
-
-        <div className="runner-stage" ref={mountRef}>
+          </div>}
           {engineError ? (
             <div className="runner-overlay">
               <span className="runner-overline">GAME ENGINE UNAVAILABLE</span>
@@ -283,27 +284,6 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
           ) : phase !== "running" ? (
             <div className="runner-overlay">
               {phase === "ready" && <>
-                <section className="runner-environment-picker" aria-label="Choose your field">
-                  <div className="runner-environment-heading">
-                    <b>CHOOSE YOUR FIELD</b>
-                    <span>Switch the scenery before your run</span>
-                  </div>
-                  <div className="runner-environment-options">
-                    <button type="button" className={selectedEnvironment === "classic" ? "is-selected" : ""} onClick={() => { setEngineError(false); setSelectedEnvironment("classic"); setEnvironmentStatus("ready"); }} aria-pressed={selectedEnvironment === "classic"}>
-                      <span className="runner-environment-choice-title">{selectedEnvironment === "classic" ? "✓ " : ""}ORIGINAL STADIUM</span>
-                      <span className="runner-environment-choice-detail">Current SETHIS field</span>
-                      <span className="runner-environment-choice-state">{selectedEnvironment === "classic" ? "SELECTED" : "CHOOSE FIELD"}</span>
-                    </button>
-                    <button type="button" className={selectedEnvironment === "club-ground" ? "is-selected" : ""} onClick={() => { setEngineError(false); setSelectedEnvironment("club-ground"); setEnvironmentStatus("loading"); }} aria-pressed={selectedEnvironment === "club-ground"}>
-                      <span className="runner-environment-choice-title">{selectedEnvironment === "club-ground" ? "✓ " : ""}CLUB GROUND</span>
-                      <span className="runner-environment-choice-detail">Imported football complex</span>
-                      <span className="runner-environment-choice-state">{selectedEnvironment === "club-ground" ? "SELECTED" : "CHOOSE FIELD"}</span>
-                    </button>
-                  </div>
-                  <p className={"runner-environment-status is-" + environmentStatus} role="status">
-                    {selectedEnvironment === "classic" ? "ORIGINAL STADIUM SELECTED" : environmentStatus === "loading" ? "CLUB GROUND SELECTED · LOADING FIELD…" : environmentStatus === "ready" ? "CLUB GROUND READY · START YOUR RUN" : "CLUB GROUND COULD NOT LOAD · ORIGINAL FIELD WILL BE USED"}
-                  </p>
-                </section>
                 <div className="runner-intro-art" aria-hidden="true">
                   <div className="runner-intro-pitch"><i/><i/><i/></div>
                   <div className="runner-intro-ball">⚽</div>
@@ -325,24 +305,11 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <small>Original: {incomingChallengeResult.challenge.score.points.toLocaleString()} pts · Reply: {incomingChallengeResult.result.points.toLocaleString()} pts</small>
                   <i>{new Date(incomingChallengeResult.completedAt).toLocaleString()} · Self-reported web result, not server-verified.</i>
                 </section>}
-                <div className="runner-personal-best">
-                  <span>{preview ? "BROWSER PREVIEW" : "PERSONAL BEST"}</span>
-                  <b>{preview ? "NOT SAVED" : recordsLoading?"…":records.bestDistance.toLocaleString()+" m"}</b>
-                  <i>{preview ? "Practice mode · no account record" : recordsLoading?"Loading account record…":records.bestPoints.toLocaleString()+" points · "+records.totalRuns+" "+(records.totalRuns===1?"run":"runs")}</i>
-                  {!preview && recordsError && <small className="runner-record-error">{recordsError}</small>}
-                </div>
-                <button className="runner-leaderboard-toggle" onClick={() => setLeaderboardOpen((open) => !open)} aria-expanded={leaderboardOpen}>{leaderboardOpen ? "HIDE MY LEADERBOARD" : "MY LEADERBOARD"} <span>{records.recentRuns.length} RUNS ↕</span></button>
-                {leaderboardOpen && <section className="runner-local-leaderboard"><div className="runner-instructions-heading">ACCOUNT RECORDS · RECENT RUNS</div>
-                  {[...records.recentRuns].sort((a,b) => b.points-a.points || b.distance-a.distance || b.balls-a.balls).slice(0,5).map((run,index) => <div key={`${run.playedAt}-${index}`}><b>#{index+1}</b><span>{run.points.toLocaleString()} pts</span><small>{run.distance.toLocaleString()} m · {run.balls} balls</small></div>)}
-                  {records.recentRuns.length === 0 && <p>{preview ? "Browser preview runs are not saved." : "Complete a run to start your personal leaderboard."}</p>}
-                  <small>{preview ? "Preview only. No account data or public ranking is used." : "Saved to your SETHIS account. Public ranking eligibility follows score-integrity validation."}</small>
-                </section>}
-                {!preview && records.recentRuns.length > 0 && <div className="runner-recent-runs">
-                  <span>RECENT RUNS</span>
-                  {records.recentRuns.slice(0, 3).map((run) => <div key={run.playedAt}>
-                    <b>{run.distance.toLocaleString()} m</b><i>{run.points.toLocaleString()} pts · {run.balls} balls</i>
-                  </div>)}
-                </div>}
+                <section className="runner-lobby-records" aria-label="Your running record">
+                  <div><small>BEST DISTANCE</small><b>{preview ? "—" : recordsLoading ? "…" : records.bestDistance.toLocaleString()+" m"}</b></div>
+                  <div><small>RUNS PLAYED</small><b>{preview ? "PRACTICE" : recordsLoading ? "…" : records.totalRuns.toLocaleString()}</b></div>
+                  {!preview && recordsError && <p className="runner-record-error">{recordsError}</p>}
+                </section>
                 {instructionsOpen && <section className="runner-instructions" aria-label="How to play">
                   <div className="runner-instructions-heading">HOW TO PLAY</div>
                   <div className="runner-instruction-row"><b>← / →</b><span>Change lanes to avoid obstacles.</span></div>
@@ -367,49 +334,22 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                 <button className="runner-text-action" onClick={requestExit}>EXIT TO GAMES</button>
               </>}
               {phase === "over" && summary && <>
-                <div className="runner-result-heading">
-                  <span className="runner-overline">FULL TIME · RUN SUMMARY</span>
-                  <h1>Run complete.</h1>
-                  <p>Every metre counts. Here's how you performed.</p>
+                <div className="runner-result-screen">
+                  <span className="runner-overline">FULL TIME</span>
+                  <h1>Run complete</h1>
+                  <div className="runner-result-ball" aria-hidden="true">⚽</div>
+                  <section className="runner-result-metrics" aria-label="Your run summary">
+                    <div><small>RUNS PLAYED</small><b>{preview ? "PRACTICE" : records.totalRuns.toLocaleString()}</b></div>
+                    <div><small>FOOTBALLS COLLECTED</small><b>{summary.balls.toLocaleString()}</b></div>
+                    <div><small>BEST DISTANCE</small><b>{Math.max(records.bestDistance, summary.distance).toLocaleString()}<em>m</em></b></div>
+                    <div><small>SETHIS EARNED</small><b>{summary.sethis.toLocaleString()} <em>SETHIS</em></b></div>
+                  </section>
+                  <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
+                  <div className="runner-result-actions">
+                    <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING…":startBusy?"PREPARING…":"PLAY AGAIN"} <span>→</span></button>
+                    <button className="runner-secondary" onClick={requestExit}>{preview ? "EXIT PREVIEW" : "EXIT TO GAMES"}</button>
+                  </div>
                 </div>
-                <section className="runner-score-showcase" aria-label="Final score">
-                  <div className="runner-score-label">TOTAL SCORE</div>
-                  <strong>{summary.points.toLocaleString()}</strong>
-                  <span>POINTS</span>
-                  <div className="runner-score-ribbon"><i/> MATCH PERFORMANCE <i/></div>
-                </section>
-                <section className="runner-stat-strip" aria-label="Run statistics">
-                  <div><small>DISTANCE</small><b>{summary.distance.toLocaleString()}<em>m</em></b></div>
-                  <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
-                  <div><small>BEST DISTANCE</small><b>{records.bestDistance.toLocaleString()}<em>m</em></b></div>
-                </section>
-                <section className="runner-breakdown-panel">
-                  <div className="runner-breakdown-title"><b>PERFORMANCE BREAKDOWN</b><span>POINTS & REWARDS</span></div>
-                  <div className="runner-breakdown-row"><span>DISTANCE SCORE</span><b>{summary.distancePoints.toLocaleString()} <i>PTS</i></b></div>
-                  <div className="runner-breakdown-row"><span>FOOTBALL COLLECTION</span><b>{summary.footballPoints.toLocaleString()} <i>PTS</i></b></div>
-                  <div className="runner-breakdown-divider"/>
-                  <div className="runner-reward-status"><span>SETHIS REWARDS</span><b>NOT ACTIVE YET</b><small>Only published and approved reward rules can credit your wallet. No estimated reward is shown as earned.</small></div>
-                </section>
-                {(recordFlags.distance || recordFlags.points) && <div className="runner-new-record"><span>✦</span> NEW PERSONAL {recordFlags.distance && recordFlags.points ? "RECORD" : recordFlags.distance ? "DISTANCE RECORD" : "POINTS RECORD"} <span>✦</span></div>}
-                {incomingChallenge && <section className="runner-challenge-outcome">
-                  <span>YOUR CHALLENGE RESULT</span>
-                  <b>{compareRunnerScores({ points: summary.points, distance: summary.distance, balls: summary.balls }, incomingChallenge.score) > 0 ? "YOU BEAT THE CHALLENGE!" : compareRunnerScores({ points: summary.points, distance: summary.distance, balls: summary.balls }, incomingChallenge.score) < 0 ? "THE CHALLENGE HOLDER WINS" : "IT'S A TIE!"}</b>
-                  <div><span>YOUR SCORE <strong>{summary.points.toLocaleString()}</strong></span><span>TO BEAT <strong>{incomingChallenge.score.points.toLocaleString()}</strong></span></div><small>Points decide. Distance, then collected footballs, break ties.</small>
-                  <button className="runner-secondary" onClick={shareChallengeResult}>SEND RESULT TO CHALLENGER ↗</button>
-                </section>}
-                {!preview && <div className="runner-personal-best runner-result-best">
-                  <span>ALL-TIME BEST</span>
-                  <b>{records.bestDistance.toLocaleString()} m</b>
-                  <i>{records.bestPoints.toLocaleString()} points</i>
-                </div>}
-                <p>{preview ? "Browser preview only. Your run is not saved to an account." : runSaveStatus || "Your score is being prepared for your account record."}</p>
-                <div className="runner-rescue-notice"><b>{preview ? "BROWSER PREVIEW · PRACTICE ONLY" : "EARLY ACCESS · FREE ENTRY"}</b><span>{preview ? "No Telegram sign-in, account record, CT deduction or SETHIS reward is connected to this preview." : "No CT is deducted. SETHIS payouts and rewarded-ad rescues are not enabled yet; this run does not create a wallet credit."}</span></div>
-                <div className="runner-ready-actions">
-                  <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"RUN AGAIN"} <span>→</span></button>
-                  {!preview && <button className="runner-secondary" onClick={shareMyChallenge}>CHALLENGE A FRIEND ↗</button>}
-                  <button className="runner-secondary" onClick={requestExit}>{preview ? "BACK TO SETHIS INTRO" : "BACK TO GAMES"}</button>
-                </div>
-                {shareNotice && <p className="runner-share-notice" role="status">{shareNotice}</p>}
               </>}
             </div>
           ) : null}
