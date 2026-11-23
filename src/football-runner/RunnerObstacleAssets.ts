@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-const PACK_URLS = ["/assets/football-runner/obstacles-a.pack", "/assets/football-runner/obstacles-b.pack"];
+const PACK_URLS = ["/assets/football-runner/obstacles-a.pack", "/assets/football-runner/obstacles-b.pack", "/assets/football-runner/obstacles-c.pack"];
 
 type ObstacleAsset = {
   file: string;
