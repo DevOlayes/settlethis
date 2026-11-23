@@ -293,11 +293,11 @@ export function createNativeBipedSlideContactRig(
       orientPalmDown();
       const palmError = palm.getWorldPosition(new THREE.Vector3()).distanceTo(palmTarget);
       const leadFootError = solveCcdChain(
-        model, leftToe, targetAtHeight(0.14, 0.44, groundY + 0.19),
+        model, leftToe, targetAtHeight(0.14, 0.44, groundY + 0.16),
         [leftFoot, leftCalf, leftThigh], 14,
       );
       const trailingFootError = solveCcdChain(
-        model, rightToe, targetAtHeight(-0.14, 0.04, groundY + 0.246),
+        model, rightToe, targetAtHeight(-0.14, 0.04, groundY + 0.216),
         [rightFoot, rightCalf, rightThigh], 10,
       );
       return { shoulder: shoulderError, palm: palmError, leadFoot: leadFootError, trailingFoot: trailingFootError };
