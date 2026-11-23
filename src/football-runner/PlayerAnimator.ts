@@ -143,7 +143,6 @@ export class PlayerAnimator {
     next.paused = false;
     const blendingJump = motion.startsWith("jump");
     const blendingLane = motion === "laneLeft" || motion === "laneRight";
-    const blendingOverlay = blendingJump || blendingLane;
     // Jump clips are true additive deltas derived from the native run. Keep
     // the run at full weight beneath them; only lane turns retain the older
     // weighted normal-blend overlay.
