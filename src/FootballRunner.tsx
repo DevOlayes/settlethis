@@ -4,12 +4,8 @@ import AvatarDiagnostic from "./AvatarDiagnostic";
 import type { TelegramUser } from "./telegram";
 import {
   compareRunnerScores,
-  createRunnerChallenge,
-  createRunnerChallengeResultUrl,
-  createRunnerChallengeUrl,
   decodeRunnerChallenge,
   decodeRunnerChallengeResult,
-  type RunnerChallengeResult,
 } from "./football-runner/challenges";
 import type { RunnerControls, RunnerHud, RunnerPhase, RunnerRecords, RunnerRunRecord, RunnerSummary } from "./football-runner/types";
 import "./FootballRunner.css";
@@ -40,11 +36,8 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const activeRunIdRef = useRef<string | null>(null);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
   useEffect(() => { setCollectionPulse(hud.balls); }, [hud.balls]);
-  const [recordFlags, setRecordFlags] = useState({ distance: false, points: false });
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<"restart" | "exit" | null>(null);
-  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
-  const [shareNotice, setShareNotice] = useState("");
   const [incomingChallenge] = useState(() => decodeRunnerChallenge(new URLSearchParams(window.location.search).get("challenge")));
   const [incomingChallengeResult] = useState(() => decodeRunnerChallengeResult(new URLSearchParams(window.location.search).get("challengeResult")));
 
@@ -88,11 +81,6 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
         onHud: setHud,
         onEnvironmentStatus: (status) => { if (status === "error") setEngineError(true); },
         onSummary: (result) => {
-          const previous = recordsRef.current;
-          setRecordFlags({
-            distance: result.distance > previous.bestDistance,
-            points: result.points > previous.bestPoints,
-          });
           setSummary({
             ...result,
             rewardFootball: 0,
@@ -211,40 +199,6 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
   }, [phase, confirmAction]);
-  const shareUrl = async (url: string, title: string, message: string) => {
-    try {
-      if (navigator.share) {
-        await navigator.share({ title, text: message, url });
-        setShareNotice("Challenge link shared.");
-      } else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-        setShareNotice("Challenge link copied. Send it to your opponent.");
-      } else {
-        window.prompt("Copy this challenge link:", url);
-        setShareNotice("Copy the link and send it to your opponent.");
-      }
-    } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") return;
-      setShareNotice("Sharing is unavailable here. You can try copying the link again.");
-    }
-  };
-  const shareMyChallenge = async () => {
-    if (!summary) return;
-    const challenge = createRunnerChallenge({ points: summary.points, distance: summary.distance, balls: summary.balls });
-    const url = createRunnerChallengeUrl(challenge);
-    await shareUrl(url, "Beat my Football Runner score", `I scored ${summary.points.toLocaleString()} points in SETHIS Football Runner. Think you can beat me?`);
-  };
-  const shareChallengeResult = async () => {
-    if (!summary || !incomingChallenge) return;
-    const result: RunnerChallengeResult = {
-      version: 1,
-      challenge: incomingChallenge,
-      result: { points: summary.points, distance: summary.distance, balls: summary.balls },
-      completedAt: Date.now(),
-    };
-    const url = createRunnerChallengeResultUrl(result);
-    await shareUrl(url, "I took your Football Runner challenge", `I scored ${summary.points.toLocaleString()} points. Here's how I did against your challenge.`);
-  };
   const toggleSound = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
@@ -320,7 +274,6 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"START RUN"} <span>→</span></button>
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
                 </div>
-                {shareNotice && <p className="runner-share-notice" role="status">{shareNotice}</p>}
                 <small>SWIPE OR USE THE CONTROLS BELOW · UP TO JUMP · DOWN TO SLIDE</small>
               </>}
               {phase === "paused" && <>
