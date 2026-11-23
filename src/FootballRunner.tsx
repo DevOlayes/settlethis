@@ -211,7 +211,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     <main className="football-runner-page">
       <header className="runner-topbar">
         <button onClick={requestExit} aria-label="Exit Football Runner">←</button>
-        <div><b>SETHIS</b><span>FOOTBALL RUNNER</span></div>
+        <div className="runner-brand-lockup"><b>SETHIS <i>×</i> RUNNER</b><span>CLUB GROUND SERIES</span></div>
         <span className="runner-prototype-tag">{preview ? "BROWSER PREVIEW · NO REWARDS" : "TELEGRAM MINI APP"}</span>
         <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"}>{soundEnabled ? "♫ SOUND ON" : "♪ SOUND OFF"}</button>
       </header>
@@ -221,10 +221,10 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
 
         <div className="runner-stage" ref={mountRef}>
           {phase === "running" && <div className="runner-hud" aria-label="Live game statistics" aria-live="off">
-          <div><small>DISTANCE</small><b>{hud.distance.toLocaleString()} m</b></div>
-          <div><small>POINTS</small><b key={collectionPulse} className="runner-points-value">{hud.points.toLocaleString()}</b></div>
-          <div><small>FOOTBALLS</small><b>{hud.balls}</b></div>
-          <div><small>SPEED</small><b>{hud.speed.toFixed(1)}×</b></div>
+          <div className="runner-hud-distance"><small><span>↗</span> DISTANCE</small><b>{hud.distance.toLocaleString()}<em>m</em></b></div>
+          <div className="runner-hud-points"><small><span>✦</span> SCORE</small><b key={collectionPulse} className="runner-points-value">{hud.points.toLocaleString()}</b></div>
+          <div className="runner-hud-balls"><small><span>⚽</span> BALLS</small><b>{hud.balls.toLocaleString()}</b></div>
+          <div className="runner-hud-speed"><small><span>ϟ</span> SPEED</small><b>{hud.speed.toFixed(1)}<em>×</em></b></div>
           </div>}
           {engineError ? (
             <div className="runner-overlay">
@@ -239,9 +239,11 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                 <div className="runner-lobby-hero" aria-label="Club Ground football course">
                   <span>CLUB GROUND · ENDLESS RUN</span>
                 </div>
-                <span className="runner-overline">THREE LANES. NO SECOND CHANCES.</span>
-                <h1>Own the pitch.</h1>
-                <p>Read the run. Beat the obstacles. Strike for every glowing ball. How far can you go?</p>
+                <div className="runner-lobby-title">
+                  <span className="runner-overline">THE CLUB GROUND CHALLENGE</span>
+                  <h1>CHASE <i>THE</i><br/>DISTANCE.</h1>
+                  <p>One pitch. Your pace. Your record to break.</p>
+                </div>
                 {incomingChallenge && <section className="runner-challenge-banner">
                   <span>ONE-ON-ONE CHALLENGE · {incomingChallenge.id.slice(0, 8).toUpperCase()}</span>
                   <b>BEAT {incomingChallenge.score.points.toLocaleString()} POINTS</b>
@@ -283,13 +285,17 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
               </>}
               {phase === "over" && summary && <>
                 <div className="runner-result-screen">
-                  <span className="runner-overline">FULL TIME</span>
-                  <h1>Run complete</h1>
-                  <div className="runner-result-ball" aria-hidden="true">⚽</div>
+                  <div className="runner-result-kicker"><span>✦</span> FULL TIME <span>✦</span></div>
+                  <h1>RUN COMPLETE</h1>
+                  <section className="runner-distance-podium" aria-label="Best distance achieved">
+                    <div className="runner-podium-stars" aria-hidden="true">✦　★　✦</div>
+                    <small>YOUR DISTANCE</small>
+                    <b>{Math.max(records.bestDistance, summary.distance).toLocaleString()}<em>m</em></b>
+                    <span>{summary.distance >= records.bestDistance && summary.distance > 0 ? "RECORD RUN" : "KEEP PUSHING"}</span>
+                  </section>
                   <section className="runner-result-metrics" aria-label="Your run summary">
                     <div><small>RUNS PLAYED</small><b>{preview ? "PRACTICE" : (records.totalRuns + (savingRun ? 1 : 0)).toLocaleString()}</b></div>
-                    <div><small>FOOTBALLS COLLECTED</small><b>{summary.balls.toLocaleString()}</b></div>
-                    <div><small>BEST DISTANCE</small><b>{Math.max(records.bestDistance, summary.distance).toLocaleString()}<em>m</em></b></div>
+                    <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
                     <div><small>SETHIS EARNED</small><b>{summary.sethis.toLocaleString()} <em>SETHIS</em></b></div>
                   </section>
                   <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
@@ -320,10 +326,10 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
 
       <footer className="runner-controls">
         <div className="runner-control-pad" role="group" aria-label="Touch game controls">
-          <button type="button" aria-label="Move left" disabled={phase !== "running"} onClick={() => engineRef.current?.act("left")}>←</button>
-          <button type="button" aria-label="Move right" disabled={phase !== "running"} onClick={() => engineRef.current?.act("right")}>→</button>
-          <button type="button" aria-label="Jump" disabled={phase !== "running"} onClick={() => engineRef.current?.act("jump")}>↑</button>
-          <button type="button" aria-label="Slide" disabled={phase !== "running"} onClick={() => engineRef.current?.act("slide")}>↓</button>
+          <button type="button" aria-label="Move left" disabled={phase !== "running"} onClick={() => engineRef.current?.act("left")}><span>←</span><small>LEFT</small></button>
+          <button type="button" aria-label="Move right" disabled={phase !== "running"} onClick={() => engineRef.current?.act("right")}><span>→</span><small>RIGHT</small></button>
+          <button type="button" aria-label="Jump" disabled={phase !== "running"} onClick={() => engineRef.current?.act("jump")}><span>↑</span><small>JUMP</small></button>
+          <button type="button" aria-label="Slide" disabled={phase !== "running"} onClick={() => engineRef.current?.act("slide")}><span>↓</span><small>SLIDE</small></button>
         </div>
         <span>SWIPE OR TAP · COLLECT BY KICKING</span>
       </footer>
