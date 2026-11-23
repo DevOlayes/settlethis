@@ -257,10 +257,14 @@ export class PlayerAnimator {
     this.character.root.rotation.y = THREE.MathUtils.damp(
       this.character.root.rotation.y, input.laneLean * 0.09, 9, delta,
     );
+    const restoringSlidePose = input.sliding || this.slideExitRemaining > 0;
+    if (restoringSlidePose) this.slideContactRig?.restore();
     this.riggedMixer.update(delta);
     if (input.sliding && this.riggedModel && this.slideContactRig) {
       const groundY = this.character.root.getWorldPosition(new THREE.Vector3()).y - 0.12;
       this.slideContactRig.solve(groundY);
+    } else if (this.slideExitRemaining <= 0) {
+      this.slideContactRig?.clear();
     }
   }
 
