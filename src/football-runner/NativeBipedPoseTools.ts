@@ -168,6 +168,20 @@ function solveCcdChain(
   return effector.getWorldPosition(new THREE.Vector3()).distanceTo(target);
 }
 
+export function addNativeBipedStaticTracks(
+  clip: THREE.AnimationClip,
+  bones: Array<THREE.Bone | undefined>,
+  times: number[],
+): void {
+  for (const bone of bones) {
+    if (!bone) continue;
+    const q = bone.quaternion.clone().normalize();
+    const values: number[] = [];
+    for (let index = 0; index < times.length; index++) values.push(q.x, q.y, q.z, q.w);
+    clip.tracks.push(new THREE.QuaternionKeyframeTrack(`${bone.name}.quaternion`, times, values));
+  }
+}
+
 export type NativeBipedSlideContactRig = {
   solve(groundY: number): { shoulder: number; palm: number; leadFoot: number; trailingFoot: number };
 };
