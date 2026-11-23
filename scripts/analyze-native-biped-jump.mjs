@@ -97,10 +97,6 @@ function measure() {
 
 for (const clip of jumpClips) {
   const mixer = new THREE.AnimationMixer(model);
-  const runAction = mixer.clipAction(run);
-  runAction.setLoop(THREE.LoopRepeat, Infinity);
-  runAction.setEffectiveWeight(1);
-  runAction.play();
   const jumpAction = mixer.clipAction(clip);
   jumpAction.setLoop(THREE.LoopOnce, 1);
   jumpAction.clampWhenFinished = true;
