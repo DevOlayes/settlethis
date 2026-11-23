@@ -32,8 +32,8 @@ export const RUNNER_CONFIG = {
     laneResponse: 13,
     laneSnapTolerance: 0.035,
     inputSwipeThreshold: 34,
-    jumpDuration: 1.02,
-    jumpHeight: 1.65,
+    jumpDuration: 1.16,
+    jumpHeight: 2.1,
     slideDuration: 0.65,
   },
   spawning: {
@@ -58,7 +58,7 @@ export const RUNNER_CONFIG = {
   collision: {
     playerHalfWidth: 0.34,
     playerHalfDepth: 0.32,
-    clearanceMargin: 0.12,
+    clearanceMargin: 0.16,
     slidingPlayerHeight: 1.08,
   },
   scoring: {
