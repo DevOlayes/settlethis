@@ -238,6 +238,7 @@ export function createNativeBipedSlideContactRig(
     leftFoot, leftCalf, leftThigh, rightFoot, rightCalf, rightThigh,
   ];
   const savedPose = new Map<THREE.Bone, THREE.Quaternion>();
+  const savedPositions = new Map<THREE.Bone, THREE.Vector3>();
 
   const targetAtHeight = (x: number, z: number, worldY: number) => {
     model.updateMatrixWorld(true);
@@ -251,14 +252,28 @@ export function createNativeBipedSlideContactRig(
   return {
     restore() {
       for (const [bone, quaternion] of savedPose) bone.quaternion.copy(quaternion);
+      for (const [bone, position] of savedPositions) bone.position.copy(position);
       model.updateMatrixWorld(true);
     },
     clear() {
       savedPose.clear();
+      savedPositions.clear();
     },
     solve(groundY: number) {
       savedPose.clear();
-      for (const bone of solvedBones) savedPose.set(bone, bone.quaternion.clone());
+      savedPositions.clear();
+      for (const bone of solvedBones) {
+        savedPose.set(bone, bone.quaternion.clone());
+        savedPositions.set(bone, bone.position.clone());
+      }
+      // A small support-side shoulder drop is part of the slide brace. It
+      // closes the final palm gap without pulling the spine or head toward the
+      // pitch, and is restored before the next mixer frame.
+      const clavicleParentInverse = leftClavicle.parent
+        ? leftClavicle.parent.getWorldQuaternion(new THREE.Quaternion()).invert()
+        : new THREE.Quaternion();
+      leftClavicle.position.add(new THREE.Vector3(0, -0.026, 0).applyQuaternion(clavicleParentInverse));
+      model.updateMatrixWorld(true);
       // Keep the authored torso and head pose fixed. The previous solver
       // dragged the neck and spine to reposition the shoulder, creating the
       // twisted, head-bent slide. Measure shoulder reach without changing it.
