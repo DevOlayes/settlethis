@@ -262,7 +262,6 @@ export function createNativeBipedSlideContactRig(
     solve(groundY: number) {
       savedPose.clear();
       savedPositions.clear();
-      savedScales.clear();
       for (const bone of solvedBones) {
         savedPose.set(bone, bone.quaternion.clone());
         savedPositions.set(bone, bone.position.clone());
