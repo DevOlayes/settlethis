@@ -4,6 +4,8 @@ import AvatarDiagnostic from "./AvatarDiagnostic";
 import type { TelegramUser } from "./telegram";
 import {
   compareRunnerScores,
+  createRunnerChallenge,
+  createRunnerChallengeUrl,
   decodeRunnerChallenge,
   decodeRunnerChallengeResult,
 } from "./football-runner/challenges";
@@ -33,6 +35,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [startBusy, setStartBusy] = useState(false);
   const [savingRun, setSavingRun] = useState(false);
   const [runSaveStatus, setRunSaveStatus] = useState("");
+  const [shareStatus, setShareStatus] = useState("");
   const activeRunIdRef = useRef<string | null>(null);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
   useEffect(() => { setCollectionPulse(hud.balls); }, [hud.balls]);
@@ -166,6 +169,25 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       setStartBusy(false);
     }
   };
+  const shareRun = async () => {
+    if (!summary) return;
+    const challenge = createRunnerChallenge({ points: summary.points, distance: summary.distance, balls: summary.balls });
+    const url = createRunnerChallengeUrl(challenge);
+    const playerName = telegramUser?.username ? "@" + telegramUser.username : telegramUser?.first_name || "A SETHIS player";
+    const message = playerName + " scored " + summary.points.toLocaleString() + " points and ran " + summary.distance.toLocaleString() + "m in SETHIS Football Runner. Can you beat my score? " + url;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Can you beat my Football Runner score?", text: message, url });
+        setShareStatus("Challenge ready to share.");
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(message);
+        setShareStatus("Challenge copied. Send it to your friends.");
+      } else setShareStatus(url);
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") return;
+      setShareStatus("Could not open sharing on this device.");
+    }
+  };
   const pause = () => engineRef.current?.pause();
   const resume = () => {
     setConfirmAction(null);
@@ -237,6 +259,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             <div className="runner-overlay">
               {phase === "ready" && <>
                 <div className="runner-lobby-hero" aria-label="Club Ground football course">
+                  <img className="runner-game-emblem" src="/football-runner-icon.svg" alt="SETHIS Football Runner emblem" />
                   <span>CLUB GROUND · ENDLESS RUN</span>
                 </div>
                 <div className="runner-lobby-title">
@@ -299,10 +322,20 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <div><small>SETHIS EARNED</small><b>{summary.sethis.toLocaleString()} <em>SETHIS</em></b></div>
                   </section>
                   <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
+                  <section className="runner-share-trophy" aria-label="Share your Football Runner challenge">
+                    <div className="runner-share-trophy-brand"><img src="/football-runner-icon.svg" alt="" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></div>
+                    <div className="runner-share-trophy-stars">✦　★　✦</div>
+                    <small>MY RUN · MY RECORD</small>
+                    <strong>{summary.points.toLocaleString()}<em>PTS</em></strong>
+                    <span>{summary.distance.toLocaleString()} M DISTANCE · {summary.balls.toLocaleString()} FOOTBALLS</span>
+                    <b className="runner-share-dare">CAN YOU BEAT ME?</b>
+                  </section>
                   <div className="runner-result-actions">
+                    <button onClick={()=>void shareRun()} disabled={savingRun}>CHALLENGE A FRIEND ↗</button>
                     <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING…":startBusy?"PREPARING…":"PLAY AGAIN"} <span>→</span></button>
                     <button className="runner-secondary" onClick={requestExit}>{preview ? "EXIT PREVIEW" : "EXIT TO GAMES"}</button>
                   </div>
+                  {shareStatus && <p className="runner-share-status" role="status">{shareStatus}</p>}
                 </div>
               </>}
             </div>
