@@ -11,7 +11,7 @@ import { PlayerAnimator } from "./PlayerAnimator";
 import { createNativeBipedJumpClips, NATIVE_BIPED_JUMP_PHASES } from "./NativeBipedJump";
 import { createNativeBipedManeuverClips } from "./NativeBipedManeuvers";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
-import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
+import { createRunnerScene, disposeRunnerScene, loadClubGroundEnvironment, resizeRunnerScene } from "./SceneFactory";
 import { applyRunnerRenderQuality } from "./RenderQuality";
 import type { RunnerAction, RunnerEngineCallbacks, RunnerPhase, RunnerSceneBundle, RunnerSummary, RunnerPerformanceSnapshot, RunnerRenderQuality } from "./types";
 
@@ -24,6 +24,7 @@ export class RunnerEngine {
   private readonly playerAnimator = new PlayerAnimator(this.playerCharacter);
   private loadedPlayerModel?: THREE.Group;
   private characterReady = false;
+  private environmentReady = true;
   private startWhenCharacterReady = false;
   private pendingRiggedPlayer?: { model: THREE.Group; animations: THREE.AnimationClip[] };
   private nativeJumpEnabled = false;
@@ -63,9 +64,20 @@ export class RunnerEngine {
   private over = false;
   private disposed = false;
 
-  constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks) {
+  constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks, environment: "classic" | "club-ground" = "classic") {
     this.host = host;
     this.bundle = createRunnerScene(host);
+    if (environment === "club-ground") {
+      this.environmentReady = false;
+      void loadClubGroundEnvironment(this.bundle).then(() => {
+        this.environmentReady = true;
+        this.tryStartWhenReady();
+      }).catch((error) => {
+        console.error("Imported club ground could not load; retaining the original environment.", error);
+        this.environmentReady = true;
+        this.tryStartWhenReady();
+      });
+    }
     // Never render the procedural placeholder. Sports Male 03 is the only approved player.
     this.playerCharacter.root.visible = false;
     this.bundle.scene.add(this.playerCharacter.root);
@@ -133,10 +145,7 @@ export class RunnerEngine {
       }
 
       this.characterReady = true;
-      if (this.startWhenCharacterReady) {
-        this.startWhenCharacterReady = false;
-        this.start();
-      }
+      this.tryStartWhenReady();
     } catch (error) {
       console.error("Sports Male 03 failed to load. The game will not substitute the procedural placeholder.", error);
     }
@@ -166,11 +175,16 @@ export class RunnerEngine {
     this.playerCharacter.root.visible = true;
   }
 
+  private tryStartWhenReady(): void {
+    if (this.disposed || !this.startWhenCharacterReady || !this.characterReady || !this.loadedPlayerModel || !this.environmentReady) return;
+    this.startWhenCharacterReady = false;
+    this.start();
+  }
+
   start = (): void => {
     if (this.disposed) return;
-    // Queue the user's start request until the approved Sports Male 03 model
-    // and its animation set are ready. Never start with a substitute character.
-    if (!this.characterReady || !this.loadedPlayerModel) {
+    // Queue the start until both Sports Male 03 and the selected environment are ready.
+    if (!this.characterReady || !this.loadedPlayerModel || !this.environmentReady) {
       this.startWhenCharacterReady = true;
       return;
     }
