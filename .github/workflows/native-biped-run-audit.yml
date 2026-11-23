@@ -5,6 +5,7 @@ on:
     paths:
       - "scripts/analyze-native-biped-run.mjs"
       - "scripts/analyze-native-biped-slide.mjs"
+      - "scripts/analyze-runner-action-library.mjs"
       - "src/football-runner/NativeBipedPoseTools.ts"
       - "src/football-runner/NativeBipedManeuvers.ts"
       - "src/football-runner/NativeBipedJump.ts"
@@ -22,6 +23,8 @@ jobs:
       - run: npm install --no-audit --no-fund
       - name: Decode and inspect every native run keyframe
         run: node scripts/analyze-native-biped-run.mjs
+      - name: Inspect retargeted reference jump and slide motions frame by frame
+        run: node scripts/analyze-runner-action-library.mjs
       - name: Compile production slide solver for contact audit
         run: npx tsc src/football-runner/NativeBipedPoseTools.ts src/football-runner/NativeBipedManeuvers.ts --target ES2022 --module ES2022 --moduleResolution bundler --skipLibCheck --outDir .tmp-audit
       - name: Evaluate production slide hand and foot contact on the original rig
