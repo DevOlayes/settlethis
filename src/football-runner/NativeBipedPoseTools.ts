@@ -183,6 +183,8 @@ export function addNativeBipedStaticTracks(
 }
 
 export type NativeBipedSlideContactRig = {
+  restore(): void;
+  clear(): void;
   solve(groundY: number): { shoulder: number; palm: number; leadFoot: number; trailingFoot: number };
 };
 
@@ -231,6 +233,17 @@ export function createNativeBipedSlideContactRig(
   palm.position.set(0.12, -0.035, 0);
   leftHand.add(palm);
 
+  // IK mutates joint quaternions after the mixer has evaluated a frame.
+  // Preserve the pre-IK animated pose so it can be restored before the next
+  // mixer update; otherwise joints without changing key values can accumulate
+  // manual rotations over successive frames.
+  const solvedBones = [
+    leftHand, leftForearm, leftUpperArm, leftClavicle,
+    neck, spine, spine1, spine2,
+    leftFoot, leftCalf, leftThigh, rightFoot, rightCalf, rightThigh,
+  ];
+  const savedPose = new Map<THREE.Bone, THREE.Quaternion>();
+
   const targetAtHeight = (x: number, z: number, worldY: number) => {
     model.updateMatrixWorld(true);
     const point = model.localToWorld(new THREE.Vector3(x, 0, z));
@@ -241,7 +254,16 @@ export function createNativeBipedSlideContactRig(
     targetAtHeight(x, z, groundY + 0.008);
 
   return {
+    restore() {
+      for (const [bone, quaternion] of savedPose) bone.quaternion.copy(quaternion);
+      model.updateMatrixWorld(true);
+    },
+    clear() {
+      savedPose.clear();
+    },
     solve(groundY: number) {
+      savedPose.clear();
+      for (const bone of solvedBones) savedPose.set(bone, bone.quaternion.clone());
       // First lower the shoulder girdle through the existing spine chain. This
       // brings the arm's root within anatomical reach before hand IK runs.
       const shoulderError = solveCcdChain(
