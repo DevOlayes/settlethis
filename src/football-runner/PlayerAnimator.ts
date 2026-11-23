@@ -259,7 +259,7 @@ export class PlayerAnimator {
     );
     this.riggedMixer.update(delta);
     if (input.sliding && this.riggedModel && this.slideContactRig) {
-      const groundY = this.character.root.getWorldPosition(new THREE.Vector3()).y;
+      const groundY = this.character.root.getWorldPosition(new THREE.Vector3()).y - 0.12;
       this.slideContactRig.solve(groundY);
     }
   }
