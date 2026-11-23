@@ -240,6 +240,7 @@ export class RunnerEngine {
     this.audio.setRunning(true);
     this.paused = false;
     this.playerCharacter.root.position.set(0, 0, RUNNER_CONFIG.playerStartZ);
+    this.playerCharacter.root.rotation.set(0, 0, 0);
     this.playerAnimator.reset();
     this.bundle.world.position.z = 0;
     this.bundle.camera.position.set(...RUNNER_CONFIG.camera.start);
