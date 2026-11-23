@@ -33,7 +33,6 @@ function readQuaternionAtFrame(track: THREE.QuaternionKeyframeTrack, frame: numb
  * across the complete cycle stabilizes the axis against small frame noise.
  */
 export function getNativeBipedJointProfile(
-  model: THREE.Object3D,
   referenceRunClip: THREE.AnimationClip,
   bone: THREE.Bone | undefined,
 ): NativeBipedJointProfile | undefined {
