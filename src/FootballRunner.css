@@ -222,3 +222,122 @@
  .runner-overlay:has(.runner-intro-art) .runner-ready-actions>button:first-child{height:45px}
 }
 @media(prefers-reduced-motion:reduce){.runner-overlay:has(.runner-intro-art) .runner-intro-ball{animation:none}}
+
+
+/* Lobby redesign 02 — pause intermission and full-time presentation */
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase)){
+  overflow-y:auto;justify-content:center;gap:0;padding:clamp(22px,5vh,48px) 20px;
+  background:radial-gradient(ellipse at 50% 24%,#493647b8 0%,#282235ed 46%,#171522fa 82%),linear-gradient(180deg,#17152266,#171522f5);
+}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase)):before{
+  content:"";position:absolute;left:50%;top:12%;width:min(76%,420px);height:36%;transform:translateX(-50%);
+  border:1px solid #f4f1f71b;border-radius:50%;box-shadow:0 0 0 22px #f4f1f708,0 0 0 48px #f4f1f706;pointer-events:none;
+}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>*{position:relative}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>.runner-overline{
+  display:inline-flex;align-items:center;gap:9px;margin-bottom:10px;color:#f3a294;font-size:8px;letter-spacing:.22em
+}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>.runner-overline:before,
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>.runner-overline:after{
+  content:"";width:22px;height:1px;background:#e9827288
+}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>h1{
+  margin:3px 0 7px;font-size:clamp(34px,8vw,48px);line-height:1;letter-spacing:-.065em;text-shadow:0 6px 24px #0008
+}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>p{
+  max-width:300px;margin:0 auto 22px;color:#d6cfdb;font-size:10px;line-height:1.7
+}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>button{
+  width:min(100%,310px);height:52px;margin:0 0 9px;border-radius:10px;
+  background:linear-gradient(105deg,#f19a88,#e98272 55%,#d96e66);color:#241824;
+  box-shadow:0 9px 24px #e9827235,inset 0 1px #ffffff66;font-size:10px;letter-spacing:.14em
+}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>button.runner-secondary{
+  height:43px;margin-top:1px;background:#302b3d;border:1px solid #ffffff26;color:#f4f1f7;box-shadow:none
+}
+.runner-overlay:has(> .runner-overline):not(:has(.runner-intro-art)):not(:has(.runner-score-showcase))>button.runner-text-action{
+  width:auto;height:36px;margin:5px 0 0;padding:0 14px;background:transparent;border:1px solid #e9827240;color:#c7c0ce;box-shadow:none;font-size:8px
+}
+
+/* Full-time screen: readable score-first hierarchy with compact, scannable stats */
+.runner-overlay:has(.runner-score-showcase){
+  gap:0;overflow-y:auto;overscroll-behavior:contain;
+  background:radial-gradient(ellipse at 50% 0%,#493447 0%,#282235 36%,#171522f5 78%);
+  padding:clamp(10px,2vh,20px) 16px 20px
+}
+.runner-overlay:has(.runner-score-showcase) .runner-result-heading{margin:0 auto 10px}
+.runner-overlay:has(.runner-score-showcase) .runner-result-heading>.runner-overline{display:inline-flex;align-items:center;gap:8px;color:#f3a294}
+.runner-overlay:has(.runner-score-showcase) .runner-result-heading>.runner-overline:before,
+.runner-overlay:has(.runner-score-showcase) .runner-result-heading>.runner-overline:after{content:"";width:19px;height:1px;background:#e9827288}
+.runner-overlay:has(.runner-score-showcase) .runner-result-heading h1{font-size:clamp(29px,7vw,39px);letter-spacing:-.06em}
+.runner-overlay:has(.runner-score-showcase) .runner-result-heading p{color:#d6cfdb;font-size:9px}
+.runner-overlay:has(.runner-score-showcase) .runner-score-showcase{
+  margin-bottom:9px;padding:15px 16px 12px;border-radius:13px;
+  background:radial-gradient(ellipse at 50% 0%,#65404d 0%,#382b3e 55%,#252031 100%);
+  box-shadow:0 14px 32px #0006,inset 0 1px #ffffff24
+}
+.runner-overlay:has(.runner-score-showcase) .runner-score-showcase>strong{font-size:clamp(44px,12vw,62px);letter-spacing:-.075em}
+.runner-overlay:has(.runner-score-showcase) .runner-stat-strip{gap:7px;margin-bottom:9px}
+.runner-overlay:has(.runner-score-showcase) .runner-stat-strip>div{padding:10px 8px;background:linear-gradient(145deg,#393044,#282332);border-color:#ffffff20}
+.runner-overlay:has(.runner-score-showcase) .runner-stat-strip small{color:#c7c0ce;font-size:6px}
+.runner-overlay:has(.runner-score-showcase) .runner-stat-strip b{font-size:clamp(15px,4.5vw,21px)}
+.runner-overlay:has(.runner-score-showcase) .runner-breakdown-panel{
+  margin-bottom:9px;padding:11px 13px;border-color:#ffffff20;background:linear-gradient(145deg,#292433,#211e2b)
+}
+.runner-overlay:has(.runner-score-showcase) .runner-breakdown-title{align-items:center}
+.runner-overlay:has(.runner-score-showcase) .runner-breakdown-title b{font-size:7px}
+.runner-overlay:has(.runner-score-showcase) .runner-breakdown-title span{color:#e98272}
+.runner-overlay:has(.runner-score-showcase) .runner-breakdown-row{padding:7px 0}
+.runner-overlay:has(.runner-score-showcase) .runner-reward-status{display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 8px;padding-top:8px}
+.runner-overlay:has(.runner-score-showcase) .runner-reward-status>span{color:#aaa3b5;font-size:7px;font-weight:900;letter-spacing:.1em}
+.runner-overlay:has(.runner-score-showcase) .runner-reward-status>b{color:#e98272;font-size:7px;letter-spacing:.1em}
+.runner-overlay:has(.runner-score-showcase) .runner-reward-status>small{grid-column:1/-1;color:#aaa3b5;font-size:7px;line-height:1.5}
+.runner-overlay:has(.runner-score-showcase) .runner-new-record{width:min(100%,390px);margin:0 auto 9px;background:linear-gradient(100deg,#e9827220,#e982720b);box-shadow:0 0 22px #e9827218}
+.runner-overlay:has(.runner-score-showcase) .runner-challenge-outcome{
+  width:min(100%,390px);margin:0 auto 9px;padding:12px;border-color:#e9827266;border-radius:9px;background:linear-gradient(120deg,#3b2b40,#262130)
+}
+.runner-overlay:has(.runner-score-showcase) .runner-result-best{margin:0 auto 9px;padding:9px 12px}
+.runner-overlay:has(.runner-score-showcase) .runner-rescue-notice{
+  width:min(100%,390px);margin:0 auto 9px;padding:9px 11px;border-color:#e9827240;background:#302b3d;text-align:left
+}
+.runner-overlay:has(.runner-score-showcase) .runner-rescue-notice>b{display:block;margin-bottom:4px;color:#e98272;font-size:7px;letter-spacing:.12em}
+.runner-overlay:has(.runner-score-showcase) .runner-rescue-notice>span{display:block;color:#c7c0ce;font-size:7px;line-height:1.55}
+.runner-overlay:has(.runner-score-showcase) .runner-ready-actions{gap:7px;margin:0 auto 8px}
+.runner-overlay:has(.runner-score-showcase) .runner-ready-actions>button:first-child{
+  height:49px;background:linear-gradient(105deg,#f19a88,#e98272 55%,#d96e66);color:#241824;
+  box-shadow:0 8px 22px #e9827238,inset 0 1px #ffffff66;letter-spacing:.13em
+}
+.runner-overlay:has(.runner-score-showcase) .runner-ready-actions>button.runner-secondary{
+  height:40px;margin:0;background:#302b3d;border:1px solid #ffffff26;color:#f4f1f7
+}
+.runner-overlay:has(.runner-score-showcase) .runner-ready-actions>button:last-child:not(:first-child){border-color:#e9827244;color:#e9dfe8}
+.runner-overlay:has(.runner-score-showcase) .runner-share-notice{width:min(100%,390px);margin:0 auto}
+.runner-confirm-backdrop{background:#100d18d9;backdrop-filter:blur(8px)}
+.runner-confirm-dialog{
+  padding:22px;border:1px solid #e9827277;border-radius:14px;
+  background:radial-gradient(ellipse at 100% 0%,#493347 0%,#292333 52%,#211e2b 100%);
+  box-shadow:0 22px 70px #000b,inset 0 1px #ffffff1a
+}
+.runner-confirm-dialog .runner-overline{color:#f3a294}
+.runner-confirm-dialog h2{font-size:23px;letter-spacing:-.055em}
+.runner-confirm-dialog p{font-size:10px;line-height:1.7}
+.runner-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.runner-confirm-actions button{min-height:43px;border-radius:8px;font-size:8px;letter-spacing:.1em}
+.runner-confirm-actions .runner-confirm-primary{background:linear-gradient(105deg,#f19a88,#e98272);color:#241824}
+@media(max-height:700px){
+ .runner-overlay:has(.runner-score-showcase){padding-top:7px;padding-bottom:10px}
+ .runner-overlay:has(.runner-score-showcase) .runner-result-heading{margin-bottom:6px}
+ .runner-overlay:has(.runner-score-showcase) .runner-score-showcase{padding:9px 12px;margin-bottom:6px}
+ .runner-overlay:has(.runner-score-showcase) .runner-stat-strip>div{padding:6px}
+ .runner-overlay:has(.runner-score-showcase) .runner-breakdown-panel{padding:7px 10px;margin-bottom:6px}
+ .runner-overlay:has(.runner-score-showcase) .runner-breakdown-row{padding:4px 0}
+ .runner-overlay:has(.runner-score-showcase) .runner-ready-actions>button:first-child{height:43px}
+ .runner-overlay:has(.runner-score-showcase) .runner-ready-actions>button.runner-secondary{height:36px}
+}
+@media(max-width:380px){
+ .runner-overlay:has(.runner-score-showcase){padding-left:10px;padding-right:10px}
+ .runner-overlay:has(.runner-score-showcase) .runner-stat-strip{gap:4px}
+ .runner-overlay:has(.runner-score-showcase) .runner-stat-strip>div{padding:7px 5px}
+ .runner-overlay:has(.runner-score-showcase) .runner-breakdown-panel{padding:9px}
+ .runner-confirm-dialog{padding:17px}
+}
