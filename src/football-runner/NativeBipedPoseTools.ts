@@ -282,7 +282,7 @@ export function createNativeBipedSlideContactRig(
       };
       // The skinned hand surface sat 2.7cm above the pitch at the first
       // measured pose; lower its palm target to bring the actual mesh into contact.
-      const palmTarget = targetAtHeight(0.24, -0.16, groundY - 0.008);
+      const palmTarget = targetAtHeight(0.20, -0.16, groundY - 0.008);
       for (let pass = 0; pass < 4; pass++) {
         orientPalmDown();
         solveCcdChain(
