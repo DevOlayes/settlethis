@@ -169,7 +169,7 @@ function solveCcdChain(
 }
 
 export type NativeBipedSlideContactRig = {
-  solve(groundY: number): { palm: number; leadFoot: number; trailingFoot: number };
+  solve(groundY: number): { shoulder: number; palm: number; leadFoot: number; trailingFoot: number };
 };
 
 function findBone(model: THREE.Object3D, name: string): THREE.Bone | undefined {
@@ -194,6 +194,10 @@ export function createNativeBipedSlideContactRig(
   const leftForearm = findBone(model, "Bip01 L Forearm");
   const leftUpperArm = findBone(model, "Bip01 L UpperArm");
   const leftClavicle = findBone(model, "Bip01 L Clavicle");
+  const neck = findBone(model, "Bip01 Neck");
+  const spine = findBone(model, "Bip01 Spine");
+  const spine1 = findBone(model, "Bip01 Spine1");
+  const spine2 = findBone(model, "Bip01 Spine2");
   const leftToe = findBone(model, "Bip01 L Toe0");
   const rightToe = findBone(model, "Bip01 R Toe0");
   const leftFoot = findBone(model, "Bip01 L Foot");
@@ -204,6 +208,7 @@ export function createNativeBipedSlideContactRig(
   const rightThigh = findBone(model, "Bip01 R Thigh");
 
   if (!leftHand || !leftForearm || !leftUpperArm || !leftClavicle ||
+      !neck || !spine || !spine1 || !spine2 ||
       !leftToe || !rightToe || !leftFoot || !leftCalf || !leftThigh ||
       !rightFoot || !rightCalf || !rightThigh) return undefined;
 
@@ -212,18 +217,26 @@ export function createNativeBipedSlideContactRig(
   palm.position.set(0.12, 0, 0);
   leftHand.add(palm);
 
-  const targetAt = (x: number, z: number, groundY: number) => {
+  const targetAtHeight = (x: number, z: number, worldY: number) => {
     model.updateMatrixWorld(true);
     const point = model.localToWorld(new THREE.Vector3(x, 0, z));
-    point.y = groundY + 0.008;
+    point.y = worldY;
     return point;
   };
+  const targetAt = (x: number, z: number, groundY: number) =>
+    targetAtHeight(x, z, groundY + 0.008);
 
   return {
     solve(groundY: number) {
+      // First lower the shoulder girdle through the existing spine chain. This
+      // brings the arm's root within anatomical reach before hand IK runs.
+      const shoulderError = solveCcdChain(
+        model, leftClavicle, targetAtHeight(-0.35, -0.05, groundY + 0.72),
+        [neck, spine2, spine1, spine], 7,
+      );
       const palmError = solveCcdChain(
         model, palm, targetAt(-0.34, -0.16, groundY),
-        [leftForearm, leftUpperArm, leftClavicle], 9,
+        [leftForearm, leftUpperArm, leftClavicle], 10,
       );
       const leadFootError = solveCcdChain(
         model, leftToe, targetAt(-0.14, 0.52, groundY),
@@ -233,7 +246,7 @@ export function createNativeBipedSlideContactRig(
         model, rightToe, targetAt(0.14, 0.04, groundY),
         [rightFoot, rightCalf, rightThigh], 8,
       );
-      return { palm: palmError, leadFoot: leadFootError, trailingFoot: trailingFootError };
+      return { shoulder: shoulderError, palm: palmError, leadFoot: leadFootError, trailingFoot: trailingFootError };
     },
   };
 }
