@@ -1,1 +1,35 @@
-.games-library{isolation:isolate}.game-library-card{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}.game-library-card:active{transform:scale(.99)}.game-library-art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#10091a00 45%,#10091a42 100%);pointer-events:none}.game-library-status{z-index:1}.game-library-play:focus-visible,.game-back-link:focus-visible{outline:2px solid #f4b39e;outline-offset:3px}@media(hover:hover){.game-library-card:hover{transform:translateY(-3px);border-color:#e9827277;box-shadow:0 17px 38px #0005}}
+.games-library{isolation:isolate}
+.game-library-card{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.game-library-art.game-artwork{position:relative;display:block;overflow:hidden;aspect-ratio:16/9;isolation:isolate}
+.game-artwork-mystery{background:radial-gradient(ellipse at 72% 42%,#713b4d 0%,#35213e 38%,#1b1029 78%)}
+.game-art-pitch-lines{position:absolute;inset:12% 7%;border:1px solid #ffffff20;border-radius:12px;transform:perspective(520px) rotateX(8deg);background:repeating-linear-gradient(90deg,transparent 0 13%,#ffffff08 13.1% 13.3%)}
+.game-art-pitch-lines:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #ffffff20}
+.game-art-pitch-lines:after{content:"";position:absolute;left:39%;top:27%;width:22%;height:46%;border:1px solid #ffffff24;border-radius:50%}
+.game-mystery-avatar{position:absolute;z-index:1;left:37%;top:4%;width:31%;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.game-mystery-avatar .mystery-avatar{width:100%;height:100%;aspect-ratio:auto;border:0;border-radius:44% 44% 0 0;background:radial-gradient(ellipse at 50% 30%,#f0a28e35,transparent 58%);box-shadow:none}
+.game-mystery-avatar .mystery-avatar svg{top:0;height:100%;filter:drop-shadow(0 10px 14px #0009)}
+.game-mystery-avatar .avatar-frame-lines{inset:8px 8px 0;border-radius:44% 44% 0 0}
+.game-mystery-avatar .avatar-mystery-mask{top:38%;font-size:7px}
+.game-art-mystery-copy{position:absolute;z-index:2;left:7%;top:23%;display:grid;gap:7px;max-width:34%;color:#fff}
+.game-art-mystery-copy span{font-size:7px;font-weight:900;letter-spacing:.18em;color:#f3a18e}
+.game-art-mystery-copy strong{font-size:clamp(10px,1.8vw,16px);line-height:1.12;letter-spacing:.04em}
+.game-art-mystery-copy i{display:grid;place-items:center;width:33px;height:33px;border:1px solid #f3a18e88;border-radius:50%;background:#f3a18e1b;color:#fff;font:900 23px Manrope;font-style:normal}
+.game-art-corner-label{position:absolute;z-index:3;right:10px;bottom:9px;padding:6px 8px;border:1px solid #ffffff30;border-radius:5px;background:#12091bdc;color:#f8f3fb;font-size:6px;font-weight:900;letter-spacing:.13em}
+.game-artwork-runner{background:radial-gradient(ellipse at 52% 42%,#2f795b 0%,#194a3c 40%,#101e2a 100%)}
+.runner-art-pitch{position:absolute;inset:0;overflow:hidden;background:linear-gradient(180deg,#12243200 0%,#0d241d88 100%)}
+.runner-art-pitch:before{content:"";position:absolute;left:-12%;right:-12%;bottom:-63%;height:118%;border:2px solid #d9f2e355;border-radius:50%;transform:perspective(280px) rotateX(58deg)}
+.runner-art-pitch:after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #d9f2e326}
+.runner-art-pitch span{position:absolute;left:15%;right:15%;top:33%;height:1px;background:#d9f2e326}
+.runner-art-pitch span:nth-child(2){top:58%;left:25%;right:25%}
+.runner-art-pitch span:nth-child(3){top:80%;left:7%;right:7%}
+.runner-art-runner{position:absolute;z-index:2;left:37%;top:12%;width:34%;height:78%;display:grid;place-items:center;color:#f2a08a;filter:drop-shadow(0 10px 14px #071a18a8)}
+.runner-art-runner svg{width:100%;height:100%}
+.runner-art-speed{position:absolute;z-index:1;left:16%;height:3px;border-radius:9px;background:#f2a08a88;transform:skewX(-35deg)}
+.runner-art-speed.speed-one{top:35%;width:19%}
+.runner-art-speed.speed-two{top:43%;left:10%;width:13%;opacity:.55}
+.runner-art-ball{position:absolute;z-index:3;right:15%;top:22%;width:58px;height:58px;display:grid;place-items:center;border:1px solid #d5f8e655;border-radius:50%;background:#071e1a66;color:#fff;box-shadow:0 0 0 10px #d5f8e610,0 0 28px #d5f8e622}
+.runner-art-label{position:absolute;z-index:3;left:8%;bottom:12%;font-size:7px;font-weight:900;letter-spacing:.16em;color:#e4f4ed}
+.game-library-play:focus-visible,.game-back-link:focus-visible{outline:2px solid #f4b39e;outline-offset:3px}
+@media(hover:hover){.game-library-card:hover{transform:translateY(-3px);border-color:#e9827277;box-shadow:0 17px 38px #0005}}
+@media(max-width:620px){.game-art-mystery-copy{left:6%;top:26%;gap:5px}.game-art-mystery-copy strong{font-size:10px}.game-art-mystery-copy i{width:26px;height:26px;font-size:18px}.game-mystery-avatar{left:38%;width:33%}.game-art-corner-label{right:7px;bottom:7px;padding:5px 6px;font-size:5px}.runner-art-runner{left:35%;width:38%}.runner-art-ball{width:44px;height:44px;right:12%;top:23%}.runner-art-ball svg{width:39px;height:39px}.runner-art-label{font-size:6px;bottom:13%}}
+@media(max-width:420px){.games-library-grid{gap:9px}.game-library-body{align-items:flex-start;flex-direction:column;gap:9px}.game-library-play{width:100%}.game-library-title h2{font-size:14px}}
