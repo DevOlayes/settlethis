@@ -312,7 +312,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
           ) : phase !== "running" ? (
             <div className="runner-overlay">
               {phase === "ready" && <>
-                <div className="runner-lobby-hero" aria-label="Club Ground football course">
+                <div className="runner-lobby-hero" aria-label="SETHIS football runner field">
                   <span>THE RUNNER FIELD · ENDLESS RUN</span>
                 </div>
                 <div className="runner-lobby-title">
