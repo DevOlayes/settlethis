@@ -7,7 +7,7 @@ type GameId="mystery"|"runner";
 function GameArtwork({game}:{game:GameId}) {
   if(game==="mystery") return <div className="game-library-art game-artwork game-artwork-mystery" aria-label="Mystery Footballer avatar artwork">
     <div className="game-art-pitch-lines" aria-hidden="true"/>
-    <div className="game-mystery-avatar"><MysteryAvatar avatarKey="sethis-mystery-feature" size="large"/></div>
+    <div className="game-mystery-avatar"><MysteryAvatar avatarKey="football-knowledge" size="large"/></div>
     <div className="game-art-mystery-copy"><span>THREE CLUES</span><strong>WHO'S THE PLAYER?</strong><i>?</i></div>
     <span className="game-art-corner-label">IDENTIFY THE LEGEND</span>
   </div>;
