@@ -87,9 +87,11 @@ export function bindTelegramViewport(webApp:TelegramWebApp):()=>void {
   webApp.onEvent?.("safeAreaChanged",applyInsets);
   webApp.onEvent?.("contentSafeAreaChanged",applyInsets);
   webApp.onEvent?.("viewportChanged",onViewport);
+  webApp.onEvent?.("fullscreenChanged",applyStableHeight);
   return()=>{
     webApp.offEvent?.("safeAreaChanged",applyInsets);
     webApp.offEvent?.("contentSafeAreaChanged",applyInsets);
     webApp.offEvent?.("viewportChanged",onViewport);
+    webApp.offEvent?.("fullscreenChanged",applyStableHeight);
   };
 }

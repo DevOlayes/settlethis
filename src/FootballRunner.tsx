@@ -24,6 +24,8 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const mountRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<RunnerControls | null>(null);
   const [phase, setPhase] = useState<RunnerPhase>("ready");
+  const phaseRef = useRef<RunnerPhase>("ready");
+  phaseRef.current = phase;
   const [summary, setSummary] = useState<RunnerSummary | null>(null);
   const [hud, setHud] = useState<RunnerHud>(EMPTY_HUD);
   const [collectionPulse, setCollectionPulse] = useState(0);
@@ -253,7 +255,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     engineRef.current?.resume();
   };
   const requestExit = () => {
-    if (phase === "running") engineRef.current?.pause();
+    if (phaseRef.current === "running") engineRef.current?.pause();
     setConfirmAction("exit");
   };
   const requestRestart = () => {
@@ -268,7 +270,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     webApp.disableVerticalSwipes?.();
     backButton?.show();
     backButton?.onClick(handleBack);
-    const handleDeactivated=()=>{if(phase==="running")engineRef.current?.pause();};
+    const handleDeactivated=()=>{if(phaseRef.current==="running")engineRef.current?.pause();};
     webApp.onEvent?.("deactivated",handleDeactivated);
     return()=>{
       backButton?.offClick(handleBack);
@@ -277,7 +279,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       webApp.enableVerticalSwipes?.();
       if(webApp.isFullscreen)webApp.exitFullscreen?.();
     };
-  },[phase,confirmAction]);
+  },[]);
   const confirmPendingAction = () => {
     const action = confirmAction;
     setConfirmAction(null);
