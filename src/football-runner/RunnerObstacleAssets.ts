@@ -14,8 +14,6 @@ const OBSTACLE_ASSETS: ObstacleAsset[] = [
   { file: "training-cone.glb", width: 0.62, height: 0.74, depth: 0.62 },
   { file: "training-hurdle.glb", width: 1.5, height: 0.88, depth: 0.62 },
   { file: "free-kick-mannequin.glb", width: 0.62, height: 1.82, depth: 0.38 },
-  { file: "passing-gate.glb", width: 1.5, height: 1.22, depth: 0.28 },
-  { file: "slalom-pole.glb", width: 0.3, height: 1.68, depth: 0.3 },
 ];
 
 let templatesPromise: Promise<THREE.Group[]> | undefined;
@@ -65,11 +63,11 @@ async function loadTemplates(): Promise<THREE.Group[]> {
     if (size.x <= 0 || size.y <= 0 || size.z <= 0) {
       throw new Error(`Supplied obstacle model has invalid dimensions: ${asset.file}`);
     }
-    const sx = asset.width / size.x;
-    const sy = asset.height / size.y;
-    const sz = asset.depth / size.z;
-    model.scale.set(sx, sy, sz);
-    model.position.set(-center.x * sx, -bounds.min.y * sy, -center.z * sz);
+    // Preserve the model's authored proportions. Independent XYZ scaling
+    // distorted the supplied props and made their bases appear misaligned.
+    const uniformScale = Math.min(asset.width / size.x, asset.height / size.y, asset.depth / size.z);
+    model.scale.setScalar(uniformScale);
+    model.position.set(-center.x * uniformScale, -bounds.min.y * uniformScale, -center.z * uniformScale);
     model.updateMatrixWorld(true);
     model.name = `SETHIS supplied ${asset.file}`;
     model.traverse((object) => {
