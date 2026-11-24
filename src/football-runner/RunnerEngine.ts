@@ -446,7 +446,9 @@ export class RunnerEngine {
       const eased = 1 - Math.pow(1 - progress, 3);
       // A decisive, immediate body drop and side fall at impact.
       player.rotation.set(startRotation.x - eased * 0.42, startRotation.y + eased * 0.16, startRotation.z - eased * 1.38);
-      player.position.y = startY + Math.sin(progress * Math.PI) * 0.08 - eased * 0.34;
+      // Return to the pitch instead of ending the fall below ground level.
+      // This also handles collisions that happen while the player is airborne.
+      player.position.y = Math.max(0, startY * (1 - eased) + Math.sin(progress * Math.PI) * 0.06);
       this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
       if (progress < 1) { this.frame = requestAnimationFrame(fall); return; }
       this.frame = 0;
@@ -579,8 +581,7 @@ export class RunnerEngine {
         halfWidth: number;
         halfDepth: number;
         height: number;
-        clearance?: "jump" | "slide" | "none";
-        clearanceHeight?: number;
+        jumpClearanceHeight?: number;
         slideClearanceHeight?: number;
       } | undefined;
       const depthLimit = (hitbox?.halfDepth ?? 0.35) + config.collision.playerHalfDepth;
@@ -618,11 +619,13 @@ export class RunnerEngine {
           this.objects.splice(index, 1);
           continue;
         } else {
-          const jumpClears = hitbox?.clearance === "jump"
-            && crossingPlayerY >= (hitbox.clearanceHeight ?? hitbox.height + config.collision.clearanceMargin);
-          const slideClears = hitbox?.clearance === "slide"
+          // Jumping and sliding are independent physical clearance tests.
+          // An obstacle may permit either action, both, or neither.
+          const jumpClears = typeof hitbox?.jumpClearanceHeight === "number"
+            && crossingPlayerY >= hitbox.jumpClearanceHeight;
+          const slideClears = typeof hitbox?.slideClearanceHeight === "number"
             && crossingSlideRemaining > 0
-            && config.collision.slidingPlayerHeight <= (hitbox.slideClearanceHeight ?? 1.1);
+            && config.collision.slidingPlayerHeight <= hitbox.slideClearanceHeight;
           if (!jumpClears && !slideClears) {
             this.releaseObject(object);
             this.objects.splice(index, 1);
