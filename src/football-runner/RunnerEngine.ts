@@ -691,22 +691,33 @@ export class RunnerEngine {
     }
     const blockedLanes = shuffled.slice(0, obstacleCount);
 
-    // Paired obstacles are staggered, creating a readable slalom instead of a flat wall.
-    blockedLanes.forEach((lane, index) => {
+    // Two-lane gates leave one safe route. At higher difficulty, a second
+    // staggered wave blocks that route and forces a deliberate lane change.
+    blockedLanes.forEach((lane) => {
       const variant = this.nextObstacleVariant();
-      const stagger = obstacleCount === 2 ? index * 6.5 : 0;
-      this.spawnObject(`obstacle-${variant}`, lane, z - stagger);
+      this.spawnObject(`obstacle-${variant}`, lane, z);
       this.lastObstacleLane = lane;
     });
 
-    // Reward the open route with a short, visible football line players can choose to chase.
-    if (Math.random() < config.safeLaneBallChance) {
-      const safeLane = lanes.find((lane) => !blockedLanes.includes(lane));
-      if (safeLane !== undefined) {
-        this.spawnObject("collectible", safeLane, z - config.safeLaneBallOffset);
-        if (Math.random() < 0.62) {
-          this.spawnObject("collectible", safeLane, z - config.safeLaneBallOffset - 2.9);
-        }
+    const safeLane = lanes.find((lane) => !blockedLanes.includes(lane));
+    const followUpChance = 0.16 + difficulty * 0.48;
+    if (obstacleCount === 2 && safeLane !== undefined && Math.random() < followUpChance) {
+      const followUpBlock = blockedLanes[Math.floor(Math.random() * blockedLanes.length)];
+      const followUpLanes = [safeLane, followUpBlock];
+      const followUpOffset = 10.5 - difficulty * 1.4;
+      followUpLanes.forEach((lane) => {
+        const variant = this.nextObstacleVariant();
+        this.spawnObject(`obstacle-${variant}`, lane, z - followUpOffset);
+        this.lastObstacleLane = lane;
+      });
+    }
+
+    // Reward the currently open route with a visible football line, but make
+    // pickups less frequent as the course gets harder.
+    if (safeLane !== undefined && Math.random() < config.safeLaneBallChance * (1 - difficulty * 0.55)) {
+      this.spawnObject("collectible", safeLane, z - config.safeLaneBallOffset);
+      if (Math.random() < 0.52) {
+        this.spawnObject("collectible", safeLane, z - config.safeLaneBallOffset - 2.6);
       }
     }
   }
