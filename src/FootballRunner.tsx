@@ -36,6 +36,8 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [savingRun, setSavingRun] = useState(false);
   const [runSaveStatus, setRunSaveStatus] = useState("");
   const [shareStatus, setShareStatus] = useState("");
+  const [rescueBusy, setRescueBusy] = useState(false);
+  const [rescueStatus, setRescueStatus] = useState("");
   const activeRunIdRef = useRef<string | null>(null);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
   useEffect(() => { setCollectionPulse(hud.balls); }, [hud.balls]);
@@ -169,6 +171,51 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       setStartBusy(false);
     }
   };
+  const watchToContinue = async () => {
+    if (preview || rescueBusy || !initData || !activeRunIdRef.current) return;
+    setRescueBusy(true);
+    setRescueStatus("Preparing your rewarded ad…");
+    try {
+      const startResponse = await fetch("/api/runner/rescue/start", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-telegram-init-data": initData },
+        body: JSON.stringify({ run_id: activeRunIdRef.current }),
+      });
+      const attempt = await startResponse.json();
+      if (!startResponse.ok || typeof attempt.ymid !== "string" || !attempt.zone_id) throw new Error(attempt.error || "A rescue ad is not available right now.");
+      setRescueStatus("Watch the full ad to get back into your run.");
+      const { default: createAdHandler } = await import("monetag-tg-sdk");
+      const showAd = createAdHandler(Number(attempt.zone_id));
+      const result = await showAd({ ymid: attempt.ymid, requestVar: "runner_rescue" });
+      if (result?.reward_event_type !== "valued") throw new Error("The ad was not completed for a valid reward. Your run will now end.");
+      setRescueStatus("Ad completed. Confirming your rescue…");
+      let verified = false;
+      for (let check = 0; check < 30; check += 1) {
+        const statusResponse = await fetch("/api/runner/rescue/status?ymid=" + encodeURIComponent(attempt.ymid), {
+          headers: { "x-telegram-init-data": initData }, cache: "no-store",
+        });
+        if (statusResponse.ok) {
+          const status = await statusResponse.json();
+          if (status.verified === true && status.status === "valued") { verified = true; break; }
+          if (status.status === "non_valued" || status.status === "expired") break;
+        }
+        await new Promise((resolve) => window.setTimeout(resolve, 650));
+      }
+      if (!verified) throw new Error("Monetag has not confirmed this ad yet. Your run cannot resume without confirmation.");
+      setRescueStatus("");
+      engineRef.current?.revive();
+    } catch (error) {
+      setRescueStatus(error instanceof Error ? error.message : "The ad could not be verified. Your run has ended.");
+      engineRef.current?.endCollision();
+    } finally {
+      setRescueBusy(false);
+    }
+  };
+  const endCollision = () => {
+    if (rescueBusy) return;
+    engineRef.current?.endCollision();
+  };
+
   const shareRun = async () => {
     if (!summary) return;
     const challenge = createRunnerChallenge({ points: summary.points, distance: summary.distance, balls: summary.balls });
@@ -297,6 +344,19 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
                 </div>
                 <small>SWIPE OR USE THE CONTROLS BELOW · UP TO JUMP · DOWN TO SLIDE</small>
+              </>}
+              {phase === "collision" && <>
+                <div className="runner-collision-panel">
+                  <span className="runner-overline">COLLISION · DOWN ON THE PITCH</span>
+                  <h1>ONE MORE RUN?</h1>
+                  <p>You hit an obstacle. Watch a complete rewarded ad to continue this same run with your distance, score and footballs intact.</p>
+                  <div className="runner-collision-actions">
+                    <button onClick={() => void watchToContinue()} disabled={rescueBusy}>{rescueBusy ? "VERIFYING AD…" : "▶ WATCH AD TO CONTINUE"}</button>
+                    <button className="runner-secondary" onClick={endCollision} disabled={rescueBusy}>END RUN</button>
+                  </div>
+                  {rescueStatus && <small className="runner-rescue-status" role="status">{rescueStatus}</small>}
+                  <small>UP TO 2 RESCUES PER RUN · 10 PER DAY</small>
+                </div>
               </>}
               {phase === "paused" && <>
                 <span className="runner-overline">TAKE A BREATHER</span>
