@@ -123,7 +123,6 @@ export function createObstacle(type: number): THREE.Group {
   const yellowDark = material(0x34313a, 0.72, 0.12);
   const coral = material(RUNNER_CONFIG.colors.coral, 0.8);
   const dark = material(0x242337, 0.82);
-  const pale = material(0xf1eee5, 0.72);
   const grey = material(0x81778c, 0.84);
 
   if (supplied) {
