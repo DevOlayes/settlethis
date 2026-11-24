@@ -939,3 +939,81 @@
   .runner-collision-actions button{min-height:43px}
   .runner-collision-panel>small:last-child{margin-top:9px}
 }
+
+
+/* Impact timing, full-choice rescue, and result/lobby hierarchy refinement */
+.runner-lobby-title{
+  width:min(100%,520px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin:0 auto 12px;
+  text-align:left;
+}
+.runner-lobby-title-copy{min-width:0;flex:1}
+.runner-lobby-title .runner-overline{display:block}
+.runner-lobby-title h1{margin:7px 0 5px!important}
+.runner-lobby-title p{margin:0!important}
+.runner-lobby-title .runner-game-emblem{
+  position:relative;inset:auto;flex:0 0 clamp(82px,23vw,124px);
+  width:clamp(82px,23vw,124px);height:auto;aspect-ratio:1;
+  margin:0 2px 0 0;object-fit:contain;
+  filter:drop-shadow(0 9px 20px #000b) drop-shadow(0 0 18px #f2a45b55);
+}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-title{
+  padding:0 clamp(4px,2vw,12px);
+}
+.runner-result-screen{
+  width:min(100%,490px);
+  min-height:min(78vh,690px);
+  justify-content:center;
+  padding:clamp(20px,4vh,34px) clamp(12px,3vw,22px);
+}
+.runner-result-screen:before{inset:0 -8px;border-radius:12px 24px 12px 24px}
+.runner-distance-podium{
+  min-height:clamp(178px,27vh,230px);
+  padding:20px 16px 22px;
+  margin-bottom:16px;
+}
+.runner-distance-podium>b{font-size:clamp(64px,16vw,86px);line-height:1.02}
+.runner-result-metrics{gap:9px;margin-bottom:15px}
+.runner-result-metrics>div{min-height:82px;padding:13px 9px;gap:9px}
+.runner-result-metrics small{font-size:clamp(7px,1.8vw,9px);letter-spacing:.08em}
+.runner-result-metrics b{font-size:clamp(18px,5vw,25px)}
+.runner-result-screen>h1{font-size:clamp(31px,8vw,43px);margin-bottom:16px}
+.runner-achievement-banner{
+  width:min(100%,390px);margin:-4px auto 13px;padding:10px 12px;
+  border:1px solid #ffd58d99;border-radius:8px;
+  background:linear-gradient(100deg,#69434d,#443149);
+  color:#ffe0a8;font-size:clamp(8px,2.2vw,10px);font-weight:1000;
+  letter-spacing:.12em;text-align:center;
+  box-shadow:0 8px 22px #0005,0 0 18px #f3b56b22;
+}
+.runner-result-first .runner-result-screen:before,
+.runner-result-first:before,
+.runner-result-record:before{
+  border-color:#ffd58d88;
+  box-shadow:0 24px 65px #000a,inset 0 1px #fff3,0 0 34px #f4b56b20;
+}
+.runner-result-first .runner-distance-podium,
+.runner-result-record .runner-distance-podium{
+  border-color:#ffe0a8;
+  background:radial-gradient(ellipse at 50% 0%,#a36c54 0%,#664052 42%,#33263e 100%);
+}
+.runner-collision-panel>small:last-child{letter-spacing:.07em}
+@media(max-width:540px){
+  .runner-lobby-title{gap:9px}
+  .runner-lobby-title .runner-game-emblem{flex-basis:clamp(76px,22vw,98px);width:clamp(76px,22vw,98px)}
+  .runner-result-screen{min-height:min(82vh,700px);padding:18px 12px}
+  .runner-distance-podium{min-height:clamp(160px,25vh,205px);padding:16px 12px}
+  .runner-distance-podium>b{font-size:clamp(59px,17vw,78px)}
+  .runner-result-metrics>div{min-height:74px;padding:11px 6px}
+}
+@media(max-height:700px){
+  .runner-result-screen{min-height:0;padding:15px 12px}
+  .runner-distance-podium{min-height:145px;padding:12px;margin-bottom:10px}
+  .runner-distance-podium>b{font-size:clamp(54px,11vh,70px)}
+  .runner-result-screen>h1{margin-bottom:10px}
+  .runner-result-metrics>div{min-height:65px;padding:8px}
+}
