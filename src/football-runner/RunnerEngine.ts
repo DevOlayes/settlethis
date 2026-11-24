@@ -439,13 +439,14 @@ export class RunnerEngine {
     const startRotation = player.rotation.clone();
     const startY = player.position.y;
     const startedAt = performance.now();
-    const fallDuration = 620;
+    const fallDuration = 390;
     const fall = (now: number) => {
       if (this.disposed) return;
       const progress = Math.min(1, (now - startedAt) / fallDuration);
       const eased = 1 - Math.pow(1 - progress, 3);
-      player.rotation.set(startRotation.x - eased * 0.28, startRotation.y + eased * 0.12, startRotation.z - eased * 1.12);
-      player.position.y = startY + Math.sin(progress * Math.PI) * 0.2 - eased * 0.16;
+      // A decisive, immediate body drop and side fall at impact.
+      player.rotation.set(startRotation.x - eased * 0.42, startRotation.y + eased * 0.16, startRotation.z - eased * 1.38);
+      player.position.y = startY + Math.sin(progress * Math.PI) * 0.08 - eased * 0.34;
       this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
       if (progress < 1) { this.frame = requestAnimationFrame(fall); return; }
       this.frame = 0;
@@ -585,20 +586,23 @@ export class RunnerEngine {
       const depthLimit = (hitbox?.halfDepth ?? 0.35) + config.collision.playerHalfDepth;
       const widthLimit = (hitbox?.halfWidth ?? 0.35) + config.collision.playerHalfWidth;
       const travelZ = object.position.z - previousZ;
-      const crossingTime = Math.abs(travelZ) > 0.00001
-        ? clamp((player.position.z - previousZ) / travelZ, 0, 1)
+      // Trigger at the obstacle's leading edge: waiting for its centre to reach
+      // the player made the impact/fall visibly late, especially on wide bars.
+      const contactZ = player.position.z - depthLimit;
+      const crossedContactPlane = previousZ <= contactZ && object.position.z >= contactZ;
+      const alreadyOverlapping = Math.abs(object.position.z - player.position.z) <= depthLimit;
+      const contactTime = Math.abs(travelZ) > 0.00001
+        ? clamp((contactZ - previousZ) / travelZ, 0, 1)
         : 0;
-      const closestZ = previousZ + travelZ * crossingTime;
-      const crossingPlayerX = previousPlayerX + (player.position.x - previousPlayerX) * crossingTime;
-      const crossingPlayerY = previousPlayerY + (player.position.y - previousPlayerY) * crossingTime;
+      const crossingPlayerX = previousPlayerX + (player.position.x - previousPlayerX) * contactTime;
+      const crossingPlayerY = previousPlayerY + (player.position.y - previousPlayerY) * contactTime;
       const crossingSlideRemaining = previousSlideRemaining
-        + (this.slideRemaining - previousSlideRemaining) * crossingTime;
-      const sweptDepthOverlap = Math.abs(closestZ - player.position.z) <= depthLimit;
+        + (this.slideRemaining - previousSlideRemaining) * contactTime;
       const width = Math.abs(object.position.x - crossingPlayerX);
 
-      // Swept collision prevents fast-moving hurdles from tunnelling past the
-      // player between frames, including on slower mobile devices.
-      if (sweptDepthOverlap && width < widthLimit) {
+      // Resolve at first physical contact, not after the obstacle centre reaches
+      // the player. The swept plane also catches high-speed frame crossings.
+      if ((crossedContactPlane || alreadyOverlapping) && width < widthLimit) {
         if (object.userData.kind === "ball") {
           this.balls++;
           this.points = Math.floor(this.distance * config.scoring.distancePointsPerMetre) + this.balls * config.scoring.footballPickupPoints;
