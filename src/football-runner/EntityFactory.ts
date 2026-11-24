@@ -167,7 +167,7 @@ export function createObstacle(type: number): THREE.Group {
       stripe.rotation.z = -0.18;
     }
     group.userData.obstacleType = "roadworks-slide-frame";
-    group.userData.hitbox = { halfWidth: 0.86, halfDepth: 0.2, height: 1.52, slideClearanceHeight: 1.22 };
+    group.userData.hitbox = { halfWidth: 0.86, halfDepth: 0.2, height: 1.52, jumpClearanceHeight: 1.62, slideClearanceHeight: 1.22 };
   } else {
     // Taller, unmistakable yellow barrier. It is deliberately non-jumpable:
     // players must change lanes rather than attempt a visually misleading jump.
@@ -177,7 +177,7 @@ export function createObstacle(type: number): THREE.Group {
     }
     addMesh(group, new THREE.BoxGeometry(1.52, 0.18, 0.22), yellow, [0, 1.36, 0]);
     group.userData.obstacleType = "tall-yellow-hurdle";
-    group.userData.hitbox = { halfWidth: 0.84, halfDepth: 0.26, height: 1.46 };
+    group.userData.hitbox = { halfWidth: 0.84, halfDepth: 0.26, height: 1.46, slideClearanceHeight: 1.2 };
   }
 
   group.userData.kind = "obstacle";
