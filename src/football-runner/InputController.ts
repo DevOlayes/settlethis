@@ -55,7 +55,7 @@ export class InputController {
     const dy = event.clientY - start.y;
     const elapsed = performance.now() - start.time;
     const rect = this.element.getBoundingClientRect();
-    const threshold = Math.max(RUNNER_CONFIG.movement.inputSwipeThreshold, Math.min(54, Math.min(rect.width, rect.height) * 0.065));
+    const threshold = Math.max(RUNNER_CONFIG.movement.inputSwipeThreshold, Math.min(44, Math.min(rect.width, rect.height) * 0.052));
     if (elapsed > 900 || Math.max(Math.abs(dx), Math.abs(dy)) < threshold) return;
 
     // Require a clear direction so diagonal movement doesn't trigger the wrong action.
