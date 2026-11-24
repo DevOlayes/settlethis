@@ -327,13 +327,18 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
     environmentRoot.add(stripe);
   }
 
-  // Subtle lane guides retain a readable route without turning the pitch into a road.
-  const laneMaterial = new THREE.MeshBasicMaterial({ color: 0xe9e2d7, transparent: true, opacity: 0.2 });
+  // Clear but restrained lane guides show the three playable corridors in 3D.
+  const laneMaterial = new THREE.MeshBasicMaterial({ color: 0xf4f0e9, transparent: true, opacity: 0.34 });
+  const edgeMaterial = new THREE.MeshBasicMaterial({ color: 0xe98272, transparent: true, opacity: 0.46 });
   for (const x of [-RUNNER_CONFIG.laneWidth / 2, RUNNER_CONFIG.laneWidth / 2]) {
-    groundLine(environmentRoot, 0.035, worldConfig.length, [x, -0.095, worldConfig.centreZ], laneMaterial);
+    groundLine(environmentRoot, 0.055, worldConfig.length, [x, -0.095, worldConfig.centreZ], laneMaterial);
+  }
+  // Outer edge markers make it obvious where the left and right playable
+  // boundaries end, without adding physical walls that could obscure the view.
+  for (const x of [-RUNNER_CONFIG.laneWidth * 1.5, RUNNER_CONFIG.laneWidth * 1.5]) {
+    groundLine(environmentRoot, 0.075, worldConfig.length, [x, -0.094, worldConfig.centreZ], edgeMaterial);
   }
   addPitchMarkings(environmentRoot, materials.marking);
-  addGoal(environmentRoot, -54, 7.2, 2.6, materials.post, materials.net);
   addStadium(environmentRoot, materials);
   addTrainingComplex(environmentRoot, materials);
   addFacilities(environmentRoot, materials);
