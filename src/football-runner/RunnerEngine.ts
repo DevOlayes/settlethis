@@ -454,11 +454,11 @@ export class RunnerEngine {
     // keeps the torso and head above the turf during the impact animation.
     const pivot = new THREE.Group();
     pivot.name = "runner-impact-pivot";
-    pivot.position.set(player.position.x, 1.18, player.position.z);
+    pivot.position.set(player.position.x, 0.42, player.position.z);
     this.bundle.scene.add(pivot);
     this.bundle.scene.remove(player);
     pivot.add(player);
-    player.position.set(0, -1.18, 0);
+    player.position.set(0, -0.42, 0);
     player.rotation.set(0, 0, 0);
     this.fallPivot = pivot;
     const startedAt = performance.now();
@@ -470,7 +470,7 @@ export class RunnerEngine {
       // A sharp first impact followed by a short settle, with the body pivot
       // preventing the model from rotating down through the grass.
       pivot.rotation.set(-eased * 0.12, eased * 0.08, -eased * 1.42);
-      pivot.position.y = 1.18 - eased * 0.06;
+      pivot.position.y = 0.42 - eased * 0.02;
       this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
       if (progress < 1) { this.frame = requestAnimationFrame(fall); return; }
       this.frame = 0;
