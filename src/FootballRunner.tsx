@@ -284,11 +284,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     const action = confirmAction;
     setConfirmAction(null);
     if (action === "restart") void start();
-    if (action === "exit") {
-      const webApp=window.Telegram?.WebApp;
-      if(webApp?.isFullscreen)webApp.exitFullscreen?.();
-      onBack();
-    }
+    if (action === "exit") onBack();
   };
 
   useEffect(() => {
