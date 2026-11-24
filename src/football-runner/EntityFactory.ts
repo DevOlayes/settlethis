@@ -113,7 +113,11 @@ export function animateCollectionEffect(group: THREE.Group, progress: number): v
 export function createObstacle(type: number): THREE.Group {
   const group = new THREE.Group();
   const variant = ((type % 5) + 5) % 5;
-  const supplied = variant <= 2 ? suppliedObstacleTemplates[variant] : undefined;
+  const supplied = variant === 0
+    ? suppliedObstacleTemplates[0]
+    : variant === 2
+      ? suppliedObstacleTemplates[1]
+      : undefined;
 
   const yellow = material(0xffd22f, 0.58, 0.04);
   const yellowDark = material(0x34313a, 0.72, 0.12);
@@ -123,23 +127,13 @@ export function createObstacle(type: number): THREE.Group {
   const grey = material(0x81778c, 0.84);
 
   if (supplied) {
-    const obstacleNames = ["training-cone", "short-yellow-hurdle", "free-kick-mannequin"];
-    group.name = `supplied-${obstacleNames[variant]}`;
-    const model = supplied.clone(true);
-    if (variant === 1) {
-      // The hurdle is intentionally high-contrast yellow so its silhouette
-      // reads clearly against both light and dark grass bands.
-      model.traverse((object) => {
-        if (object instanceof THREE.Mesh) object.material = yellow;
-      });
-    }
-    group.add(model);
-    group.userData.obstacleType = obstacleNames[variant];
+    const obstacleName = variant === 0 ? "training-cone" : "free-kick-mannequin";
+    group.name = `supplied-${obstacleName}`;
+    group.add(supplied.clone(true));
+    group.userData.obstacleType = obstacleName;
     group.userData.hitbox = variant === 0
       ? { halfWidth: 0.32, halfDepth: 0.32, height: 0.74, jumpClearanceHeight: 0.9 }
-      : variant === 1
-        ? { halfWidth: 0.72, halfDepth: 0.31, height: 0.68, jumpClearanceHeight: 0.84 }
-        : { halfWidth: 0.34, halfDepth: 0.2, height: 1.82 };
+      : { halfWidth: 0.34, halfDepth: 0.2, height: 1.82 };
   } else if (variant === 0) {
     const cone = addMesh(group, new THREE.ConeGeometry(0.34, 0.78, 8), coral, [0, 0.39, 0]);
     cone.castShadow = true;
@@ -162,18 +156,19 @@ export function createObstacle(type: number): THREE.Group {
     group.userData.obstacleType = "mannequin";
     group.userData.hitbox = { halfWidth: 0.48, halfDepth: 0.38, height: 1.98 };
   } else if (variant === 3) {
-    // A broad construction barrier adds a non-football obstacle silhouette.
-    addMesh(group, new THREE.BoxGeometry(1.55, 0.78, 0.34), yellowDark, [0, 0.48, 0]);
-    addMesh(group, new THREE.BoxGeometry(1.62, 0.14, 0.4), yellow, [0, 0.84, 0]);
-    for (const x of [-0.48, 0, 0.48]) {
-      const stripe = addMesh(group, new THREE.BoxGeometry(0.22, 0.58, 0.025), pale, [x, 0.48, 0.18]);
-      stripe.rotation.z = -0.28;
+    // A compact overhead roadworks frame: a proper slide-under obstacle,
+    // not a lone vertical pole or a solid block across the lane.
+    for (const x of [-0.68, 0.68]) {
+      addMesh(group, new THREE.BoxGeometry(0.12, 1.48, 0.16), yellowDark, [x, 0.74, 0]);
+      addMesh(group, new THREE.BoxGeometry(0.34, 0.1, 0.28), dark, [x, 0.05, 0]);
     }
-    for (const x of [-0.58, 0.58]) {
-      addMesh(group, new THREE.BoxGeometry(0.18, 0.12, 0.62), dark, [x, 0.06, 0]);
+    addMesh(group, new THREE.BoxGeometry(1.58, 0.2, 0.2), yellow, [0, 1.42, 0]);
+    for (const x of [-0.38, 0.38]) {
+      const stripe = addMesh(group, new THREE.BoxGeometry(0.18, 0.205, 0.025), dark, [x, 1.42, 0.112]);
+      stripe.rotation.z = -0.18;
     }
-    group.userData.obstacleType = "construction-barrier";
-    group.userData.hitbox = { halfWidth: 0.86, halfDepth: 0.28, height: 0.98, jumpClearanceHeight: 1.14 };
+    group.userData.obstacleType = "roadworks-slide-frame";
+    group.userData.hitbox = { halfWidth: 0.86, halfDepth: 0.2, height: 1.52, slideClearanceHeight: 1.22 };
   } else {
     // Tall yellow hurdle. The larger frame has a distinct silhouette and
     // requires a committed jump rather than being mistaken for the short bar.
