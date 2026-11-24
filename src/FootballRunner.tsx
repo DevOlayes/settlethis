@@ -140,7 +140,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             })
             .finally(() => setSavingRun(false));
         },
-      }, "club-ground");
+      }, "custom-field");
       engine.setSoundEnabled(soundEnabled);
       engineRef.current = engine;
     } catch {
@@ -287,7 +287,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     <main className="football-runner-page">
       <header className="runner-topbar">
         <button onClick={requestExit} aria-label="Exit Football Runner">←</button>
-        <div className="runner-brand-lockup"><b>SETHIS <i>×</i> RUNNER</b><span>CLUB GROUND SERIES</span></div>
+        <div className="runner-brand-lockup"><b>SETHIS <i>×</i> RUNNER</b><span>RUNNER FIELD SERIES</span></div>
         <span className="runner-prototype-tag">{preview ? "BROWSER PREVIEW · NO REWARDS" : "TELEGRAM MINI APP"}</span>
         <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"}>{soundEnabled ? "♫ SOUND ON" : "♪ SOUND OFF"}</button>
       </header>
@@ -313,13 +313,13 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             <div className="runner-overlay">
               {phase === "ready" && <>
                 <div className="runner-lobby-hero" aria-label="Club Ground football course">
-                  <span>CLUB GROUND · ENDLESS RUN</span>
+                  <span>THE RUNNER FIELD · ENDLESS RUN</span>
                 </div>
                 <div className="runner-lobby-title">
                   <div className="runner-lobby-title-copy">
-                    <span className="runner-overline">THE CLUB GROUND CHALLENGE</span>
+                    <span className="runner-overline">THE RUNNER FIELD CHALLENGE</span>
                     <h1>CHASE <i>THE</i><br/>DISTANCE.</h1>
-                    <p>One pitch. Your pace. Your record to break.</p>
+                    <p>Three lanes. No easy route. Your record to break.</p>
                   </div>
                   <img className="runner-game-emblem" src="/football-runner-icon.svg" alt="SETHIS Football Runner emblem" />
                 </div>
@@ -356,7 +356,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
               </>}
               {phase === "collision" && <>
                 <div className="runner-collision-panel">
-                  <span className="runner-overline">COLLISION · DOWN ON THE PITCH</span>
+                  <span className="runner-overline">COLLISION · DOWN ON THE FIELD</span>
                   <h1>ONE MORE RUN?</h1>
                   <p>You hit an obstacle. Watch a complete rewarded ad to continue this same run with your distance, score and footballs intact.</p>
                   <div className="runner-collision-actions">
@@ -379,7 +379,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                 <div className={"runner-result-screen runner-result-" + runAchievement}>
                   <div className="runner-result-kicker"><span>✦</span> {runAchievement === "first" ? "MILESTONE UNLOCKED" : runAchievement === "record" ? "NEW PERSONAL RECORD" : "FULL TIME"} <span>✦</span></div>
                   <h1>{runAchievement === "first" ? "FIRST RUN COMPLETE!" : runAchievement === "record" ? "NEW RECORD!" : "RUN COMPLETE"}</h1>
-                  {runAchievement !== "standard" && <div className="runner-achievement-banner">{runAchievement === "first" ? "🏆 YOUR FIRST FINISH ON THE CLUB GROUND" : "🏆 YOU JUST RAISED YOUR PERSONAL BEST"}</div>}
+                  {runAchievement !== "standard" && <div className="runner-achievement-banner">{runAchievement === "first" ? "🏆 YOUR FIRST FINISH ON THE RUNNER FIELD" : "🏆 YOU JUST RAISED YOUR PERSONAL BEST"}</div>}
                   <section className="runner-distance-podium" aria-label="Distance achieved">
                     <div className="runner-podium-stars" aria-hidden="true">✦　★　✦</div>
                     <small>YOUR DISTANCE</small>
