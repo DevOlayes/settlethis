@@ -48,6 +48,8 @@ export class RunnerEngine {
   private targetLane = 0;
   private jumpProgress = 0;
   private slideRemaining = 0;
+  private bufferedAction: { action: "jump" | "slide"; expiresAt: number } | null = null;
+  private fallPivot?: THREE.Group;
   private elapsed = 0;
   private distance = 0;
   private points = 0;
@@ -198,6 +200,13 @@ export class RunnerEngine {
     this.targetLane = 0;
     this.jumpProgress = 0;
     this.slideRemaining = 0;
+    this.bufferedAction = null;
+    if (this.fallPivot) {
+      this.bundle.scene.add(this.playerCharacter.root);
+      this.bundle.scene.remove(this.fallPivot);
+      this.fallPivot.remove(this.playerCharacter.root);
+      this.fallPivot = undefined;
+    }
     this.elapsed = 0;
     this.distance = 0;
     this.points = 0;
@@ -260,8 +269,15 @@ export class RunnerEngine {
     if (this.disposed || !this.over) return;
     this.over = false;
     this.paused = false;
+    if (this.fallPivot) {
+      this.fallPivot.remove(this.playerCharacter.root);
+      this.bundle.scene.add(this.playerCharacter.root);
+      this.bundle.scene.remove(this.fallPivot);
+      this.fallPivot = undefined;
+    }
     this.playerCharacter.root.rotation.set(0, 0, 0);
     this.playerCharacter.root.position.y = 0;
+    this.bufferedAction = null;
     void this.audio.unlock();
     this.audio.setRunning(true);
     this.callbacks.onPhase("running");
@@ -322,11 +338,26 @@ export class RunnerEngine {
     if (this.paused || this.over || this.disposed) return;
     if (action === "left") this.targetLane = clamp(this.targetLane - 1, -1, 1);
     if (action === "right") this.targetLane = clamp(this.targetLane + 1, -1, 1);
-    if (action === "jump" && this.jumpProgress <= 0 && this.slideRemaining <= 0) {
+    if (action === "jump" || action === "slide") {
+      const actionIsBusy = action === "jump"
+        ? this.jumpProgress > 0 || this.slideRemaining > 0
+        : this.jumpProgress > 0;
+      if (actionIsBusy) {
+        // Keep the latest deliberate manoeuvre briefly queued. Touch input can
+        // arrive a fraction before the current animation finishes.
+        this.bufferedAction = { action, expiresAt: this.elapsed + 1.35 };
+        return;
+      }
+      this.bufferedAction = null;
+      this.startManeuver(action);
+    }
+  }
+
+  private startManeuver(action: "jump" | "slide"): void {
+    if (action === "jump") {
       this.jumpProgress = RUNNER_CONFIG.movement.jumpDuration;
       this.audio.jump();
-    }
-    if (action === "slide" && this.jumpProgress <= 0) {
+    } else {
       this.slideRemaining = RUNNER_CONFIG.movement.slideDuration;
       this.audio.slide();
     }
@@ -419,19 +450,27 @@ export class RunnerEngine {
     cancelAnimationFrame(this.frame);
     this.frame = 0;
     const player = this.playerCharacter.root;
-    const startRotation = player.rotation.clone();
-    const startY = player.position.y;
+    // Rotate around the player's body centre, not the boot-level root. This
+    // keeps the torso and head above the turf during the impact animation.
+    const pivot = new THREE.Group();
+    pivot.name = "runner-impact-pivot";
+    pivot.position.set(player.position.x, 1.18, player.position.z);
+    this.bundle.scene.add(pivot);
+    this.bundle.scene.remove(player);
+    pivot.add(player);
+    player.position.set(0, -1.18, 0);
+    player.rotation.set(0, 0, 0);
+    this.fallPivot = pivot;
     const startedAt = performance.now();
-    const fallDuration = 390;
+    const fallDuration = 300;
     const fall = (now: number) => {
       if (this.disposed) return;
       const progress = Math.min(1, (now - startedAt) / fallDuration);
       const eased = 1 - Math.pow(1 - progress, 3);
-      // A decisive, immediate body drop and side fall at impact.
-      player.rotation.set(startRotation.x - eased * 0.42, startRotation.y + eased * 0.16, startRotation.z - eased * 1.38);
-      // Return to the pitch instead of ending the fall below ground level.
-      // This also handles collisions that happen while the player is airborne.
-      player.position.y = Math.max(0, startY * (1 - eased) + Math.sin(progress * Math.PI) * 0.06);
+      // A sharp first impact followed by a short settle, with the body pivot
+      // preventing the model from rotating down through the grass.
+      pivot.rotation.set(-eased * 0.12, eased * 0.08, -eased * 1.42);
+      pivot.position.y = 1.18 - eased * 0.06;
       this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
       if (progress < 1) { this.frame = requestAnimationFrame(fall); return; }
       this.frame = 0;
@@ -530,6 +569,19 @@ export class RunnerEngine {
       player.position.y = 0;
     }
     this.slideRemaining = Math.max(0, this.slideRemaining - delta);
+    if (this.bufferedAction) {
+      if (this.elapsed > this.bufferedAction.expiresAt) {
+        this.bufferedAction = null;
+      } else if (this.bufferedAction.action === "jump" && this.jumpProgress <= 0 && this.slideRemaining <= 0) {
+        const action = this.bufferedAction.action;
+        this.bufferedAction = null;
+        this.startManeuver(action);
+      } else if (this.bufferedAction.action === "slide" && this.jumpProgress <= 0) {
+        const action = this.bufferedAction.action;
+        this.bufferedAction = null;
+        this.startManeuver(action);
+      }
+    }
     this.playerAnimator.update(delta, {
       speedRatio: speed / config.movement.initialSpeed,
       // Start the landing pose during the final 0.32s of the existing
@@ -694,7 +746,7 @@ export class RunnerEngine {
       const followUpLanes = obstacleCount === 2
         ? [safeLane, blockedLanes[Math.floor(Math.random() * blockedLanes.length)]]
         : [safeLane];
-      const followUpOffset = 14 - difficulty * 1.2;
+      const followUpOffset = 20 - difficulty * 1.5;
       followUpLanes.forEach((lane) => {
         const variant = this.nextObstacleVariant();
         this.spawnObject(`obstacle-${variant}`, lane, z - followUpOffset);
