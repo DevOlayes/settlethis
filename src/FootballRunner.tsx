@@ -288,7 +288,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       <header className="runner-topbar">
         <button onClick={requestExit} aria-label="Exit Football Runner">←</button>
         <div className="runner-brand-lockup"><b>SETHIS <i>×</i> RUNNER</b><span>RUNNER FIELD SERIES</span></div>
-        <span className="runner-prototype-tag">{preview ? "BROWSER PREVIEW · NO REWARDS" : "TELEGRAM MINI APP"}</span>
+        <span className="runner-prototype-tag">{preview ? "PREVIEW · NO REWARDS" : "TELEGRAM MINI APP"}</span>
         <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"}>{soundEnabled ? "♫ SOUND ON" : "♪ SOUND OFF"}</button>
       </header>
 
@@ -356,15 +356,19 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
               </>}
               {phase === "collision" && <>
                 <div className="runner-collision-panel">
-                  <span className="runner-overline">COLLISION · DOWN ON THE FIELD</span>
-                  <h1>ONE MORE RUN?</h1>
-                  <p>You hit an obstacle. Watch a complete rewarded ad to continue this same run with your distance, score and footballs intact.</p>
+                  <span className="runner-overline">COLLISION · YOUR RUN IS STILL HERE</span>
+                  <div className="runner-rescue-emblem" aria-hidden="true">▶</div>
+                  <h1>DON’T CALL IT YET.</h1>
+                  <p>Your distance, score and collected footballs are ready to carry on. Complete a rewarded ad to pick up this same run where you left off.</p>
                   <div className="runner-collision-actions">
-                    <button onClick={() => void watchToContinue()} disabled={rescueBusy}>{rescueBusy ? "VERIFYING AD…" : "▶ WATCH AD TO CONTINUE"}</button>
+                    <button className="runner-rescue-primary" onClick={() => void watchToContinue()} disabled={preview || rescueBusy}>
+                      <span className="runner-rescue-button-title">{rescueBusy ? "PREPARING YOUR RESCUE…" : preview ? "WATCH AD IN TELEGRAM" : "WATCH AD & KEEP RUNNING"}</span>
+                      <span className="runner-rescue-button-subtitle">{preview ? "Rewarded rescue is available in the Telegram game" : "Complete one short rewarded ad · Continue this run"}</span>
+                    </button>
                     <button className="runner-secondary" onClick={endCollision} disabled={rescueBusy}>END RUN</button>
                   </div>
                   {rescueStatus && <small className="runner-rescue-status" role="status">{rescueStatus}</small>}
-                  <small>TAKE YOUR TIME · UP TO 2 RESCUES PER RUN · 10 PER DAY</small>
+                  <small>UP TO 2 RESCUES PER RUN · 10 PER DAY</small>
                 </div>
               </>}
               {phase === "paused" && <>

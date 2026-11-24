@@ -27,14 +27,14 @@ function addMesh(
 export function createCollectible(): THREE.Group {
   const group = new THREE.Group();
   group.name = "sethis-football-collectible";
-  const ballRadius = 0.235;
-  const ball = new THREE.Mesh(new THREE.SphereGeometry(ballRadius, 16, 12), new THREE.MeshStandardMaterial({ color: 0xf6f0e9, roughness: 0.48, emissive: RUNNER_CONFIG.colors.coral, emissiveIntensity: 0.045 }));
+  const ballRadius = 0.31;
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(ballRadius, 24, 18), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.42, metalness: 0.015, emissive: 0x25364b, emissiveIntensity: 0.075 }));
   ball.castShadow = false;
   ball.receiveShadow = false;
   group.add(ball);
   // One instanced panel mesh replaces twelve separate panel draw calls.
-  const panelGeometry = new THREE.CircleGeometry(0.066, 5);
-  const panelMaterial = material(0x292431, 0.66);
+  const panelGeometry = new THREE.CircleGeometry(0.09, 5);
+  const panelMaterial = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.68, metalness: 0.02 });
   const panels = new THREE.InstancedMesh(panelGeometry, panelMaterial, 12);
   const dummy = new THREE.Object3D();
   const normals: THREE.Vector3[] = [new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, -1, 0)];
@@ -47,7 +47,7 @@ export function createCollectible(): THREE.Group {
     }
   }
   normals.forEach((normal, index) => {
-    dummy.position.copy(normal).multiplyScalar(ballRadius + 0.002);
+    dummy.position.copy(normal).multiplyScalar(ballRadius + 0.003);
     dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
     dummy.updateMatrix();
     panels.setMatrixAt(index, dummy.matrix);
@@ -56,15 +56,18 @@ export function createCollectible(): THREE.Group {
   panels.castShadow = false;
   panels.receiveShadow = false;
   group.add(panels);
-  const aura = new THREE.Mesh(new THREE.SphereGeometry(0.31, 10, 8), new THREE.MeshBasicMaterial({ color: RUNNER_CONFIG.colors.coral, transparent: true, opacity: 0.1, depthWrite: false }));
+  const aura = new THREE.Mesh(new THREE.SphereGeometry(0.39, 14, 10), new THREE.MeshBasicMaterial({ color: 0x52e7f2, transparent: true, opacity: 0.075, depthWrite: false }));
   group.add(aura);
-  const halo = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.018, 5, 18), new THREE.MeshBasicMaterial({ color: RUNNER_CONFIG.colors.coral, transparent: true, opacity: 0.78 }));
+  const halo = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.026, 7, 28), new THREE.MeshBasicMaterial({ color: 0x38e6f2, transparent: true, opacity: 0.92 }));
   halo.rotation.x = Math.PI / 2;
-  halo.position.y = -0.28;
+  halo.position.y = -0.3;
   group.add(halo);
+  const uprightRing = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.012, 5, 24), new THREE.MeshBasicMaterial({ color: RUNNER_CONFIG.colors.coral, transparent: true, opacity: 0.9 }));
+  uprightRing.rotation.y = Math.PI / 2;
+  group.add(uprightRing);
   group.userData.kind = "ball";
   group.userData.poolKey = "collectible";
-  group.userData.hitbox = { halfWidth: 0.38, halfDepth: 0.38, height: 0.55 };
+  group.userData.hitbox = { halfWidth: 0.46, halfDepth: 0.46, height: 0.68 };
   return group;
 }
 export function createCollectionEffect(): THREE.Group {
@@ -119,11 +122,12 @@ export function createObstacle(type: number): THREE.Group {
       ? suppliedObstacleTemplates[1]
       : undefined;
 
-  const yellow = material(0xffd22f, 0.58, 0.04);
-  const yellowDark = material(0x34313a, 0.72, 0.12);
-  const coral = material(RUNNER_CONFIG.colors.coral, 0.8);
-  const dark = material(0x242337, 0.82);
-  const grey = material(0x81778c, 0.84);
+  // High-contrast training colours are deliberately brighter than the turf.
+  const yellow = new THREE.MeshStandardMaterial({ color: 0xffd52f, roughness: 0.48, metalness: 0.02, emissive: 0x8a6500, emissiveIntensity: 0.32 });
+  const yellowDark = new THREE.MeshStandardMaterial({ color: 0x282a35, roughness: 0.62, metalness: 0.08, emissive: 0x101522, emissiveIntensity: 0.24 });
+  const coral = new THREE.MeshStandardMaterial({ color: RUNNER_CONFIG.colors.coral, roughness: 0.62, emissive: RUNNER_CONFIG.colors.coral, emissiveIntensity: 0.18 });
+  const dark = material(0x171d2b, 0.72);
+  const grey = new THREE.MeshStandardMaterial({ color: 0xb9c6d0, roughness: 0.72, emissive: 0x46586a, emissiveIntensity: 0.22 });
 
   if (supplied) {
     const obstacleName = variant === 0 ? "training-cone" : "free-kick-mannequin";

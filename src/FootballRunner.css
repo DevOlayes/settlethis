@@ -1017,3 +1017,72 @@
   .runner-result-screen>h1{margin-bottom:10px}
   .runner-result-metrics>div{min-height:65px;padding:8px}
 }
+
+
+/* Compact, single-line Runner header: labels remain readable without stealing play space. */
+.runner-topbar{
+  flex:0 0 42px!important;height:42px!important;min-height:42px;
+  gap:8px!important;padding:0 2px;overflow:hidden;
+}
+.runner-topbar>button:first-child{flex:0 0 32px;width:32px!important;height:32px!important;border-radius:9px!important}
+.runner-brand-lockup{min-width:0;gap:1px!important;flex:0 1 auto}
+.runner-brand-lockup>b{font-size:11px!important;letter-spacing:.1em!important;white-space:nowrap}
+.runner-brand-lockup>span{font-size:6px!important;letter-spacing:.14em!important;white-space:nowrap}
+.runner-prototype-tag{
+  margin-left:auto;flex:0 1 auto;min-width:0;padding:5px 7px!important;
+  font-size:6px!important;letter-spacing:.055em!important;line-height:1.1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.runner-sound-toggle{
+  flex:0 0 auto;height:29px!important;min-width:58px;padding:0 7px!important;
+  font-size:7px!important;letter-spacing:.035em!important;border-radius:8px!important;
+}
+.runner-stage-wrap{margin-top:7px!important;max-height:calc(100dvh - 92px)!important}
+@media(max-width:540px){
+  .runner-topbar{height:40px!important;min-height:40px;flex-basis:40px!important;gap:6px!important}
+  .runner-topbar>button:first-child{width:29px!important;height:29px!important;flex-basis:29px}
+  .runner-brand-lockup>b{font-size:10px!important;letter-spacing:.075em!important}
+  .runner-brand-lockup>span{font-size:5.5px!important;letter-spacing:.09em!important}
+  .runner-prototype-tag{display:block!important;max-width:104px;padding:4px 5px!important;font-size:5.5px!important}
+  .runner-sound-toggle{min-width:53px;height:27px!important;padding:0 5px!important;font-size:6px!important}
+  .runner-stage-wrap{margin-top:5px!important;max-height:calc(100dvh - 82px)!important}
+}
+@media(max-width:370px){
+  .runner-brand-lockup>span{display:none}
+  .runner-prototype-tag{max-width:88px;font-size:5px!important}
+  .runner-sound-toggle{min-width:48px}
+}
+
+/* Rewarded rescue is the clear primary action, while ending the run stays available. */
+.runner-collision-panel{
+  width:min(100%,540px);padding:clamp(20px,4.5vw,34px);
+  border:1px solid #f5a06b88;
+  background:radial-gradient(ellipse at 50% 0%,#74452d55 0%,transparent 48%),linear-gradient(150deg,#202b3d 0%,#101827 72%);
+  box-shadow:0 26px 90px #000b,0 0 42px #ff985222,inset 0 1px #ffffff20;
+}
+.runner-rescue-emblem{
+  display:grid;place-items:center;width:54px;height:54px;margin:13px auto 9px;
+  border-radius:17px;color:#18202b;font-size:22px;font-weight:1000;
+  background:linear-gradient(145deg,#ffe1a0,#ff985e 62%,#f05d67);
+  box-shadow:0 0 0 7px #ffad6720,0 9px 28px #ff865044;
+}
+.runner-collision-panel h1{font-size:clamp(30px,7vw,46px);margin:8px 0 10px}
+.runner-collision-panel p{max-width:400px;margin:0 auto 17px;color:#e8edf5;font-size:clamp(12px,2.6vw,14px)}
+.runner-collision-actions{gap:9px}
+.runner-collision-actions .runner-rescue-primary{
+  min-height:78px;padding:12px 15px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  border:1px solid #ffe0a6!important;border-radius:15px;
+  color:#17202b;background:linear-gradient(105deg,#ffe29a 0%,#ffad68 46%,#f36b68 100%)!important;
+  box-shadow:0 10px 28px #ff925744,inset 0 1px #fff9;
+  animation:runner-rescue-pulse 2.2s ease-in-out infinite;
+}
+.runner-rescue-button-title{font-size:clamp(12px,3vw,15px);font-weight:1000;letter-spacing:.07em}
+.runner-rescue-button-subtitle{font-size:9px;font-weight:800;letter-spacing:.015em;opacity:.83}
+.runner-collision-actions .runner-rescue-primary:disabled{opacity:.82;filter:saturate(.9)}
+.runner-collision-actions .runner-secondary{min-height:39px;border-radius:10px;font-size:9px;opacity:.88}
+.runner-collision-panel>small:last-child{margin-top:12px;font-size:8px}
+@keyframes runner-rescue-pulse{
+  0%,100%{box-shadow:0 10px 28px #ff925744,inset 0 1px #fff9}
+  50%{box-shadow:0 12px 34px #ffad6877,0 0 0 4px #ffad681b,inset 0 1px #fff9}
+}
+@media(prefers-reduced-motion:reduce){.runner-collision-actions .runner-rescue-primary{animation:none}}

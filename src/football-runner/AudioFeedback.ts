@@ -56,34 +56,45 @@ export class RunnerAudioFeedback {
   }
 
   jump(): void {
-    this.noiseSweep(680, 210, 0.14, 0.035, "highpass");
-    this.tone(240, 390, 0.11, 0.045, "sine");
+    // Short boot-lift whoosh with a bright, confident landing-note.
+    this.noiseSweep(1500, 260, 0.2, 0.055, "bandpass");
+    this.tone(185, 330, 0.16, 0.045, "triangle");
+    this.tone(520, 410, 0.1, 0.018, "sine", 0.07);
   }
 
   slide(): void {
-    this.noiseSweep(900, 260, 0.24, 0.045, "lowpass");
+    // Wider low-mid sweep gives the slide a gritty turf brush instead of a beep.
+    this.noiseSweep(1250, 170, 0.32, 0.065, "bandpass");
+    this.noiseSweep(420, 95, 0.24, 0.028, "lowpass");
   }
 
   collect(): void {
-    this.tone(520, 760, 0.12, 0.065, "sine");
-    this.tone(780, 1120, 0.19, 0.055, "sine", 0.065);
-    this.tone(1050, 1320, 0.16, 0.035, "triangle", 0.13);
-    this.tone(115, 48, 0.13, 0.055, "sine");
+    // A three-note football pickup chime with a soft leather-like impact.
+    this.noiseSweep(360, 115, 0.075, 0.026, "lowpass");
+    this.tone(660, 660, 0.12, 0.052, "sine");
+    this.tone(880, 880, 0.15, 0.052, "sine", 0.075);
+    this.tone(1180, 1180, 0.2, 0.045, "sine", 0.15);
+    this.tone(330, 220, 0.12, 0.025, "triangle", 0.02);
   }
 
   collision(): void {
     this.setRunning(false);
-    this.noiseSweep(180, 65, 0.28, 0.12, "lowpass");
-    this.tone(105, 42, 0.32, 0.13, "triangle");
+    // A padded body impact, a short debris-like burst and a descending cue.
+    this.noiseSweep(520, 72, 0.34, 0.14, "lowpass");
+    this.noiseSweep(1800, 320, 0.11, 0.035, "bandpass");
+    this.tone(118, 48, 0.38, 0.14, "triangle");
+    this.tone(220, 92, 0.2, 0.045, "sine", 0.035);
   }
 
   milestone(kind: "distance" | "speed"): void {
     if (kind === "distance") {
-      this.tone(660, 660, 0.12, 0.055, "sine");
-      this.tone(880, 880, 0.18, 0.05, "sine", 0.11);
+      this.tone(523.25, 523.25, 0.13, 0.05, "sine");
+      this.tone(659.25, 659.25, 0.13, 0.05, "sine", 0.09);
+      this.tone(783.99, 783.99, 0.22, 0.06, "sine", 0.18);
     } else {
-      this.tone(520, 690, 0.13, 0.045, "triangle");
-      this.tone(690, 920, 0.16, 0.05, "triangle", 0.1);
+      this.noiseSweep(900, 1500, 0.12, 0.025, "bandpass");
+      this.tone(440, 587.33, 0.14, 0.045, "triangle");
+      this.tone(587.33, 880, 0.19, 0.052, "triangle", 0.1);
     }
   }
 
@@ -106,7 +117,7 @@ export class RunnerAudioFeedback {
   private createContext(context: AudioContext): void {
     this.context = context;
     this.master = context.createGain();
-    this.master.gain.value = 0.78;
+    this.master.gain.value = 0.9;
     this.master.connect(context.destination);
 
     const buffer = context.createBuffer(1, Math.floor(context.sampleRate * 2), context.sampleRate);
@@ -145,9 +156,11 @@ export class RunnerAudioFeedback {
   }
 
   private footstep(alternate: boolean): void {
-    const frequency = alternate ? 76 : 92;
-    this.tone(frequency, frequency * 0.62, 0.075, 0.038, "sine");
-    this.noiseSweep(240, 110, 0.045, 0.012, "lowpass");
+    const frequency = alternate ? 88 : 104;
+    const variation = alternate ? 0.94 : 1.04;
+    this.tone(frequency * variation, frequency * 0.58, 0.09, 0.052, "triangle");
+    this.noiseSweep(alternate ? 330 : 410, 105, 0.065, 0.021, "lowpass");
+    this.tone(54, 38, 0.075, 0.018, "sine", 0.006);
   }
 
   private tone(
