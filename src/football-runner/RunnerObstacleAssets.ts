@@ -12,7 +12,6 @@ type ObstacleAsset = {
 
 const OBSTACLE_ASSETS: ObstacleAsset[] = [
   { file: "training-cone.glb", width: 0.62, height: 0.74, depth: 0.62 },
-  { file: "training-hurdle.glb", width: 1.5, height: 0.88, depth: 0.62 },
   { file: "free-kick-mannequin.glb", width: 0.62, height: 1.82, depth: 0.38 },
 ];
 
