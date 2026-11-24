@@ -155,29 +155,30 @@ export function createObstacle(type: number): THREE.Group {
     group.userData.obstacleType = "mannequin";
     group.userData.hitbox = { halfWidth: 0.48, halfDepth: 0.38, height: 1.98 };
   } else if (variant === 3) {
-    // A compact overhead roadworks frame: a proper slide-under obstacle,
-    // not a lone vertical pole or a solid block across the lane.
+    // Tall yellow-and-dark overhead frame: its beam sits high enough to
+    // read as an overhead obstacle, but low enough that a standing player
+    // must slide underneath. This obstacle is intentionally NOT jumpable.
     for (const x of [-0.68, 0.68]) {
-      addMesh(group, new THREE.BoxGeometry(0.12, 1.48, 0.16), yellowDark, [x, 0.74, 0]);
-      addMesh(group, new THREE.BoxGeometry(0.34, 0.1, 0.28), dark, [x, 0.05, 0]);
+      addMesh(group, new THREE.BoxGeometry(0.14, 1.74, 0.18), yellowDark, [x, 0.87, 0]);
+      addMesh(group, new THREE.BoxGeometry(0.36, 0.1, 0.3), dark, [x, 0.05, 0]);
     }
-    addMesh(group, new THREE.BoxGeometry(1.58, 0.2, 0.2), yellow, [0, 1.42, 0]);
-    for (const x of [-0.38, 0.38]) {
-      const stripe = addMesh(group, new THREE.BoxGeometry(0.18, 0.205, 0.025), dark, [x, 1.42, 0.112]);
+    addMesh(group, new THREE.BoxGeometry(1.62, 0.22, 0.22), yellow, [0, 1.68, 0]);
+    for (const x of [-0.4, 0.4]) {
+      const stripe = addMesh(group, new THREE.BoxGeometry(0.19, 0.225, 0.025), dark, [x, 1.68, 0.122]);
       stripe.rotation.z = -0.18;
     }
     group.userData.obstacleType = "roadworks-slide-frame";
-    group.userData.hitbox = { halfWidth: 0.86, halfDepth: 0.2, height: 1.52, jumpClearanceHeight: 1.62, slideClearanceHeight: 1.22 };
+    group.userData.hitbox = { halfWidth: 0.88, halfDepth: 0.22, height: 1.8, slideClearanceHeight: 1.24 };
   } else {
-    // Taller, unmistakable yellow barrier. It is deliberately non-jumpable:
-    // players must change lanes rather than attempt a visually misleading jump.
+    // Plain yellow hurdle: clearly lower than the striped overhead frame.
+    // Its crossbar is low enough to jump over and high enough to slide under.
     for (const x of [-0.62, 0.62]) {
-      addMesh(group, new THREE.BoxGeometry(0.14, 1.42, 0.18), yellow, [x, 0.71, 0]);
+      addMesh(group, new THREE.BoxGeometry(0.14, 1.18, 0.18), yellow, [x, 0.59, 0]);
       addMesh(group, new THREE.BoxGeometry(0.34, 0.09, 0.28), yellowDark, [x, 0.045, 0]);
     }
-    addMesh(group, new THREE.BoxGeometry(1.52, 0.18, 0.22), yellow, [0, 1.36, 0]);
+    addMesh(group, new THREE.BoxGeometry(1.52, 0.14, 0.22), yellow, [0, 1.18, 0]);
     group.userData.obstacleType = "tall-yellow-hurdle";
-    group.userData.hitbox = { halfWidth: 0.84, halfDepth: 0.26, height: 1.46, slideClearanceHeight: 1.2 };
+    group.userData.hitbox = { halfWidth: 0.84, halfDepth: 0.26, height: 1.25, jumpClearanceHeight: 1.42, slideClearanceHeight: 1.34 };
   }
 
   group.userData.kind = "obstacle";
