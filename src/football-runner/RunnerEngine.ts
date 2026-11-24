@@ -273,6 +273,30 @@ export class RunnerEngine {
     this.startLoop();
   };
 
+  revive = (): void => {
+    if (this.disposed || !this.over) return;
+    this.over = false;
+    this.paused = false;
+    this.playerCharacter.root.rotation.set(0, 0, 0);
+    this.playerCharacter.root.position.y = 0;
+    void this.audio.unlock();
+    this.audio.setRunning(true);
+    this.callbacks.onPhase("running");
+    this.startLoop();
+  };
+
+  endCollision = (): void => {
+    if (this.disposed || !this.over) return;
+    const summary: RunnerSummary = {
+      distance: Math.floor(this.distance), points: this.points, balls: this.balls,
+      distancePoints: Math.floor(this.distance * RUNNER_CONFIG.scoring.distancePointsPerMetre),
+      footballPoints: this.balls * RUNNER_CONFIG.scoring.footballPickupPoints,
+      rewardFootball: 0, rewardDistance: 0, rewardPerformance: 0, sethis: 0,
+    };
+    this.callbacks.onSummary(summary);
+    this.callbacks.onPhase("over");
+  };
+
   restart = (): void => this.start();
 
   act = (action: RunnerAction): void => this.handleAction(action);
@@ -425,14 +449,7 @@ export class RunnerEngine {
       this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
       if (progress < 1) { this.frame = requestAnimationFrame(fall); return; }
       this.frame = 0;
-      const summary: RunnerSummary = {
-        distance: Math.floor(this.distance), points: this.points, balls: this.balls,
-        distancePoints: Math.floor(this.distance * RUNNER_CONFIG.scoring.distancePointsPerMetre),
-        footballPoints: this.balls * RUNNER_CONFIG.scoring.footballPickupPoints,
-        rewardFootball: 0, rewardDistance: 0, rewardPerformance: 0, sethis: 0,
-      };
-      this.callbacks.onSummary(summary);
-      this.callbacks.onPhase("over");
+      this.callbacks.onPhase("collision");
     };
     this.frame = requestAnimationFrame(fall);
   }
