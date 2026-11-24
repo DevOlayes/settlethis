@@ -186,7 +186,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       setRescueStatus("Watch the full ad to get back into your run.");
       const { default: createAdHandler } = await import("monetag-tg-sdk");
       const showAd = createAdHandler(Number(attempt.zone_id));
-      const result = await showAd({ ymid: attempt.ymid, requestVar: "runner_rescue" });
+      const result = await showAd({ type: "end", ymid: attempt.ymid, requestVar: "runner_rescue" }) as unknown as { reward_event_type?: string } | undefined;
       if (result?.reward_event_type !== "valued") throw new Error("The ad was not completed for a valid reward. Your run will now end.");
       setRescueStatus("Ad completed. Confirming your rescue…");
       let verified = false;
