@@ -610,6 +610,8 @@ export class RunnerEngine {
             && this.slideRemaining > 0
             && config.collision.slidingPlayerHeight <= (hitbox.slideClearanceHeight ?? 1.1);
           if (!jumpClears && !slideClears) {
+            this.releaseObject(object);
+            this.objects.splice(index, 1);
             this.finish();
             break;
           }
