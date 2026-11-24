@@ -66,7 +66,7 @@ export class RunnerEngine {
   private over = false;
   private disposed = false;
 
-  constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks, environment: "club-ground" = "club-ground") {
+  constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks, environment: "custom-field" | "club-ground" = "custom-field") {
     this.host = host;
     this.bundle = createRunnerScene(host);
     void loadRunnerObstacleTemplates().then((templates) => {
@@ -694,8 +694,9 @@ export class RunnerEngine {
     }
     const blockedLanes = shuffled.slice(0, obstacleCount);
 
-    // Two-lane gates leave one safe route. At higher difficulty, a second
-    // staggered wave blocks that route and forces a deliberate lane change.
+    // Each row is deliberately built around a readable safe route. Most
+    // rows block two lanes; the next staggered wave then closes that route,
+    // making the player switch lanes instead of running through long empty gaps.
     blockedLanes.forEach((lane) => {
       const variant = this.nextObstacleVariant();
       this.spawnObject(`obstacle-${variant}`, lane, z);
@@ -703,11 +704,14 @@ export class RunnerEngine {
     });
 
     const safeLane = lanes.find((lane) => !blockedLanes.includes(lane));
-    const followUpChance = 0.16 + difficulty * 0.48;
-    if (obstacleCount === 2 && safeLane !== undefined && Math.random() < followUpChance) {
-      const followUpBlock = blockedLanes[Math.floor(Math.random() * blockedLanes.length)];
-      const followUpLanes = [safeLane, followUpBlock];
-      const followUpOffset = 10.5 - difficulty * 1.4;
+    const followUpChance = obstacleCount === 2
+      ? 0.58 + difficulty * 0.28
+      : 0.24 + difficulty * 0.2;
+    if (safeLane !== undefined && Math.random() < followUpChance) {
+      const followUpLanes = obstacleCount === 2
+        ? [safeLane, blockedLanes[Math.floor(Math.random() * blockedLanes.length)]]
+        : [safeLane];
+      const followUpOffset = 14 - difficulty * 1.2;
       followUpLanes.forEach((lane) => {
         const variant = this.nextObstacleVariant();
         this.spawnObject(`obstacle-${variant}`, lane, z - followUpOffset);
