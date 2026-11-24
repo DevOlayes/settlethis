@@ -42,25 +42,6 @@ function addPitchMarkings(world: THREE.Group, white: THREE.Material): void {
   world.add(spot);
 }
 
-function addGoal(world: THREE.Group, z: number, width: number, height: number, postMaterial: THREE.Material, netMaterial: THREE.Material): void {
-  const goal = new THREE.Group();
-  const depth = 1.6;
-  for (const x of [-width / 2, width / 2]) {
-    box(goal, [0.14, height, 0.14], [x, height / 2, 0], postMaterial);
-    box(goal, [0.12, height, depth], [x, height / 2, -depth / 2], postMaterial);
-  }
-  box(goal, [width + 0.14, 0.14, 0.14], [0, height, 0], postMaterial);
-  box(goal, [width + 0.1, 0.1, 0.1], [0, height, -depth], postMaterial);
-  box(goal, [0.1, 0.1, depth], [-width / 2, height, -depth / 2], postMaterial);
-  box(goal, [0.1, 0.1, depth], [width / 2, height, -depth / 2], postMaterial);
-
-  const net = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), netMaterial);
-  net.position.set(0, height / 2, -depth / 2);
-  goal.add(net);
-  goal.position.z = z;
-  world.add(goal);
-}
-
 function addCrowd(world: THREE.Group): void {
   // Instanced spectator silhouettes add scale and life without thousands of draw calls.
   const bodyGeometry = new THREE.CapsuleGeometry(0.062, 0.16, 2, 6);
@@ -168,11 +149,6 @@ function addTrainingComplex(world: THREE.Group, materials: Record<string, THREE.
     world.add(field);
     for (const edge of [-4, 4]) groundLine(world, 0.045, 42, [x + edge, -0.045, -87], line);
     groundLine(world, 8, 0.045, [x, -0.045, -87], line);
-    const miniGoal = new THREE.Group();
-    addGoal(miniGoal, 0, 2.8, 1.8, materials.post, materials.net);
-    miniGoal.position.set(x, 0, -107);
-    world.add(miniGoal);
-
     // Training benches and equipment racks face the practice pitches.
     box(world, [3.8, 0.22, 0.65], [side * 9.2, 0.72, -78], materials.concrete);
     for (let seat = 0; seat < 4; seat++) {
