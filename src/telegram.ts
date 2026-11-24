@@ -30,6 +30,8 @@ interface TelegramWebApp {
   setBottomBarColor?(color:string): void;
   onEvent?(eventType:string, callback:(event?:unknown)=>void): void;
   offEvent?(eventType:string, callback:(event?:unknown)=>void): void;
+  requestSafeArea?(): void;
+  requestContentSafeArea?(): void;
   openTelegramLink?(url: string): void;
   BackButton?: { show(): void; hide(): void; onClick(callback: () => void): void; offClick(callback: () => void): void };
 }
@@ -82,6 +84,8 @@ export function bindTelegramViewport(webApp:TelegramWebApp):()=>void {
   const onViewport=(event?:unknown)=>{
     if((event as {isStateStable?:boolean}|undefined)?.isStateStable!==false)applyStableHeight();
   };
+  webApp.requestSafeArea?.();
+  webApp.requestContentSafeArea?.();
   applyInsets();
   applyStableHeight();
   webApp.onEvent?.("safeAreaChanged",applyInsets);
