@@ -1,6 +1,6 @@
 import type * as THREE from "three";
 
-export type RunnerPhase = "ready" | "running" | "paused" | "over";
+export type RunnerPhase = "ready" | "running" | "paused" | "collision" | "over";
 export type RunnerRenderQuality = "low" | "balanced" | "high";
 export type RunnerAction = "left" | "right" | "jump" | "slide";
 export type RunnerSummary = {
@@ -55,6 +55,8 @@ export type RunnerControls = {
   start: () => void;
   pause: () => void;
   resume: () => void;
+  revive: () => void;
+  endCollision: () => void;
   restart: () => void;
   act: (action: RunnerAction) => void;
   setSoundEnabled: (enabled: boolean) => void;
