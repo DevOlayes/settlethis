@@ -508,11 +508,16 @@ export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle, shoul
     });
   });
 
-  const tileLength = 36.2;
+  // The imported club-ground GLB is authored at real-world scale. The old
+  // 0.32 multiplier compressed its pitch and goal structures to roughly a
+  // third of their intended size beside the unchanged 2.18m footballer.
+  const environmentScale = 1 / 0.32;
+  const sourceTileLength = 36.2;
+  const tileLength = sourceTileLength * environmentScale;
   for (let index = 0; index < 5; index++) {
     const ground = groundAsset.scene.clone(true);
-    ground.name = `SETHIS darkened club ground section ${index + 1}`;
-    ground.scale.setScalar(0.32);
+    ground.name = `SETHIS full-scale club ground section ${index + 1}`;
+    ground.scale.setScalar(1);
     ground.position.set(0, 0, -index * tileLength);
     ground.traverse((object) => {
       if (object instanceof THREE.Mesh) {
@@ -523,7 +528,12 @@ export async function loadClubGroundEnvironment(bundle: RunnerSceneBundle, shoul
     bundle.environmentRoot.add(ground);
   }
 
-  addClubGroundSideStands(bundle.environmentRoot, tileLength, 5);
+  // Keep the custom stands in the same real-world scale as the imported pitch.
+  // Their original dimensions were authored for the compressed 0.32 ground.
+  const stands = new THREE.Group();
+  addClubGroundSideStands(stands, sourceTileLength, 5);
+  stands.scale.setScalar(environmentScale);
+  bundle.environmentRoot.add(stands);
   bundle.environmentRoot.visible = true;
 
   // Club Ground uses the same 180m world-wrap as the runner engine.
