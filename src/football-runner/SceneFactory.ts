@@ -278,7 +278,9 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   scene.add(world);
   const environmentRoot = new THREE.Group();
   environmentRoot.name = "runner-environment-root";
-  environmentRoot.visible = false;
+  // Use the original procedural grass pitch by default; the imported Club Ground
+  // model is intentionally no longer loaded for the production runner.
+  environmentRoot.visible = true;
   world.add(environmentRoot);
 
   const materials: Record<string, THREE.Material> = {
@@ -348,10 +350,10 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
     }
   }
 
-  // A second copy trails the active 180m segment so the ground and landmarks remain underfoot while the loop advances.
+  // A matching copy keeps the original grass pitch and landmarks seamless at wrap.
   const loopCopy = environmentRoot.clone(true);
   loopCopy.name = "runner-environment-loop-copy";
-  loopCopy.visible = false;
+  loopCopy.visible = true;
   loopCopy.position.z = -worldConfig.length;
   world.add(loopCopy);
 
