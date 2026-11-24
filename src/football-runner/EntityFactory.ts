@@ -117,11 +117,15 @@ export function createObstacle(type: number): THREE.Group {
   if (supplied) {
     const obstacleNames = ["training-cone", "training-hurdle", "free-kick-mannequin", "passing-gate", "slalom-pole"];
     const hitboxes = [
-      { halfWidth: 0.36, halfDepth: 0.36, height: 0.74, clearance: "jump" as const, clearanceHeight: 0.9 },
-      { halfWidth: 0.78, halfDepth: 0.34, height: 0.88, clearance: "jump" as const, clearanceHeight: 1.08 },
-      { halfWidth: 0.42, halfDepth: 0.25, height: 1.82, clearance: "jump" as const, clearanceHeight: 1.98 },
-      { halfWidth: 0.82, halfDepth: 0.34, height: 1.22, clearance: "none" as const },
-      { halfWidth: 0.2, halfDepth: 0.2, height: 1.68, clearance: "jump" as const, clearanceHeight: 1.84 },
+      // Jump clearance is the minimum player-root height needed to put the
+      // player's feet safely above the obstacle's top surface.
+      { halfWidth: 0.32, halfDepth: 0.32, height: 0.74, jumpClearanceHeight: 0.9 },
+      { halfWidth: 0.76, halfDepth: 0.31, height: 0.88, jumpClearanceHeight: 1.08 },
+      { halfWidth: 0.34, halfDepth: 0.2, height: 1.82, jumpClearanceHeight: 1.98 },
+      // The supplied passing gate has a low crossbar and an open underside:
+      // it can be cleared by jumping over the bar or sliding underneath it.
+      { halfWidth: 0.76, halfDepth: 0.18, height: 1.22, jumpClearanceHeight: 1.38, slideClearanceHeight: 1.16 },
+      { halfWidth: 0.15, halfDepth: 0.15, height: 1.68, jumpClearanceHeight: 1.84 },
     ];
     group.name = `supplied-${obstacleNames[variant]}`;
     group.add(supplied.clone(true));
@@ -141,7 +145,7 @@ export function createObstacle(type: number): THREE.Group {
     cone.castShadow = true;
     addMesh(group, new THREE.CylinderGeometry(0.38, 0.38, 0.1, 8), dark, [0, 0.05, 0]);
     group.userData.obstacleType = "cone";
-    group.userData.hitbox = { halfWidth: 0.4, halfDepth: 0.38, height: 0.82, clearance: "jump", clearanceHeight: 0.98 };
+    group.userData.hitbox = { halfWidth: 0.4, halfDepth: 0.38, height: 0.82, jumpClearanceHeight: 0.98 };
   } else if (variant === 1) {
     addMesh(group, new THREE.BoxGeometry(1.25, 0.13, 0.17), pale, [0, 0.7, 0]);
     for (const x of [-0.52, 0.52]) {
@@ -149,13 +153,13 @@ export function createObstacle(type: number): THREE.Group {
       addMesh(group, new THREE.BoxGeometry(0.3, 0.07, 0.25), dark, [x, 0.035, 0]);
     }
     group.userData.obstacleType = "hurdle";
-    group.userData.hitbox = { halfWidth: 0.68, halfDepth: 0.23, height: 0.78, clearance: "jump", clearanceHeight: 0.96 };
+    group.userData.hitbox = { halfWidth: 0.68, halfDepth: 0.23, height: 0.78, jumpClearanceHeight: 0.96 };
   } else if (variant === 2) {
     addMesh(group, new THREE.CapsuleGeometry(0.22, 0.9, 3, 7), grey, [0, 1.05, 0]);
     addMesh(group, new THREE.SphereGeometry(0.23, 10, 8), material(0x9a91a1), [0, 1.68, 0]);
     addMesh(group, new THREE.BoxGeometry(0.82, 0.16, 0.2), grey, [0, 1.52, 0]);
     group.userData.obstacleType = "mannequin";
-    group.userData.hitbox = { halfWidth: 0.48, halfDepth: 0.38, height: 1.98, clearance: "none" };
+    group.userData.hitbox = { halfWidth: 0.48, halfDepth: 0.38, height: 1.98 };
   } else if (variant === 3) {
     addMesh(group, new THREE.BoxGeometry(1.22, 0.72, 0.72), dark, [0, 0.62, 0]);
     addMesh(group, new THREE.BoxGeometry(1.08, 0.12, 0.66), metal, [0, 1.02, 0]);
@@ -168,7 +172,7 @@ export function createObstacle(type: number): THREE.Group {
     }
     addMesh(group, new THREE.BoxGeometry(1.05, 0.12, 0.58), coral, [0, 1.84, -0.27]);
     group.userData.obstacleType = "equipment-cart";
-    group.userData.hitbox = { halfWidth: 0.72, halfDepth: 0.48, height: 1.95, clearance: "none" };
+    group.userData.hitbox = { halfWidth: 0.72, halfDepth: 0.48, height: 1.95 };
   } else {
     for (const x of [-0.58, 0.58]) {
       addMesh(group, new THREE.BoxGeometry(0.13, 1.58, 0.16), metal, [x, 0.79, 0]);
@@ -176,7 +180,7 @@ export function createObstacle(type: number): THREE.Group {
     }
     addMesh(group, new THREE.BoxGeometry(1.34, 0.2, 0.22), coral, [0, 1.52, 0]);
     group.userData.obstacleType = "low-bar";
-    group.userData.hitbox = { halfWidth: 0.74, halfDepth: 0.3, height: 1.62, clearance: "slide", slideClearanceHeight: 1.16 };
+    group.userData.hitbox = { halfWidth: 0.74, halfDepth: 0.3, height: 1.62, jumpClearanceHeight: 1.78, slideClearanceHeight: 1.16 };
   }
 
   group.userData.kind = "obstacle";
