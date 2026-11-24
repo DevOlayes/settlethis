@@ -527,6 +527,11 @@ export class RunnerEngine {
     this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % config.world.length;
 
     const player = this.playerCharacter.root;
+    // Keep the previous pose so collision is evaluated at the moment the
+    // moving obstacle crosses the player, not only at the end of a frame.
+    const previousPlayerX = player.position.x;
+    const previousPlayerY = player.position.y;
+    const previousSlideRemaining = this.slideRemaining;
     const laneTarget = this.targetLane * config.laneWidth;
     const laneBlend = 1 - Math.exp(-config.movement.laneResponse * delta);
     player.position.x += (laneTarget - player.position.x) * laneBlend;
@@ -568,11 +573,6 @@ export class RunnerEngine {
       object.position.z += speed * delta;
       object.userData.previousZ = object.position.z;
       if (object.userData.kind === "ball") object.rotation.y += delta * 2.4;
-      if (object.position.z > 3.2) {
-        this.releaseObject(object);
-        this.objects.splice(index, 1);
-        continue;
-      }
 
       const hitbox = object.userData.hitbox as {
         halfWidth: number;
@@ -584,15 +584,24 @@ export class RunnerEngine {
       } | undefined;
       const depthLimit = (hitbox?.halfDepth ?? 0.35) + config.collision.playerHalfDepth;
       const widthLimit = (hitbox?.halfWidth ?? 0.35) + config.collision.playerHalfWidth;
-      const depth = Math.abs(object.position.z - player.position.z);
-      const width = Math.abs(object.position.x - player.position.x);
-      const crossedPlayerDepth = previousZ <= player.position.z + depthLimit && object.position.z >= player.position.z - depthLimit;
-      if ((depth < depthLimit || crossedPlayerDepth) && width < widthLimit) {
+      const travelZ = object.position.z - previousZ;
+      const crossingTime = Math.abs(travelZ) > 0.00001
+        ? clamp((player.position.z - previousZ) / travelZ, 0, 1)
+        : 0;
+      const closestZ = previousZ + travelZ * crossingTime;
+      const crossingPlayerX = previousPlayerX + (player.position.x - previousPlayerX) * crossingTime;
+      const crossingPlayerY = previousPlayerY + (player.position.y - previousPlayerY) * crossingTime;
+      const crossingSlideRemaining = previousSlideRemaining
+        + (this.slideRemaining - previousSlideRemaining) * crossingTime;
+      const sweptDepthOverlap = Math.abs(closestZ - player.position.z) <= depthLimit;
+      const width = Math.abs(object.position.x - crossingPlayerX);
+
+      // Swept collision prevents fast-moving hurdles from tunnelling past the
+      // player between frames, including on slower mobile devices.
+      if (sweptDepthOverlap && width < widthLimit) {
         if (object.userData.kind === "ball") {
           this.balls++;
           this.points = Math.floor(this.distance * config.scoring.distancePointsPerMetre) + this.balls * config.scoring.footballPickupPoints;
-          // Collection is a score/effect event, not a locomotion action.
-          // Keep the native run cycle uninterrupted as the player passes through the ball.
           this.audio.collect();
           this.spawnCollectionEffect(object.position);
           this.callbacks.onHud({
@@ -603,11 +612,12 @@ export class RunnerEngine {
           });
           this.releaseObject(object);
           this.objects.splice(index, 1);
+          continue;
         } else {
           const jumpClears = hitbox?.clearance === "jump"
-            && player.position.y >= (hitbox.clearanceHeight ?? hitbox.height + config.collision.clearanceMargin);
+            && crossingPlayerY >= (hitbox.clearanceHeight ?? hitbox.height + config.collision.clearanceMargin);
           const slideClears = hitbox?.clearance === "slide"
-            && this.slideRemaining > 0
+            && crossingSlideRemaining > 0
             && config.collision.slidingPlayerHeight <= (hitbox.slideClearanceHeight ?? 1.1);
           if (!jumpClears && !slideClears) {
             this.releaseObject(object);
@@ -616,6 +626,13 @@ export class RunnerEngine {
             break;
           }
         }
+      }
+
+      // Only retire an obstacle after collision has been checked. Releasing it
+      // first allowed a large frame step to skip the collision window entirely.
+      if (object.position.z > 3.2) {
+        this.releaseObject(object);
+        this.objects.splice(index, 1);
       }
     }
 
