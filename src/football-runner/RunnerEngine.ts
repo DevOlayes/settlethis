@@ -12,7 +12,7 @@ import { PlayerAnimator } from "./PlayerAnimator";
 import { createNativeBipedJumpClips, NATIVE_BIPED_JUMP_PHASES } from "./NativeBipedJump";
 import { createNativeBipedManeuverClips } from "./NativeBipedManeuvers";
 import { RunnerPerformanceMonitor } from "./PerformanceMonitor";
-import { createRunnerScene, disposeRunnerScene, loadClubGroundEnvironment, resizeRunnerScene } from "./SceneFactory";
+import { createRunnerScene, disposeRunnerScene, resizeRunnerScene } from "./SceneFactory";
 import { applyRunnerRenderQuality } from "./RenderQuality";
 import type { RunnerAction, RunnerEngineCallbacks, RunnerPhase, RunnerSceneBundle, RunnerSummary, RunnerPerformanceSnapshot, RunnerRenderQuality } from "./types";
 
@@ -66,7 +66,7 @@ export class RunnerEngine {
   private over = false;
   private disposed = false;
 
-  constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks, environment: "custom-field" | "club-ground" = "custom-field") {
+  constructor(host: HTMLElement, private readonly callbacks: RunnerEngineCallbacks) {
     this.host = host;
     this.bundle = createRunnerScene(host);
     void loadRunnerObstacleTemplates().then((templates) => {
@@ -81,24 +81,7 @@ export class RunnerEngine {
       this.obstacleAssetsReady = true;
       this.tryStartWhenReady();
     });
-    if (environment === "club-ground") {
-      this.environmentReady = false;
-      this.callbacks.onEnvironmentStatus?.("loading");
-      void loadClubGroundEnvironment(this.bundle, () => this.disposed).then(() => {
-        if (this.disposed) return;
-        this.environmentReady = true;
-        this.callbacks.onEnvironmentStatus?.("ready");
-        this.tryStartWhenReady();
-      }).catch((error) => {
-        if (this.disposed) return;
-        console.error("Club Ground could not load; refusing to substitute another field.", error);
-        this.environmentReady = true;
-        this.callbacks.onEnvironmentStatus?.("error");
-        this.tryStartWhenReady();
-      });
-    } else {
-      this.callbacks.onEnvironmentStatus?.("ready");
-    }
+    this.callbacks.onEnvironmentStatus?.("ready");
     // Never render the procedural placeholder. Sports Male 03 is the only approved player.
     this.playerCharacter.root.visible = false;
     this.bundle.scene.add(this.playerCharacter.root);
