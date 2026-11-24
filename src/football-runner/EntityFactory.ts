@@ -169,15 +169,15 @@ export function createObstacle(type: number): THREE.Group {
     group.userData.obstacleType = "roadworks-slide-frame";
     group.userData.hitbox = { halfWidth: 0.86, halfDepth: 0.2, height: 1.52, slideClearanceHeight: 1.22 };
   } else {
-    // Tall yellow hurdle. The larger frame has a distinct silhouette and
-    // requires a committed jump rather than being mistaken for the short bar.
+    // Taller, unmistakable yellow barrier. It is deliberately non-jumpable:
+    // players must change lanes rather than attempt a visually misleading jump.
     for (const x of [-0.62, 0.62]) {
-      addMesh(group, new THREE.BoxGeometry(0.12, 1.08, 0.16), yellow, [x, 0.54, 0]);
-      addMesh(group, new THREE.BoxGeometry(0.32, 0.08, 0.26), yellowDark, [x, 0.04, 0]);
+      addMesh(group, new THREE.BoxGeometry(0.14, 1.42, 0.18), yellow, [x, 0.71, 0]);
+      addMesh(group, new THREE.BoxGeometry(0.34, 0.09, 0.28), yellowDark, [x, 0.045, 0]);
     }
-    addMesh(group, new THREE.BoxGeometry(1.48, 0.16, 0.2), yellow, [0, 1.02, 0]);
+    addMesh(group, new THREE.BoxGeometry(1.52, 0.18, 0.22), yellow, [0, 1.36, 0]);
     group.userData.obstacleType = "tall-yellow-hurdle";
-    group.userData.hitbox = { halfWidth: 0.82, halfDepth: 0.24, height: 1.1, jumpClearanceHeight: 1.28 };
+    group.userData.hitbox = { halfWidth: 0.84, halfDepth: 0.26, height: 1.46 };
   }
 
   group.userData.kind = "obstacle";
