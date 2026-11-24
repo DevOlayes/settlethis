@@ -156,6 +156,11 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
 
   const start = async () => {
     if (startBusy || savingRun) return;
+    if (!preview) {
+      const webApp=window.Telegram?.WebApp;
+      webApp?.expand();
+      if(webApp?.requestFullscreen&&!webApp.isFullscreen)webApp.requestFullscreen();
+    }
     if (preview) { setStartBusy(true); setConfirmAction(null); setInstructionsOpen(false); setRunSaveStatus(""); engineRef.current?.start(); setStartBusy(false); return; }
     if (!initData || !telegramUser) return;
     setStartBusy(true);
@@ -255,11 +260,33 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     if (phase === "running") engineRef.current?.pause();
     setConfirmAction("restart");
   };
+  useEffect(()=>{
+    const webApp=window.Telegram?.WebApp;
+    if(!webApp)return;
+    const backButton=webApp.BackButton;
+    const handleBack=()=>requestExit();
+    webApp.disableVerticalSwipes?.();
+    backButton?.show();
+    backButton?.onClick(handleBack);
+    const handleDeactivated=()=>{if(phase==="running")engineRef.current?.pause();};
+    webApp.onEvent?.("deactivated",handleDeactivated);
+    return()=>{
+      backButton?.offClick(handleBack);
+      backButton?.hide();
+      webApp.offEvent?.("deactivated",handleDeactivated);
+      webApp.enableVerticalSwipes?.();
+      if(webApp.isFullscreen)webApp.exitFullscreen?.();
+    };
+  },[phase,confirmAction]);
   const confirmPendingAction = () => {
     const action = confirmAction;
     setConfirmAction(null);
     if (action === "restart") void start();
-    if (action === "exit") onBack();
+    if (action === "exit") {
+      const webApp=window.Telegram?.WebApp;
+      if(webApp?.isFullscreen)webApp.exitFullscreen?.();
+      onBack();
+    }
   };
 
   useEffect(() => {

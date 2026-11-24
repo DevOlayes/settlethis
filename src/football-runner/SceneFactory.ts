@@ -208,14 +208,14 @@ export function createRunnerScene(host: HTMLElement): RunnerSceneBundle {
   const renderer = new THREE.WebGLRenderer({
     antialias: renderQuality !== "low",
     alpha: false,
-    powerPreference: "low-power",
+    powerPreference: "high-performance",
   });
   // Device-aware resolution keeps the drawing buffer proportional to available hardware.
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelRatioCap));
   renderer.setSize(host.clientWidth, host.clientHeight);
   renderer.shadowMap.enabled = renderQuality === "high";
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.shadowMap.autoUpdate = true;
+  renderer.shadowMap.autoUpdate = renderQuality === "high";
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.04;

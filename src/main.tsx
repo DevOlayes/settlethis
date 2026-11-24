@@ -5,7 +5,7 @@ import BrandMark from "./BrandMark";
 import AdminPortal from "./Admin";
 const FootballRunner=lazy(()=>import("./FootballRunner"));
 const AvatarAnimationDiagnostic=lazy(()=>import("./AvatarAnimationDiagnostic"));
-import {authenticateTelegram,initializeTelegramApp,type TelegramUser} from "./telegram";
+import {authenticateTelegram,initializeTelegramApp,bindTelegramViewport,type TelegramUser} from "./telegram";
 import "./index.css";
 
 const BOT_CONFIG_URL="/api/telegram/config";
@@ -54,9 +54,11 @@ function Root(){
  useEffect(()=>{
   if(isAdmin)return;
   let active=true;
+  let unbindViewport:(()=>void)|undefined;
   try{
    const webApp=initializeTelegramApp();
-   if(!webApp?.initData){setTelegramUser(null);setAuthStatus("outside");return;}
+   unbindViewport=webApp?bindTelegramViewport(webApp):undefined;
+   if(!webApp?.initData){setTelegramUser(null);setAuthStatus("outside");return ()=>{active=false;unbindViewport?.();};}
    setAuthStatus("checking");setAuthError("");
    authenticateTelegram(webApp.initData).then(user=>{if(active){setTelegramUser(user);setAuthStatus("ready");}}).catch(error=>{
     if(active){setTelegramUser(null);setAuthError(error instanceof Error?error.message:"Telegram sign-in could not be completed.");setAuthStatus("failed");}
@@ -64,7 +66,7 @@ function Root(){
   }catch(error){
    if(active){setAuthError(error instanceof Error?error.message:"Telegram Mini App could not be initialized.");setAuthStatus("failed");}
   }
-  return()=>{active=false;};
+  return()=>{active=false;unbindViewport?.();};
  },[retry,isAdmin]);
  if(isAdmin)return <AdminPortal/>;
  if(isAvatarAnimationDiagnostic)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the animation test</h1><p>Loading Sports Male 03 and its run cycle…</p></div></main>}><AvatarAnimationDiagnostic onBack={()=>{window.location.href="/avatar-diagnostic";}}/></Suspense>;
