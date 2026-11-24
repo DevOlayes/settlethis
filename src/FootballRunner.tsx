@@ -140,7 +140,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             })
             .finally(() => setSavingRun(false));
         },
-      }, "custom-field");
+      });
       engine.setSoundEnabled(soundEnabled);
       engineRef.current = engine;
     } catch {
