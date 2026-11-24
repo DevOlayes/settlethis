@@ -38,14 +38,10 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [shareStatus, setShareStatus] = useState("");
   const [rescueBusy, setRescueBusy] = useState(false);
   const [rescueStatus, setRescueStatus] = useState("");
+  const [runAchievement, setRunAchievement] = useState<"first" | "record" | "standard">("standard");
   const activeRunIdRef = useRef<string | null>(null);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
   useEffect(() => { setCollectionPulse(hud.balls); }, [hud.balls]);
-  useEffect(() => {
-    if (phase !== "collision" || rescueBusy) return;
-    const decisionTimeout = window.setTimeout(() => engineRef.current?.endCollision(), 5000);
-    return () => window.clearTimeout(decisionTimeout);
-  }, [phase, rescueBusy]);
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<"restart" | "exit" | null>(null);
   const [incomingChallenge] = useState(() => decodeRunnerChallenge(new URLSearchParams(window.location.search).get("challenge")));
@@ -91,6 +87,12 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
         onHud: setHud,
         onEnvironmentStatus: (status) => { if (status === "error") setEngineError(true); },
         onSummary: (result) => {
+          const previousRecords = recordsRef.current;
+          setRunAchievement(previousRecords.totalRuns === 0
+            ? "first"
+            : result.distance > previousRecords.bestDistance || result.points > previousRecords.bestPoints
+              ? "record"
+              : "standard");
           setSummary({
             ...result,
             rewardFootball: 0,
@@ -311,13 +313,15 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             <div className="runner-overlay">
               {phase === "ready" && <>
                 <div className="runner-lobby-hero" aria-label="Club Ground football course">
-                  <img className="runner-game-emblem" src="/football-runner-icon.svg" alt="SETHIS Football Runner emblem" />
                   <span>CLUB GROUND · ENDLESS RUN</span>
                 </div>
                 <div className="runner-lobby-title">
-                  <span className="runner-overline">THE CLUB GROUND CHALLENGE</span>
-                  <h1>CHASE <i>THE</i><br/>DISTANCE.</h1>
-                  <p>One pitch. Your pace. Your record to break.</p>
+                  <div className="runner-lobby-title-copy">
+                    <span className="runner-overline">THE CLUB GROUND CHALLENGE</span>
+                    <h1>CHASE <i>THE</i><br/>DISTANCE.</h1>
+                    <p>One pitch. Your pace. Your record to break.</p>
+                  </div>
+                  <img className="runner-game-emblem" src="/football-runner-icon.svg" alt="SETHIS Football Runner emblem" />
                 </div>
                 {incomingChallenge && <section className="runner-challenge-banner">
                   <span>ONE-ON-ONE CHALLENGE · {incomingChallenge.id.slice(0, 8).toUpperCase()}</span>
@@ -360,7 +364,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <button className="runner-secondary" onClick={endCollision} disabled={rescueBusy}>END RUN</button>
                   </div>
                   {rescueStatus && <small className="runner-rescue-status" role="status">{rescueStatus}</small>}
-                  <small>CHOOSE WITHIN 5 SECONDS · UP TO 2 RESCUES PER RUN · 10 PER DAY</small>
+                  <small>TAKE YOUR TIME · UP TO 2 RESCUES PER RUN · 10 PER DAY</small>
                 </div>
               </>}
               {phase === "paused" && <>
@@ -372,14 +376,15 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                 <button className="runner-text-action" onClick={requestExit}>EXIT TO GAMES</button>
               </>}
               {phase === "over" && summary && <>
-                <div className="runner-result-screen">
-                  <div className="runner-result-kicker"><span>✦</span> FULL TIME <span>✦</span></div>
-                  <h1>RUN COMPLETE</h1>
-                  <section className="runner-distance-podium" aria-label="Best distance achieved">
+                <div className={"runner-result-screen runner-result-" + runAchievement}>
+                  <div className="runner-result-kicker"><span>✦</span> {runAchievement === "first" ? "MILESTONE UNLOCKED" : runAchievement === "record" ? "NEW PERSONAL RECORD" : "FULL TIME"} <span>✦</span></div>
+                  <h1>{runAchievement === "first" ? "FIRST RUN COMPLETE!" : runAchievement === "record" ? "NEW RECORD!" : "RUN COMPLETE"}</h1>
+                  {runAchievement !== "standard" && <div className="runner-achievement-banner">{runAchievement === "first" ? "🏆 YOUR FIRST FINISH ON THE CLUB GROUND" : "🏆 YOU JUST RAISED YOUR PERSONAL BEST"}</div>}
+                  <section className="runner-distance-podium" aria-label="Distance achieved">
                     <div className="runner-podium-stars" aria-hidden="true">✦　★　✦</div>
                     <small>YOUR DISTANCE</small>
-                    <b>{Math.max(records.bestDistance, summary.distance).toLocaleString()}<em>m</em></b>
-                    <span>{summary.distance >= records.bestDistance && summary.distance > 0 ? "RECORD RUN" : "KEEP PUSHING"}</span>
+                    <b>{summary.distance.toLocaleString()}<em>m</em></b>
+                    <span>{runAchievement === "first" ? "FIRST FINISH" : runAchievement === "record" ? "PERSONAL BEST" : "KEEP PUSHING"}</span>
                   </section>
                   <section className="runner-result-metrics" aria-label="Your run summary">
                     <div><small>RUNS PLAYED</small><b>{preview ? "PRACTICE" : (records.totalRuns + (savingRun ? 1 : 0)).toLocaleString()}</b></div>
