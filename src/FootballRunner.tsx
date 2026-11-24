@@ -41,6 +41,11 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const activeRunIdRef = useRef<string | null>(null);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
   useEffect(() => { setCollectionPulse(hud.balls); }, [hud.balls]);
+  useEffect(() => {
+    if (phase !== "collision" || rescueBusy) return;
+    const decisionTimeout = window.setTimeout(() => engineRef.current?.endCollision(), 5000);
+    return () => window.clearTimeout(decisionTimeout);
+  }, [phase, rescueBusy]);
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<"restart" | "exit" | null>(null);
   const [incomingChallenge] = useState(() => decodeRunnerChallenge(new URLSearchParams(window.location.search).get("challenge")));
@@ -355,7 +360,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <button className="runner-secondary" onClick={endCollision} disabled={rescueBusy}>END RUN</button>
                   </div>
                   {rescueStatus && <small className="runner-rescue-status" role="status">{rescueStatus}</small>}
-                  <small>UP TO 2 RESCUES PER RUN · 10 PER DAY</small>
+                  <small>CHOOSE WITHIN 5 SECONDS · UP TO 2 RESCUES PER RUN · 10 PER DAY</small>
                 </div>
               </>}
               {phase === "paused" && <>
