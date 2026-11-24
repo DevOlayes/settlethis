@@ -8,22 +8,25 @@ export const RUNNER_CONFIG = {
   laneWidth: 2.9,
   playerStartZ: 2.3,
   camera: {
-    fov: 62,
+    // A slightly wider, more distant chase view keeps the footballer grounded
+    // in a much larger stadium environment and reveals more forward depth.
+    fov: 64,
     near: 0.1,
-    far: 210,
-    start: [0, 5.35, 10.6] as const,
-    lookAt: [0, 1.25, -6.2] as const,
-    followHeight: 5.35,
-    followDistance: 8.3,
-    lookAhead: 8.5,
+    far: 800,
+    start: [0, 5.8, 14] as const,
+    lookAt: [0, 1.25, -8] as const,
+    followHeight: 5.8,
+    followDistance: 10.8,
+    lookAhead: 10.5,
     positionDamping: 5.2,
     targetDamping: 7.5,
   },
   world: {
-    length: 180,
-    centreZ: -48,
-    fogNear: 42,
-    fogFar: 138,
+    // Five full-size ground sections form a seamless ~566m environment loop.
+    length: 565.6,
+    centreZ: -150,
+    fogNear: 140,
+    fogFar: 400,
   },
   movement: {
     initialSpeed: 9,
