@@ -311,7 +311,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   if (avatarDiagnostic) return <AvatarDiagnostic onBack={onBack} />;
 
   return (
-    <main className="football-runner-page">
+    <div className="football-runner-page">
       <header className="runner-topbar">
         <button onClick={requestExit} aria-label="Exit Football Runner">←</button>
         <div className="runner-brand-lockup"><b>SETHIS <i>×</i> RUNNER</b><span>RUNNER FIELD SERIES</span></div>
@@ -467,6 +467,6 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
         </div>
         <span>SWIPE OR TAP · COLLECT BY KICKING</span>
       </footer>
-    </main>
+    </div>
   );
 }
