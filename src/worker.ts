@@ -350,12 +350,7 @@ const referralCommunityMatch=path.match(/^\/api\/admin\/referral-program\/commun
     if(dailyWin)return json({error:"You have already completed today's five-question challenge."},409);
     const dailyAttempt=await env.DB.prepare("SELECT a.id,a.status,s.difficulty FROM mystery_question_attempts a JOIN mystery_question_sets s ON s.id=a.set_id WHERE a.user_id=? AND s.set_date=? ORDER BY a.started_at ASC LIMIT 1").bind(user,setDate).first<{id:string;status:string;difficulty:string}>();
     if(dailyAttempt&&dailyAttempt.difficulty!==key)return json({error:"You can play only one Mystery Footballer difficulty each day. Your selected daily challenge is "+dailyAttempt.difficulty.toUpperCase()+"."},409);
-    if(dailyAttempt&&(dailyAttempt.status==='lost'||dailyAttempt.status==='expired')){
-     await env.DB.batch([
-      env.DB.prepare("DELETE FROM mystery_question_attempt_answers WHERE attempt_id=?").bind(dailyAttempt.id),
-      env.DB.prepare("UPDATE mystery_question_attempts SET status='active',current_position=1,correct_answers=0,completed_at=NULL WHERE id=? AND user_id=? AND status IN ('lost','expired') AND reward_credited_at IS NULL").bind(dailyAttempt.id,user)
-     ]);
-    }
+    if(dailyAttempt&&dailyAttempt.status!=="active")return json({error:"Today's five-question challenge has already been used. Please come back tomorrow."},409);
     let set=await env.DB.prepare("SELECT id,question_count,entry_ct,reward_sethis,status FROM mystery_question_sets WHERE set_date=? AND difficulty=?").bind(setDate,key).first<{id:string;question_count:number;entry_ct:number;reward_sethis:number;status:string}>();
     if(!set){
      const count=await env.DB.prepare("SELECT COUNT(*) AS total FROM mystery_questions WHERE active=1 AND difficulty=?").bind(key).first<{total:number}>();
