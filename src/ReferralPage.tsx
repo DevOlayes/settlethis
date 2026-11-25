@@ -5,207 +5,233 @@ import "./ReferralPage.css";
 type ReferralRecord = { attributed_at: string; qualified_at: string | null; username: string | null; first_name: string | null };
 type ReferralReward = { milestone: number; amount: number; created_at: string };
 type ReferralMilestone = { milestone: number; threshold: number; reward: number; title: string; description: string; earned: boolean };
-type ReferralData = { telegram_verified?: boolean; code: string | null; invite_link: string | null; total: number; qualified: number; pending: number; target: number; reward: number; token: string; milestones: ReferralMilestone[]; next_milestone: ReferralMilestone | null; referrals: ReferralRecord[]; rewards: ReferralReward[] };
+type ReferralData = { code: string | null; invite_link: string | null; total: number; qualified: number; pending: number; target: number; reward: number; token: string; milestones: ReferralMilestone[]; next_milestone: ReferralMilestone | null; referrals: ReferralRecord[]; rewards: ReferralReward[] };
 type CommunityData = { invited: number; qualified: number; contributors: number; member_qualified: number; targets: Array<{number:number;threshold:number;title:string;reward_title:string;reward_description:string;achieved:boolean}>; achieved: number[]; next_target: number | null; progress_target: number; progress_percent: number; eligibility: boolean; eligibility_rule: string; reward_status: string; leaderboard?: Array<{rank:number;name:string;qualified:number;is_you:boolean}>; achievements?:Array<{number:number;threshold:number;title:string;achieved_at:string}> };
 
 const number = (value: number) => (Number(value) || 0).toLocaleString();
-const date = (value: string) => new Date(value.endsWith("Z") ? value : value + "Z").toLocaleDateString();
-const challengeTitle = (threshold: number) => `Bring ${number(threshold)} qualified fans into SETHIS`;
+const date = (value: string) => new Date(value.endsWith("Z") ? value : value + "Z").toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});
+const clampPercent = (value:number) => Math.max(0,Math.min(100,Number(value)||0));
+const challengeTitle = (threshold:number) => {
+  const titles:Record<number,string> = {
+    3:"Kick off your squad",8:"Grow your football circle",15:"Build a stronger squad",25:"Bring a crowd to SETHIS",
+    50:"Make it fifty strong",100:"Hit the century",250:"Build a community movement",500:"Fill the stands",
+    1000:"Lead a thousand fans",2500:"Take it city-wide",5000:"Make it national",10000:"Reach ten thousand",20000:"Build a football movement"
+  };
+  return titles[threshold] || `Bring ${number(threshold)} fans into SETHIS`;
+};
 
 export default function ReferralPage({ onBack, showNotice }: { onBack: () => void; showNotice: (message: string) => void }) {
-  const [data, setData] = useState<ReferralData | null>(null);
-  const [community, setCommunity] = useState<CommunityData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [communityError, setCommunityError] = useState("");
-  const [showAllMilestones, setShowAllMilestones] = useState(true);
-  const [referralView,setReferralView]=useState<"overview"|"community"|"activity">("overview");
+  const [data,setData]=useState<ReferralData|null>(null);
+  const [community,setCommunity]=useState<CommunityData|null>(null);
+  const [loading,setLoading]=useState(true);
+  const [error,setError]=useState("");
+  const [communityError,setCommunityError]=useState("");
+  const [view,setView]=useState<"progress"|"community"|"activity">("progress");
+  const [showAll,setShowAll]=useState(true);
 
-  const refresh = useCallback(async () => {
-    const initData = window.Telegram?.WebApp?.initData;
-    if (!initData) { setError("Open SETHIS inside Telegram to access your referrals."); setLoading(false); return; }
-    setLoading(true); setError("");
-    const headers = { "x-telegram-init-data": initData };
-    try {
-      const [referralResponse, communityResponse] = await Promise.all([
-        fetch("/api/referrals", { headers, cache: "no-store" }),
-        fetch("/api/referral-community", { headers, cache: "no-store" })
+  const refresh=useCallback(async()=>{
+    const initData=window.Telegram?.WebApp?.initData;
+    if(!initData){setError("Open SETHIS inside Telegram to access your referrals.");setLoading(false);return;}
+    setLoading(true);setError("");
+    const headers={"x-telegram-init-data":initData};
+    try{
+      const [referralResponse,communityResponse]=await Promise.all([
+        fetch("/api/referrals",{headers,cache:"no-store"}),
+        fetch("/api/referral-community",{headers,cache:"no-store"})
       ]);
-      const referralResult = await referralResponse.json();
-      if (!referralResponse.ok || !referralResult?.code) {
-        const message=referralResponse.status===401 ? "Telegram could not verify this session. Close and reopen SETHIS from its official bot, then retry." : referralResponse.status===503 ? "The referral service is temporarily unavailable. Please retry shortly." : (referralResult.error || "Referral information could not be loaded.");
+      const result=await referralResponse.json();
+      if(!referralResponse.ok||!result?.code){
+        const message=referralResponse.status===401?"Telegram could not verify this session. Close and reopen SETHIS from its official bot, then retry.":referralResponse.status===503?"The referral service is temporarily unavailable. Please retry shortly.":(result.error||"Referral information could not be loaded.");
         throw new Error(message);
       }
-      setData({ ...referralResult, referrals: Array.isArray(referralResult.referrals) ? referralResult.referrals : [], rewards: Array.isArray(referralResult.rewards) ? referralResult.rewards : [], milestones: Array.isArray(referralResult.milestones) ? referralResult.milestones : [] });
-      if (communityResponse.ok) { setCommunity(await communityResponse.json()); setCommunityError(""); }
-      else { const result = await communityResponse.json().catch(() => ({})); setCommunityError(result.error || "Community progress could not be loaded."); }
-    } catch (e) { setError(e instanceof Error ? e.message : "Referral information could not be loaded."); }
-    finally { setLoading(false); }
-  }, []);
+      setData({...result,referrals:Array.isArray(result.referrals)?result.referrals:[],rewards:Array.isArray(result.rewards)?result.rewards:[],milestones:Array.isArray(result.milestones)?result.milestones:[]});
+      if(communityResponse.ok){setCommunity(await communityResponse.json());setCommunityError("");}
+      else{const communityResult=await communityResponse.json().catch(()=>({}));setCommunityError(communityResult.error||"Community progress could not be loaded.");}
+    }catch(e){setError(e instanceof Error?e.message:"Referral information could not be loaded.");}
+    finally{setLoading(false);}
+  },[]);
 
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(()=>{void refresh();},[refresh]);
 
-  const copyLink = async () => {
-    if (!data?.invite_link) { showNotice("Your referral link is not available."); return; }
-    try { await navigator.clipboard.writeText(data.invite_link); showNotice("Your invite link has been copied."); }
-    catch { showNotice("The referral link could not be copied on this device."); }
+  const copyLink=async()=>{
+    if(!data?.invite_link){showNotice("Your referral link is not available.");return;}
+    try{await navigator.clipboard.writeText(data.invite_link);showNotice("Invite link copied.");}
+    catch{showNotice("The referral link could not be copied on this device.");}
   };
-  const shareLink = () => {
-    if (!data?.invite_link) { showNotice("Your referral link is not available."); return; }
-    const shareUrl = "https://t.me/share/url?url=" + encodeURIComponent(data.invite_link) + "&text=" + encodeURIComponent("Join me on SETHIS Football Games. Let's see who really knows football.");
-    if (window.Telegram?.WebApp?.openTelegramLink) window.Telegram.WebApp.openTelegramLink(shareUrl);
-    else window.open(shareUrl, "_blank", "noopener,noreferrer");
+  const shareLink=()=>{
+    if(!data?.invite_link){showNotice("Your referral link is not available.");return;}
+    const url="https://t.me/share/url?url="+encodeURIComponent(data.invite_link)+"&text="+encodeURIComponent("Join me on SETHIS Football Games. Let's see who really knows football.");
+    if(window.Telegram?.WebApp?.openTelegramLink)window.Telegram.WebApp.openTelegramLink(url);
+    else window.open(url,"_blank","noopener,noreferrer");
   };
 
-  const next = data?.next_milestone || null;
-  const nextProgress = next && data ? Math.min(100, Math.round(data.qualified / next.threshold * 100)) : 100;
-  const communityTarget = community?.next_target || community?.progress_target || 1000;
+  const next=data?.next_milestone||null;
+  const communityTarget=community?.next_target||community?.progress_target||community?.targets?.[0]?.threshold||1000;
+  const communityPercent=community?clampPercent(community.progress_percent):0;
+  const remaining=next&&data?Math.max(0,next.threshold-data.qualified):0;
 
-  return <div className="referral-page">
-    <div className="referral-page-top">
-      <button type="button" onClick={onBack} aria-label="Back to home">← BACK</button>
-      <span className="eyebrow">SETHIS · COMMUNITY GROWTH</span>
+  return <div className="referral-page rfx-page">
+    <div className="rfx-topline">
+      <button type="button" className="rfx-back" onClick={onBack} aria-label="Back to games"><span aria-hidden="true">←</span> BACK</button>
+      <span className="rfx-brand-label">SETHIS <i/> REFERRALS</span>
     </div>
 
-    <header className="referral-hero">
-      <div className="referral-hero-copy">
-        <span className="eyebrow">YOUR REFERRAL CENTRE</span>
-        <h1>Grow your football circle.</h1>
-        <p>Bring your people into the game.</p>
+    <header className="rfx-hero">
+      <div className="rfx-hero-copy">
+        <span className="rfx-kicker">GROW THE SETHIS COMMUNITY</span>
+        <h1>Your people.<br/><em>Your impact.</em></h1>
+        <p>Invite football fans. Track your progress. Unlock referral rewards.</p>
       </div>
-      <span className="referral-hero-icon" aria-hidden="true"><Group width={30} height={30} strokeWidth={1.8}/></span>
+      <div className="rfx-hero-art" aria-hidden="true">
+        <span className="rfx-orbit rfx-orbit-one"/><span className="rfx-orbit rfx-orbit-two"/>
+        <span className="rfx-person rfx-person-main"><i/></span>
+        <span className="rfx-person rfx-person-left"><i/></span>
+        <span className="rfx-person rfx-person-right"><i/></span>
+        <span className="rfx-hero-ball">✦</span>
+      </div>
     </header>
 
-    {loading ? <div className="referral-state">Loading your referrals…</div> : error ? <div className="referral-state referral-error"><b>We couldn't load your referrals.</b><p>{error}</p><button type="button" onClick={()=>void refresh()}>TRY AGAIN</button></div> : data && <>
-      <section className="referral-invite-card">
-        <div className="referral-invite-heading">
-          <div><span className="eyebrow">YOUR PERSONAL INVITE LINK</span><b>{data.code}</b></div>
-          <span className="referral-invite-icon"><UserPlus width={21} height={21}/></span>
+    {loading?<div className="rfx-state">Loading referral progress…</div>:error?<div className="rfx-state rfx-error"><b>Referrals unavailable</b><p>{error}</p><button type="button" onClick={()=>void refresh()}>TRY AGAIN</button></div>:data&&<>
+      <section className="rfx-invite">
+        <div className="rfx-invite-top">
+          <div><span className="rfx-kicker">YOUR PERSONAL INVITE</span><h2>Bring your crew in.</h2></div>
+          <span className="rfx-invite-mark"><UserPlus width={23} height={23}/></span>
         </div>
-        <div className="referral-link-value">{data.invite_link || "Invite link unavailable"}</div>
-        <div className="referral-link-actions">
-          <button type="button" className="referral-copy-button" onClick={()=>void copyLink()} disabled={!data.invite_link}>COPY LINK</button>
-          <button type="button" className="referral-share-button" onClick={shareLink} disabled={!data.invite_link}><ShareAndroid width={16} height={16}/> SHARE INVITE</button>
+        <div className="rfx-link-box">
+          <span>{data.invite_link||"Invite link unavailable"}</span>
+          <span className="rfx-link-code">{data.code}</span>
+        </div>
+        <div className="rfx-actions">
+          <button type="button" className="rfx-copy" onClick={()=>void copyLink()} disabled={!data.invite_link}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg> COPY LINK
+          </button>
+          <button type="button" className="rfx-share" onClick={shareLink} disabled={!data.invite_link}>
+            <ShareAndroid width={18} height={18}/> SHARE INVITE
+          </button>
         </div>
       </section>
 
-      <nav className="referral-tabs" role="tablist" aria-label="Referral sections">
-        <button role="tab" aria-selected={referralView==="overview"} className={referralView==="overview"?"active":""} onClick={()=>setReferralView("overview")}>MY PROGRESS</button>
-        <button role="tab" aria-selected={referralView==="community"} className={referralView==="community"?"active":""} onClick={()=>setReferralView("community")}>COMMUNITY</button>
-        <button role="tab" aria-selected={referralView==="activity"} className={referralView==="activity"?"active":""} onClick={()=>setReferralView("activity")}>ACTIVITY</button>
+      <nav className="rfx-tabs" role="tablist" aria-label="Referral sections">
+        <button type="button" role="tab" aria-selected={view==="progress"} className={view==="progress"?"active":""} onClick={()=>setView("progress")}>MY PROGRESS</button>
+        <button type="button" role="tab" aria-selected={view==="community"} className={view==="community"?"active":""} onClick={()=>setView("community")}>COMMUNITY</button>
+        <button type="button" role="tab" aria-selected={view==="activity"} className={view==="activity"?"active":""} onClick={()=>setView("activity")}>ACTIVITY</button>
       </nav>
 
-      {referralView==="overview"&&<div className="referral-view-panel">
-        <section className="referral-section">
-          <div className="referral-section-heading"><div><span className="eyebrow">YOUR NETWORK</span><h2>Referral snapshot</h2></div><button type="button" onClick={()=>void refresh()} aria-label="Refresh referrals">↻</button></div>
-          <div className="referral-stat-grid">
-            <article><small>INVITED</small><strong>{number(data.total)}</strong></article>
-            <article><small>QUALIFIED</small><strong>{number(data.qualified)}</strong></article>
-            <article><small>PENDING</small><strong>{number(data.pending ?? Math.max(0,data.total-data.qualified))}</strong></article>
+      {view==="progress"&&<div className="rfx-panel">
+        <section className="rfx-stats">
+          <div className="rfx-stat-primary"><span className="rfx-kicker">QUALIFIED FANS</span><strong>{number(data.qualified)}</strong><small>of {number(data.total)} invited</small></div>
+          <div className="rfx-stat-pair">
+            <article><span>INVITED</span><b>{number(data.total)}</b></article>
+            <article><span>PENDING</span><b>{number(data.pending??Math.max(0,data.total-data.qualified))}</b></article>
           </div>
         </section>
 
-        <section className="referral-next-card">
-          <div className="referral-next-main">
-            <span className="eyebrow">YOUR NEXT CHALLENGE</span>
-            {next ? <><h2>{challengeTitle(next.threshold)}</h2><div className="referral-next-reward"><Trophy width={16} height={16}/><strong>{number(next.reward)} SETHIS</strong></div></> : <><h2>Milestone ladder completed</h2><div className="referral-next-reward"><Check width={16} height={16}/><strong>ALL CURRENT REWARDS UNLOCKED</strong></div></>}
+        <section className="rfx-milestones">
+          <div className="rfx-section-head">
+            <div><span className="rfx-kicker">YOUR REFERRAL JOURNEY</span><h2>Milestone challenges</h2><p>Each milestone brings a new SETHIS reward.</p></div>
+            <button type="button" className="rfx-refresh" onClick={()=>void refresh()} aria-label="Refresh referral progress">↻</button>
           </div>
-          <div className="referral-progress-summary">
-            <div><b>{number(data.qualified)} <span>/ {next?number(next.threshold):"20,000"} qualified</span></b><strong>{next?nextProgress+"%":"100%"}</strong></div>
-            <div className="referral-progress-track"><i style={{width:nextProgress+"%"}}/></div>
-            <small>{next?number(Math.max(0,next.threshold-data.qualified))+" more qualified invite"+(next.threshold-data.qualified===1?"":"s")+" to unlock":"Every published personal milestone reached"}</small>
-          </div>
-        </section>
-
-        <section className="referral-section referral-milestone-journey">
-          <div className="referral-section-heading">
-            <div><span className="eyebrow">KEEP THE MOMENTUM</span><h2>Milestone challenges</h2></div>
-            <button type="button" onClick={()=>setShowAllMilestones(v=>!v)}>{showAllMilestones?"COLLAPSE":"VIEW ALL"}</button>
-          </div>
-          <div className="referral-milestone-list">
-            {(showAllMilestones?data.milestones:data.milestones.filter(m=>m.earned||m.milestone===next?.milestone)).map(item=>{
+          {next&&<article className="rfx-feature-challenge">
+            <div className="rfx-feature-top"><span className="rfx-live-tag"><i/> NEXT UNLOCK</span><span className="rfx-reward-pill"><Trophy width={14} height={14}/>{number(next.reward)} SETHIS</span></div>
+            <h3>{challengeTitle(next.threshold)}</h3>
+            <div className="rfx-feature-bottom"><b>{number(data.qualified)} <small>/ {number(next.threshold)} qualified</small></b><strong>{Math.min(100,Math.round(data.qualified/next.threshold*100))}%</strong></div>
+            <div className="rfx-progress-track"><i style={{width:Math.min(100,data.qualified/next.threshold*100)+"%"}}/></div>
+            <span className="rfx-remaining">{remaining?number(remaining)+" more qualified "+(remaining===1?"fan":"fans")+" to unlock": "Milestone ready to unlock"}</span>
+          </article>}
+          <div className="rfx-ladder-head"><span>THE MILESTONE LADDER</span><button type="button" onClick={()=>setShowAll(v=>!v)}>{showAll?"SHOW LESS":"SHOW ALL"} <span>{showAll?"−":"+"}</span></button></div>
+          <div className="rfx-ladder">
+            {(showAll?data.milestones:data.milestones.filter(m=>m.earned||m.milestone===next?.milestone)).map(item=>{
               const earned=item.earned;
               const current=!earned&&item.milestone===next?.milestone;
-              const progress=earned?100:Math.min(100,Math.round(data.qualified/item.threshold*100));
-              const remaining=Math.max(0,item.threshold-data.qualified);
-              return <article key={item.milestone} className={"referral-milestone-item "+(earned?"earned":current?"current":"locked")}>
-                <span className="referral-milestone-state" aria-label={earned?"Unlocked":current?"In progress":"Locked"}>{earned?<Check width={17} height={17}/>:current?<Trophy width={17} height={17}/>:<Lock width={16} height={16}/>}</span>
-                <div className="referral-milestone-content">
-                  <div className="referral-milestone-title-row"><b>{challengeTitle(item.threshold)}</b><small>{earned?"UNLOCKED":current?"IN PROGRESS":"LOCKED"}</small></div>
-                  <div className="referral-milestone-progress-label"><span>{number(Math.min(data.qualified,item.threshold))} / {number(item.threshold)} qualified</span><span>{progress}%</span></div>
-                  <div className="referral-milestone-track"><i style={{width:progress+"%"}}/></div>
-                  <small className="referral-milestone-remaining">{earned?"Challenge completed":current?number(remaining)+" more to unlock":"Reach the previous challenge to unlock"}</small>
+              const progress=earned?100:current?Math.min(100,Math.round(data.qualified/item.threshold*100)):0;
+              const state=earned?"earned":current?"current":"locked";
+              return <article key={item.milestone} className={"rfx-milestone "+state}>
+                <span className="rfx-milestone-icon">{earned?<Check width={18} height={18}/>:current?<Trophy width={17} height={17}/>:<Lock width={16} height={16}/>}</span>
+                <div className="rfx-milestone-main">
+                  <div className="rfx-milestone-title"><b>{challengeTitle(item.threshold)}</b><span>{earned?"COMPLETED":current?"IN PROGRESS":"LOCKED"}</span></div>
+                  {current||earned?<><div className="rfx-milestone-meta"><span>{number(Math.min(data.qualified,item.threshold))} / {number(item.threshold)} qualified</span><b>{progress}%</b></div><div className="rfx-mini-track"><i style={{width:progress+"%"}}/></div></>:<small className="rfx-locked-copy">Complete the previous challenge to unlock</small>}
                 </div>
-                <div className="referral-milestone-reward"><strong>{number(item.reward)}</strong><small>SETHIS</small></div>
+                <div className="rfx-milestone-reward"><strong>{number(item.reward)}</strong><small>SETHIS</small></div>
               </article>;
             })}
           </div>
         </section>
       </div>}
 
-      {referralView==="community"&&<div className="referral-view-panel">
-        <section className="referral-community-card">
-          {communityError?<div className="referral-error">{communityError}</div>:community?<>
-            <div className="referral-community-heading"><div><span className="eyebrow">ONE SHARED TARGET</span><h2>Community challenge</h2></div><span className="referral-community-icon"><Group width={25} height={25}/></span></div>
-            <div className="referral-community-total">
-              <div><small>QUALIFIED MEMBERS</small><strong>{number(community.qualified)}</strong><span>of {number(communityTarget)}</span></div>
-              <div className="referral-community-percent">{community.progress_percent}%</div>
-            </div>
-            <div className="referral-progress-track"><i style={{width:community.progress_percent+"%"}}/></div>
-            <p className="referral-community-explainer">Every qualified referral from every member adds to this same community total.</p>
-            <div className="referral-community-stats">
-              <article><strong>{number(community.member_qualified)}</strong><small>YOUR CONTRIBUTION</small></article>
-              <article><strong>{number(community.contributors)}</strong><small>ACTIVE CONTRIBUTORS</small></article>
-              <article><strong>{number(community.invited)}</strong><small>TOTAL INVITES</small></article>
-            </div>
-            <div className="referral-contribution-status">
-              <span className={community.eligibility?"contributing":"not-contributing"}>{community.eligibility?"✓ YOU'RE CONTRIBUTING":"YOUR FIRST QUALIFIED INVITE AWAITS"}</span>
-              <b>{community.eligibility?number(community.member_qualified)+" qualified invite"+(community.member_qualified===1?"":"s")+" added by you":"Invite a friend and help move the shared target"}</b>
-            </div>
-            <div className="referral-community-ladder">
-              <div className="referral-section-heading"><div><span className="eyebrow">SHARED MILESTONES</span><h3>Community targets</h3></div></div>
-              <div className="referral-community-targets">{community.targets.map(target=>{
-                const active=!target.achieved&&community.next_target===target.threshold;
-                return <div key={target.number} className={"referral-community-target "+(target.achieved?"achieved":active?"active":"locked")}>
-                  <span>{target.achieved?<Check width={16} height={16}/>:active?<Trophy width={16} height={16}/>:<Lock width={15} height={15}/>}</span>
-                  <b>{number(target.threshold)}</b>
-                  <small>{target.achieved?"REACHED":active?"NEXT TARGET":"LOCKED"}</small>
-                </div>;
-              })}</div>
-            </div>
-            <div className="referral-community-reward">
-              <span className="eyebrow">COMMUNITY REWARD</span>
-              <b>{community.reward_status==="not_announced"?"REWARD DETAILS TO BE ANNOUNCED":community.targets.find(target=>target.threshold===community.next_target)?.reward_title||"COMMUNITY REWARD"}</b>
-              <small>{community.reward_status==="not_announced"?"The shared progress is live. Reward and eligibility terms will be published before activation.":community.targets.find(target=>target.threshold===community.next_target)?.reward_description}</small>
-            </div>
-            <div className="referral-community-leaders">
-              <div className="referral-section-heading"><div><span className="eyebrow">LEADING THE WAY</span><h3>Top contributors</h3></div></div>
-              {community.leaderboard?.length?community.leaderboard.map(person=><div key={person.rank} className={"referral-community-leader"+(person.is_you?" you":"")}>
-                <span className="referral-leader-rank">{person.rank===1?<Trophy width={15} height={15}/>:person.rank}</span>
-                <b>{person.name}{person.is_you?" · YOU":""}</b>
-                <strong>{number(person.qualified)} <small>QUALIFIED</small></strong>
-              </div>):<div className="referral-empty">No qualified contributors yet.</div>}
-            </div>
-            {community.achievements?.length? <div className="referral-community-achievements"><span className="eyebrow">COMPLETED</span>{community.achievements.map(a=><span key={a.number}><Check width={13} height={13}/>{a.title} · {number(a.threshold)}</span>)}</div>:null}
-          </>:<div className="referral-state">Loading shared progress…</div>}
+      {view==="community"&&<div className="rfx-panel">
+        <section className="rfx-community">
+          {communityError?<div className="rfx-state rfx-error">{communityError}</div>:community?<><div className="rfx-community-heading">
+            <div><span className="rfx-kicker">ONE GOAL. EVERY MEMBER.</span><h2>The community challenge</h2></div>
+            <span className="rfx-community-icon"><Group width={25} height={25}/></span>
+          </div>
+          <div className="rfx-shared-goal">
+            <div className="rfx-shared-count"><span>SHARED QUALIFIED REFERRALS</span><strong>{number(community.qualified)}<small> / {number(communityTarget)}</small></strong></div>
+            <b className="rfx-shared-percent">{communityPercent}%</b>
+          </div>
+          <div className="rfx-community-track"><i style={{width:communityPercent+"%"}}/></div>
+          <div className="rfx-community-remaining">{number(Math.max(0,communityTarget-community.qualified))} more qualified referrals to reach this target</div>
+
+          <div className="rfx-contribution-card">
+            <div className="rfx-contribution-icon"><UserPlus width={21} height={21}/></div>
+            <div className="rfx-contribution-copy"><span>YOUR CONTRIBUTION</span><strong>{number(community.member_qualified)}</strong><small>qualified referrals added by you</small></div>
+            <span className={"rfx-contribution-status "+(community.eligibility?"eligible":"waiting")}>{community.eligibility?"CONTRIBUTING":"NOT YET"}</span>
+          </div>
+
+          <div className="rfx-how-it-works">
+            <div className="rfx-how-title"><span className="rfx-kicker">HOW IT WORKS</span><b>Everyone moves the same counter.</b></div>
+            <div className="rfx-how-step"><span>01</span><p>Invite friends. When an invite qualifies, it adds <b>one</b> to the shared community total.</p></div>
+            <div className="rfx-how-step"><span>02</span><p>Your contribution is the number of qualified people <b>you</b> have invited.</p></div>
+            <div className="rfx-how-step"><span>03</span><p>To count as a contributor, you need at least <b>one genuine qualified referral</b>.</p></div>
+          </div>
+
+          <div className="rfx-community-metrics">
+            <article><strong>{number(community.contributors)}</strong><span>ACTIVE CONTRIBUTORS</span></article>
+            <article><strong>{number(community.invited)}</strong><span>ALL INVITES</span></article>
+          </div>
+
+          <div className="rfx-community-reward">
+            <span className="rfx-kicker">COMMUNITY REWARD</span>
+            <div><b>{community.reward_status==="not_announced"?"REWARD TERMS NOT ANNOUNCED":"COMMUNITY REWARD"}</b><span>{community.reward_status==="not_announced"?"The target tracks shared growth. Reward and eligibility terms will be published before any reward is activated.":community.targets.find(t=>t.threshold===community.next_target)?.reward_description}</span></div>
+            <span className="rfx-reward-status">PENDING</span>
+          </div>
+
+          <div className="rfx-target-section">
+            <div className="rfx-section-head"><div><span className="rfx-kicker">THE BIGGER PICTURE</span><h3>Community targets</h3></div></div>
+            <div className="rfx-target-grid">{community.targets.map(target=>{
+              const active=!target.achieved&&community.next_target===target.threshold;
+              return <article key={target.number} className={target.achieved?"achieved":active?"active":"locked"}>
+                <span>{target.achieved?<Check width={16} height={16}/>:active?<Trophy width={16} height={16}/>:<Lock width={14} height={14}/>}</span>
+                <b>{number(target.threshold)}</b><small>{target.achieved?"REACHED":active?"CURRENT GOAL":"LOCKED"}</small>
+              </article>;
+            })}</div>
+          </div>
+
+          <div className="rfx-leaderboard">
+            <div className="rfx-section-head"><div><span className="rfx-kicker">COMMUNITY MOMENTUM</span><h3>Top contributors</h3></div><span className="rfx-leader-count">{number(community.leaderboard?.length||0)}</span></div>
+            {community.leaderboard?.length?community.leaderboard.slice(0,5).map(person=><article key={person.rank} className={person.is_you?"you":""}>
+              <span className="rfx-rank">{person.rank===1?<Trophy width={15} height={15}/>:person.rank}</span>
+              <b>{person.name}{person.is_you?" · YOU":""}</b><strong>{number(person.qualified)} <small>QUALIFIED</small></strong>
+            </article>):<div className="rfx-empty">No qualified contributors yet.</div>}
+          </div>
+          </>:<div className="rfx-state">Loading shared community progress…</div>}
         </section>
       </div>}
 
-      {referralView==="activity"&&<div className="referral-view-panel">
-        <section className="referral-section referral-activity">
-          <div className="referral-section-heading"><div><span className="eyebrow">INVITATION TRACKER</span><h2>Your invitations</h2></div><strong className="referral-record-count">{number(data.referrals.length)}</strong></div>
-          {data.referrals.length===0?<div className="referral-empty"><UserPlus width={22} height={22}/><b>No invitations yet</b><span>Share your link to bring the first fan in.</span></div>:<div className="referral-member-list">{data.referrals.map((person,index)=><article key={person.attributed_at+":"+index}>
-            <span className="referral-member-avatar">{(person.first_name||person.username||"F").slice(0,1).toUpperCase()}</span>
+      {view==="activity"&&<div className="rfx-panel">
+        <section className="rfx-activity-section">
+          <div className="rfx-section-head"><div><span className="rfx-kicker">YOUR INVITE TRACKER</span><h2>Invitations</h2></div><strong className="rfx-count-pill">{number(data.referrals.length)}</strong></div>
+          <div className="rfx-activity-summary"><article><b>{number(data.total)}</b><span>INVITED</span></article><article><b>{number(data.qualified)}</b><span>QUALIFIED</span></article><article><b>{number(data.pending??Math.max(0,data.total-data.qualified))}</b><span>PENDING</span></article></div>
+          {data.referrals.length===0?<div className="rfx-empty"><UserPlus width={22} height={22}/><b>Your first invite starts here.</b><span>Share your link and your invitations will appear here.</span></div>:<div className="rfx-member-list">{data.referrals.map((person,index)=><article key={person.attributed_at+":"+index}>
+            <span className="rfx-avatar">{(person.first_name||person.username||"F").slice(0,1).toUpperCase()}</span>
             <div><b>{person.username?"@"+person.username:person.first_name||"SETHIS member"}</b><small>{date(person.attributed_at)}</small></div>
-            <span className={"referral-member-status"+(person.qualified_at?" qualified":"")}>{person.qualified_at?"QUALIFIED":"PENDING"}</span>
+            <span className={"rfx-member-status "+(person.qualified_at?"qualified":"pending")}>{person.qualified_at?"QUALIFIED":"PENDING"}</span>
           </article>)}</div>}
         </section>
-        <section className="referral-section referral-reward-history">
-          <div className="referral-section-heading"><div><span className="eyebrow">REWARD HISTORY</span><h2>Milestones earned</h2></div><strong className="referral-record-count">{number(data.rewards.length)}</strong></div>
-          {data.rewards.length===0?<div className="referral-empty"><Trophy width={22} height={22}/><b>No rewards recorded yet</b><span>Unlocked rewards will appear here.</span></div>:data.rewards.map(reward=><article key={reward.milestone}>
-            <span><b>{number(reward.milestone)} qualified referrals</b><small>{date(reward.created_at)}</small></span>
-            <strong>+{number(reward.amount)} SETHIS</strong>
-          </article>)}
+        <section className="rfx-activity-section">
+          <div className="rfx-section-head"><div><span className="rfx-kicker">YOUR EARNINGS</span><h2>Reward history</h2></div><strong className="rfx-count-pill">{number(data.rewards.length)}</strong></div>
+          {data.rewards.length===0?<div className="rfx-empty"><Trophy width={22} height={22}/><b>No referral rewards yet.</b><span>Rewards appear here when milestones are earned.</span></div>:<div className="rfx-reward-list">{data.rewards.map(reward=><article key={reward.milestone}>
+            <span className="rfx-reward-check"><Check width={16} height={16}/></span><div><b>{number(reward.milestone)} qualified referrals</b><small>{date(reward.created_at)}</small></div><strong>+{number(reward.amount)} <small>SETHIS</small></strong>
+          </article>)}</div>}
         </section>
       </div>}
     </>}
