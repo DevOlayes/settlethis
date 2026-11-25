@@ -10,10 +10,10 @@ function MysteryArtwork(){return <div className="gamelib-art gamelib-photo-art g
   <img src="/images/mystery-footballer.webp" alt="Mystery Footballer game artwork" loading="lazy" decoding="async"/>
   <div className="gamelib-photo-copy gamelib-mystery-overlay">
     <span className="gamelib-photo-kicker">FOOTBALL KNOWLEDGE</span>
-    <strong>WHO’S THE<br/>PLAYER?</strong>
-    <span className="gamelib-photo-subtitle">3 CLUES. 1 LEGEND.</span>
+    <strong>MYSTERY<br/>FOOTBALLER</strong>
+    <span className="gamelib-photo-subtitle">FIVE-QUESTION QUIZ</span>
     <span className="gamelib-photo-clues"><i>01</i><i>02</i><i>03</i></span>
-    <span className="gamelib-photo-foot">CAN YOU NAME THE LEGEND?</span>
+    <span className="gamelib-photo-foot">WHO’S THE PLAYER? · 3 CLUES. 1 LEGEND.</span>
   </div>
 </div>}
 
@@ -21,9 +21,9 @@ function RunnerArtwork(){return <div className="gamelib-art gamelib-photo-art ga
   <img src="/images/football-runner.webp" alt="Football Runner game artwork" loading="lazy" decoding="async"/>
   <div className="gamelib-photo-copy gamelib-runner-overlay">
     <span className="gamelib-photo-kicker">3D ENDLESS RUNNER</span>
-    <strong>OWN THE<br/>PITCH.</strong>
-    <span className="gamelib-photo-subtitle">JUMP · SLIDE · COLLECT</span>
-    <span className="gamelib-photo-foot">ENDLESS MODE</span>
+    <strong>FOOTBALL<br/>RUNNER</strong>
+    <span className="gamelib-photo-subtitle">RUN THE PITCH</span>
+    <span className="gamelib-photo-foot">OWN THE PITCH · JUMP · SLIDE · COLLECT</span>
   </div>
 </div>}
 
