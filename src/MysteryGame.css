@@ -46,3 +46,16 @@
 .mystery-start-heading>b{min-width:0;font-size:clamp(11px,2.8vw,15px);letter-spacing:.04em}
 .mystery-dynamic-reward{flex:0 0 auto}
 @media(max-width:420px){.mystery-start-heading{align-items:center;flex-direction:row}.mystery-dynamic-reward{padding:7px 8px}.mystery-dynamic-reward small{font-size:6px}.mystery-dynamic-reward strong{font-size:14px}}
+
+
+/* Clear, unmistakable reward feedback and stronger live reward hierarchy. */
+.mystery-question-panel{position:relative}
+.mystery-question-options button.selected.correct{min-height:58px;border:2px solid #35e08b!important;background:linear-gradient(105deg,#105238,#167b4c)!important;color:#fff!important;box-shadow:0 0 0 2px #35e08b30,0 0 30px #35e08b55!important;animation:mystery-correct-pop .34s cubic-bezier(.2,.8,.2,1) both}
+.mystery-question-options button.selected.correct b{background:#35e08b!important;color:#062719!important}
+.mystery-answer-check{animation:mystery-check-pop .32s cubic-bezier(.2,.8,.2,1) both}
+.mystery-confetti i{z-index:10;animation-duration:1.75s!important}
+.mystery-dynamic-reward{padding:10px 14px;border-color:#27d7f288;box-shadow:0 0 0 1px #27d7f222,0 8px 24px #0005}
+.mystery-dynamic-reward strong{font-size:21px;color:#fff;text-shadow:0 0 16px #27d7f255}
+@keyframes mystery-correct-pop{0%{transform:scale(.975);filter:brightness(.8)}65%{transform:scale(1.012);filter:brightness(1.2)}100%{transform:scale(1);filter:brightness(1)}}
+@keyframes mystery-check-pop{0%{transform:scale(.3) rotate(-30deg);opacity:0}75%{transform:scale(1.15) rotate(8deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@media(max-width:420px){.mystery-dynamic-reward strong{font-size:18px}}
