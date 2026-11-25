@@ -6,9 +6,26 @@ type GameId="mystery"|"runner";
 
 function PlayMark(){return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.8c0-.8.9-1.3 1.6-.9l9.2 5.3a1 1 0 0 1 0 1.7l-9.2 5.3c-.7.4-1.6-.1-1.6-.9V5.8Z" fill="currentColor"/></svg>}
 
-function MysteryArtwork(){return <div className="gamelib-art gamelib-photo-art"><img src="/images/mystery-footballer.webp" alt="Mystery Footballer game artwork" loading="lazy" decoding="async"/></div>}
+function MysteryArtwork(){return <div className="gamelib-art gamelib-photo-art gamelib-mystery-photo">
+  <img src="/images/mystery-footballer.webp" alt="Mystery Footballer game artwork" loading="lazy" decoding="async"/>
+  <div className="gamelib-photo-copy gamelib-mystery-overlay">
+    <span className="gamelib-photo-kicker">FOOTBALL KNOWLEDGE</span>
+    <strong>WHO’S THE<br/>PLAYER?</strong>
+    <span className="gamelib-photo-subtitle">3 CLUES. 1 LEGEND.</span>
+    <span className="gamelib-photo-clues"><i>01</i><i>02</i><i>03</i></span>
+    <span className="gamelib-photo-foot">CAN YOU NAME THE LEGEND?</span>
+  </div>
+</div>}
 
-function RunnerArtwork(){return <div className="gamelib-art gamelib-photo-art"><img src="/images/football-runner.webp" alt="Football Runner game artwork" loading="lazy" decoding="async"/></div>}
+function RunnerArtwork(){return <div className="gamelib-art gamelib-photo-art gamelib-runner-photo">
+  <img src="/images/football-runner.webp" alt="Football Runner game artwork" loading="lazy" decoding="async"/>
+  <div className="gamelib-photo-copy gamelib-runner-overlay">
+    <span className="gamelib-photo-kicker">3D ENDLESS RUNNER</span>
+    <strong>OWN THE<br/>PITCH.</strong>
+    <span className="gamelib-photo-subtitle">JUMP · SLIDE · COLLECT</span>
+    <span className="gamelib-photo-foot">ENDLESS MODE</span>
+  </div>
+</div>}
 
 function GameArtwork({game}:{game:GameId}){return game==="mystery"?<MysteryArtwork/>:<RunnerArtwork/>}
 

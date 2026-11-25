@@ -58,3 +58,31 @@
 /* Library-supplied game thumbnails: consistent 16:9 crop on every screen. */
 .gamelib-photo-art{aspect-ratio:16/9;width:100%;overflow:hidden;background:#171323}
 .gamelib-photo-art img{display:block;width:100%;height:100%;aspect-ratio:16/9;object-fit:cover;object-position:center}
+
+/* Restored game-title typography layered over the new Library thumbnails. */
+.gamelib-photo-art{position:relative;isolation:isolate}
+.gamelib-photo-art:after{position:absolute;inset:0;z-index:1;content:"";pointer-events:none}
+.gamelib-mystery-photo:after{background:linear-gradient(90deg,rgba(17,10,29,.94) 0%,rgba(17,10,29,.76) 35%,rgba(17,10,29,.12) 72%,transparent 100%),linear-gradient(0deg,rgba(12,8,22,.55),transparent 42%)}
+.gamelib-runner-photo:after{background:linear-gradient(90deg,rgba(8,17,32,.92) 0%,rgba(8,17,32,.72) 39%,rgba(8,17,32,.08) 78%,transparent 100%),linear-gradient(0deg,rgba(8,17,32,.52),transparent 45%)}
+.gamelib-photo-copy{position:absolute;z-index:2;left:5.5%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-start;gap:clamp(3px,.65vw,7px);max-width:59%;color:#fff;pointer-events:none}
+.gamelib-photo-kicker{color:#ffbd9f;font-size:clamp(6px,.9vw,9px);font-weight:1000;letter-spacing:.16em;text-shadow:0 2px 8px #000}
+.gamelib-photo-copy strong{color:#fff;font:1000 clamp(19px,4vw,38px)/.88 Manrope,sans-serif;letter-spacing:-.055em;text-shadow:0 3px 14px #000b}
+.gamelib-photo-subtitle{color:#fff0e8;font-size:clamp(6px,.95vw,9px);font-weight:950;letter-spacing:.105em;text-shadow:0 2px 8px #000b}
+.gamelib-photo-clues{display:flex;gap:5px;margin-top:2px}
+.gamelib-photo-clues i{display:grid;place-items:center;width:clamp(17px,2.2vw,23px);height:clamp(17px,2.2vw,23px);border:1px solid #ffb28b99;border-radius:5px;background:#21152fd9;color:#fff;font-size:clamp(7px,.85vw,9px);font-style:normal;font-weight:1000;box-shadow:0 2px 7px #0005}
+.gamelib-photo-foot{margin-top:2px;padding:5px 7px;border:1px solid #ffffff55;border-radius:4px;background:#171020c9;color:#fff;font-size:clamp(5px,.78vw,8px);font-weight:1000;letter-spacing:.11em;text-shadow:0 1px 4px #000}
+.gamelib-runner-overlay{max-width:58%}
+.gamelib-runner-overlay .gamelib-photo-kicker{color:#b8f4e2}
+.gamelib-runner-overlay .gamelib-photo-subtitle{color:#e1fff4}
+.gamelib-runner-overlay .gamelib-photo-foot{margin-top:3px;border-color:#b8f4e277;background:#092521d9;color:#edfff8}
+@media(max-width:720px){
+ .gamelib-photo-copy{left:5%;gap:4px;max-width:62%}
+ .gamelib-photo-copy strong{font-size:clamp(23px,7vw,34px)}
+ .gamelib-photo-kicker,.gamelib-photo-subtitle{font-size:clamp(7px,2vw,9px)}
+ .gamelib-photo-foot{font-size:clamp(6px,1.7vw,8px)}
+}
+@media(max-width:390px){
+ .gamelib-photo-copy{gap:3px}
+ .gamelib-photo-copy strong{font-size:25px}
+ .gamelib-photo-clues{gap:3px}
+}
