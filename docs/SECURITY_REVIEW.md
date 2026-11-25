@@ -1,3 +1,5 @@
+> **DATED SECURITY REVIEW — NOT A LIVE RELEASE CHECKLIST.** This review records a previous implementation snapshot and contains references to retired Courts/Pool Courts and earlier release assumptions. Do not treat its old outstanding items, counts, or product descriptions as current without re-verification. The current product specification is [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md). Reconfirm security controls and release checks during the final production review.
+
 # Security Review — Phase One
 
 Review date: 2026-11-15  
