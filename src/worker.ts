@@ -328,7 +328,7 @@ const referralCommunityMatch=path.match(/^\/api\/admin\/referral-program\/commun
    const user=await authenticatedUser(request,env);if(!user)return json({error:"A registered Telegram member account is required to play."},401);
    try{
     const settings=await env.DB.prepare("SELECT entry_easy_ct,entry_medium_ct,entry_hard_ct,reward_easy_sethis,reward_medium_sethis,reward_hard_sethis,question_count FROM mystery_game_settings WHERE id=1").first<Record<string,number>>();
-    const date=await env.DB.prepare("SELECT date('now','+1 hour') AS set_date").first<{set_date:string}>(),setDate=String(date?.set_date||"");
+    const date=await env.DB.prepare("SELECT CASE WHEN date('now','+1 hour')='2026-11-25' THEN '2026-11-25-reset-1' ELSE date('now','+1 hour') END AS set_date").first<{set_date:string}>(),setDate=String(date?.set_date||"");
     const availability=await env.DB.prepare("SELECT difficulty,COUNT(*) AS available FROM mystery_questions WHERE active=1 GROUP BY difficulty").all<{difficulty:string;available:number}>();
     const attempts=await env.DB.prepare("SELECT a.id,a.status,a.current_position,a.correct_answers,a.total_questions,a.reward_sethis,s.difficulty,q.id AS question_id,q.question_text,q.option_a,q.option_b,q.option_c,q.option_d FROM mystery_question_attempts a JOIN mystery_question_sets s ON s.id=a.set_id LEFT JOIN mystery_question_set_items i ON i.set_id=s.id AND i.position=a.current_position LEFT JOIN mystery_questions q ON q.id=i.question_id WHERE a.user_id=? AND s.set_date=? ORDER BY a.started_at ASC LIMIT 1").bind(user,setDate).all<Record<string,unknown>>();
     const wallet=await env.DB.prepare("SELECT ct_balance,sethis_balance FROM wallets WHERE user_id=?").bind(user).first<{ct_balance:number;sethis_balance:number}>()||{ct_balance:0,sethis_balance:0};
@@ -345,7 +345,7 @@ const referralCommunityMatch=path.match(/^\/api\/admin\/referral-program\/commun
     if(!difficulty)return json({error:"Choose Easy, Medium or Hard before starting."},400);
     const settings=await env.DB.prepare("SELECT entry_easy_ct,entry_medium_ct,entry_hard_ct,reward_easy_sethis,reward_medium_sethis,reward_hard_sethis,question_count FROM mystery_game_settings WHERE id=1").first<Record<string,number>>();
     const key=difficulty as "easy"|"medium"|"hard",entryCt=Math.max(0,Number(settings?.["entry_"+key+"_ct"])||0),reward=Math.max(0,Number(settings?.["reward_"+key+"_sethis"])||0),questionCount=5;
-    const date=await env.DB.prepare("SELECT date('now','+1 hour') AS set_date").first<{set_date:string}>(),setDate=String(date?.set_date||"");
+    const date=await env.DB.prepare("SELECT CASE WHEN date('now','+1 hour')='2026-11-25' THEN '2026-11-25-reset-1' ELSE date('now','+1 hour') END AS set_date").first<{set_date:string}>(),setDate=String(date?.set_date||"");
     const dailyWin=await env.DB.prepare("SELECT a.id FROM mystery_question_attempts a JOIN mystery_question_sets s ON s.id=a.set_id WHERE a.user_id=? AND s.set_date=? AND a.status='won' LIMIT 1").bind(user,setDate).first<{id:string}>();
     if(dailyWin)return json({error:"You have already completed today's five-question challenge."},409);
     const dailyAttempt=await env.DB.prepare("SELECT a.id,a.status,s.difficulty FROM mystery_question_attempts a JOIN mystery_question_sets s ON s.id=a.set_id WHERE a.user_id=? AND s.set_date=? ORDER BY a.started_at ASC LIMIT 1").bind(user,setDate).first<{id:string;status:string;difficulty:string}>();
