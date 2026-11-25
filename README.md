@@ -29,7 +29,7 @@ SETHIS gameplay is available through the official Telegram Mini App. A Telegram 
 
 The authoritative current rules and product guidance are in **[Current Product Direction](docs/PRODUCT_DIRECTION.md)**.
 
-> The Phase One, Phase Two and Phase Three planning documents are historical project records from the former Courts/debate direction. They are not the current product specification.
+> `PHASE_ONE.md`, `PHASE_ONE_REMAINING.md`, `PHASE_TWO.md`, `PHASE_THREE.md`, `SECURITY_REVIEW.md` and `SETHIS_TOKEN_ECOSYSTEM_RESEARCH.md` contain historical project records or dated reviews. Some describe the retired Courts/debate direction and old CT terminology. They are archives, not active product instructions. This README and [Current Product Direction](docs/PRODUCT_DIRECTION.md) define the current games product.
 
 ## Stack
 
