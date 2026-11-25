@@ -171,7 +171,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
               recordsRef.current = next;
               setRecords(next);
               setSummary(current=>current?{...current,sethis:Math.max(0,Number(data.sethis_reward)||0)}:current);
-              setRunSaveStatus(Number(data.sethis_reward)>0?"Run saved · "+Number(data.sethis_reward).toLocaleString()+" SETHIS earned.":"Run saved · today's SETHIS reward limit has been reached.");
+              setRunSaveStatus(Number(data.sethis_reward)>0?"Run saved · "+Number(data.sethis_reward).toLocaleString()+" SETHIS earned.":"Run saved · no SETHIS earned on this run.");
             })
             .catch((error) => {
               activeRunIdRef.current = null;
