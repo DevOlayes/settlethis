@@ -4,7 +4,7 @@ import "./CustomerCare.css";
 type Ticket={id:string;category:string;subject:string;status:"open"|"in_progress"|"waiting_member"|"resolved";created_at:string;updated_at:string;last_message_at:string;latest_message?:string|null;latest_sender?:string|null};
 type Message={id:string;sender_type:"member"|"admin";body:string;created_at:string};
 type Detail={id:string;category:string;subject:string;status:Ticket["status"];created_at:string;updated_at:string;username?:string|null;first_name?:string|null};
-const categories=[["account","Account & profile"],["games","Games & game results"],["wallet","CT, SETHIS & wallet"],["rewards","Tasks & rewards"],["referrals","Referrals & invitations"],["technical","App or technical issue"],["safety","Safety or conduct"],["other","Something else"]];
+const categories=[["account","Account & profile"],["games","Games & game results"],["wallet","GT, SETHIS & wallet"],["rewards","Tasks & rewards"],["referrals","Referrals & invitations"],["technical","App or technical issue"],["safety","Safety or conduct"],["other","Something else"]];
 const statusLabel:Record<string,string>={open:"Open",in_progress:"Being reviewed",waiting_member:"Reply received",resolved:"Resolved"};
 async function supportApi(path:string,init?:RequestInit){
  const initData=window.Telegram?.WebApp?.initData||"";
