@@ -65,15 +65,18 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [botUsername,setBotUsername]=useState("");
   const [runnerAccessUnlocked,setRunnerAccessUnlocked]=useState(false);
   const [shareCard,setShareCard] = useState<File|null>(null);
-  const [shareRewardOptIn,setShareRewardOptIn]=useState(false);
+  const [tutorialOpen,setTutorialOpen]=useState(false);
+  const [tutorialStep,setTutorialStep]=useState(0);
+  const [tutorialComplete,setTutorialComplete]=useState(false);
+  const tutorialPointer=useRef<{x:number;y:number;id:number}|null>(null);
   const [shareCardBusy,setShareCardBusy] = useState(false);
   useEffect(()=>{
     if(!summary||preview){setShareCard(null);setShareCardBusy(false);return;}
     let cancelled=false;setShareCard(null);setShareCardBusy(true);
     const playerName=telegramUser?.username?"@"+telegramUser.username:telegramUser?.first_name||"A SETHIS player";
-    void createRunnerShareCard(summary,playerName,telegramUser?.photo_url,shareRewardOptIn).then(file=>{if(!cancelled)setShareCard(file);}).catch(()=>{if(!cancelled)setShareCard(null);}).finally(()=>{if(!cancelled)setShareCardBusy(false);});
+    void createRunnerShareCard(summary,playerName,telegramUser?.photo_url,true).then(file=>{if(!cancelled)setShareCard(file);}).catch(()=>{if(!cancelled)setShareCard(null);}).finally(()=>{if(!cancelled)setShareCardBusy(false);});
     return()=>{cancelled=true;};
-  },[summary?.points,summary?.distance,summary?.balls,summary?.sethis,shareRewardOptIn,preview,telegramUser?.username,telegramUser?.first_name,telegramUser?.photo_url]);
+  },[summary?.points,summary?.distance,summary?.balls,summary?.sethis,preview,telegramUser?.username,telegramUser?.first_name,telegramUser?.photo_url]);
   const [rescueBusy, setRescueBusy] = useState(false);
   const [rescueStatus, setRescueStatus] = useState("");
   const [runAchievement, setRunAchievement] = useState<"first" | "record" | "standard">("standard");
@@ -195,7 +198,6 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   }, [preview, initData, avatarDiagnostic]);
 
   const start = async () => {
-    setShareRewardOptIn(false);
     if (startBusy || savingRun) return;
     if (!preview) {
       const webApp=window.Telegram?.WebApp;
@@ -224,6 +226,33 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     } finally {
       setStartBusy(false);
     }
+  };
+  const requestStart = () => {
+    if (!tutorialComplete) { setTutorialStep(0); setTutorialOpen(true); return; }
+    void start();
+  };
+  const completeTutorialAction = (action:"left"|"right"|"jump"|"slide") => {
+    const sequence = ["left","right","jump","slide"] as const;
+    if (action !== sequence[tutorialStep]) { setTutorialStep(0); return; }
+    const next = tutorialStep + 1;
+    setTutorialStep(next);
+    if (next === sequence.length) { setTutorialComplete(true); setTutorialOpen(false); void start(); }
+  };
+  const onTutorialPointerDown = (event:React.PointerEvent<HTMLDivElement>) => {
+    tutorialPointer.current = {x:event.clientX,y:event.clientY,id:event.pointerId};
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+  const onTutorialPointerUp = (event:React.PointerEvent<HTMLDivElement>) => {
+    const origin=tutorialPointer.current; tutorialPointer.current=null;
+    if(!origin||origin.id!==event.pointerId)return;
+    const dx=event.clientX-origin.x,dy=event.clientY-origin.y;
+    if(Math.max(Math.abs(dx),Math.abs(dy))<28)return;
+    if(Math.abs(dx)>Math.abs(dy)*1.15)completeTutorialAction(dx<0?"left":"right");
+    else completeTutorialAction(dy<0?"jump":"slide");
+  };
+  const onTutorialKeyDown = (event:React.KeyboardEvent<HTMLDivElement>) => {
+    const actions:Record<string,"left"|"right"|"jump"|"slide">={ArrowLeft:"left",ArrowRight:"right",ArrowUp:"jump",ArrowDown:"slide"};
+    const action=actions[event.key];if(action){event.preventDefault();completeTutorialAction(action);}
   };
   const watchToContinue = async () => {
     if (preview || rescueBusy || !initData || !activeRunIdRef.current) return;
@@ -371,7 +400,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       <header className="runner-topbar">
         <button onClick={requestExit} aria-label="Exit Football Runner">←</button>
         <div className="runner-brand-lockup"><b>SETHIS <i>×</i> RUNNER</b><span>RUNNER FIELD SERIES</span></div>
-        <span className="runner-prototype-tag">{preview ? "PREVIEW · NO REWARDS" : "TELEGRAM MINI APP"}</span>
+        <span className="runner-prototype-tag">{preview ? "PREVIEW · NO REWARDS" : ""}</span>
         <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"}>{soundEnabled ? "♫ SOUND ON" : "♪ SOUND OFF"}</button>
       </header>
 
@@ -433,10 +462,10 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                 </section>}
                 {!preview&&<div className="runner-entry-note"><b>{runnerAccessUnlocked?"ACCESS UNLOCKED TODAY":"500 GT DAILY ACCESS"}</b><span>{runnerAccessUnlocked?"Repeat runs are free for the rest of today.":"Pay once to unlock unlimited runs for today."} Earn SETHIS from verified performance. Less-active accounts have a starter daily limit; consistently active players unlock uncapped performance rewards.</span></div>}
                 <div className="runner-ready-actions">
-                  <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"START RUN"} <span>→</span></button>
+                  <button onClick={requestStart} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"START RUN"} <span>→</span></button>
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
                 </div>
-                <small>SWIPE OR USE THE CONTROLS BELOW · UP TO JUMP · DOWN TO SLIDE</small>
+                <small>SWIPE LEFT OR RIGHT TO CHANGE LANES · UP TO JUMP · DOWN TO SLIDE</small>
               </>}
               {phase === "collision" && <>
                 <div className="runner-collision-panel">
@@ -479,18 +508,18 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
                     <div><small>SETHIS EARNED</small><b>{summary.sethis.toLocaleString()} <em>SETHIS</em></b></div>
                   </section>
-                  <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>{!preview&&<><small className="runner-reward-privacy">Your SETHIS reward is hidden by default. You choose whether it appears on the shared challenge card.</small>{summary.sethis>0&&<label className="runner-share-reward-toggle"><input type="checkbox" checked={shareRewardOptIn} onChange={event=>setShareRewardOptIn(event.target.checked)}/><span>Include my {summary.sethis.toLocaleString()} SETHIS reward on the share card</span></label>}</>}
+                  <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>{!preview&&summary.sethis>0&&<div className="runner-result-earned">+{summary.sethis.toLocaleString()} SETHIS EARNED</div>}
                   <section className="runner-share-trophy" aria-label="Share your Football Runner challenge">
                     <div className="runner-share-trophy-brand"><img src="/football-runner-icon.svg" alt="" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></div>
                     <div className="runner-share-trophy-stars">✦　★　✦</div>
                     <small>{telegramUser?.username?"@"+telegramUser.username:telegramUser?.first_name||"MY RUN"} · MY RECORD</small>
                     <strong>{summary.points.toLocaleString()}<em>PTS</em></strong>
-                    <span>{summary.distance.toLocaleString()} M DISTANCE · {summary.balls.toLocaleString()} FOOTBALLS</span>
+                    <span>{summary.distance.toLocaleString()} M DISTANCE · {summary.balls.toLocaleString()} FOOTBALLS</span>{!preview&&<b className="runner-share-trophy-reward">+{summary.sethis.toLocaleString()} SETHIS EARNED</b>}
                     <b className="runner-share-dare">CAN YOU BEAT ME?</b>
                   </section>
                   <div className="runner-result-actions">
                     <button className="runner-share-action" onClick={()=>void shareRun()} disabled={savingRun||shareCardBusy}><span>↗</span><b>{shareCardBusy?"PREPARING CARD…":"SHARE CHALLENGE CARD"}</b><small>Send your run graphic with the challenge link</small></button>
-                    <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING…":startBusy?"PREPARING…":"PLAY AGAIN"} <span>→</span></button>
+                    <button onClick={requestStart} disabled={startBusy || savingRun}>{savingRun?"SAVING…":startBusy?"PREPARING…":"PLAY AGAIN"} <span>→</span></button>
                     <button className="runner-secondary" onClick={requestExit}>{preview ? "EXIT PREVIEW" : "EXIT TO GAMES"}</button>
                   </div>
                   {shareStatus && <p className="runner-share-status" role="status">{shareStatus}</p>}
@@ -498,6 +527,13 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
               </>}
             </div>
           ) : null}
+        {tutorialOpen && <div className="runner-tutorial" role="dialog" aria-modal="true" aria-label="Swipe control tutorial" onPointerDown={onTutorialPointerDown} onPointerUp={onTutorialPointerUp} onPointerCancel={()=>{tutorialPointer.current=null;}} onKeyDown={onTutorialKeyDown} tabIndex={0}>
+          <span className="runner-overline">QUICK TOUCH TUTORIAL</span><h2>LEARN THE MOVES</h2><p>Swipe in the direction shown. Complete all four moves and your run starts automatically.</p>
+          <div className="runner-tutorial-progress">{["LEFT","RIGHT","JUMP","SLIDE"].map((name,index)=><span key={name} className={index<tutorialStep?"done":index===tutorialStep?"current":""}>{index<tutorialStep?"✓":index+1}</span>)}</div>
+          <div className="runner-tutorial-gesture">{["←","→","↑","↓"][tutorialStep]}</div>
+          <b>{["SWIPE LEFT · CHANGE LANE","SWIPE RIGHT · CHANGE LANE","SWIPE UP · JUMP","SWIPE DOWN · SLIDE"][tutorialStep]}</b>
+          <small>USE YOUR FINGER ON THIS PANEL · WRONG DIRECTION RESETS THE LESSON</small>
+        </div>}
           {phase === "running" && collectionPulse > 0 && <div key={collectionPulse} className="runner-collect-fly" aria-hidden="true"><span>⚽</span><b>+100 PTS</b></div>}
         </div>
 
@@ -515,15 +551,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
         </div>}
       </section>
 
-      <footer className="runner-controls">
-        <div className="runner-control-pad" role="group" aria-label="Touch game controls">
-          <button type="button" aria-label="Move left" disabled={phase !== "running"} onClick={() => engineRef.current?.act("left")}><span>←</span><small>LEFT</small></button>
-          <button type="button" aria-label="Move right" disabled={phase !== "running"} onClick={() => engineRef.current?.act("right")}><span>→</span><small>RIGHT</small></button>
-          <button type="button" aria-label="Jump" disabled={phase !== "running"} onClick={() => engineRef.current?.act("jump")}><span>↑</span><small>JUMP</small></button>
-          <button type="button" aria-label="Slide" disabled={phase !== "running"} onClick={() => engineRef.current?.act("slide")}><span>↓</span><small>SLIDE</small></button>
-        </div>
-        <span>SWIPE OR TAP · COLLECT BY KICKING</span>
-      </footer>
+
     </div>
   );
 }
