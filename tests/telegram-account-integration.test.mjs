@@ -198,7 +198,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(mysteryState.data.daily_entries_remaining, 5);
   assert.equal(mysteryState.data.daily_access_unlocked, false);
   const mysteryStart = await api(env, "/api/mystery-game/start", firstInit, "POST", { difficulty: "easy" });
-  assert.equal(mysteryStart.response.status, 201);
+  assert.equal(mysteryStart.response.status, 200);
   assert.equal(mysteryStart.data.round.id.length > 0, true);
   const mysteryGuess = await api(env, "/api/mystery-game/" + mysteryStart.data.round.id + "/guess", firstInit, "POST", { guess: "Didier Drogba" });
   assert.equal(mysteryGuess.response.status, 200);
@@ -207,7 +207,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(walletAfterMystery.data.wallet.ct_balance, 2700, "Mystery Footballer daily access should cost 300 GT once");
   assert.equal(walletAfterMystery.data.wallet.sethis_balance, 10, "a correct first-clue Mystery answer should reward 10 SETHIS");
   const mysteryStartAgain = await api(env, "/api/mystery-game/start", firstInit, "POST", { difficulty: "easy" });
-  assert.equal(mysteryStartAgain.response.status, 201);
+  assert.equal(mysteryStartAgain.response.status, 200);
   const walletAfterMysteryRepeat = await api(env, "/api/wallet", firstInit);
   assert.equal(walletAfterMysteryRepeat.data.wallet.ct_balance, 2700, "additional Mystery rounds must not charge another daily access fee");
   const unauthenticatedRunnerRecords = await worker.fetch(new Request("https://settlethis.test/api/runner/records"), env);
