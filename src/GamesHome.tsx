@@ -10,7 +10,40 @@ function MysteryArtwork(){return <div className="gamelib-art gamelib-mystery" ro
   <div className="gamelib-stadium-glow"/><div className="gamelib-stadium-lights"><i/><i/><i/><i/></div>
   <div className="gamelib-mystery-pitch"><i/><i/><i/></div>
   <div className="gamelib-mystery-copy"><span className="gamelib-art-kicker">FOOTBALL KNOWLEDGE</span><strong>WHO'S<br/>THE PLAYER?</strong><small>3 CLUES. 1 LEGEND.</small><span className="gamelib-clue-row"><i>01</i><i>02</i><i>03</i></span></div>
-  <div className="gamelib-mystery-player"><svg className="gamelib-footballer-portrait" viewBox="0 0 240 310" aria-hidden="true"><defs><linearGradient id="mysteryJersey" x2="1" y2="1"><stop stopColor="#27d7f2"/><stop offset="1" stopColor="#126b89"/></linearGradient><linearGradient id="mysterySkin" x2="1" y2="1"><stop stopColor="#dca17e"/><stop offset="1" stopColor="#92583f"/></linearGradient></defs><ellipse cx="120" cy="294" rx="84" ry="12" fill="#030811" opacity=".6"/><path d="M42 310q2-82 37-111l41-20 43 20q34 29 38 111Z" fill="url(#mysteryJersey)" stroke="#9ff5ff" strokeOpacity=".6" strokeWidth="3"/><path d="M56 264q64-24 128 0" stroke="#a8f7ff" strokeOpacity=".35" strokeWidth="3" fill="none"/><path d="M76 213 64 287m100-74 12 74" stroke="#063f57" strokeOpacity=".55" strokeWidth="7"/><path d="M92 248h56" stroke="#e9fbff" strokeOpacity=".75" strokeWidth="3"/><path d="M112 260h16" stroke="#e9fbff" strokeOpacity=".6" strokeWidth="3"/><path d="m79 204 41 32 41-32-13-25h-56Z" fill="#f4f8fa"/><path d="m105 229 15 18 15-18-15-12Z" fill="#0b2638"/><path d="M91 120q-5-65 29-75 49-5 49 57l-8 52q-14 35-43 35-28-6-37-42Z" fill="url(#mysterySkin)"/><path d="M91 125q-8-19-2-38m81 8q5 20-2 39" stroke="#f2c09b" strokeWidth="5" strokeLinecap="round" opacity=".45"/><path d="M103 126q8-5 16 0m16 0q8-5 16 0" stroke="#2b1b19" strokeWidth="4" strokeLinecap="round" fill="none"/><path d="M112 158q10 7 20 0" stroke="#5f3028" strokeWidth="3" strokeLinecap="round" fill="none"/><path d="M120 181v20" stroke="#f4c7a7" strokeWidth="3" opacity=".5"/><path d="M79 109q-12-65 40-79 57-7 61 57l-10 24q-16-34-49-37-28-1-42 35Z" fill="#101824"/><path d="M91 122q15-12 29-1m20 0q13-10 25 1" stroke="#302019" strokeWidth="5" strokeLinecap="round" fill="none"/><path d="M113 154q13 9 27 0" stroke="#6d382d" strokeWidth="4" strokeLinecap="round" fill="none"/><path d="M108 180v24m24-24v24" stroke="#92583f" strokeWidth="10" strokeLinecap="round"/><path d="m52 239 28 14m108-14-28 14" stroke="#f4f8fa" strokeWidth="8" strokeLinecap="round"/><path d="M105 258h30" stroke="#f6ffff" strokeOpacity=".65" strokeWidth="4"/></svg></div>
+  <div className="gamelib-mystery-player"><svg className="gamelib-footballer-portrait" viewBox="0 0 240 310" aria-hidden="true"><defs>
+ <linearGradient id="mysteryJersey" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#55f1ff"/><stop offset=".48" stopColor="#1a9dbb"/><stop offset="1" stopColor="#073d68"/></linearGradient>
+ <linearGradient id="mysterySkin" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#f1c29f"/><stop offset=".55" stopColor="#bd805f"/><stop offset="1" stopColor="#75432f"/></linearGradient>
+ <linearGradient id="mysteryHair" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#35404a"/><stop offset=".5" stopColor="#111923"/><stop offset="1" stopColor="#050a12"/></linearGradient>
+ <linearGradient id="mysteryLight" x1="0" y1="0" x2="1" y2="0"><stop stopColor="#fff" stopOpacity=".55"/><stop offset="1" stopColor="#fff" stopOpacity="0"/></linearGradient>
+ <filter id="mysteryShadow"><feGaussianBlur stdDeviation="8"/></filter>
+ </defs>
+ <ellipse cx="121" cy="296" rx="86" ry="13" fill="#020710" opacity=".7" filter="url(#mysteryShadow)"/>
+ <path d="M25 310q5-75 37-100 21-17 58-22 38 5 59 22 32 25 36 100Z" fill="url(#mysteryJersey)" stroke="#a8f7ff" strokeWidth="2.5"/>
+ <path d="M55 221q28-22 65-23 38 1 65 23l-9 89H64Z" fill="#0b6688" opacity=".35"/>
+ <path d="M78 194 120 226l42-32-9-22H87Z" fill="#f7fbff"/>
+ <path d="m103 215 17 19 17-19-17-13Z" fill="#0a2940"/>
+ <path d="M45 248q34 11 75 9 43 3 76-10" fill="none" stroke="#b9f8ff" strokeOpacity=".4" strokeWidth="3"/>
+ <path d="M76 225 61 293m103-68 15 68" stroke="#064866" strokeWidth="7" opacity=".45"/>
+ <path d="M87 251h66" stroke="#e5fdff" strokeOpacity=".72" strokeWidth="3"/>
+ <path d="M104 263h32" stroke="#e5fdff" strokeOpacity=".55" strokeWidth="2"/>
+ <path d="M105 228 120 246l15-18" fill="none" stroke="#d7fbff" strokeWidth="2" opacity=".7"/>
+ <path d="M95 117q-8-35 1-61 10-31 44-31 39 0 47 37 6 28-1 70l-9 28q-17 30-46 30-29-2-43-32Z" fill="url(#mysterySkin)"/>
+ <path d="M83 105q-14-69 34-88 46-18 72 19 14 20 5 63l-10 22q-8-32-27-43-25 13-51 4-12 5-23 29Z" fill="url(#mysteryHair)"/>
+ <path d="M91 61q11-34 41-37m-25 10q28-20 54-4m-43-3q27-11 48 5m-61 12q-7 8-10 19m77-26q14 13 17 31" fill="none" stroke="#65717a" strokeWidth="4" strokeLinecap="round" opacity=".55"/>
+ <path d="M95 111q12-9 25-2m20 0q13-7 25 2" fill="none" stroke="#4b2c24" strokeWidth="5" strokeLinecap="round"/>
+ <path d="M99 121q9-4 17 1m29-1q9-5 17 0" fill="none" stroke="#171c22" strokeWidth="3" strokeLinecap="round"/>
+ <ellipse cx="108" cy="122" rx="3" ry="2.4" fill="#101820"/><ellipse cx="153" cy="122" rx="3" ry="2.4" fill="#101820"/>
+ <path d="M131 124q-5 17-2 23l7 2" fill="none" stroke="#8c5a42" strokeWidth="3" strokeLinecap="round"/>
+ <path d="M114 160q16 11 32-1" fill="none" stroke="#6b352d" strokeWidth="4" strokeLinecap="round"/>
+ <path d="M111 165q18 14 39-1" fill="none" stroke="#f2c4a5" strokeWidth="2" opacity=".6"/>
+ <path d="M91 139q5 28 23 37m51-39q-6 27-22 39" fill="none" stroke="#f7d2b5" strokeWidth="3" opacity=".45"/>
+ <path d="M78 202q-8 5-17 16m101-16q10 4 18 15" fill="none" stroke="#d9fbff" strokeWidth="3" opacity=".45"/>
+ <path d="M42 275q24-10 36-4m84 0q16-6 34 4" fill="none" stroke="#d7fbff" strokeOpacity=".3" strokeWidth="3"/>
+ <path d="M120 244v46" stroke="#d7fbff" strokeOpacity=".35" strokeWidth="2"/>
+ <path d="M42 310q3-31 8-51" stroke="url(#mysteryLight)" strokeWidth="7" opacity=".35"/>
+ <path d="M198 310q-3-31-8-51" stroke="#fff" strokeOpacity=".16" strokeWidth="7"/>
+ <path d="M120 252h0" stroke="#fff" strokeWidth="1"/>
+ </svg></div>
   <div className="gamelib-question-orb">?</div><div className="gamelib-art-foot">CAN YOU NAME THE LEGEND?</div>
 </div>}
 
@@ -47,7 +80,21 @@ function RunnerArtwork(){return <div className="gamelib-art gamelib-runner" role
       <path d="M-4 61q12 8 24-1" stroke="#7e4e3c" strokeWidth="3" fill="none" strokeLinecap="round"/>
       <path d="M-17 84q16 16 34 0" stroke="#d99b78" strokeWidth="13" strokeLinecap="round"/>
     </g>
-    <g transform="translate(565 291)">
+    <g transform="translate(350 48)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+ <path d="M-21 18q7-22 29-25 22 1 30 21" stroke="#53616e" strokeWidth="5" opacity=".75"/>
+ <path d="M-19 40q9-6 17-2m18 0q9-5 16 1" stroke="#412d27" strokeWidth="3"/>
+ <circle cx="-9" cy="42" r="2.3" fill="#101820" stroke="none"/><circle cx="20" cy="42" r="2.3" fill="#101820" stroke="none"/>
+ <path d="M-4 55q11 6 21-1" stroke="#744633" strokeWidth="3"/>
+ <path d="M-27 132q26 13 55 0" stroke="#c5fff4" strokeWidth="3" opacity=".7"/>
+ <path d="M-25 177q25 10 52 0" stroke="#c5fff4" strokeWidth="2" opacity=".45"/>
+ <path d="M-4 143v30" stroke="#eafffa" strokeWidth="2" opacity=".4"/>
+ <path d="M-22 150h10l5 8-10 7-8-7Z" fill="#f5fffb" stroke="#d8fff2" strokeWidth="1.5"/>
+ <path d="M-12 150h4v10h-4Z" fill="#123d50" stroke="none"/>
+ <path d="M-91 203q-14 28-32 50m-8 4 27-13m73-35q18 22 16 49" stroke="#647586" strokeWidth="4" opacity=".5"/>
+ <path d="M-109 309q14 7 28 0m78 17q16 7 30 0" stroke="#d7e4e8" strokeWidth="3"/>
+ </g>
+ <g stroke="#b8f4e2" strokeWidth="3" strokeLinecap="round" opacity=".65"><path d="m211 262 48-8m-35 25 35-6m-312-16 34-8"/></g>
+ <g transform="translate(565 291)">
       <circle r="39" fill="#d9fff4" fillOpacity=".13"/><circle r="28" fill="#f5f8f4" stroke="#d4fff2" strokeWidth="3"/>
       <path d="m0-13 12 9-5 14h-14l-5-14zM-25-8l12-4m27 0 12 4M-20 20l8-10m24 0 8 10" fill="#18252a" stroke="#18252a" strokeWidth="5" strokeLinejoin="round"/>
     </g>
