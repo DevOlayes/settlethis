@@ -50,5 +50,4 @@ jobs:
             echo "::error::CLOUDFLARE_API_TOKEN is missing. Production deployment is blocked; configure the repository Actions secret before treating this build as deployed."
             exit 1
           fi
-          npx wrangler whoami
           npx wrangler deploy --keep-vars --message "SETHIS production release from main"
