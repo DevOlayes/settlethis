@@ -25,7 +25,7 @@ SETHIS is a football gaming and entertainment platform accessed through its offi
 
 ## Access
 
-SETHIS gameplay is available through the official Telegram Mini App. A Telegram account and registered member session are required; a general browser session is not a substitute for Telegram access.
+Account-based gameplay, the wallet, tasks, rankings and reward-eligible activity require the official Telegram Mini App and a registered Telegram member session. A separate Football Runner browser preview is only a demo; preview runs are not saved to member accounts and do not earn rewards.
 
 The authoritative current rules and product guidance are in **[Current Product Direction](docs/PRODUCT_DIRECTION.md)**.
 
