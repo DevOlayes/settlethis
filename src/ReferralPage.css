@@ -277,3 +277,20 @@
 .rfx-page .rfx-leadership-branches,.rfx-page .rfx-leadership-stats,.rfx-page .rfx-leadership-rates,.rfx-page .rfx-community-metrics{min-width:0;max-width:100%}
 .rfx-page .rfx-leadership-branches>div,.rfx-page .rfx-member-list article,.rfx-page .rfx-leaderboard>article{min-width:0;max-width:100%;overflow:hidden}
 @media(max-width:560px){.referral-page.rfx-page{width:100%;max-width:100%;padding-inline:0;contain:inline-size}.rfx-page .rfx-hero-copy{max-width:72%;min-width:0}.rfx-page .rfx-tabs{width:100%;max-width:100%;grid-template-columns:repeat(3,minmax(0,1fr))}.rfx-page .rfx-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Mobile viewport containment: referral data can contain long Telegram invite URLs. */
+.referral-page.rfx-page{width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow-x:clip}
+.referral-page.rfx-page *{box-sizing:border-box;min-width:0}
+.rfx-link-box{width:100%;max-width:100%;min-width:0}
+.rfx-link-box>span:first-child{flex:1 1 auto;min-width:0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word;text-overflow:ellipsis}
+.rfx-link-code{max-width:34%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rfx-invite,.rfx-hero,.rfx-tabs,.rfx-panel,.rfx-community,.rfx-activity-section{width:100%;max-width:100%;min-width:0}
+@media(max-width:560px){
+ .referral-page.rfx-page{padding-left:0;padding-right:0}
+ .rfx-link-box{gap:7px}
+ .rfx-link-box>span:first-child{font-size:9px}
+ .rfx-link-code{max-width:30%;font-size:7px}
+ .rfx-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .rfx-actions button{min-width:0;padding-left:6px;padding-right:6px;white-space:normal}
+}
