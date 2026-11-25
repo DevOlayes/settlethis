@@ -7,7 +7,7 @@ type ReferralReward = { milestone: number; amount: number; created_at: string };
 type ReferralMilestone = { milestone: number; threshold: number; reward: number; title: string; description: string; earned: boolean };
 export type ReferralData = { code: string | null; invite_link: string | null; total: number; qualified: number; pending: number; target: number; reward: number; token: string; milestones: ReferralMilestone[]; next_milestone: ReferralMilestone | null; referrals: ReferralRecord[]; rewards: ReferralReward[] };
 type LeadershipData={is_leader:boolean;status:string;personal_qualified:number;branch_qualified:number;active_members:number;active_ratio:number;low_activity_since:string|null;recovery_days_remaining:number;commission_earned:number;commission_paid:number;commission_pending:number;branch_leaders:Array<{user_id:string;name:string;status:string;personal_qualified:number;branch_qualified:number;active_ratio:number}>;personal_threshold:number;hybrid_personal_threshold:number;branch_threshold:number;active_threshold:number;recovery_days:number};
-export type CommunityData = { invited: number; qualified: number; contributors: number; member_qualified: number; leadership?:LeadershipData; commission_rates?:{direct_percent:number;upline_percent:number;maximum_combined_percent:number}; activity_rule?:{window_days:number;minimum_active_percent:number;warning_below_percent:number;recovery_days:number}; targets: Array<{number:number;threshold:number;title:string;reward_title:string;reward_description:string;achieved:boolean}>; achieved: number[]; next_target: number | null; progress_target: number; progress_percent: number; eligibility: boolean; eligibility_rule: string; reward_status: string; leaderboard?: Array<{rank:number;name:string;qualified:number;is_you:boolean}>; achievements?:Array<{number:number;threshold:number;title:string;achieved_at:string}> };
+export type CommunityData = { invited: number; qualified: number; contributors: number; member_qualified: number; leadership?:LeadershipData; commission_rates?:{direct_percent:number;upline_percent:number;maximum_combined_percent:number}; activity_rule?:{window_days:number;minimum_active_percent:number;warning_below_percent:number;recovery_days:number}; targets: Array<{number:number;threshold:number;title:string;reward_title:string;reward_description:string;achieved:boolean}>; achieved: number[]; next_target: number | null; progress_target: number; progress_percent: number; eligibility: boolean; eligibility_rule: string; reward_status: string; leaderboard?: Array<{rank:number;name:string;sethis_earned:number;is_you:boolean}>; achievements?:Array<{number:number;threshold:number;title:string;achieved_at:string}> };
 
 const number = (value: number) => (Number(value) || 0).toLocaleString();
 const date = (value: string) => new Date(value.endsWith("Z") ? value : value + "Z").toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});
@@ -193,10 +193,10 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
           </div>
 
           <div className="rfx-leaderboard">
-            <div className="rfx-section-head"><div><span className="rfx-kicker">COMMUNITY MOMENTUM</span><h3>Top contributors</h3></div><span className="rfx-leader-count">{number(community.leaderboard?.length||0)}</span></div>
+            <div className="rfx-section-head"><div><span className="rfx-kicker">COMMUNITY MOMENTUM</span><h3>Top SETHIS earners</h3></div><span className="rfx-leader-count">{number(community.leaderboard?.length||0)}</span></div>
             {community.leaderboard?.length?community.leaderboard.slice(0,5).map(person=><article key={person.rank} className={person.is_you?"you":""}>
               <span className="rfx-rank">{person.rank===1?<Trophy width={15} height={15}/>:person.rank}</span>
-              <b>{person.name}{person.is_you?" · YOU":""}</b><strong>{number(person.qualified)} <small>QUALIFIED</small></strong>
+              <b>{person.name}{person.is_you?" · YOU":""}</b><strong>{number(person.sethis_earned)} <small>SETHIS</small></strong>
             </article>):<div className="rfx-empty">No qualified contributors yet.</div>}
           </div>
           </>:<div className="rfx-state">Loading shared community progress…</div>}
