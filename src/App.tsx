@@ -1,7 +1,6 @@
 import { lazy, Suspense, useEffect, useState, type CSSProperties } from "react";
 import { SoccerBall, User, Search, Coins, Gift, Gamepad, Trophy, TaskList, UserPlus, Wallet } from "iconoir-react";
 import BrandMark from "./BrandMark";
-import CompetitionDiscovery from "./CompetitionDiscovery";
 import WalletHelpCentre from "./WalletHelpCentre";
 import ReferralPage from "./ReferralPage";
 import MysteryGame from "./MysteryGame";
