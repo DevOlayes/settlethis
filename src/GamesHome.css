@@ -86,3 +86,10 @@
  .gamelib-photo-copy strong{font-size:25px}
  .gamelib-photo-clues{gap:3px}
 }
+
+/* Explicit stacking order: thumbnail image at the back, shade above it, copy at the front. */
+.gamelib-photo-art{position:relative!important;display:block;isolation:isolate!important;overflow:hidden}
+.gamelib-photo-art>img{position:absolute!important;inset:0!important;z-index:0!important;display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.gamelib-photo-art:after{position:absolute!important;inset:0!important;z-index:1!important;content:"";pointer-events:none}
+.gamelib-photo-art>.gamelib-photo-copy{position:absolute!important;z-index:10!important;left:5.5%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-start}
+.gamelib-mystery-photo>.gamelib-photo-copy,.gamelib-runner-photo>.gamelib-photo-copy{visibility:visible!important;opacity:1!important}
