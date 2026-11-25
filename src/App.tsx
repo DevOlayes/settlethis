@@ -27,7 +27,7 @@ type CheckinState={today:string;days:CheckinDay[];streak:number;total_checkins:n
 
 type Tab = "Games" | "Tasks" | "Rankings" | "Wallet" | "Referrals";
 const onboardingStories=[
- {title:"Football has a new home.",body:"SETHIS is a growing arena of football games and challenges. Your first test? Mystery Footballer.",label:"PLAY · COMPETE · RETURN",detail:"More ways to test your football knowledge will join the line-up."},
+ {title:"Football has a new home.",body:"SETHIS is a growing arena of football games and challenges. Your first test? Mystery Footballer.",label:"PLAY · COMPETE · RETURN",detail:"Choose between Mystery Footballer and Football Runner, then build your game record."},
  {title:"Five questions. One perfect set.",body:"Choose Easy, Medium or Hard and answer all five multiple-choice questions. Get every answer right to earn the full difficulty reward.",label:"MYSTERY FOOTBALLER",detail:"Five questions. Four options each. One perfect set earns the full reward."},
  {title:"Build something worth keeping.",body:"SETHIS is the platform’s main reward token. Earn it through eligible activities, milestones and rewards across the platform.",label:"SETHIS IS YOUR REWARD",detail:"Keep an eye on your SETHIS balance and the published rules for each reward."},
  {title:"GT gets you into the game.",body:"Use GT to enter eligible games. Earn SETHIS through platform rewards, improve your game record and bring your football crew along.",label:"TWO TOKENS. TWO PURPOSES.",detail:"GT is for playing. SETHIS is what you earn."}
