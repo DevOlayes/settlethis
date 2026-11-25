@@ -155,11 +155,10 @@ const refreshTasks=()=>{const initData=window.Telegram?.WebApp?.initData;if(!tel
   const [notificationUnread,setNotificationUnread]=useState(0);
   useEffect(()=>{
     const backButton=window.Telegram?.WebApp?.BackButton;
-    if(!backButton||activeGame==="runner")return;
-    const shouldShow=!onboardingOpen&&(activeGame==="mystery"||notificationOpen||profileOpen||courtOpen||poolOpen||quizDetail!==null||infoPage!==null||ctBalanceOpen||selectedCourt!==null||searchOpen||tab!=="Games");
+    const shouldShow=!onboardingOpen&&(activeGame!==null||notificationOpen||profileOpen||courtOpen||poolOpen||quizDetail!==null||infoPage!==null||ctBalanceOpen||selectedPool!==null||selectedCourt!==null||searchOpen||tab!=="Games");
     const handleBack=()=>{
       if(onboardingOpen)return;
-      if(activeGame==="mystery"){setActiveGame(null);return;}
+      if(activeGame==="runner"||activeGame==="mystery"){setActiveGame(null);return;}
       if(notificationOpen){setNotificationOpen(false);return;}
       if(profileOpen){setProfileOpen(false);return;}
       if(courtOpen){setCourtOpen(false);return;}
@@ -167,13 +166,16 @@ const refreshTasks=()=>{const initData=window.Telegram?.WebApp?.initData;if(!tel
       if(quizDetail){setQuizDetail(null);return;}
       if(infoPage!==null){setInfoPage(null);return;}
       if(ctBalanceOpen){setCtBalanceOpen(false);return;}
+      if(selectedPool){setSelectedPool(null);return;}
       if(selectedCourt){setSelectedCourt(null);return;}
       if(searchOpen){setSearchOpen(false);setSearch("");return;}
       if(tab!=="Games")setTab("Games");
     };
-    if(shouldShow){backButton.show();backButton.onClick(handleBack);}else backButton.hide();
-    return()=>{backButton.offClick(handleBack);};
-  },[activeGame,onboardingOpen,notificationOpen,profileOpen,courtOpen,poolOpen,quizDetail,infoPage,ctBalanceOpen,selectedCourt,searchOpen,tab]);
+    if(backButton){if(shouldShow){backButton.show();backButton.onClick(handleBack);}else backButton.hide();}
+    const handleEscape=(event:KeyboardEvent)=>{if(event.key==="Escape"){event.preventDefault();handleBack();}};
+    window.addEventListener("keydown",handleEscape);
+    return()=>{backButton?.offClick(handleBack);window.removeEventListener("keydown",handleEscape);};
+  },[activeGame,onboardingOpen,notificationOpen,profileOpen,courtOpen,poolOpen,quizDetail,infoPage,ctBalanceOpen,selectedPool,selectedCourt,searchOpen,tab]);
   const [rankings,setRankings]=useState<LeaderboardEntry[]>([]);
   const [sethisRankings,setSethisRankings]=useState<LeaderboardEntry[]>([]);
   const [homeStats,setHomeStats]=useState<{sethisEarned:number;rank:number|null}>({sethisEarned:0,rank:null});
