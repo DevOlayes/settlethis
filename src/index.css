@@ -3529,3 +3529,48 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .admin-shell button:focus-visible{outline:2px solid #27d7f2;outline-offset:3px}
 @media(max-width:900px){.admin-workspace{grid-template-columns:210px minmax(0,1fr);padding:18px;gap:14px}.admin-tabs{padding:10px 8px}.admin-tabs button{font-size:8px;padding:9px}}
 @media(max-width:680px){.admin-top{height:62px;padding:0 14px}.admin-workspace{display:flex;flex-direction:column;padding:13px 12px 36px;gap:12px}.admin-workspace>*{width:100%}.admin-welcome{order:0;min-height:125px;padding:19px 17px}.admin-welcome:after{right:-35px;opacity:.12}.admin-tabs{order:1;position:sticky;top:62px;z-index:50;width:100%;height:auto;max-height:none;flex-direction:row;align-items:center;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:7px;border-radius:13px}.admin-nav-label{display:none}.admin-tabs button{width:auto;min-width:max-content;min-height:37px;padding:9px 12px;text-align:center;font-size:8px}.admin-workspace>.admin-notice,.admin-workspace>.admin-error{order:2}.admin-workspace>:not(.admin-tabs):not(.admin-welcome):not(.admin-notice):not(.admin-error){order:3}.admin-user span{max-width:120px;overflow:hidden;text-overflow:ellipsis}.admin-detail{padding:13px}.admin-detail-head h2{font-size:21px}}
+
+
+/* SETHIS contrast and action-button standard: warm coral with the established dark label. */
+:root{--sethis-coral:#E98272}
+.primary-wide,.game-primary,.hero-cta,.task-action-button,.task-reward-button,
+.quiz-open-button:not(:disabled),.court-reply-compose button:not(:disabled),
+.settle-episode-foot button,.court-roar-panel>button,.referral-share-button,
+.referral-page-error button,.referral-link-actions button,.checkin-card-foot button:not(:disabled),
+.pool-invite-button,.editorial-refresh,.gamelib-play,.game-library-play,
+.game-invite-strip button,.game-earn-ct,.quiz-promo button,.view-court,
+.home-ad-card>button,.wallet-help-done{
+  background:var(--sethis-coral)!important;
+  border-color:var(--sethis-coral)!important;
+  color:#21101d!important;
+  font-family:Manrope,Inter,sans-serif!important;
+  font-weight:900!important;
+  box-shadow:0 6px 18px #E9827230;
+}
+.primary-wide:disabled,.game-primary:disabled,.task-action-button:disabled,
+.task-reward-button:disabled,.quiz-open-button:disabled{opacity:.55;filter:saturate(.7)}
+.primary-wide:active,.game-primary:active,.hero-cta:active,.task-action-button:active,
+.task-reward-button:active,.gamelib-play:active,.game-library-play:active{filter:brightness(1.06)}
+.ct-balance-modal>.eyebrow{color:var(--sethis-coral)!important}
+.ct-balance-ad-head>strong{background:#3b211f!important;color:var(--sethis-coral)!important}
+.ct-ad-status button{color:var(--sethis-coral)!important;font-family:Manrope,Inter,sans-serif!important;font-weight:900!important}
+.ct-ad-progress-track span{background:linear-gradient(90deg,#E98272,#F4A18F)!important}
+.ct-ad-progress>div:first-child,.ct-ad-status,.ct-balance-ad-card>p,
+.ct-balance-modal>p{color:#eee8f3!important}
+.ct-balance-ad-head>div small{color:#e7ddea!important}
+.ct-balance-modal .ct-balance-number,.ct-balance-modal .ct-balance-number i{color:#fff!important}
+
+/* Readable secondary copy on the dark plum surfaces. Keep selected states and semantic alerts intact. */
+.section-heading p,.featured-content>p,.moment-note p,.steps p,.quiz-promo p,
+.page-intro,.empty-state p,.wallet-history p,.wallet-future,.integration-note,
+.case-context span,.task-row small,.onboarding-bottom>span,.ranking-person small,
+.profile-achievement>div small,.ranking-view-heading small,.referral-page-heading p,
+.referral-page-state,.referral-link-prompt,.referral-page-note,.game-muted,.game-loading,
+.mystery-start-copy p,.mystery-difficulty-picker small,.mystery-result-panel p,
+.mystery-feedback small,.mystery-wallet-strip,.info-steps p,.modal-context,
+.ct-ad-progress>div:first-child,.ct-ad-status{color:#e5ddec!important}
+.my-courts-filters button:not(.active),
+.ranking-slider button:not(.active),.referral-section-slider button:not(.active){color:#e2d9eb!important}
+.bottom-nav button{color:#ded5e7!important}
+.bottom-nav button.selected{color:var(--sethis-coral)!important}
+.bottom-nav button.selected:before{background:var(--sethis-coral)!important;box-shadow:0 0 10px #E9827266!important}
