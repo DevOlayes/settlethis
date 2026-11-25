@@ -3487,3 +3487,45 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .referral-leader-status.recovering,.referral-leader-status.pending{background:#473719;color:#ffdc8c}
 .referral-leader-status.suspended,.referral-leader-status.void{background:#49252c;color:#ffabb2}
 @media(max-width:650px){.referral-leadership-admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.referral-leader-table article{grid-template-columns:minmax(0,1fr) auto;gap:7px}.referral-leader-table article>strong,.referral-leader-table article>b{text-align:right}}
+
+/* SETHIS administration — full dashboard system */
+.admin-shell{--admin-bg:#0b1220;--admin-panel:#121d2e;--admin-raised:#1a2940;--admin-line:#263a54;--admin-muted:#9aabc0;--admin-text:#f7fbff;--admin-accent:#27d7f2;min-height:100vh;background:radial-gradient(ellipse at 78% -12%,#173a5366,transparent 38%),var(--admin-bg);color:var(--admin-text);font-family:Inter,system-ui,sans-serif}
+.admin-top{height:68px;padding:0 28px;border-bottom:1px solid var(--admin-line);background:#0b1220f2;backdrop-filter:blur(18px);z-index:100}
+.admin-brand{gap:12px;letter-spacing:.02em}.admin-brand>span{background:transparent;width:auto;height:auto;display:block}
+.admin-wordmark{display:grid;grid-template-columns:auto auto;align-items:center;column-gap:4px;font-size:13px;letter-spacing:.08em}.admin-wordmark i{color:var(--admin-accent);font-style:normal}.admin-wordmark small{grid-column:1 / -1;margin-top:3px;color:#8ca2ba;font-size:8px;letter-spacing:.2em}
+.admin-user{gap:14px;color:#c5d4e5;font-size:11px}.admin-user button{border:1px solid #36516d;border-radius:9px;background:#14243a;color:#dff8ff;padding:10px 14px;font-size:9px}
+.admin-auth{border:1px solid var(--admin-line);border-radius:20px;background:linear-gradient(145deg,#15253a,#101a2a);box-shadow:0 28px 90px #0007}
+.admin-kicker{color:var(--admin-accent)}.admin-auth h1,.admin-welcome h1{letter-spacing:-.055em}.admin-auth input{border:1px solid #36516d;border-radius:11px;background:#0b1626;color:#fff;min-height:46px}
+.admin-primary,.admin-publish{min-height:44px;border-radius:11px;background:linear-gradient(110deg,#27d7f2,#16a8ca);color:#06131b;font-size:10px;letter-spacing:.06em;box-shadow:0 9px 24px #27d7f222}
+.admin-workspace{width:min(1600px,100%);max-width:none;margin:0 auto;padding:24px 28px 60px;display:grid;grid-template-columns:252px minmax(0,1fr);column-gap:24px;row-gap:18px;align-items:start}
+.admin-workspace>:not(.admin-tabs){grid-column:2;min-width:0}
+.admin-welcome{grid-column:2;grid-row:1;min-height:144px;margin:0;padding:25px 28px;border:1px solid #2a4762;border-radius:20px;background:radial-gradient(ellipse at 88% 15%,#27d7f22a,transparent 38%),linear-gradient(115deg,#172b42,#111e30 70%);position:relative;overflow:hidden}
+.admin-welcome:after{content:"";position:absolute;right:7%;top:20px;width:170px;height:110px;opacity:.22;background:repeating-linear-gradient(90deg,transparent 0 18px,#27d7f2 19px 20px),repeating-linear-gradient(0deg,transparent 0 18px,#27d7f2 19px 20px);mask-image:linear-gradient(110deg,transparent,#000)}
+.admin-welcome h1{font-size:clamp(27px,3vw,38px);margin:9px 0}.admin-welcome p{max-width:580px;color:#b8c9db;font-size:12px}
+.admin-tabs{grid-column:1;grid-row:1 / span 12;position:sticky;top:86px;align-self:start;height:calc(100dvh - 106px);max-height:calc(100dvh - 106px);overflow:auto;display:flex;flex-direction:column;gap:5px;padding:14px 11px;border:1px solid var(--admin-line);border-radius:18px;background:linear-gradient(180deg,#121f31,#0f1928);box-shadow:0 16px 42px #0003}
+.admin-nav-label{padding:15px 11px 6px;color:#7189a4;font-size:8px;font-weight:900;letter-spacing:.17em}
+.admin-tabs button{width:100%;min-height:40px;padding:10px 12px;text-align:left;border:1px solid transparent;border-radius:10px;background:transparent;color:#a9bbcf;font-size:9px;font-weight:800;letter-spacing:.045em;line-height:1.35;transition:background .18s,border-color .18s,color .18s}
+.admin-tabs button:hover{background:#1a2b40;color:#effcff}.admin-tabs button.active{border-color:#28647a;background:linear-gradient(100deg,#12384a,#172c42);color:#65e8fa;box-shadow:inset 3px 0 #27d7f2,0 8px 20px #0002}
+.admin-workspace .admin-notice,.admin-workspace .admin-error{grid-column:2;margin:0;border-radius:12px;padding:12px 15px;font-size:11px}
+.admin-notice{border:1px solid #276a66;background:#10312f;color:#a9f1d9}.admin-error{border:1px solid #7c444b;background:#321d29;color:#ffc4c8}
+.admin-queue,.admin-detail{min-width:0;border:1px solid var(--admin-line);border-radius:16px;background:linear-gradient(145deg,#142238,#101b2b)}
+.admin-queue{padding:14px;top:84px}.admin-detail{padding:20px}
+.admin-section-title{font-size:10px;letter-spacing:.12em;color:#dceaf7}.admin-section-title span,.admin-detail-head small{color:var(--admin-accent)}
+.admin-queue-item{border:1px solid #263b54;border-radius:11px;background:#0d1929;color:#f6fbff;padding:13px}.admin-queue-item.active{border-color:#27d7f2;background:#123247}.admin-queue-item small{color:#55d9ef}
+.admin-detail-head h2{font-size:25px;letter-spacing:-.04em}.admin-detail-head p,.admin-muted{color:#a9bbcf}
+.admin-context,.admin-evidence,.admin-image,.admin-score{border:1px solid #263b54;border-radius:13px;background:#0e1a2a;padding:15px}
+.admin-context>b,.admin-evidence>b,.admin-image>b,.admin-history>b{color:#42d9ef}
+.admin-sides article{border:1px solid #2b425d;border-radius:12px;background:#17283d}.admin-sides p,.admin-context p,.admin-evidence p{color:#c4d2e1}
+.admin-refresh{border:1px solid #35516b;border-radius:10px;background:#17283d;color:#dffaff;padding:10px 13px;font-size:9px}
+.admin-publish{background:linear-gradient(110deg,#f2b65b,#e68b52);color:#24170b}.admin-rule{color:#e5bd83}
+.admin-shell input:not([type=checkbox]):not([type=radio]),.admin-shell textarea,.admin-shell select{width:100%;min-height:44px;padding:11px 13px;border:1px solid #334d68;border-radius:11px;background-color:#0d1929;color:#f5fbff;font:500 12px Inter,system-ui,sans-serif;outline:none;box-shadow:inset 0 1px #ffffff08;appearance:none;-webkit-appearance:none}
+.admin-shell select{padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m2 4 4 4 4-4' fill='none' stroke='%2327d7f2' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.admin-shell textarea{min-height:100px;resize:vertical}.admin-shell input:focus,.admin-shell textarea:focus,.admin-shell select:focus{border-color:#27d7f2;box-shadow:0 0 0 3px #27d7f21c}
+.admin-shell input::placeholder,.admin-shell textarea::placeholder{color:#7389a2}.admin-shell input[type=checkbox],.admin-shell input[type=radio]{accent-color:#27d7f2}
+.admin-shell .admin-select-trigger{border:1px solid #334d68;border-radius:11px;background:linear-gradient(145deg,#15263b,#0d1929);color:#f5fbff;min-height:44px}
+.admin-shell .admin-select-trigger:hover,.admin-shell .admin-select-trigger[aria-expanded=true]{border-color:#27d7f2;box-shadow:0 0 0 3px #27d7f21c}
+.admin-shell .admin-select-menu{border:1px solid #31536d;border-radius:13px;background:#13243a;box-shadow:0 20px 50px #0009}
+.admin-shell .admin-select-menu button:hover,.admin-shell .admin-select-menu button.selected{background:#16465a;color:#fff}.admin-shell .admin-select-menu button b{color:#65e8fa}
+.admin-shell button:focus-visible{outline:2px solid #27d7f2;outline-offset:3px}
+@media(max-width:900px){.admin-workspace{grid-template-columns:210px minmax(0,1fr);padding:18px;gap:14px}.admin-tabs{padding:10px 8px}.admin-tabs button{font-size:8px;padding:9px}}
+@media(max-width:680px){.admin-top{height:62px;padding:0 14px}.admin-workspace{display:flex;flex-direction:column;padding:13px 12px 36px;gap:12px}.admin-workspace>*{width:100%}.admin-welcome{order:0;min-height:125px;padding:19px 17px}.admin-welcome:after{right:-35px;opacity:.12}.admin-tabs{order:1;position:sticky;top:62px;z-index:50;width:100%;height:auto;max-height:none;flex-direction:row;align-items:center;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:7px;border-radius:13px}.admin-nav-label{display:none}.admin-tabs button{width:auto;min-width:max-content;min-height:37px;padding:9px 12px;text-align:center;font-size:8px}.admin-workspace>.admin-notice,.admin-workspace>.admin-error{order:2}.admin-workspace>:not(.admin-tabs):not(.admin-welcome):not(.admin-notice):not(.admin-error){order:3}.admin-user span{max-width:120px;overflow:hidden;text-overflow:ellipsis}.admin-detail{padding:13px}.admin-detail-head h2{font-size:21px}}
