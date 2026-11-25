@@ -14,7 +14,7 @@ import "./FootballRunner.css";
 
 type Props = { telegramUser: TelegramUser | null; onBack: () => void; preview?: boolean };
 
-async function createRunnerShareCard(summary:RunnerSummary,playerName:string,avatarUrl?:string):Promise<File>{
+async function createRunnerShareCard(summary:RunnerSummary,playerName:string,avatarUrl?:string,includeReward=false):Promise<File>{
   const canvas=document.createElement("canvas");canvas.width=1200;canvas.height=675;
   const context=canvas.getContext("2d");if(!context)throw new Error("The challenge card could not be prepared.");
   const ctx=context,background=ctx.createLinearGradient(0,0,1200,675);background.addColorStop(0,"#071522");background.addColorStop(.58,"#102b3b");background.addColorStop(1,"#171522");ctx.fillStyle=background;ctx.fillRect(0,0,1200,675);
@@ -31,7 +31,7 @@ async function createRunnerShareCard(summary:RunnerSummary,playerName:string,ava
   ctx.fillStyle="#27d7f2";ctx.font="900 84px Arial";ctx.fillText(summary.points.toLocaleString(),94,500);ctx.fillStyle="#d5e5ef";ctx.font="900 22px Arial";ctx.fillText("POINTS",98,535);
   ctx.fillStyle="#f8fafc";ctx.font="900 34px Arial";ctx.fillText(summary.distance.toLocaleString()+" M",680,490);ctx.fillStyle="#b7c9d8";ctx.font="800 18px Arial";ctx.fillText("DISTANCE",684,523);
   ctx.fillStyle="#f8fafc";ctx.font="900 34px Arial";ctx.fillText(summary.balls.toLocaleString(),930,490);ctx.fillStyle="#b7c9d8";ctx.font="800 18px Arial";ctx.fillText("FOOTBALLS",934,523);
-  ctx.fillStyle="#f6c98c";ctx.font="900 25px Arial";ctx.fillText("CAN YOU BEAT ME?",680,580);
+  if(includeReward&&summary.sethis>0){ctx.fillStyle="#27d7f2";ctx.font="900 21px Arial";ctx.fillText("SETHIS REWARD · "+summary.sethis.toLocaleString(),680,550);}ctx.fillStyle="#f6c98c";ctx.font="900 25px Arial";ctx.fillText("CAN YOU BEAT ME?",680,580);
   ctx.fillStyle="#d6e4ee";ctx.font="700 17px Arial";ctx.fillText("OPEN THE CHALLENGE LINK IN THE CAPTION TO PLAY",94,586);
   const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error("The challenge image could not be generated.")),"image/png",.94));
   return new File([blob],"sethis-football-run-challenge.png",{type:"image/png"});
@@ -64,14 +64,15 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [botUsername,setBotUsername]=useState("");
   const [runnerAccessUnlocked,setRunnerAccessUnlocked]=useState(false);
   const [shareCard,setShareCard] = useState<File|null>(null);
+  const [shareRewardOptIn,setShareRewardOptIn]=useState(false);
   const [shareCardBusy,setShareCardBusy] = useState(false);
   useEffect(()=>{
     if(!summary||preview){setShareCard(null);setShareCardBusy(false);return;}
     let cancelled=false;setShareCard(null);setShareCardBusy(true);
     const playerName=telegramUser?.username?"@"+telegramUser.username:telegramUser?.first_name||"A SETHIS player";
-    void createRunnerShareCard(summary,playerName,telegramUser?.photo_url).then(file=>{if(!cancelled)setShareCard(file);}).catch(()=>{if(!cancelled)setShareCard(null);}).finally(()=>{if(!cancelled)setShareCardBusy(false);});
+    void createRunnerShareCard(summary,playerName,telegramUser?.photo_url,shareRewardOptIn).then(file=>{if(!cancelled)setShareCard(file);}).catch(()=>{if(!cancelled)setShareCard(null);}).finally(()=>{if(!cancelled)setShareCardBusy(false);});
     return()=>{cancelled=true;};
-  },[summary?.points,summary?.distance,summary?.balls,preview,telegramUser?.username,telegramUser?.first_name,telegramUser?.photo_url]);
+  },[summary?.points,summary?.distance,summary?.balls,summary?.sethis,shareRewardOptIn,preview,telegramUser?.username,telegramUser?.first_name,telegramUser?.photo_url]);
   const [rescueBusy, setRescueBusy] = useState(false);
   const [rescueStatus, setRescueStatus] = useState("");
   const [runAchievement, setRunAchievement] = useState<"first" | "record" | "standard">("standard");
@@ -476,7 +477,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
                     <div><small>SETHIS EARNED</small><b>{summary.sethis.toLocaleString()} <em>SETHIS</em></b></div>
                   </section>
-                  <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>{!preview&&<small className="runner-reward-privacy">Your SETHIS reward is private. The shared challenge card only shows your game performance.</small>}
+                  <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>{!preview&&<small className="runner-reward-privacy">Your SETHIS reward is hidden by default. You choose whether it appears on the shared challenge card.</small>{summary.sethis>0&&<label className="runner-share-reward-toggle"><input type="checkbox" checked={shareRewardOptIn} onChange={event=>setShareRewardOptIn(event.target.checked)}/><span>Include my {summary.sethis.toLocaleString()} SETHIS reward on the share card</span></label>}}
                   <section className="runner-share-trophy" aria-label="Share your Football Runner challenge">
                     <div className="runner-share-trophy-brand"><img src="/football-runner-icon.svg" alt="" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></div>
                     <div className="runner-share-trophy-stars">✦　★　✦</div>
