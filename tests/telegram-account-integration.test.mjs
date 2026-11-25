@@ -279,6 +279,11 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(mysteryProfile.data.activity.mystery_sets_won, 1);
   assert.equal(mysteryProfile.data.history.mystery_rounds.length, 2);
 
+  for (const retiredPath of ["/api/courts", "/api/pool-court/retired", "/api/sponsorship", "/api/affiliates", "/api/mystery-game"]) {
+    const retired = await api(env, retiredPath, gameInit);
+    assert.equal(retired.response.status, 410, retiredPath + " should be retired");
+  }
+
   const unauthenticatedRunnerRecords = await worker.fetch(new Request("https://settlethis.test/api/runner/records"), env);
   assert.equal(unauthenticatedRunnerRecords.status, 401);
 
