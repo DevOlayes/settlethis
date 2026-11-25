@@ -1,0 +1,22 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { calculateRunnerSethisReward, calculateMysterySethisReward } from "../src/game-rewards.ts";
+
+test("Runner reward combines collected balls, distance milestones and one performance bonus",()=>{
+  assert.deepEqual(calculateRunnerSethisReward({distance:1200,points:6000,footballs:3,dailyRemaining:300}),{amount:26,football:6,distance:10,performance:10});
+});
+test("Runner reward respects per-run and remaining daily caps",()=>{
+  assert.equal(calculateRunnerSethisReward({distance:10000,points:50000,footballs:100,dailyRemaining:40}).amount,40);
+  assert.equal(calculateRunnerSethisReward({distance:10000,points:50000,footballs:100,dailyRemaining:300,settings:{per_run_cap:55}}).amount,55);
+});
+test("Runner reward rejects invalid scores",()=>{
+  assert.throws(()=>calculateRunnerSethisReward({distance:-1,points:0,footballs:0,dailyRemaining:10}));
+});
+test("Mystery rewards vary by difficulty and clue count",()=>{
+  assert.equal(calculateMysterySethisReward("easy",1,150),10);
+  assert.equal(calculateMysterySethisReward("medium",2,150),14);
+  assert.equal(calculateMysterySethisReward("hard",3,150),15);
+});
+test("Mystery reward respects daily remaining balance",()=>{
+  assert.equal(calculateMysterySethisReward("hard",1,4),4);
+});
