@@ -61,6 +61,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [savingRun, setSavingRun] = useState(false);
   const [runSaveStatus, setRunSaveStatus] = useState("");
   const [shareStatus, setShareStatus] = useState("");
+  const [botUsername,setBotUsername]=useState("");
   const [shareCard,setShareCard] = useState<File|null>(null);
   const [shareCardBusy,setShareCardBusy] = useState(false);
   useEffect(()=>{
@@ -78,12 +79,13 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   useEffect(() => { setCollectionPulse(hud.balls); }, [hud.balls]);
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<"restart" | "exit" | null>(null);
-  const [incomingChallenge] = useState(() => decodeRunnerChallenge(new URLSearchParams(window.location.search).get("challenge")));
+  const [incomingChallenge] = useState(() => decodeRunnerChallenge(new URLSearchParams(window.location.search).get("challenge") || telegramUser?.runner_challenge || null));
   const [incomingChallengeResult] = useState(() => decodeRunnerChallengeResult(new URLSearchParams(window.location.search).get("challengeResult")));
 
   useEffect(() => {
     if (preview || !telegramUser || !initData) { setRecordsLoading(false); return; }
     let active = true;
+    fetch("/api/runner/config", { headers: { "x-telegram-init-data": initData }, cache: "no-store" }).then(response=>response.json()).then(data=>{if(active&&typeof data.bot_username==="string")setBotUsername(data.bot_username);}).catch(()=>{});
     fetch("/api/runner/records", { headers: { "x-telegram-init-data": initData }, cache: "no-store" })
       .then(async (response) => {
         const data = await response.json();
@@ -266,7 +268,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const shareRun = async () => {
     if (!summary) return;
     const challenge = createRunnerChallenge({ points: summary.points, distance: summary.distance, balls: summary.balls });
-    const url = createRunnerChallengeUrl(challenge);
+    const url = createRunnerChallengeUrl(challenge,botUsername);
     const playerName = telegramUser?.username ? "@" + telegramUser.username : telegramUser?.first_name || "A SETHIS player";
     const message = playerName + " is challenging you to beat " + summary.points.toLocaleString() + " points and " + summary.distance.toLocaleString() + "m in SETHIS Football Runner. Open the challenge link and take your turn: " + url;
     try {

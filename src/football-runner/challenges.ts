@@ -92,9 +92,11 @@ export function compareRunnerScores(a: RunnerChallengeScore, b: RunnerChallengeS
   return a.balls - b.balls;
 }
 
-export function createRunnerChallengeUrl(challenge: RunnerChallenge): string {
+export function createRunnerChallengeUrl(challenge: RunnerChallenge, botUsername?: string): string {
+  const encoded = encodeRunnerChallenge(challenge);
+  if (botUsername && /^[a-zA-Z0-9_]{5,32}$/.test(botUsername)) return "https://t.me/" + botUsername + "?startapp=runner_" + encoded;
   const url = new URL("/football-runner", window.location.origin);
-  url.searchParams.set("challenge", encodeRunnerChallenge(challenge));
+  url.searchParams.set("challenge", encoded);
   return url.toString();
 }
 
