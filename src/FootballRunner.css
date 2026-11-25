@@ -1158,6 +1158,6 @@
  .runner-result-actions button{min-height:39px}
 }
 
-/* Remove the parent app's content gutter and bottom-navigation reserve while Runner is active. */
+/* Runner occupies the entire Telegram viewport, without parent gutters or bottom-navigation reserve. */
 .app-shell.app-shell-runner{height:100dvh;min-height:100dvh;padding-bottom:0!important;overflow:hidden}
 .main-content.main-content-runner{width:100%;max-width:none;height:100dvh;min-height:100dvh;margin:0;padding:0!important}
