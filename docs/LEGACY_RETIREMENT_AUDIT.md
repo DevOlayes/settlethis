@@ -48,6 +48,7 @@ The current question-set Mystery Footballer API remains active at `/api/mystery-
 - Deployment time: `2026-11-25T16:56:13.847Z`.
 - Additive migration `0059_admin_analytics_country.sql` was applied to production before deployment. It adds the approximate country code field and per-game presence table/index.
 - Forward migration `0060_retire_legacy_product_tables.sql` was applied after the Worker deployment. All legacy Courts, Pool, debate, sponsorship, affiliate, match-poll and clue-game tables were dropped in foreign-key-safe order.
+- Forward migration `0061_retire_legacy_competition_tables.sql` removed the unused competition catalogue and matchday editorial proposal queue. Fixture records remain because the current quiz workflow still uses them.
 - Production verification found no remaining tables matching the retired feature groups.
 - Current data was preserved: 900 active Mystery Footballer questions (300 per difficulty), Telegram member and wallet records, Runner runs, fixtures, quizzes and quiz questions remain present.
 - GT and SETHIS balances and wallet ledger records were not deleted or rewritten.
