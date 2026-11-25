@@ -141,7 +141,7 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
       {view==="community"&&<div className="rfx-panel">
         <section className="rfx-community">
           {communityError&&<div className="rfx-state rfx-error">{communityError}</div>}
-          <><div className="rfx-community-heading">
+          <div className="rfx-community-heading">
             <div><span className="rfx-kicker">ONE GOAL. EVERY MEMBER.</span><h2>The community challenge</h2></div>
             <span className="rfx-community-icon"><Group width={25} height={25}/></span>
           </div>
@@ -203,7 +203,6 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
               <b>{person.name}{person.is_you?" · YOU":""}</b><strong>{number(person.sethis_earned)} <small>SETHIS</small></strong>
             </article>):<div className="rfx-empty">No SETHIS earners yet.</div>}
           </div>
-          </>}
         </section>
       </div>}
 
