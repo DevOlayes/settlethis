@@ -62,6 +62,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [runSaveStatus, setRunSaveStatus] = useState("");
   const [shareStatus, setShareStatus] = useState("");
   const [botUsername,setBotUsername]=useState("");
+  const [runnerAccessUnlocked,setRunnerAccessUnlocked]=useState(false);
   const [shareCard,setShareCard] = useState<File|null>(null);
   const [shareCardBusy,setShareCardBusy] = useState(false);
   useEffect(()=>{
@@ -85,7 +86,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   useEffect(() => {
     if (preview || !telegramUser || !initData) { setRecordsLoading(false); return; }
     let active = true;
-    fetch("/api/runner/config", { headers: { "x-telegram-init-data": initData }, cache: "no-store" }).then(response=>response.json()).then(data=>{if(active&&typeof data.bot_username==="string")setBotUsername(data.bot_username);}).catch(()=>{});
+    fetch("/api/runner/config", { headers: { "x-telegram-init-data": initData }, cache: "no-store" }).then(response=>response.json()).then(data=>{if(active){if(typeof data.bot_username==="string")setBotUsername(data.bot_username);setRunnerAccessUnlocked(Boolean(data.daily_access_unlocked));}}).catch(()=>{});
     fetch("/api/runner/records", { headers: { "x-telegram-init-data": initData }, cache: "no-store" })
       .then(async (response) => {
         const data = await response.json();
@@ -426,7 +427,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <div className="runner-instruction-row"><b>FOOTBALLS</b><span>Move into their lane to collect them automatically.</span></div>
                   <p>One collision ends the run. Watch the route ahead and keep a safe lane open.</p>
                 </section>}
-                {!preview&&<div className="runner-entry-note"><b>500 GT PER RUN</b><span>Earn SETHIS from verified performance · daily rewards are capped</span></div>}
+                {!preview&&<div className="runner-entry-note"><b>{runnerAccessUnlocked?"ACCESS UNLOCKED TODAY":"500 GT DAILY ACCESS"}</b><span>{runnerAccessUnlocked?"Repeat runs are free for the rest of today.":"Pay once to unlock unlimited runs for today."} Earn SETHIS from verified performance · daily rewards are capped.</span></div>}
                 <div className="runner-ready-actions">
                   <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"START RUN"} <span>→</span></button>
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
