@@ -105,7 +105,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             dailyPreviewTotal: 0,
             dailyPreviewRemaining: 0,
           });
-          if (preview) { setRunSaveStatus("Browser preview only. This run was not saved and earns no CT or SETHIS."); return; }
+          if (preview) { setRunSaveStatus("Browser preview only. This run was not saved and earns no GT or SETHIS."); return; }
           const runId = activeRunIdRef.current;
           if (!runId || !initData) {
             setRunSaveStatus("This run could not be linked to your SETHIS account.");
