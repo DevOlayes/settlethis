@@ -394,7 +394,7 @@ if(path==="/api/admin/competition-catalogue"&&request.method==="GET"){const admi
      const bank=await env.DB.prepare("SELECT id FROM mystery_questions WHERE active=1 AND difficulty=? ORDER BY usage_count ASC,CASE WHEN last_used_at IS NULL THEN 0 ELSE 1 END,last_used_at ASC,created_at ASC,random() LIMIT ?").bind(key,Number(set.question_count)).all<{id:string}>();
      if(bank.results.length<Number(set.question_count))return json({error:"This difficulty does not yet have enough verified questions."},503);
      await env.DB.batch(bank.results.map((q,i)=>env.DB.prepare("INSERT OR IGNORE INTO mystery_question_set_items(set_id,question_id,position) VALUES(?,?,?)").bind(set!.id,q.id,i+1)));
-     await env.DB.batch(bank.results.map(q=>env.DB.prepare("UPDATE mystery_questions SET usage_count=usage_count+1,last_used_at=CURRENT_TIMESTAMP WHERE id=? AND NOT EXISTS(SELECT 1 FROM mystery_question_set_items x JOIN mystery_question_sets s ON s.id=x.set_id WHERE x.question_id=? AND s.set_date<?)").bind(q.id,q.id,setDate)));
+     await env.DB.prepare("UPDATE mystery_questions SET usage_count=usage_count+1,last_used_at=CURRENT_TIMESTAMP WHERE id IN (SELECT question_id FROM mystery_question_set_items WHERE set_id=?) AND (last_used_at IS NULL OR date(datetime(last_used_at,'+1 hour'))<>date('now','+1 hour'))").bind(set.id).run();
      items=await env.DB.prepare("SELECT i.position FROM mystery_question_set_items i WHERE i.set_id=? ORDER BY i.position").bind(set.id).all<{position:number}>();
     }
     if(items.results.length!==Number(set.question_count))return json({error:"Today's question set is incomplete. Please try again shortly."},503);
