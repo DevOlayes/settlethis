@@ -47,7 +47,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: 678b6f8f8cd615747fc2d27320a2ecca
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "::notice::CLOUDFLARE_API_TOKEN is not configured; deployment was skipped."
-            exit 0
+            echo "::error::CLOUDFLARE_API_TOKEN is missing. Production deployment is blocked; configure the repository Actions secret before treating this build as deployed."
+            exit 1
           fi
-          npx wrangler deploy --keep-vars --message "SETHIS Admin dashboard and staff workflow cleanup"
+          npx wrangler deploy --keep-vars --message "SETHIS production release from main"
