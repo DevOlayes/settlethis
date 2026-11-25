@@ -480,10 +480,10 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const throttledLogin = await adminApi(env, "/api/admin/login", adminToken, "POST", { email: "unknown@example.invalid", password: "incorrect" });
   assert.equal(throttledLogin.response.status, 429);
 
+  const invalidBotEnv = { ...env, TELEGRAM_BOT_USERNAME: "attacker.example/path" };
   const invalidBotReferral = await api(invalidBotEnv, "/api/referrals", firstInit);
   assert.equal(invalidBotReferral.response.status, 200);
   assert.equal(invalidBotReferral.data.invite_link, null);
-  assert.equal(invalidBotPoolInvite.response.status, 503);
 });
 
 
