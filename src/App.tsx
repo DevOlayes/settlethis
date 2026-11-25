@@ -69,6 +69,7 @@ function MarketSplit({a,b,unit="people",aLabel="SIDE A",bLabel="SIDE B"}:{a:numb
 function App({ telegramUser }: { telegramUser: import("./telegram").TelegramUser | null }) {
   const [tab, setTab] = useState<Tab>("Games");
   const [activeGame,setActiveGame]=useState<"mystery"|"runner"|null>(null);
+  useEffect(()=>{if(telegramUser?.runner_challenge)setActiveGame("runner");},[telegramUser?.runner_challenge]);
   const [courtFeed,setCourtFeed]=useState<CourtFeedItem[]>([]);
   const [settleEpisodes,setSettleEpisodes]=useState<SettleEpisodeFeed[]>([]);
   const [selectedCourt,setSelectedCourt]=useState<CourtFeedItem|null>(null);
