@@ -2,203 +2,106 @@
 
 **Status:** Current product definition  
 **Product:** SETHIS / Settle This!  
-**Primary experience:** Telegram Mini App, mobile-first  
-**First featured game:** Guess Who? / Mystery Footballer
+**Member access:** Official Telegram Mini App  
+**Games:** Mystery Footballer and Football Runner  
+**Wallet currencies:** GT (Game Token) and SETHIS
 
 ## 1. Product definition
 
-SETHIS is a football gaming and entertainment platform for registered football fans. Members play football challenges, test their knowledge, build a game record, compete on rankings, earn eligible rewards and invite their friends.
+SETHIS is a football gaming and entertainment platform for registered football fans. Members play football games, build a game record, compete on shared game rankings, earn eligible rewards and invite friends.
 
-The product is no longer a football courtroom, debate network or platform for joining sides and waiting for verdicts. The previous Courts experience is retired from the member-facing product.
+The Games experience is the centre of the product. The member-facing product is accessed through the official Telegram Mini App; a general browser session is not an alternative way to play.
 
-The Games area is the centre of the new experience. Mystery Footballer is the first featured game, and Football Runner is the second game in free early access. The product architecture and language must support additional games without making the whole platform look like a single-game website.
+## 2. Member experience
 
-## 2. Member experience and navigation
+The main member destinations are:
 
-The primary navigation contains five destinations:
+- **Games:** Mystery Footballer and Football Runner.
+- **Tasks:** available quizzes, missions, check-ins and reward activities.
+- **Rankings:** shared competitive standings based on recorded game performance.
+- **Referrals:** personal invite links, qualification progress and the existing referral rewards programme.
+- **Wallet:** separate GT and SETHIS balances and transaction history.
 
-### Games
-The home for available football games. Mystery Footballer and Football Runner are the first two titles. Football Runner is free early access: its proposed CT entry fee, SETHIS payouts and rewarded-ad rescues remain inactive until the product owner approves the exact economy. The Games hub should make it clear that additional games will join the line-up as they are developed and released. Do not invent future game names or imply that unreleased games are playable.
+## 3. Mystery Footballer
 
-### Tasks
-A place for daily football quizzes, member missions, check-ins and eligible reward activities. Each task must clearly explain what the member must do, how completion is verified and what reward is available. A reward amount is information, not a button; only the action itself should look clickable.
+Mystery Footballer uses a daily, difficulty-selected question-set format. It is not the former clue-and-guess format.
 
-### Rankings
-Competitive standings based on recorded game performance. Mystery Footballer points are the leading ranking metric at launch. CT spending must never buy ranking points or improve a member's position.
+- Members choose **Easy**, **Medium** or **Hard**.
+- Each difficulty set contains **five multiple-choice questions**, each with four answer options.
+- A member gets one attempt at the selected daily set.
+- A correct answer advances to the next question.
+- One incorrect answer ends the attempt and pays no SETHIS reward.
+- All five answers must be correct to earn the full SETHIS reward for that difficulty.
+- The current entry cost is **300 GT** for each difficulty.
+- Current perfect-set rewards are **130 SETHIS (Easy)**, **200 SETHIS (Medium)** and **500 SETHIS (Hard)**.
+- The 900-question bank contains 300 active questions at each difficulty.
 
-### Referrals
-Personal invite links, invited-member status, qualification progress, milestone rewards and community growth information. Qualification requirements and rewards must be explicit and must reflect server-side rules.
+The game screen and server-side rules are authoritative for availability and the current daily attempt state. Admin manages the question bank and the configured difficulty entry/reward settings.
 
-### Wallet
-Separate CT and SETHIS balances, recorded transactions and available ways to earn CT. The wallet must explain the purpose of each balance and never imply that the two are interchangeable.
+## 4. Football Runner
 
-Help & Information and Customer Care are accessible from Wallet. Their content must describe the current games product, not the retired Courts experience.
+Football Runner is an implemented game, not a placeholder or unrewarded preview.
 
-## 3. First featured game: Guess Who? / Mystery Footballer
+- Daily access costs **500 GT**.
+- Repeat runs are available within the daily access period.
+- Completed runs can earn SETHIS under the existing Runner reward rules.
+- Football Runner participates in the shared game rankings alongside Mystery Footballer.
 
-Mystery Footballer is a football identity guessing game. The identity of a footballer is hidden while the member uses clues and guesses to identify the player.
+The server remains responsible for validating run completion, applying the configured reward rules and recording game results. Do not describe Runner as excluded from rewards or shared rankings.
 
-### Current round structure
+## 5. GT and SETHIS
 
-- A member must be registered and signed in through the official Telegram Mini App.
-- Guest play is not available.
-- Members choose Easy, Medium or Hard.
-- Each round has three clues and up to three guesses.
-- A member can unlock the next clue when they need another hint.
-- An incorrect guess uses one chance.
-- Three incorrect guesses end the round and reveal the answer.
-- The current default round duration is 10 minutes. Admin can configure the duration for new rounds.
-- The CT entry cost is configurable by Admin. The current default is 100 CT.
-- CT is deducted only when the round is successfully created.
-- Existing rounds keep the entry cost and expiry values recorded when they started.
+### GT — Game Token
 
-### Scoring
+GT is the in-app participation currency used for eligible game access and configured activities. GT is distinct from SETHIS.
 
-A correct answer is worth:
+The member-facing name and abbreviation are always **GT (Game Token)**. Do not display or describe the participation currency as CT or Court Tokens.
 
-| When the player is identified | Game points |
-| --- | ---: |
-| Using clue 1 | 100 |
-| Using clue 2 | 70 |
-| Using clue 3 | 40 |
+### SETHIS — reward token
 
-Three incorrect guesses award no game points and reveal the player. Rankings are based on recorded points and game performance, not CT spending.
+SETHIS is the separate platform reward balance. It is credited for eligible game rewards, approved tasks, referrals and other configured reward programmes.
 
-### Content management
-
-Admin manages the Mystery Footballer question bank, including:
-
-- Player answer and accepted name variations
-- Nationality
-- Difficulty
-- Exactly three clues per player
-- Avatar mapping
-- Active or inactive rotation status
-- CT entry cost
-- Round duration
-
-The mystery identity must remain hidden during an active round. Member-facing visuals must use the masked football identity treatment rather than exposing a real player portrait or answer prematurely.
-
-## 4. CT and SETHIS
-
-### CT — participation currency
-
-CT is the in-app currency used for eligible game entries and configured activities. CT is separate from SETHIS.
-
-Current CT sources include the one-time welcome gift and verified rewarded-ad credits. Rewarded-ad availability, cooldowns and daily limits are enforced by the platform. The current configured home reward is 100 CT, with a shared 20-minute cooldown and a maximum of 30 verified ad events per member per Lagos calendar day.
-
-### SETHIS — platform reward token
-
-SETHIS is a separate reward balance. It may be credited for eligible tasks, quizzes, referrals and other explicitly configured reward programmes.
-
-SETHIS and CT are not interchangeable. No cash value, exchange listing, withdrawal, external transfer or blockchain utility should be promised unless a separately approved and legally reviewed product decision authorises it.
+GT and SETHIS are separate balances; do not describe them as interchangeable. Do not promise cash value, withdrawals, exchange listings, external transfers or blockchain utility unless a separately approved product decision authorises it.
 
 ### Wallet integrity
 
-- Every credit and debit must be recorded in the server-side wallet ledger.
-- Rewarded-ad credits require provider verification and server-side validation.
-- Task rewards must follow their configured verification and approval method.
-- Referral rewards require server-confirmed qualification.
+- Credits and debits must be validated server-side and recorded in the wallet ledger.
+- Rewarded-ad GT credits require provider verification and server-side validation.
+- Task rewards follow their configured verification and approval method.
+- Referral rewards follow the existing server-confirmed qualification rules.
 - Client-side success messages must never create a reward by themselves.
-- Balances shown in the UI must remain legible and consistent across the header, Wallet and game screens.
+- GT and SETHIS balances must remain clearly distinguished in the header, Wallet, game screens and transaction history.
 
-## 5. Other games and the growing Games hub
+## 6. Tasks, referrals and rankings
 
-Mystery Footballer is the first featured game. Football Runner is implemented as the second game in free early access. Authenticated runs are recorded against the member account, but scores are not yet prize-eligible or included in public rankings because the client simulation does not provide cryptographic replay verification. CT entry, SETHIS payout and rewarded-ad rescue rules remain disabled pending explicit economy approval. Further games must have their exact formats, rules, scoring and rewards defined before implementation.
+Tasks show the available action, its verification method and the configured SETHIS reward. Existing task reward allocations and approval rules must be preserved; do not invent a new reward cap or change approved amounts as part of terminology work.
 
-The existing daily and fixture football quizzes remain available within Tasks for now. Their placement and the wider Games hub can be revisited as the game catalogue expands.
+The existing referral system is implemented. Its qualification and reward rules are server-controlled and should not be redefined during documentation or terminology updates.
 
-For every future game, define before release:
+Rankings combine the recorded performance of the supported games, including Mystery Footballer and Football Runner. Spending GT does not purchase ranking points or improve rank.
 
-1. The core player experience and objective
-2. Entry requirements and any CT cost
-3. Rules, round duration and completion conditions
-4. Scoring and ranking treatment
-5. Reward eligibility, if any
-6. Admin content and configuration controls
-7. Help Centre answers and Customer Care categories
-8. Abuse prevention and server-side validation
+## 7. Telegram access and member support
 
-Do not add placeholder games that appear playable when they are not.
+Members access gameplay through the official Telegram bot and its Mini App. Telegram authentication and Mini App context are required.
 
-## 6. Member profile and game record
-
-The member profile should focus on football identity and game performance:
-
-- Games played
-- Players identified
-- Game points
-- Game rank
-- Quiz attempts and results
-- Earned SETHIS
-- CT usage
-- Game-specific achievements
-- Recent Mystery Footballer rounds
-- Recent quiz attempts
-- Recent wallet activity
-
-Do not show retired Court entries, debate arguments, replies, verdict wins or Pool Court positions as current product activity.
-
-## 7. Help & Information and Customer Care
-
-All explanations must match the actual product. Quick answers should cover:
-
-- What SETHIS is
-- How Guess Who? / Mystery Footballer works
-- How to start a round
-- Clues, guesses and time limits
-- Scoring and rankings
-- CT versus SETHIS
-- Welcome gift eligibility
-- Rewarded ads, cooldowns and limits
-- Registration and guest-play restrictions
-- Referrals and task rewards
-- Wallet history and support
-
-Customer Care topics should include account and profile, games and game results, CT/SETHIS and wallet, tasks and rewards, referrals and invitations, technical issues, safety and other enquiries.
-
-No Help Centre, onboarding, notification, empty-state or support copy should direct members to join a Court, choose a side, make an argument or wait for a verdict.
+Help & Information, Customer Care, onboarding, notifications and Admin guidance must describe the current game formats and use GT consistently. Do not publish the former three-clue/three-guess Mystery Footballer rules.
 
 ## 8. Admin and operations
 
-The private Admin Portal should open on Mystery Footballer game management. Its current operational areas include:
+The Admin Portal supports current game content and settings, task review, wallet operations, referrals, Customer Care, official community links, member safety and moderation, audit history and staff access.
 
-- Mystery Footballer content and game settings
-- Football quiz management
-- Task claims and reward review
-- CT wallet grants and wallet integrity
-- Referral programme settings
-- Customer Care
-- Official community links
-- Member safety and moderation
-- Admin audit history
-- Staff access
-- Sponsorship and affiliate foundations
-
-Legacy Court editorial, settlement and Pool Court tools are not part of the current member-facing product and should not be promoted as active SETHIS features. Historical database records and backend code are retained during the transition until their dependencies and safe retirement can be reviewed.
-
-The existing scheduled football-content sourcing process is left running during this transition. It must not be paused as part of the UI/product reorientation. Its future role should be assessed against the new game-content pipeline before it is repurposed.
+The current product specification is this document. Older Phase One, Phase Two, Phase Three and token-research documents may contain historical terminology and designs from the retired Courts/debate direction; treat them as historical records, not current product instructions.
 
 ## 9. Visual and interaction principles
 
-- Telegram Mini App first; Android/mobile is the primary usage context.
+- Telegram Mini App first; mobile is the primary usage context.
 - Premium, clean, compact and football-specific.
 - Use the approved Midnight Aubergine, Deep Plum, Muted Violet, Warm Coral, Soft White and Lavender Grey palette.
 - Manrope is the product typeface.
-- Keep text readable and CT balances white on dark surfaces.
-- Use strong, meaningful football/game icons rather than generic decorative symbols.
-- Keep instructions short, clear and action-oriented.
-- Avoid excessive whitespace, oversized cards and unnecessary repeated information.
-- Make buttons visually distinct from plain reward amounts and supporting metadata.
-- Every screen must explain its purpose within the new gaming product.
+- Keep text readable and balances legible on dark surfaces.
+- Use football/game-specific icons and concise, action-oriented instructions.
+- Avoid excessive whitespace, oversized cards and repeated information.
 
-## 10. Development and validation sequence
+## 10. Completion and validation
 
-1. Align member navigation, onboarding, profile, Tasks, Rankings, Referrals, Wallet, Help and Customer Care with the game-first product.
-2. Complete and refine Mystery Footballer as the first featured game.
-3. Ensure Admin content controls and reward operations support the current member experience.
-4. Define and implement additional games one at a time.
-5. Review legacy Court code and records for safe retirement after all dependencies are understood.
-6. Complete final live validation only after the planned development work is complete and the product owner explicitly authorises it.
-
-Production builds and deployments may be used during development. Live end-to-end tests, provider callbacks and other real-world validation remain gated until explicit approval.
+Terminology and documentation must match the implemented product before final member testing. Production data, wallet balances, ledger history, reward allocations and game rules must not be altered by a copy/documentation-only change. Final live Telegram testing and production checks are carried out separately with the product owner.
