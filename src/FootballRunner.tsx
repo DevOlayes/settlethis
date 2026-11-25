@@ -67,7 +67,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [shareCard,setShareCard] = useState<File|null>(null);
   const [tutorialOpen,setTutorialOpen]=useState(false);
   const [tutorialStep,setTutorialStep]=useState(0);
-  const [tutorialComplete,setTutorialComplete]=useState(false);
+  const [tutorialComplete,setTutorialComplete]=useState(()=>{try{return window.localStorage.getItem("sethis_runner_tutorial_v1")==="complete";}catch{return false;}});
   const tutorialPointer=useRef<{x:number;y:number;id:number}|null>(null);
   const [shareCardBusy,setShareCardBusy] = useState(false);
   useEffect(()=>{
@@ -236,7 +236,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     if (action !== sequence[tutorialStep]) { setTutorialStep(0); return; }
     const next = tutorialStep + 1;
     setTutorialStep(next);
-    if (next === sequence.length) { setTutorialComplete(true); setTutorialOpen(false); void start(); }
+    if (next === sequence.length) { setTutorialComplete(true); try{window.localStorage.setItem("sethis_runner_tutorial_v1","complete");}catch{} setTutorialOpen(false); void start(); }
   };
   const onTutorialPointerDown = (event:React.PointerEvent<HTMLDivElement>) => {
     tutorialPointer.current = {x:event.clientX,y:event.clientY,id:event.pointerId};
