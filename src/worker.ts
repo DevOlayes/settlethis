@@ -166,7 +166,7 @@ async function handleTelegramBotUpdate(request:Request,env:Env){
   await telegramBotCall(env,"sendMessage",{chat_id:chat.id,text:"You have opted out of SETHIS broadcast messages. You can still open the Mini App and play. Send /start whenever you want to opt in again."});
  }else if(commandName==="help"){
   await env.DB.prepare("UPDATE telegram_bot_members SET last_interaction_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE telegram_user_id=?").bind(telegramId).run();
-  await telegramBotCall(env,"sendMessage",{chat_id:chat.id,text:"SETHIS is home to football guessing games and challenges. Start with Guess Who? / Mystery Footballer: read three clues and use up to three guesses to identify the player. Your game record is saved to your registered account.",reply_markup:{inline_keyboard:[[{text:"⚽ OPEN SETHIS & PLAY",web_app:{url:SETHIS_MINI_APP_URL}}]]}});
+  await telegramBotCall(env,"sendMessage",{chat_id:chat.id,text:"SETHIS is home to football games and challenges. Start with Mystery Footballer: choose a difficulty and answer five multiple-choice football questions. You can also play Football Runner. Your game record and eligible rewards are saved to your registered account.",reply_markup:{inline_keyboard:[[{text:"⚽ OPEN SETHIS & PLAY",web_app:{url:SETHIS_MINI_APP_URL}}]]}});
  }else{
   await env.DB.prepare("UPDATE telegram_bot_members SET last_interaction_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE telegram_user_id=?").bind(telegramId).run().catch(()=>{});
  }
@@ -412,7 +412,7 @@ if(path==="/api/admin/competition-catalogue"&&request.method==="GET"){const admi
      env.DB.prepare("INSERT OR IGNORE INTO mystery_question_attempts(id,user_id,set_id,status,current_position,correct_answers,total_questions,entry_ct,reward_sethis) SELECT ?,?,?,'active',1,0,?,?,? WHERE (?=0 OR EXISTS(SELECT 1 FROM wallet_ledger WHERE idempotency_key=? AND user_id=?))").bind(attemptId,user,set.id,Number(set.question_count),Number(set.entry_ct),Number(set.reward_sethis),Number(set.entry_ct),ledgerKey,user)
     ]);
     const attempt=await env.DB.prepare("SELECT id,status,current_position,correct_answers,total_questions,reward_sethis FROM mystery_question_attempts WHERE user_id=? AND set_id=?").bind(user,set.id).first<Record<string,unknown>>();
-    if(!attempt){const wallet=await env.DB.prepare("SELECT ct_balance FROM wallets WHERE user_id=?").bind(user).first<{ct_balance:number}>();return json({error:"You need "+Number(set.entry_ct).toLocaleString()+" CT to enter this challenge.",required_ct:Number(set.entry_ct),balance_ct:Number(wallet?.ct_balance)||0},402);}
+    if(!attempt){const wallet=await env.DB.prepare("SELECT ct_balance FROM wallets WHERE user_id=?").bind(user).first<{ct_balance:number}>();return json({error:"You need "+Number(set.entry_ct).toLocaleString()+" GT to enter this challenge.",required_ct:Number(set.entry_ct),balance_ct:Number(wallet?.ct_balance)||0},402);}
     const question=await env.DB.prepare("SELECT q.id,q.question_text,q.option_a,q.option_b,q.option_c,q.option_d,i.position FROM mystery_question_set_items i JOIN mystery_questions q ON q.id=i.question_id WHERE i.set_id=? AND i.position=1").bind(set.id).first<Record<string,unknown>>();
     const wallet=await env.DB.prepare("SELECT ct_balance,sethis_balance FROM wallets WHERE user_id=?").bind(user).first();
     return json({attempt:{id:attempt.id,status:attempt.status,current_position:Number(attempt.current_position),total_questions:Number(attempt.total_questions),correct_answers:Number(attempt.correct_answers)},question,wallet});
