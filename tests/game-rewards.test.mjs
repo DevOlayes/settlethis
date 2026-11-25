@@ -25,3 +25,7 @@ test("Both games stop issuing SETHIS after the daily cap is exhausted",()=>{
   assert.equal(calculateRunnerSethisReward({distance:9000,points:50000,footballs:30,dailyRemaining:0}).amount,0);
   assert.equal(calculateMysterySethisReward("hard",1,0),0);
 });
+
+test("configured Mystery Footballer reward values override launch defaults",()=>{
+  assert.equal(calculateMysterySethisReward("hard",1,100,{reward_hard_clue1:42}),42);
+});
