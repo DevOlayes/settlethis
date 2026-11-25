@@ -271,10 +271,6 @@ async function monetagPostback(env, fields, secret = env.MONETAG_POSTBACK_SECRET
 }
 
 test("Monetag postbacks enforce secret, valued-event, user, placement, shared cooldown, daily cap and exactly-once wallet notifications", async () => {
-  // At the start of the Lagos day, the prior-day cooldown overlaps the reset.
-  // Skip the same-day cap fixture during that unavoidable 20-minute window.
-  const lagosNow = new Date(Date.now() + 60 * 60 * 1000);
-  if (lagosNow.getUTCHours() === 0 && lagosNow.getUTCMinutes() < 21) return;
   const env = createEnvironment();
   const user = { id: 710001, first_name: "AdTest", username: "ad_test_member" };
   const initData = signedInitData(user);
@@ -340,8 +336,13 @@ test("Monetag postbacks enforce secret, valued-event, user, placement, shared co
       .run("seed-ad-" + index, "monetag", "seed-ad-event-" + index, String(user.id), "home_ct", "CT", 100, "valued", "12269852");
   }
   const statusAt29 = await api(env, "/api/ads/status", initData);
-  assert.equal(statusAt29.data.ads_today, 30); // one real credit plus 29 seeded records
-  assert.equal(statusAt29.data.remaining_today, 0);
+  // During the first 21 minutes after Lagos midnight, the 21-minute-old fixtures
+  // correctly belong to yesterday, so the daily counter has already reset.
+  const lagosNow = new Date(Date.now() + 60 * 60 * 1000);
+  const justAfterMidnight = lagosNow.getUTCHours() === 0 && lagosNow.getUTCMinutes() < 21;
+  assert.equal(statusAt29.data.ads_today, justAfterMidnight ? 0 : 30);
+  assert.equal(statusAt29.data.remaining_today, justAfterMidnight ? 30 : 0);
+  if (justAfterMidnight) return;
 
   // Use a fresh member for an exact 29 -> 30 -> 31 daily-cap boundary.
   const capUser = { id: 710002, first_name: "CapTest", username: "cap_test_member" };
