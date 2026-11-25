@@ -188,6 +188,28 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(repeatRunnerFinish.response.status, 200);
   const walletAfterRepeatRun = await api(env, "/api/wallet", firstInit);
   assert.equal(walletAfterRepeatRun.data.wallet.ct_balance, 3000, "repeat runs must not charge another daily access fee");
+
+  env.testDb.prepare("INSERT INTO mystery_players(id,answer,accepted_answers_json,nationality,difficulty,avatar_key,active) VALUES(?,?,?,?,?,?,1)").run("test-mystery-player","Didier Drogba","[]","Ivory Coast","easy","test-mystery-avatar");
+  env.testDb.prepare("INSERT INTO mystery_player_clues(id,player_id,clue_number,clue_text) VALUES(?,?,?,?)").run("test-mystery-clue-1","test-mystery-player",1,"He won the Champions League with Chelsea in 2012.");
+  env.testDb.prepare("INSERT INTO mystery_player_clues(id,player_id,clue_number,clue_text) VALUES(?,?,?,?)").run("test-mystery-clue-2","test-mystery-player",2,"He is a legendary striker from Ivory Coast.");
+  env.testDb.prepare("INSERT INTO mystery_player_clues(id,player_id,clue_number,clue_text) VALUES(?,?,?,?)").run("test-mystery-clue-3","test-mystery-player",3,"He scored in the 2012 Champions League final.");
+  const mysteryState = await api(env, "/api/mystery-game", firstInit);
+  assert.equal(mysteryState.data.entry_ct, 300);
+  assert.equal(mysteryState.data.daily_entries_remaining, 5);
+  assert.equal(mysteryState.data.daily_access_unlocked, false);
+  const mysteryStart = await api(env, "/api/mystery-game/start", firstInit, "POST", { difficulty: "easy" });
+  assert.equal(mysteryStart.response.status, 201);
+  assert.equal(mysteryStart.data.round.id.length > 0, true);
+  const mysteryGuess = await api(env, "/api/mystery-game/" + mysteryStart.data.round.id + "/guess", firstInit, "POST", { guess: "Didier Drogba" });
+  assert.equal(mysteryGuess.response.status, 200);
+  assert.equal(mysteryGuess.data.sethis_reward, 10);
+  const walletAfterMystery = await api(env, "/api/wallet", firstInit);
+  assert.equal(walletAfterMystery.data.wallet.ct_balance, 2700, "Mystery Footballer daily access should cost 300 GT once");
+  assert.equal(walletAfterMystery.data.wallet.sethis_balance, 10, "a correct first-clue Mystery answer should reward 10 SETHIS");
+  const mysteryStartAgain = await api(env, "/api/mystery-game/start", firstInit, "POST", { difficulty: "easy" });
+  assert.equal(mysteryStartAgain.response.status, 201);
+  const walletAfterMysteryRepeat = await api(env, "/api/wallet", firstInit);
+  assert.equal(walletAfterMysteryRepeat.data.wallet.ct_balance, 2700, "additional Mystery rounds must not charge another daily access fee");
   const unauthenticatedRunnerRecords = await worker.fetch(new Request("https://settlethis.test/api/runner/records"), env);
   assert.equal(unauthenticatedRunnerRecords.status, 401);
 
