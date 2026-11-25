@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS mystery_question_attempts (
   entry_ct INTEGER NOT NULL CHECK(entry_ct>=0),
   reward_sethis INTEGER NOT NULL CHECK(reward_sethis>=0),
   reward_ledger_key TEXT UNIQUE,
+  reward_credited_at TEXT,
   started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   completed_at TEXT,
   UNIQUE(user_id,set_id)
