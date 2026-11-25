@@ -1,61 +1,71 @@
 # Legacy retirement and current-product alignment
 
-**Working branch:** `cleanup/current-product-alignment`  
-**Baseline:** `main` at `08a36a7798d247f3a7080b8c9747e13cc0ac1904`  
-**Audit date:** 2026-11-25  
-**Status:** In progress. No production data or schema has been deleted.
+**Status:** Completed and deployed  
+**Date:** 2026-11-25  
+**Pull request:** #3 — merged to `main`  
+**Cloudflare Worker:** `settlethis`  
+**Production database:** `sethis-production`
 
 ## Current release boundary
 
-SETHIS is the Telegram Mini App for football games. Current member destinations are Games, Tasks, Rankings, Referrals and Wallet. Current games are Mystery Footballer and Football Runner. The member-facing participation currency is GT (Game Token); SETHIS is the separate reward token.
+SETHIS is the Telegram Mini App for football games. The member experience is Games, Tasks, Rankings, Referrals and Wallet. The games are Mystery Footballer and Football Runner. The participation currency is GT; SETHIS is the separate reward token.
 
-Preserve the existing referral programme, task reward allocations, Monetag rewarded-ad crediting, game access and reward rules, shared rankings, wallet ledger, Telegram authentication, support, moderation, staff access and current Admin analytics/settings.
-
-The retired Courts / Pool Courts / debate-episode product is not part of this release. Sponsorship and affiliate placements are out of scope.
-
-## Confirmed legacy surfaces on baseline main
-
-| Area | Confirmed evidence | Required treatment |
-|---|---|---|
-| Member app | `src/App.tsx` still contains Court, Pool, argument and episode models and Court-room UI. | Remove the old member experience as a coherent app-flow change; preserve shared account, wallet and moderation primitives. |
-| Member placements | `SponsorSlot` and `AffiliateSlot` are imported and rendered in the old Court-room UI. | Remove member-facing placements and their callers. |
-| Admin | `src/Admin.tsx` still declares sponsorship, affiliate, Court, Pool and Settle Argument state and section identifiers. | Rebuild navigation around current release operations; remove legacy screens and state in dependency-safe batches. |
-| Worker | `src/worker.ts` still serves sponsorship, affiliate, Court and Settle Argument routes alongside current game routes. | Trace callers, then retire routes with no current-release consumer. Keep shared auth, wallet, audit and moderation services. |
-| Migrations | `0031_sponsorship_foundation.sql`, `0032_sponsorship_measurement.sql`, `0033_affiliate_commerce.sql` and earlier Court/Pool migrations establish historical schema. | Keep applied migrations immutable. Inspect production tables and dependencies before any forward cleanup. |
-| Docs | `docs/PRODUCT_DIRECTION.md` defines the current product; older phase and token research docs contain historical direction. | Make the current product definition authoritative and label historical material clearly. |
-
-## Current-release data and code to protect
-
-- Mystery Footballer daily five-question sets, difficulty levels, question bank and rewards.
+Preserved current systems:
+- Mystery Footballer five-question daily sets, Easy/Medium/Hard rules, 900-question bank and configured rewards.
 - Football Runner daily access, repeat runs, server-validated rewards and shared rankings.
-- GT and SETHIS balances, wallet ledger and integrity checks.
-- Referral qualification/reward history and task definitions/claims/approvals.
-- Monetag verification and rewarded-ad credits.
-- Telegram authentication and member records.
-- Current Admin analytics, member directory, Mystery Footballer settings, Runner settings, support, referrals, staff, moderation and audit capabilities.
+- Wallet balances and ledger, task rewards and claims, referral programme, Monetag reward verification, football quizzes, Telegram member records, support, staff access, moderation and audit operations.
+- Fixtures and quiz data used by the current quiz/task workflows.
 
-## Database safety rules
+## Retired systems
 
-1. Do not edit or delete already-applied migration files.
-2. Do not drop a table until all source references, foreign keys, triggers, indexes, views, jobs and production row counts have been checked.
-3. Preserve wallet ledger entries, balances, referral history, task claims, game attempts/results/rewards, question bank records, moderation history and audit history.
-4. For confirmed isolated legacy tables, use a new numbered forward migration and back up affected production tables first.
-5. No destructive production SQL during this audit.
+The following are no longer part of the active product:
+- Courts, Pool Courts and their member participation, argument, reply, reaction, poll and settlement flows.
+- Settle Argument episodes and debate-source ingestion/review.
+- Sponsorship placements, sponsor campaign operations and affiliate placements/click tracking.
+- The old clue-based Mystery Footballer implementation and player/clue/round records.
+- Competition discovery and retired match-poll interfaces.
 
-## Work sequence
+The current question-set Mystery Footballer API remains active at `/api/mystery-challenge`; the old clue-game API is retired.
 
-- [x] Create a dedicated cleanup branch and record the audit baseline.
-- [ ] Trace the product-direction pivot and check which later commits carried it forward.
-- [ ] Inventory member-app legacy screens, components and CSS.
-- [ ] Inventory Admin navigation, loaders, forms and API dependencies.
-- [ ] Inventory Worker routes and current-release consumers.
-- [ ] Map migrations to live tables, triggers, foreign keys and production data.
-- [ ] Remove legacy member surfaces and placements.
-- [ ] Rebuild Admin navigation and retire legacy admin screens.
-- [ ] Remove unreferenced Worker endpoints and feature-specific code.
-- [ ] Add a forward-only database cleanup migration only for verified orphaned schema.
-- [ ] Update current docs and label historical documents.
-- [ ] Run typecheck, build, tests and code/dependency audits.
-- [ ] Deploy only after source and schema are aligned; verify production and Telegram Mini App behavior.
+## Source changes
 
-This file records confirmed findings and the cleanup plan. It does not claim legacy code, routes or tables have already been removed. Production deployment and destructive database cleanup remain blocked pending dependency and backup checks.
+- Removed SponsorSlot and AffiliateSlot from the member app and deleted those components.
+- Removed the unused CompetitionDiscovery component.
+- Removed the old debate-sourcing Admin component.
+- Stopped Admin initialization from loading retired editorial, poll, Court, Pool, sponsorship and affiliate data.
+- Retired the old Worker API handlers and blocked remaining legacy path variants with HTTP 410 responses.
+- Removed debate ingestion from the scheduled Worker path.
+- Updated profile history and achievements to reflect five-question Mystery Footballer sets.
+- Updated shared rankings to use Football Runner runs and Mystery Footballer attempts.
+- Updated wallet-integrity checks to validate current Runner, Mystery Footballer, quiz, task, referral, rewarded-ad and wallet ledger flows.
+- Fixed Mystery Footballer question progression so each correct answer advances to the next question and the fifth correct answer settles the perfect set.
+
+## Production deployment and database changes
+
+- Cloudflare Workers Build completed successfully from `main`.
+- Build ID: `3fd4063b-80e9-447d-8def-41c0e7917861`.
+- Deployed Worker version: `5d480642-9f25-461e-b0b0-a1cd68f0f22f`.
+- Deployment time: `2026-11-25T16:56:13.847Z`.
+- Additive migration `0059_admin_analytics_country.sql` was applied to production before deployment. It adds the approximate country code field and per-game presence table/index.
+- Forward migration `0060_retire_legacy_product_tables.sql` was applied after the Worker deployment. All legacy Courts, Pool, debate, sponsorship, affiliate, match-poll and clue-game tables were dropped in foreign-key-safe order.
+- Production verification found no remaining tables matching the retired feature groups.
+- Current data was preserved: 900 active Mystery Footballer questions (300 per difficulty), Telegram member and wallet records, Runner runs, fixtures, quizzes and quiz questions remain present.
+- GT and SETHIS balances and wallet ledger records were not deleted or rewritten.
+
+## Verification
+
+- The GitHub verification workflow passed before merge.
+- The Cloudflare production build completed and the Worker deployment succeeded.
+- The deployed Worker contains the current Admin overview, Runner settings, Mystery Footballer settings, question-set game API and current profile/ranking logic.
+- Production D1 checks confirmed the new country and presence schema, the full 900-question bank and absence of retired feature tables.
+
+## Remaining operational checks
+
+The remaining checks are normal live product acceptance checks, not legacy cleanup work:
+- Test with real Telegram accounts on mobile.
+- Complete a full Easy, Medium and Hard Mystery Footballer set and verify reward settlement.
+- Complete a Football Runner access cycle and verify repeat runs and reward rules.
+- Review the redesigned Admin Portal, wallet audit, task administration, referrals, support and moderation.
+- Confirm Telegram bot settings, official social links, security headers and production logs with the product owner.
+
+Applied migration files are immutable. Any future schema change must be a new numbered forward migration.
