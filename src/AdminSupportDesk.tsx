@@ -3,7 +3,7 @@ import "./AdminSupportDesk.css";
 type Ticket={id:string;user_id:string;category:string;subject:string;status:"open"|"in_progress"|"waiting_member"|"resolved";created_at:string;updated_at:string;last_message_at:string;username?:string|null;first_name?:string|null;last_name?:string|null;latest_message?:string|null;latest_sender?:string|null;message_count:number};
 type Message={id:string;sender_type:"member"|"admin";sender_id:string;body:string;created_at:string};
 const labels:Record<string,string>={open:"Open",in_progress:"In progress",waiting_member:"Waiting for member",resolved:"Resolved"};
-const categoryLabels:Record<string,string>={account:"Account & profile",wallet:"CT, SETHIS & wallet",games:"Games & game results",rewards:"Tasks & rewards",referrals:"Referrals & invitations",technical:"App or technical issue",safety:"Safety or conduct",other:"Something else"};
+const categoryLabels:Record<string,string>={account:"Account & profile",wallet:"GT, SETHIS & wallet",games:"Games & game results",rewards:"Tasks & rewards",referrals:"Referrals & invitations",technical:"App or technical issue",safety:"Safety or conduct",other:"Something else"};
 async function careAdminApi(path:string,init?:RequestInit){const r=await fetch(path,{...init,cache:"no-store",credentials:"same-origin",headers:{"content-type":"application/json",...(init?.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Customer Care request failed.");return d;}
 export default function AdminSupportDesk(){
  const [tickets,setTickets]=useState<Ticket[]>([]),[filter,setFilter]=useState("all"),[active,setActive]=useState<Ticket|null>(null),[messages,setMessages]=useState<Message[]>([]),[reply,setReply]=useState("");
