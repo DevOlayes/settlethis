@@ -267,3 +267,13 @@
 
 /* Prevent loaded referral content from widening the Mini App viewport */
 .referral-page,.rfx-page{width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow-x:clip}.rfx-page *{box-sizing:border-box;min-width:0}.rfx-hero,.rfx-invite,.rfx-panel,.rfx-stats,.rfx-stat-pair,.rfx-milestones,.rfx-community,.rfx-activity-section,.rfx-leadership-card,.rfx-target-section,.rfx-leaderboard{max-width:100%;min-width:0}.rfx-link-box{width:100%;max-width:100%;min-width:0}.rfx-link-box>span:first-child{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rfx-link-code{max-width:35%;overflow:hidden;text-overflow:ellipsis}.rfx-page button,.rfx-page article,.rfx-page section{min-width:0;max-width:100%}.rfx-page p,.rfx-page small,.rfx-page b,.rfx-page strong{overflow-wrap:anywhere}@media(max-width:560px){.rfx-page{padding-inline:0}.rfx-hero{padding:17px 15px}.rfx-hero-copy{max-width:72%}.rfx-stats{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}.rfx-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Hard containment for asynchronously loaded referral data on narrow Telegram WebViews. */
+.referral-page.rfx-page{display:grid;width:100%;max-width:min(920px,100%);min-width:0;max-inline-size:100%;box-sizing:border-box;contain:inline-size;overflow-x:clip;position:relative}
+.referral-page.rfx-page *{box-sizing:border-box;min-width:0;max-width:100%}
+.rfx-page .rfx-link-box{display:grid;grid-template-columns:minmax(0,1fr) auto;width:100%;max-width:100%;min-width:0}
+.rfx-page .rfx-link-box>span:first-child{display:block;width:100%;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal}
+.rfx-page .rfx-link-code{max-width:32vw;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.rfx-page .rfx-leadership-branches,.rfx-page .rfx-leadership-stats,.rfx-page .rfx-leadership-rates,.rfx-page .rfx-community-metrics{min-width:0;max-width:100%}
+.rfx-page .rfx-leadership-branches>div,.rfx-page .rfx-member-list article,.rfx-page .rfx-leaderboard>article{min-width:0;max-width:100%;overflow:hidden}
+@media(max-width:560px){.referral-page.rfx-page{width:100%;max-width:100%;padding-inline:0;contain:inline-size}.rfx-page .rfx-hero-copy{max-width:72%;min-width:0}.rfx-page .rfx-tabs{width:100%;max-width:100%;grid-template-columns:repeat(3,minmax(0,1fr))}.rfx-page .rfx-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
