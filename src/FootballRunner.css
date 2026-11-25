@@ -1098,3 +1098,6 @@
 .runner-share-action>small{font-size:8px;font-weight:700;opacity:.82}
 .runner-reward-privacy{display:block;margin:5px auto 8px;max-width:330px;color:#aab9c8;font-size:8px;line-height:1.5;text-align:center}
 @media(max-width:380px){.runner-entry-note{align-items:flex-start;flex-direction:column;gap:4px}.runner-entry-note>span{text-align:left}.runner-share-action{padding:10px!important}}
+
+.runner-share-reward-toggle{display:flex;align-items:center;justify-content:center;gap:8px;max-width:360px;margin:8px auto 10px;padding:9px 11px;border:1px solid #27d7f255;border-radius:10px;background:#102b3b;color:#dce8f1;font-size:9px;font-weight:800;line-height:1.4}
+.runner-share-reward-toggle input{width:16px;height:16px;accent-color:#27d7f2;flex:none}
