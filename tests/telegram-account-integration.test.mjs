@@ -407,6 +407,27 @@ test("Telegram accounts persist independently through onboarding, profile, check
     .bind(String(secondUser.id), "restricted", "Repeated abusive conduct in this integration test.", 1)
     .run();
 
+  const mysterySettingsColumns = env.testDb.prepare("PRAGMA table_info(mystery_game_settings)").all().map(column => column.name);
+  assert.deepEqual(mysterySettingsColumns.sort(), [
+    "entry_easy_ct","entry_hard_ct","entry_medium_ct","id","question_count",
+    "reward_easy_sethis","reward_hard_sethis","reward_medium_sethis","updated_at"
+  ].sort());
+  const mysterySettings = await adminApi(env, "/api/admin/mystery-game-settings", adminToken);
+  assert.equal(mysterySettings.response.status, 200);
+  assert.equal(mysterySettings.data.settings.question_count, 5);
+  const invalidMysterySettings = await adminApi(env, "/api/admin/mystery-game-settings", adminToken, "PATCH", {
+    entry_easy_ct: 300, entry_medium_ct: 300, entry_hard_ct: 300,
+    reward_easy_sethis: 130, reward_medium_sethis: 200, reward_hard_sethis: 500,
+    question_count: 4
+  });
+  assert.equal(invalidMysterySettings.response.status, 400);
+  const validMysterySettings = await adminApi(env, "/api/admin/mystery-game-settings", adminToken, "PATCH", {
+    entry_easy_ct: 300, entry_medium_ct: 300, entry_hard_ct: 300,
+    reward_easy_sethis: 130, reward_medium_sethis: 200, reward_hard_sethis: 500,
+    question_count: 5
+  });
+  assert.equal(validMysterySettings.response.status, 200);
+
   const userReport = await api(env, "/api/reports", firstInit, "POST", {
     target_type: "user", target_id: "@arsenal_fan", reason: "Abusive conduct", details: "A report against this member for moderator review."
   });
