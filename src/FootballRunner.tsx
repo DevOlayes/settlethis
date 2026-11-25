@@ -61,6 +61,15 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [savingRun, setSavingRun] = useState(false);
   const [runSaveStatus, setRunSaveStatus] = useState("");
   const [shareStatus, setShareStatus] = useState("");
+  const [shareCard,setShareCard] = useState<File|null>(null);
+  const [shareCardBusy,setShareCardBusy] = useState(false);
+  useEffect(()=>{
+    if(!summary||preview){setShareCard(null);setShareCardBusy(false);return;}
+    let cancelled=false;setShareCard(null);setShareCardBusy(true);
+    const playerName=telegramUser?.username?"@"+telegramUser.username:telegramUser?.first_name||"A SETHIS player";
+    void createRunnerShareCard(summary,playerName,telegramUser?.photo_url).then(file=>{if(!cancelled)setShareCard(file);}).catch(()=>{if(!cancelled)setShareCard(null);}).finally(()=>{if(!cancelled)setShareCardBusy(false);});
+    return()=>{cancelled=true;};
+  },[summary?.points,summary?.distance,summary?.balls,preview,telegramUser?.username,telegramUser?.first_name,telegramUser?.photo_url]);
   const [rescueBusy, setRescueBusy] = useState(false);
   const [rescueStatus, setRescueStatus] = useState("");
   const [runAchievement, setRunAchievement] = useState<"first" | "record" | "standard">("standard");
@@ -261,22 +270,25 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     const playerName = telegramUser?.username ? "@" + telegramUser.username : telegramUser?.first_name || "A SETHIS player";
     const message = playerName + " is challenging you to beat " + summary.points.toLocaleString() + " points and " + summary.distance.toLocaleString() + "m in SETHIS Football Runner. Open the challenge link and take your turn: " + url;
     try {
-      const card = await createRunnerShareCard(summary, playerName, telegramUser?.photo_url);
+      const card = shareCard;
+      if (!card) { setShareStatus(shareCardBusy ? "Your challenge card is still being prepared. Try again in a moment." : "The challenge card could not be prepared. Please try again."); return; }
       const shareData: ShareData = { title: "Your SETHIS Football Runner challenge", text: message, url };
       if (navigator.share && typeof navigator.canShare === "function" && navigator.canShare({ files: [card] })) {
-        await navigator.share({ ...shareData, files: [card] });
+        const pendingShare = navigator.share({ ...shareData, files: [card] });
+        await pendingShare;
         setShareStatus("Your challenge card and personal challenge link are ready to send.");
       } else {
         const objectUrl = URL.createObjectURL(card);
-        const anchor = document.createElement("a");
-        anchor.href = objectUrl;
-        anchor.download = "sethis-football-run-challenge.png";
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
+        const downloadLink = document.createElement("a");
+        downloadLink.href = objectUrl;
+        downloadLink.download = "sethis-football-run-challenge.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
         window.setTimeout(() => URL.revokeObjectURL(objectUrl), 15000);
         if (navigator.share) {
-          await navigator.share(shareData);
+          const pendingShare = navigator.share(shareData);
+          await pendingShare;
           setShareStatus("Challenge card saved. Your personal challenge link is ready to send.");
         } else if (navigator.clipboard?.writeText) {
           await navigator.clipboard.writeText(message);
@@ -412,7 +424,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <div className="runner-instruction-row"><b>FOOTBALLS</b><span>Move into their lane to collect them automatically.</span></div>
                   <p>One collision ends the run. Watch the route ahead and keep a safe lane open.</p>
                 </section>}
-                <div className="runner-entry-note"><b>500 GT PER RUN</b><span>Earn SETHIS from verified performance · daily rewards are capped</span></div>
+                {!preview&&<div className="runner-entry-note"><b>500 GT PER RUN</b><span>Earn SETHIS from verified performance · daily rewards are capped</span></div>}
                 <div className="runner-ready-actions">
                   <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"START RUN"} <span>→</span></button>
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
@@ -470,7 +482,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <b className="runner-share-dare">CAN YOU BEAT ME?</b>
                   </section>
                   <div className="runner-result-actions">
-                    <button className="runner-share-action" onClick={()=>void shareRun()} disabled={savingRun}><span>↗</span><b>SHARE CHALLENGE CARD</b><small>Send your run graphic with the challenge link</small></button>
+                    <button className="runner-share-action" onClick={()=>void shareRun()} disabled={savingRun||shareCardBusy}><span>↗</span><b>{shareCardBusy?"PREPARING CARD…":"SHARE CHALLENGE CARD"}</b><small>Send your run graphic with the challenge link</small></button>
                     <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING…":startBusy?"PREPARING…":"PLAY AGAIN"} <span>→</span></button>
                     <button className="runner-secondary" onClick={requestExit}>{preview ? "EXIT PREVIEW" : "EXIT TO GAMES"}</button>
                   </div>
