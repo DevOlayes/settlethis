@@ -70,7 +70,7 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
       </div>
     </header>
 
-    {loading?<div className="rfx-state">Loading referral progress…</div>:error?<div className="rfx-state rfx-error"><b>Referrals unavailable</b><p>{error}</p><button type="button" onClick={()=>void refresh()}>TRY AGAIN</button></div>:data&&<>
+    {loading?<div className="rfx-state">Loading referral progress…</div>:error?<div className="rfx-state rfx-error"><b>Referrals unavailable</b><p>{error}</p><button type="button" onClick={()=>void onRefresh()}>TRY AGAIN</button></div>:data&&<>
       <section className="rfx-invite">
         <div className="rfx-invite-top">
           <div><span className="rfx-kicker">YOUR PERSONAL INVITE</span><h2>Bring your crew in.</h2></div>
