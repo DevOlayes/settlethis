@@ -194,6 +194,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   }, [preview, initData, avatarDiagnostic]);
 
   const start = async () => {
+    setShareRewardOptIn(false);
     if (startBusy || savingRun) return;
     if (!preview) {
       const webApp=window.Telegram?.WebApp;
