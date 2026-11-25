@@ -43,6 +43,7 @@ const EMPTY_RECORDS: RunnerRecords = { bestDistance: 0, bestPoints: 0, totalRuns
 
 export default function FootballRunner({ telegramUser, onBack, preview = false }: Props) {
   const initData = window.Telegram?.WebApp?.initData || "";
+  useEffect(() => { if (preview || !telegramUser || !initData) return; const ping = () => { void fetch("/api/game-presence", { method: "POST", headers: { "content-type": "application/json", "x-telegram-init-data": initData }, body: JSON.stringify({ game_key: "football_runner" }), keepalive: true }).catch(() => {}); }; ping(); const timer = window.setInterval(ping, 60000); return () => window.clearInterval(timer); }, [preview, telegramUser, initData]);
   const avatarDiagnostic = window.location.pathname === "/avatar-diagnostic" || new URLSearchParams(window.location.search).get("avatar-test") === "1";
   const mountRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<RunnerControls | null>(null);
