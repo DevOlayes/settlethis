@@ -1,0 +1,1 @@
+ALTER TABLE game_daily_access ADD COLUMN debited_at TEXT;
