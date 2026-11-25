@@ -6,7 +6,7 @@ type GameId="mystery"|"runner";
 
 function PlayMark(){return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.8c0-.8.9-1.3 1.6-.9l9.2 5.3a1 1 0 0 1 0 1.7l-9.2 5.3c-.7.4-1.6-.1-1.6-.9V5.8Z" fill="currentColor"/></svg>}
 
-function MysteryArtwork(){return <div className="gamelib-art gamelib-mystery" role="img" aria-label="Mystery Footballer: identify the hidden football star">
+function MysteryArtwork(){return <div className="gamelib-art gamelib-mystery" role="img" aria-label="Mystery Footballer: answer five daily football questions">
   <div className="gamelib-stadium-glow"/><div className="gamelib-stadium-lights"><i/><i/><i/><i/></div>
   <div className="gamelib-mystery-pitch"><i/><i/><i/></div>
   <div className="gamelib-mystery-copy"><span className="gamelib-art-kicker">FOOTBALL KNOWLEDGE</span><strong>WHO'S<br/>THE PLAYER?</strong><small>3 CLUES. 1 LEGEND.</small><span className="gamelib-clue-row"><i>01</i><i>02</i><i>03</i></span></div>
@@ -62,7 +62,7 @@ function GameArtwork({game}:{game:GameId}){return game==="mystery"?<MysteryArtwo
 
 export default function GamesHome({onSelect}:{onSelect:(game:GameId)=>void}){
  const games:[{id:GameId;name:string;kind:string;tag:string},...{id:GameId;name:string;kind:string;tag:string}[]]=[
-  {id:"mystery",name:"Mystery Footballer",kind:"FOOTBALL KNOWLEDGE",tag:"GUESS THE PLAYER"},
+  {id:"mystery",name:"Mystery Footballer",kind:"FOOTBALL KNOWLEDGE",tag:"FIVE-QUESTION QUIZ"},
   {id:"runner",name:"Football Runner",kind:"3D ENDLESS RUNNER",tag:"RUN THE PITCH"}
  ];
  return <section className="gamelib">
