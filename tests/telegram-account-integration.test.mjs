@@ -204,27 +204,86 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const walletAfterRepeatRun = await api(env, "/api/wallet", gameInit);
   assert.equal(walletAfterRepeatRun.data.wallet.ct_balance, 3000, "repeat runs must not charge another daily access fee");
 
-  env.testDb.prepare("INSERT INTO mystery_players(id,answer,accepted_answers_json,nationality,difficulty,avatar_key,active) VALUES(?,?,?,?,?,?,1)").run("test-mystery-player","Didier Drogba","[]","Ivory Coast","easy","test-mystery-avatar");
-  env.testDb.prepare("INSERT INTO mystery_player_clues(id,player_id,clue_number,clue_text) VALUES(?,?,?,?)").run("test-mystery-clue-1","test-mystery-player",1,"He won the Champions League with Chelsea in 2012.");
-  env.testDb.prepare("INSERT INTO mystery_player_clues(id,player_id,clue_number,clue_text) VALUES(?,?,?,?)").run("test-mystery-clue-2","test-mystery-player",2,"He is a legendary striker from Ivory Coast.");
-  env.testDb.prepare("INSERT INTO mystery_player_clues(id,player_id,clue_number,clue_text) VALUES(?,?,?,?)").run("test-mystery-clue-3","test-mystery-player",3,"He scored in the 2012 Champions League final.");
-  const mysteryState = await api(env, "/api/mystery-game", gameInit);
-  assert.equal(mysteryState.data.entry_ct, 300);
-  assert.equal(mysteryState.data.daily_entries_remaining, 5);
-  assert.equal(mysteryState.data.daily_access_unlocked, false);
-  const mysteryStart = await api(env, "/api/mystery-game/start", gameInit, "POST", { difficulty: "easy" });
-  assert.equal(mysteryStart.response.status, 200);
-  assert.equal(mysteryStart.data.round.id.length > 0, true);
-  const mysteryGuess = await api(env, "/api/mystery-game/" + mysteryStart.data.round.id + "/guess", gameInit, "POST", { guess: "Didier Drogba" });
-  assert.equal(mysteryGuess.response.status, 200);
-  assert.equal(mysteryGuess.data.sethis_reward, 10);
-  const walletAfterMystery = await api(env, "/api/wallet", gameInit);
-  assert.equal(walletAfterMystery.data.wallet.ct_balance, 2700, "Mystery Footballer daily access should cost 300 GT once");
-  assert.equal(walletAfterMystery.data.wallet.sethis_balance, 10, "a correct first-clue Mystery answer should reward 10 SETHIS");
-  const mysteryStartAgain = await api(env, "/api/mystery-game/start", gameInit, "POST", { difficulty: "easy" });
-  assert.equal(mysteryStartAgain.response.status, 200);
-  const walletAfterMysteryRepeat = await api(env, "/api/wallet", gameInit);
-  assert.equal(walletAfterMysteryRepeat.data.wallet.ct_balance, 2700, "additional Mystery rounds must not charge another daily access fee");
+  env.testDb.prepare("UPDATE mystery_questions SET active=0").run();
+  for (const difficulty of ["easy", "medium"]) {
+    for (let position = 1; position <= 5; position++) {
+      env.testDb.prepare("INSERT INTO mystery_questions(id,difficulty,category,question_text,option_a,option_b,option_c,option_d,correct_option,explanation,source_label,source_url,active) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,1)")
+        .run(
+          "integration-" + difficulty + "-" + position,
+          difficulty,
+          "Integration",
+          "Which answer is correct for " + difficulty + " test question " + position + "?",
+          "Correct answer " + position,
+          "Wrong answer B " + position,
+          "Wrong answer C " + position,
+          "Wrong answer D " + position,
+          "a",
+          "Option A is the correct integration-test answer.",
+          "Integration Test",
+          "https://example.com/integration/" + difficulty + "/" + position
+        );
+    }
+  }
+  const mysteryState = await api(env, "/api/mystery-challenge", gameInit);
+  assert.equal(mysteryState.response.status, 200);
+  const easyLevel = mysteryState.data.levels.find(level => level.difficulty === "easy");
+  assert.equal(easyLevel.ready, true);
+  assert.equal(easyLevel.question_count, 5);
+  assert.equal(easyLevel.entry_ct, 300);
+  assert.equal(easyLevel.reward_sethis, 130);
+
+  const easyStart = await api(env, "/api/mystery-challenge/start", gameInit, "POST", { difficulty: "easy" });
+  assert.equal(easyStart.response.status, 200);
+  assert.equal(easyStart.data.attempt.status, "active");
+  assert.ok(easyStart.data.attempt.id);
+  let currentQuestion = easyStart.data.question;
+  for (let position = 1; position <= 5; position++) {
+    const answer = await api(env, "/api/mystery-challenge/" + easyStart.data.attempt.id + "/answer", gameInit, "POST", {
+      question_id: currentQuestion.id,
+      option: "a"
+    });
+    assert.equal(answer.response.status, 200);
+    assert.equal(answer.data.correct, true);
+    if (position < 5) {
+      assert.equal(answer.data.status, "active");
+      currentQuestion = answer.data.next_question;
+      assert.ok(currentQuestion);
+    } else {
+      assert.equal(answer.data.status, "won");
+      assert.equal(answer.data.correct_answers, 5);
+      assert.equal(answer.data.sethis_reward, 130);
+    }
+  }
+  const walletAfterMysteryWin = await api(env, "/api/wallet", gameInit);
+  assert.equal(walletAfterMysteryWin.data.wallet.ct_balance, 2700);
+  assert.equal(walletAfterMysteryWin.data.wallet.sethis_balance, 130);
+
+  const mediumStart = await api(env, "/api/mystery-challenge/start", gameInit, "POST", { difficulty: "medium" });
+  assert.equal(mediumStart.response.status, 200);
+  const wrongAnswer = await api(env, "/api/mystery-challenge/" + mediumStart.data.attempt.id + "/answer", gameInit, "POST", {
+    question_id: mediumStart.data.question.id,
+    option: "b"
+  });
+  assert.equal(wrongAnswer.response.status, 200);
+  assert.equal(wrongAnswer.data.correct, false);
+  assert.equal(wrongAnswer.data.status, "lost");
+  assert.equal(wrongAnswer.data.sethis_reward, 0);
+  const walletAfterMysteryLoss = await api(env, "/api/wallet", gameInit);
+  assert.equal(walletAfterMysteryLoss.data.wallet.ct_balance, 2400);
+  assert.equal(walletAfterMysteryLoss.data.wallet.sethis_balance, 130);
+
+  const mysteryProfile = await api(env, "/api/profile", gameInit);
+  assert.equal(mysteryProfile.data.activity.games_played, 4);
+  assert.equal(mysteryProfile.data.activity.games_won, 3);
+  assert.equal(mysteryProfile.data.activity.mystery_sets_played, 2);
+  assert.equal(mysteryProfile.data.activity.mystery_sets_won, 1);
+  assert.equal(mysteryProfile.data.history.mystery_rounds.length, 2);
+
+  for (const retiredPath of ["/api/courts", "/api/pool-court/retired", "/api/sponsorship", "/api/affiliates", "/api/mystery-game"]) {
+    const retired = await api(env, retiredPath, gameInit);
+    assert.equal(retired.response.status, 410, retiredPath + " should be retired");
+  }
+
   const unauthenticatedRunnerRecords = await worker.fetch(new Request("https://settlethis.test/api/runner/records"), env);
   assert.equal(unauthenticatedRunnerRecords.status, 401);
 
@@ -332,137 +391,10 @@ test("Telegram accounts persist independently through onboarding, profile, check
   }), env);
   assert.equal(thirdSignIn.status, 200);
 
-  const courtId = "court-community-integration";
-  await env.DB.prepare("INSERT INTO courts (id,title,category,incident_context,side_a_label,side_a_argument,side_b_label,side_b_argument,status,closes_at) VALUES (?,?,?,?,?,?,?,?,?,?)")
-    .bind(courtId, "Community integration test", "match_debate", "Synthetic test Court.", "Side A", "Case for A.", "Side B", "Case for B.", "open", new Date(Date.now() + 3600000).toISOString())
-    .run();
-
-  const outsiderArgument = await api(env, "/api/courts/" + courtId + "/arguments", thirdInit, "POST", { body: "I have not joined this Court." });
-  assert.equal(outsiderArgument.response.status, 403);
-
-  const firstJoin = await api(env, "/api/courts/" + courtId + "/join", firstInit, "POST", { side: "A" });
-  assert.equal(firstJoin.response.status, 200);
-  assert.equal(firstJoin.data.participant.side, "A");
-  assert.equal(firstJoin.data.wallet.ct_balance, 3000);
-
-  const secondJoin = await api(env, "/api/courts/" + courtId + "/join", secondInit, "POST", { side: "B" });
-  assert.equal(secondJoin.response.status, 200);
-  assert.equal(secondJoin.data.participant.side, "B");
-  assert.equal(secondJoin.data.wallet.ct_balance, 3000);
-
-  const duplicateJoin = await api(env, "/api/courts/" + courtId + "/join", firstInit, "POST", { side: "B" });
-  assert.equal(duplicateJoin.response.status, 409);
-
-  const argument = await api(env, "/api/courts/" + courtId + "/arguments", firstInit, "POST", {
-    body: "The evidence supports Side A because the decision was consistent with the published rules."
-  });
-  assert.equal(argument.response.status, 201);
-  const argumentId = argument.data.argument_id;
-
-  const duplicateArgument = await api(env, "/api/courts/" + courtId + "/arguments", firstInit, "POST", {
-    body: "The evidence supports Side A because the decision was consistent with the published rules."
-  });
-  assert.equal(duplicateArgument.response.status, 409);
-
-  const reply = await api(env, "/api/arguments/" + argumentId + "/replies", secondInit, "POST", {
-    body: "I disagree: the same evidence can be interpreted differently."
-  });
-  assert.equal(reply.response.status, 201);
-
   const memberProfile = await api(env, "/api/profile", firstInit);
   assert.equal(memberProfile.response.status, 200);
   assert.equal(memberProfile.data.activity.games_played, 0);
-  assert.equal(memberProfile.data.activity.sethis_earned, 500);
-  assert.equal(memberProfile.data.rank, null);
-  assert.equal(memberProfile.data.achievements.find(item => item.key === "first_mystery").earned, false);
-  assert.equal(memberProfile.data.achievements.find(item => item.key === "game_regular").earned, false);
-
-  const secondMemberProfile = await api(env, "/api/profile", secondInit);
-  assert.equal(secondMemberProfile.data.activity.games_played, 0);
-  assert.equal(secondMemberProfile.data.activity.sethis_earned, 0);
-
-  const replyReaction = await api(env, "/api/reactions", firstInit, "POST", {
-    target_type: "reply", target_id: reply.data.reply_id, reaction: "insightful"
-  });
-  assert.equal(replyReaction.response.status, 200);
-  const replyReactionCount = await env.DB.prepare("SELECT COUNT(*) AS count FROM court_reactions WHERE target_type='reply' AND target_id=? AND telegram_user_id=?")
-    .bind(reply.data.reply_id, String(firstUser.id)).first();
-  assert.equal(Number(replyReactionCount.count), 1);
-
-  const reaction = await api(env, "/api/reactions", secondInit, "POST", {
-    target_type: "argument", target_id: argumentId, reaction: "agree"
-  });
-  assert.equal(reaction.response.status, 200);
-  const repeatedReaction = await api(env, "/api/reactions", secondInit, "POST", {
-    target_type: "argument", target_id: argumentId, reaction: "agree"
-  });
-  assert.equal(repeatedReaction.response.status, 200);
-  const reactionCount = await env.DB.prepare("SELECT COUNT(*) AS count FROM court_reactions WHERE target_type='argument' AND target_id=? AND telegram_user_id=?")
-    .bind(argumentId, String(secondUser.id)).first();
-  assert.equal(Number(reactionCount.count), 1);
-
-  const report = await api(env, "/api/reports", secondInit, "POST", {
-    target_type: "argument", target_id: argumentId, reason: "Misleading content", details: "This is a synthetic integration report."
-  });
-  assert.equal(report.response.status, 201);
-  const duplicateReport = await api(env, "/api/reports", secondInit, "POST", {
-    target_type: "argument", target_id: argumentId, reason: "Misleading content", details: "Duplicate synthetic report."
-  });
-  assert.equal(duplicateReport.response.status, 409);
-  const replyReport = await api(env, "/api/reports", firstInit, "POST", { target_type: "reply", target_id: reply.data.reply_id, reason: "Abusive reply" });
-  assert.equal(replyReport.response.status, 201);
-  const courtReport = await api(env, "/api/reports", firstInit, "POST", { target_type: "court", target_id: courtId, reason: "Misleading Court context" });
-  assert.equal(courtReport.response.status, 201);
-
-  const immediateFirstNotifications = await api(env, "/api/notifications", firstInit);
-  assert.equal(immediateFirstNotifications.data.notifications.some(item => item.type === "reaction" && item.reference_id === argumentId), false);
-  const immediateSecondNotifications = await api(env, "/api/notifications", secondInit);
-  assert.equal(immediateSecondNotifications.data.notifications.some(item => item.type === "new_argument" && item.reference_id === courtId), false);
-
-  const additionalArgumentIds = [];
-  for (let number = 2; number <= 20; number++) {
-    const created = await api(env, "/api/courts/" + courtId + "/arguments", firstInit, "POST", {
-      body: "Distinct integration argument number " + number + " supporting Side A with its own evidence reference."
-    });
-    assert.equal(created.response.status, 201);
-    additionalArgumentIds.push(created.data.argument_id);
-  }
-  const argumentLimit = await api(env, "/api/courts/" + courtId + "/arguments", firstInit, "POST", {
-    body: "The twenty-first argument must be rate limited for this member."
-  });
-  assert.equal(argumentLimit.response.status, 429);
-
-  for (let number = 2; number <= 60; number++) {
-    const createdReply = await api(env, "/api/arguments/" + argumentId + "/replies", secondInit, "POST", {
-      body: "Distinct integration reply number " + number + " with a separate contribution."
-    });
-    assert.equal(createdReply.response.status, 201);
-  }
-  const replyLimit = await api(env, "/api/arguments/" + argumentId + "/replies", secondInit, "POST", {
-    body: "The sixty-first reply must be rate limited."
-  });
-  assert.equal(replyLimit.response.status, 429);
-
-  for (let number = 0; number < 9; number++) {
-    const createdReport = await api(env, "/api/reports", secondInit, "POST", {
-      target_type: "argument", target_id: additionalArgumentIds[number], reason: "Independent review", details: "Synthetic rate-limit coverage."
-    });
-    assert.equal(createdReport.response.status, 201);
-  }
-  const reportLimit = await api(env, "/api/reports", secondInit, "POST", {
-    target_type: "court", target_id: courtId, reason: "Independent review", details: "The eleventh report must be rate limited."
-  });
-  assert.equal(reportLimit.response.status, 429);
-
-  const firstNotifications = await api(env, "/api/notifications", firstInit);
-  assert.equal(firstNotifications.data.notifications.some(item => item.type === "new_reply" && item.reference_id === argumentId), false);
-  const secondNotifications = await api(env, "/api/notifications", secondInit);
-  const secondUserNotification = secondNotifications.data.notifications.find(item => item.type === "wallet_credit");
-  assert.ok(secondUserNotification);
-  const crossAccountRead = await api(env, "/api/notifications/" + secondUserNotification.id + "/read", firstInit, "POST", {});
-  assert.equal(crossAccountRead.response.status, 200);
-  const secondNotificationsAfterCrossAccountRead = await api(env, "/api/notifications", secondInit);
-  assert.equal(secondNotificationsAfterCrossAccountRead.data.notifications.find(item => item.id === secondUserNotification.id).read_at, null);
+  assert.equal(memberProfile.data.activity.mystery_sets_played, 0);
 
   await env.DB.prepare("INSERT INTO admin_setup_authorizations (id,expires_at) VALUES (1,datetime('now','+10 minutes'))").run();
   await env.DB.prepare("INSERT INTO admin_users (id,email,password_salt,password_hash,password_iterations) VALUES (1,?,?,?,?)")
@@ -472,39 +404,8 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const adminTokenHash = createHash("sha256").update(adminToken).digest("hex");
   env.testDb.prepare("INSERT INTO admin_sessions (token_hash,admin_id,expires_at) VALUES (?,1,datetime('now','+10 minutes'))").run(adminTokenHash);
   await env.DB.prepare("INSERT INTO user_restrictions (user_id,status,reason,updated_by) VALUES (?,?,?,?)")
-    .bind(String(secondUser.id), "restricted", "Repeated abusive posting in this integration test.", 1)
+    .bind(String(secondUser.id), "restricted", "Repeated abusive conduct in this integration test.", 1)
     .run();
-
-  const blockedReply = await api(env, "/api/arguments/" + argumentId + "/replies", secondInit, "POST", {
-    body: "This reply must be blocked while the account is restricted."
-  });
-  assert.equal(blockedReply.response.status, 403);
-  const blockedReaction = await api(env, "/api/reactions", secondInit, "POST", {
-    target_type: "argument", target_id: argumentId, reaction: "fire"
-  });
-  assert.equal(blockedReaction.response.status, 403);
-
-  await env.DB.prepare("UPDATE court_arguments SET moderation_status='hidden' WHERE id=?").bind(argumentId).run();
-  const hiddenReplies = await api(env, "/api/arguments/" + argumentId + "/replies", firstInit);
-  assert.equal(hiddenReplies.response.status, 200);
-  assert.equal(hiddenReplies.data.replies.length, 0);
-  const hiddenReaction = await api(env, "/api/reactions", firstInit, "POST", {
-    target_type: "argument", target_id: argumentId, reaction: "insightful"
-  });
-  assert.equal(hiddenReaction.response.status, 404);
-  const hiddenReport = await api(env, "/api/reports", secondInit, "POST", {
-    target_type: "argument", target_id: argumentId, reason: "Hidden content", details: "A hidden argument should no longer accept a new report."
-  });
-  assert.equal(hiddenReport.response.status, 404);
-
-  const contentModerated = await adminApi(env, "/api/admin/moderation/" + report.data.report_id + "/content", adminToken, "POST", { action: "hidden" });
-  assert.equal(contentModerated.response.status, 200);
-  assert.equal(env.testDb.prepare("SELECT status FROM moderation_reports WHERE id=?").get(report.data.report_id).status, "actioned");
-  const reopenedContentReport = await adminApi(env, "/api/admin/moderation/" + report.data.report_id + "/review", adminToken, "POST", { status: "dismissed", note: "This report must remain closed." });
-  assert.equal(reopenedContentReport.response.status, 409);
-  const restoredContent = await adminApi(env, "/api/admin/moderation/" + report.data.report_id + "/content", adminToken, "POST", { action: "visible" });
-  assert.equal(restoredContent.response.status, 200);
-  assert.equal(env.testDb.prepare("SELECT moderation_status FROM court_arguments WHERE id=?").get(argumentId).moderation_status, "visible");
 
   const userReport = await api(env, "/api/reports", firstInit, "POST", {
     target_type: "user", target_id: "@arsenal_fan", reason: "Abusive conduct", details: "A report against this member for moderator review."
@@ -535,7 +436,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
 
   const walletAudit = await adminApi(env, "/api/admin/wallet-audit", adminToken);
   assert.equal(walletAudit.response.status, 200);
-  assert.equal(walletAudit.data.checks.length, 37);
+  assert.equal(walletAudit.data.checks.length, 16);
   assert.equal(walletAudit.data.healthy, true, JSON.stringify(walletAudit.data.checks.filter(item => item.issues > 0)));
 
   const unauthenticatedDestinations = await adminApi(env, "/api/admin/task-destinations", "b".repeat(64));
@@ -579,47 +480,10 @@ test("Telegram accounts persist independently through onboarding, profile, check
   const throttledLogin = await adminApi(env, "/api/admin/login", adminToken, "POST", { email: "unknown@example.invalid", password: "incorrect" });
   assert.equal(throttledLogin.response.status, 429);
 
-  env.testDb.prepare("INSERT INTO pool_courts(id,title,prize_amount,minimum_stake_ct,duration_days,status,opens_at,closes_at,reserve_status) VALUES(?,?,?,?,?,'open',datetime('now','-1 minute'),datetime('now','+1 day'),'secured')").run("pool-invite-rate-test","Invite rate test",10000,500,7);
-  env.testDb.prepare("INSERT INTO pool_positions(id,pool_id,user_id,side,stake_ct,status) VALUES(?,?,?,?,?,'active')").run("pool-invite-position","pool-invite-rate-test",String(firstUser.id),"A",500);
-  for (let invite = 0; invite < 5; invite++) {
-    const createdInvite = await api(env, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
-    assert.equal(createdInvite.response.status, 200);
-  }
-  const sixthInvite = await api(env, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
-  assert.equal(sixthInvite.response.status, 429);
-  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invites WHERE pool_id=? AND inviter_user_id=?").get("pool-invite-rate-test", String(firstUser.id)).n, 5);
-
-  const poolInviteCode = env.testDb.prepare("SELECT invite_code FROM pool_invites WHERE pool_id=? AND inviter_user_id=? ORDER BY created_at LIMIT 1").get("pool-invite-rate-test", String(firstUser.id)).invite_code;
-  env.testDb.prepare("UPDATE pool_invites SET invite_code=lower(invite_code) WHERE invite_code=?").run(poolInviteCode);
-  // Use a fresh identity, separate from the three referral-qualification fixtures.
-  const poolInviteUser = { id: 700004, first_name: "Liverpool", username: "liverpool_pool_fan" };
-  const thirdPoolInit = signedInitData(poolInviteUser, { start_param: "pool_" + poolInviteCode });
-  const thirdAuthResponse = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
-    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: thirdPoolInit })
-  }), env);
-  const thirdAuth = await thirdAuthResponse.json();
-  assert.equal(thirdAuthResponse.status, 200);
-  assert.equal(thirdAuth.pool_invite.pool_id, "pool-invite-rate-test");
-  assert.equal(thirdAuth.pool_invite.side, "A");
-  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invite_acceptances WHERE invite_id=(SELECT id FROM pool_invites WHERE invite_code=lower(?)) AND invitee_user_id=?").get(poolInviteCode, String(poolInviteUser.id)).n, 1);
-  const replayedPoolAuth = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
-    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: thirdPoolInit })
-  }), env);
-  assert.equal(replayedPoolAuth.status, 200);
-  assert.equal(env.testDb.prepare("SELECT COUNT(*) AS n FROM pool_invite_acceptances WHERE invite_id=(SELECT id FROM pool_invites WHERE invite_code=lower(?)) AND invitee_user_id=?").get(poolInviteCode, String(poolInviteUser.id)).n, 1);
-  const selfPoolInit = signedInitData(firstUser, { start_param: "pool_" + poolInviteCode });
-  const selfPoolResponse = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
-    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: selfPoolInit })
-  }), env);
-  const selfPoolAuth = await selfPoolResponse.json();
-  assert.equal(selfPoolResponse.status, 200);
-  assert.equal(selfPoolAuth.pool_invite, null);
   const invalidBotEnv = { ...env, TELEGRAM_BOT_USERNAME: "attacker.example/path" };
   const invalidBotReferral = await api(invalidBotEnv, "/api/referrals", firstInit);
   assert.equal(invalidBotReferral.response.status, 200);
   assert.equal(invalidBotReferral.data.invite_link, null);
-  const invalidBotPoolInvite = await api(invalidBotEnv, "/api/pool-court/pool-invite-rate-test/invites", firstInit, "POST", { side: "A" });
-  assert.equal(invalidBotPoolInvite.response.status, 503);
 });
 
 
