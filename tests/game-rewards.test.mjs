@@ -29,3 +29,7 @@ test("Both games stop issuing SETHIS after the daily cap is exhausted",()=>{
 test("configured Mystery Footballer reward values override launch defaults",()=>{
   assert.equal(calculateMysterySethisReward("hard",1,100,{reward_hard_clue1:42}),42);
 });
+
+test("Highly active Runner reward settings can remove both per-run and daily ceilings",()=>{
+  assert.deepEqual(calculateRunnerSethisReward({distance:12000,points:50000,footballs:40,dailyRemaining:null,settings:{per_run_cap:0}}),{amount:180,football:80,distance:120,performance:20});
+});
