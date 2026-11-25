@@ -1,3 +1,5 @@
+> **Historical research — not the current token specification.** This document predates the GT (Game Token) terminology and the current games product. Its former participation-currency references and Court-specific examples are historical only. For current currency names, game costs and reward rules, use [Current Product Direction](PRODUCT_DIRECTION.md). GT is the participation currency; SETHIS is the separate reward token.
+
 > **PRODUCT CONTEXT UPDATE:** This research was written for the previous Courts/debate-first product. SETHIS is now game-first, with Mystery Footballer as the first featured game. The closed-loop CT/SETHIS and no-cash-value guardrails remain relevant, but Court/Pool-specific utilities and reward examples must be reassessed against [Current Product Direction](PRODUCT_DIRECTION.md) before implementation.
 
 # SETHIS Token Ecosystem — Research & Readiness Assessment
