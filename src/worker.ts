@@ -50,6 +50,46 @@ async function awardReferralMilestones(inviterId:string,qualifiedCount:number,en
   ]);
  }
 }
+async function syncCommunityLeader(userId:string,env:Env){
+ const settings=await env.DB.prepare("SELECT personal_leader_threshold,hybrid_personal_threshold,branch_leader_threshold,active_ratio_min,recovery_days FROM community_leader_settings WHERE id=1").first<{personal_leader_threshold:number;hybrid_personal_threshold:number;branch_leader_threshold:number;active_ratio_min:number;recovery_days:number}>();
+ const personalThreshold=Number(settings?.personal_leader_threshold)||500,hybridThreshold=Number(settings?.hybrid_personal_threshold)||250,branchThreshold=Number(settings?.branch_leader_threshold)||500,minActive=Number(settings?.active_ratio_min)||35,recoveryDays=Number(settings?.recovery_days)||14;
+ const counts=await env.DB.prepare("WITH RECURSIVE branch(user_id) AS (SELECT invitee_user_id FROM referrals WHERE inviter_user_id=? AND qualified_at IS NOT NULL UNION SELECT r.invitee_user_id FROM referrals r JOIN branch b ON r.inviter_user_id=b.user_id WHERE r.qualified_at IS NOT NULL) SELECT (SELECT COUNT(*) FROM referrals WHERE inviter_user_id=? AND qualified_at IS NOT NULL) AS personal,(SELECT COUNT(*) FROM branch) AS branch,(SELECT COUNT(*) FROM branch b WHERE EXISTS(SELECT 1 FROM member_activity_events a WHERE a.user_id=b.user_id AND julianday(a.occurred_at)>julianday('now','-30 days'))) AS active").bind(userId,userId).first<{personal:number;branch:number;active:number}>();
+ const personal=Number(counts?.personal)||0,branch=Number(counts?.branch)||0,active=Number(counts?.active)||0;
+ if(!(personal>=personalThreshold||(personal>=hybridThreshold&&branch>=branchThreshold)))return;
+ await env.DB.prepare("INSERT OR IGNORE INTO community_leaders(user_id,personal_qualified_count,branch_qualified_count,active_member_count,active_ratio,status,low_activity_since) VALUES(?,?,?,?,?,'recovering',CURRENT_TIMESTAMP)").bind(userId,personal,branch,active,branch?active/branch*100:0).run();
+ const existing=await env.DB.prepare("SELECT status,low_activity_since FROM community_leaders WHERE user_id=?").bind(userId).first<{status:string;low_activity_since:string|null}>(),ratio=branch?active/branch*100:0;
+ if(ratio>=minActive){await env.DB.prepare("UPDATE community_leaders SET personal_qualified_count=?,branch_qualified_count=?,active_member_count=?,active_ratio=?,status='active',low_activity_since=NULL,updated_at=CURRENT_TIMESTAMP WHERE user_id=?").bind(personal,branch,active,ratio,userId).run();return;}
+ const overdue=!!existing?.low_activity_since&&(Date.now()-Date.parse(existing.low_activity_since+"Z"))>=recoveryDays*86400000,status=overdue?"suspended":"recovering";
+ await env.DB.prepare("UPDATE community_leaders SET personal_qualified_count=?,branch_qualified_count=?,active_member_count=?,active_ratio=?,status=?,low_activity_since=COALESCE(low_activity_since,CURRENT_TIMESTAMP),updated_at=CURRENT_TIMESTAMP WHERE user_id=?").bind(personal,branch,active,ratio,status,userId).run();
+}
+async function syncCommunityLeaderAncestors(userId:string,env:Env){
+ const rows=await env.DB.prepare("WITH RECURSIVE ancestors(user_id,depth) AS (SELECT inviter_user_id,1 FROM referrals WHERE invitee_user_id=? AND qualified_at IS NOT NULL UNION ALL SELECT r.inviter_user_id,a.depth+1 FROM ancestors a JOIN referrals r ON r.invitee_user_id=a.user_id WHERE r.qualified_at IS NOT NULL AND a.depth<100) SELECT user_id,MIN(depth) AS depth FROM ancestors GROUP BY user_id ORDER BY depth").bind(userId).all<{user_id:string;depth:number}>();
+ for(const row of rows.results)await syncCommunityLeader(row.user_id,env);
+}
+async function recordCommunityActivity(userId:string,eventKey:string,eventType:"football_runner"|"mystery_footballer"|"approved_task",env:Env){
+ await env.DB.prepare("INSERT OR IGNORE INTO member_activity_events(event_key,user_id,event_type) VALUES(?,?,?)").bind(eventKey,userId,eventType).run();
+ await syncCommunityLeaderAncestors(userId,env);
+}
+async function awardCommunityCommissions(sourceUserId:string,sourceLedgerKey:string,rewardAmount:number,env:Env){
+ if(!Number.isSafeInteger(rewardAmount)||rewardAmount<=0)return;
+ const settings=await env.DB.prepare("SELECT programme_enabled,direct_rate_bps,upline_rate_bps,max_combined_rate_bps FROM community_leader_settings WHERE id=1").first<{programme_enabled:number;direct_rate_bps:number;upline_rate_bps:number;max_combined_rate_bps:number}>();
+ if(Number(settings?.programme_enabled)!==1)return;
+ const directRate=Math.max(0,Number(settings?.direct_rate_bps)||0),uplineRate=Math.max(0,Number(settings?.upline_rate_bps)||0),maxRate=Math.max(0,Number(settings?.max_combined_rate_bps)||1200);
+ if(directRate+uplineRate>maxRate||directRate+uplineRate>1200)return;
+ const leaders=await env.DB.prepare("WITH RECURSIVE ancestors(user_id,depth) AS (SELECT inviter_user_id,1 FROM referrals WHERE invitee_user_id=? AND qualified_at IS NOT NULL UNION ALL SELECT r.inviter_user_id,a.depth+1 FROM ancestors a JOIN referrals r ON r.invitee_user_id=a.user_id WHERE r.qualified_at IS NOT NULL AND a.depth<100) SELECT a.user_id,MIN(a.depth) AS depth,l.status FROM ancestors a JOIN community_leaders l ON l.user_id=a.user_id GROUP BY a.user_id ORDER BY depth LIMIT 2").bind(sourceUserId).all<{user_id:string;depth:number;status:string}>();
+ for(const [index,row] of leaders.results.entries()){
+  const tier=index===0?"direct":"upline",rate=index===0?directRate:uplineRate;if(row.status==="suspended"||rate<=0)continue;
+  const amount=Math.floor(rewardAmount*rate/10000);if(amount<=0)continue;
+  const key="community-commission:"+sourceLedgerKey+":"+row.user_id+":"+tier,reason=(tier==="direct"?"10% direct community leader commission":"2% qualifying upline commission")+" on "+sourceLedgerKey;
+  await env.DB.batch([
+   env.DB.prepare("INSERT OR IGNORE INTO wallets(user_id,ct_balance,sethis_balance) VALUES(?,0,0)").bind(row.user_id),
+   env.DB.prepare("INSERT OR IGNORE INTO community_commissions(id,source_user_id,source_ledger_key,recipient_user_id,tier,rate_bps,amount,idempotency_key) VALUES(?,?,?,?,?,?,?,?)").bind(id(),sourceUserId,sourceLedgerKey,row.user_id,tier,rate,amount,key),
+   env.DB.prepare("INSERT OR IGNORE INTO wallet_ledger(id,user_id,token,amount,transaction_type,reference_id,idempotency_key,grant_source,grant_reason) SELECT ?,recipient_user_id,'SETHIS',?,'community_commission',?,?, 'community_commission',? FROM community_commissions WHERE idempotency_key=? AND status='pending'").bind(id(),amount,sourceLedgerKey,key,reason,key),
+   env.DB.prepare("UPDATE wallets SET sethis_balance=sethis_balance+?,updated_at=CURRENT_TIMESTAMP WHERE user_id=? AND EXISTS(SELECT 1 FROM wallet_ledger WHERE idempotency_key=? AND user_id=?) AND EXISTS(SELECT 1 FROM community_commissions WHERE idempotency_key=? AND status='pending' AND credited_at IS NULL)").bind(amount,row.user_id,key,row.user_id,key),
+   env.DB.prepare("UPDATE community_commissions SET status='paid',credited_at=CURRENT_TIMESTAMP WHERE idempotency_key=? AND status='pending' AND EXISTS(SELECT 1 FROM wallet_ledger WHERE idempotency_key=? AND user_id=?)").bind(key,key,row.user_id)
+  ]);
+ }
+}
 async function syncCommunityReferralAchievements(env:Env){
  const total=await env.DB.prepare("SELECT COUNT(*) AS qualified FROM referrals WHERE qualified_at IS NOT NULL").first<{qualified:number}>(),qualified=Number(total?.qualified)||0;
  const targets=await env.DB.prepare("SELECT target_number,qualified_threshold FROM referral_community_targets WHERE enabled=1 AND qualified_threshold<=?").bind(qualified).all<{target_number:number;qualified_threshold:number}>();
@@ -63,6 +103,7 @@ async function qualifyReferral(telegramId:string,env:Env){
  const referral=await env.DB.prepare("SELECT inviter_user_id,COUNT(*) AS qualified FROM referrals WHERE inviter_user_id=(SELECT inviter_user_id FROM referrals WHERE invitee_user_id=?) AND qualified_at IS NOT NULL GROUP BY inviter_user_id").bind(telegramId).first<{inviter_user_id:string;qualified:number}>();
  if(referral)await awardReferralMilestones(referral.inviter_user_id,Number(referral.qualified)||0,env);
  await syncCommunityReferralAchievements(env);
+ await syncCommunityLeaderAncestors(telegramId,env);
 }
 async function syncMatchPollNotificationRows(env:Env){
  await env.DB.prepare("UPDATE match_polls SET status='open',updated_at=CURRENT_TIMESTAMP WHERE status='scheduled' AND julianday(opens_at)<=julianday('now') AND julianday(closes_at)>julianday('now') AND EXISTS(SELECT 1 FROM courts c WHERE c.id=match_polls.court_id AND c.status='open' AND c.moderation_status='visible' AND (c.opens_at IS NULL OR julianday(c.opens_at)<=julianday('now')))").run();
