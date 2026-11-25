@@ -36,6 +36,8 @@ The current question-set Mystery Footballer API remains active at `/api/mystery-
 - Retired the old Worker API handlers and blocked remaining legacy path variants with HTTP 410 responses.
 - Removed debate ingestion from the scheduled Worker path.
 - Updated profile history and achievements to reflect five-question Mystery Footballer sets.
+- Locked the daily set size to exactly five questions in both Admin and the Worker API; Admin cannot change it.
+- Removed the unused clue rewards, old daily-entry limit and old daily SETHIS cap fields from the Mystery Footballer settings table.
 - Updated shared rankings to use Football Runner runs and Mystery Footballer attempts.
 - Updated wallet-integrity checks to validate current Runner, Mystery Footballer, quiz, task, referral, rewarded-ad and wallet ledger flows.
 - Fixed Mystery Footballer question progression so each correct answer advances to the next question and the fifth correct answer settles the perfect set.
@@ -43,12 +45,14 @@ The current question-set Mystery Footballer API remains active at `/api/mystery-
 ## Production deployment and database changes
 
 - Cloudflare Workers Build completed successfully from `main`.
-- Build ID: `3fd4063b-80e9-447d-8def-41c0e7917861`.
-- Deployed Worker version: `5d480642-9f25-461e-b0b0-a1cd68f0f22f`.
+- Legacy-retirement build ID: `3fd4063b-80e9-447d-8def-41c0e7917861`.
+- Latest fixed-five-question build ID: `8e49967d-3d6f-49a0-88df-e1c9057fd35a`.
+- Latest deployed Worker version: `ce4c9173-cd17-4ab4-9e99-899bd70fca3a`.
 - Deployment time: `2026-11-25T16:56:13.847Z`.
 - Additive migration `0059_admin_analytics_country.sql` was applied to production before deployment. It adds the approximate country code field and per-game presence table/index.
 - Forward migration `0060_retire_legacy_product_tables.sql` was applied after the Worker deployment. All legacy Courts, Pool, debate, sponsorship, affiliate, match-poll and clue-game tables were dropped in foreign-key-safe order.
 - Forward migration `0061_retire_legacy_competition_tables.sql` removed the unused competition catalogue and matchday editorial proposal queue. Fixture records remain because the current quiz workflow still uses them.
+- Forward migration `0062_fix_mystery_question_count.sql` rebuilt `mystery_game_settings` with only current fields, preserved the 300 GT entry costs and 130 / 200 / 500 SETHIS rewards, and enforces exactly five questions. The retired clue reward fields and daily SETHIS cap are no longer stored.
 - Production verification found no remaining tables matching the retired feature groups.
 - Current data was preserved: 900 active Mystery Footballer questions (300 per difficulty), Telegram member and wallet records, Runner runs, fixtures, quizzes and quiz questions remain present.
 - GT and SETHIS balances and wallet ledger records were not deleted or rewritten.
