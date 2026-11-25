@@ -14,6 +14,29 @@ import "./FootballRunner.css";
 
 type Props = { telegramUser: TelegramUser | null; onBack: () => void; preview?: boolean };
 
+async function createRunnerShareCard(summary:RunnerSummary,playerName:string,avatarUrl?:string):Promise<File>{
+  const canvas=document.createElement("canvas");canvas.width=1200;canvas.height=675;
+  const context=canvas.getContext("2d");if(!context)throw new Error("The challenge card could not be prepared.");
+  const ctx=context,background=ctx.createLinearGradient(0,0,1200,675);background.addColorStop(0,"#071522");background.addColorStop(.58,"#102b3b");background.addColorStop(1,"#171522");ctx.fillStyle=background;ctx.fillRect(0,0,1200,675);
+  ctx.strokeStyle="rgba(39,215,242,.14)";ctx.lineWidth=2;for(let x=0;x<=1200;x+=100){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,675);ctx.stroke();}for(let y=0;y<=675;y+=90){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(1200,y);ctx.stroke();}
+  ctx.strokeStyle="rgba(255,255,255,.12)";ctx.lineWidth=4;ctx.strokeRect(54,54,1092,567);ctx.beginPath();ctx.arc(600,338,180,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(600,60);ctx.lineTo(600,615);ctx.stroke();
+  ctx.fillStyle="#27d7f2";ctx.font="900 26px Arial";ctx.fillText("SETHIS  ×  FOOTBALL RUNNER",94,116);
+  ctx.fillStyle="#f8fafc";ctx.font="900 54px Arial";ctx.fillText("RUN COMPLETE.",94,190);
+  ctx.fillStyle="#b7c9d8";ctx.font="700 23px Arial";ctx.fillText("A NEW SCORE IS ON THE BOARD.",96,231);
+  ctx.save();ctx.beginPath();ctx.arc(160,340,62,0,Math.PI*2);ctx.closePath();ctx.clip();
+  let avatarLoaded=false;
+  if(avatarUrl){try{const avatar=new Image();avatar.crossOrigin="anonymous";const loaded=new Promise<void>(resolve=>{avatar.onload=()=>resolve();avatar.onerror=()=>resolve();avatar.src=avatarUrl;});await Promise.race([loaded,new Promise<void>(resolve=>window.setTimeout(resolve,1300))]);if(avatar.complete&&avatar.naturalWidth>0){ctx.drawImage(avatar,98,278,124,124);avatarLoaded=true;}}catch{}}
+  if(!avatarLoaded){ctx.fillStyle="#18394b";ctx.fillRect(98,278,124,124);ctx.fillStyle="#27d7f2";ctx.font="900 58px Arial";ctx.textAlign="center";ctx.fillText((playerName.replace(/^@/,"").slice(0,1)||"S").toUpperCase(),160,360);}
+  ctx.restore();ctx.textAlign="left";ctx.fillStyle="#f8fafc";ctx.font="900 30px Arial";ctx.fillText(playerName.slice(0,28),255,326);ctx.fillStyle="#9fb5c7";ctx.font="700 19px Arial";ctx.fillText("IS CHALLENGING YOU TO BEAT THIS RUN",255,362);
+  ctx.fillStyle="#27d7f2";ctx.font="900 84px Arial";ctx.fillText(summary.points.toLocaleString(),94,500);ctx.fillStyle="#d5e5ef";ctx.font="900 22px Arial";ctx.fillText("POINTS",98,535);
+  ctx.fillStyle="#f8fafc";ctx.font="900 34px Arial";ctx.fillText(summary.distance.toLocaleString()+" M",680,490);ctx.fillStyle="#b7c9d8";ctx.font="800 18px Arial";ctx.fillText("DISTANCE",684,523);
+  ctx.fillStyle="#f8fafc";ctx.font="900 34px Arial";ctx.fillText(summary.balls.toLocaleString(),930,490);ctx.fillStyle="#b7c9d8";ctx.font="800 18px Arial";ctx.fillText("FOOTBALLS",934,523);
+  ctx.fillStyle="#f6c98c";ctx.font="900 25px Arial";ctx.fillText("CAN YOU BEAT ME?",680,580);
+  ctx.fillStyle="#d6e4ee";ctx.font="700 17px Arial";ctx.fillText("OPEN THE CHALLENGE LINK IN THE CAPTION TO PLAY",94,586);
+  const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error("The challenge image could not be generated.")),"image/png",.94));
+  return new File([blob],"sethis-football-run-challenge.png",{type:"image/png"});
+}
+
 const EMPTY_HUD: RunnerHud = { distance: 0, points: 0, balls: 0, speed: 1 };
 const EMPTY_RECORDS: RunnerRecords = { bestDistance: 0, bestPoints: 0, totalRuns: 0, recentRuns: [] };
 
@@ -134,7 +157,8 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
               };
               recordsRef.current = next;
               setRecords(next);
-              setRunSaveStatus("Run checked and saved to your SETHIS account.");
+              setSummary(current=>current?{...current,sethis:Math.max(0,Number(data.sethis_reward)||0)}:current);
+              setRunSaveStatus(Number(data.sethis_reward)>0?"Run saved · "+Number(data.sethis_reward).toLocaleString()+" SETHIS earned.":"Run saved · today's SETHIS reward limit has been reached.");
             })
             .catch((error) => {
               activeRunIdRef.current = null;
@@ -235,18 +259,33 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     const challenge = createRunnerChallenge({ points: summary.points, distance: summary.distance, balls: summary.balls });
     const url = createRunnerChallengeUrl(challenge);
     const playerName = telegramUser?.username ? "@" + telegramUser.username : telegramUser?.first_name || "A SETHIS player";
-    const message = playerName + " scored " + summary.points.toLocaleString() + " points and ran " + summary.distance.toLocaleString() + "m in SETHIS Football Runner. Can you beat my score? " + url;
+    const message = playerName + " is challenging you to beat " + summary.points.toLocaleString() + " points and " + summary.distance.toLocaleString() + "m in SETHIS Football Runner. Open the challenge link and take your turn: " + url;
     try {
-      if (navigator.share) {
-        await navigator.share({ title: "Can you beat my Football Runner score?", text: message, url });
-        setShareStatus("Challenge ready to share.");
-      } else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(message);
-        setShareStatus("Challenge copied. Send it to your friends.");
-      } else setShareStatus(url);
+      const card = await createRunnerShareCard(summary, playerName, telegramUser?.photo_url);
+      const shareData: ShareData = { title: "Your SETHIS Football Runner challenge", text: message, url };
+      if (navigator.share && typeof navigator.canShare === "function" && navigator.canShare({ files: [card] })) {
+        await navigator.share({ ...shareData, files: [card] });
+        setShareStatus("Your challenge card and personal challenge link are ready to send.");
+      } else {
+        const objectUrl = URL.createObjectURL(card);
+        const anchor = document.createElement("a");
+        anchor.href = objectUrl;
+        anchor.download = "sethis-football-run-challenge.png";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 15000);
+        if (navigator.share) {
+          await navigator.share(shareData);
+          setShareStatus("Challenge card saved. Your personal challenge link is ready to send.");
+        } else if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(message);
+          setShareStatus("Challenge card saved and the invitation caption copied.");
+        } else setShareStatus("Challenge card saved to your device.");
+      }
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") return;
-      setShareStatus("Could not open sharing on this device.");
+      setShareStatus(error instanceof Error ? error.message : "Could not prepare your challenge card.");
     }
   };
   const pause = () => engineRef.current?.pause();
@@ -373,6 +412,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <div className="runner-instruction-row"><b>FOOTBALLS</b><span>Move into their lane to collect them automatically.</span></div>
                   <p>One collision ends the run. Watch the route ahead and keep a safe lane open.</p>
                 </section>}
+                <div className="runner-entry-note"><b>500 GT PER RUN</b><span>Earn SETHIS from verified performance · daily rewards are capped</span></div>
                 <div className="runner-ready-actions">
                   <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"START RUN"} <span>→</span></button>
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
@@ -420,17 +460,17 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
                     <div><small>SETHIS EARNED</small><b>{summary.sethis.toLocaleString()} <em>SETHIS</em></b></div>
                   </section>
-                  <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
+                  <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>{!preview&&<small className="runner-reward-privacy">Your SETHIS reward is private. The shared challenge card only shows your game performance.</small>}
                   <section className="runner-share-trophy" aria-label="Share your Football Runner challenge">
                     <div className="runner-share-trophy-brand"><img src="/football-runner-icon.svg" alt="" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></div>
                     <div className="runner-share-trophy-stars">✦　★　✦</div>
-                    <small>MY RUN · MY RECORD</small>
+                    <small>{telegramUser?.username?"@"+telegramUser.username:telegramUser?.first_name||"MY RUN"} · MY RECORD</small>
                     <strong>{summary.points.toLocaleString()}<em>PTS</em></strong>
                     <span>{summary.distance.toLocaleString()} M DISTANCE · {summary.balls.toLocaleString()} FOOTBALLS</span>
                     <b className="runner-share-dare">CAN YOU BEAT ME?</b>
                   </section>
                   <div className="runner-result-actions">
-                    <button onClick={()=>void shareRun()} disabled={savingRun}>CHALLENGE A FRIEND ↗</button>
+                    <button className="runner-share-action" onClick={()=>void shareRun()} disabled={savingRun}><span>↗</span><b>SHARE CHALLENGE CARD</b><small>Send your run graphic with the challenge link</small></button>
                     <button onClick={()=>void start()} disabled={startBusy || savingRun}>{savingRun?"SAVING…":startBusy?"PREPARING…":"PLAY AGAIN"} <span>→</span></button>
                     <button className="runner-secondary" onClick={requestExit}>{preview ? "EXIT PREVIEW" : "EXIT TO GAMES"}</button>
                   </div>
