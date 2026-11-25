@@ -152,9 +152,9 @@ test("Telegram accounts persist independently through onboarding, profile, check
 
   const runnerConfig = await api(env, "/api/runner/config", firstInit);
   assert.equal(runnerConfig.response.status, 200);
-  assert.equal(runnerConfig.data.access_mode, "free_early_access");
-  assert.equal(runnerConfig.data.entry_ct, 0);
-  assert.equal(runnerConfig.data.rewards_enabled, false);
+  assert.equal(runnerConfig.data.access_mode, "daily_access");
+  assert.equal(runnerConfig.data.entry_ct, 500);
+  assert.equal(runnerConfig.data.rewards_enabled, true);
 
   const runnerBefore = await api(env, "/api/runner/records", firstInit);
   assert.equal(runnerBefore.response.status, 200);
@@ -171,14 +171,23 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(runnerFinish.response.status, 200);
   assert.equal(runnerFinish.data.saved, true);
   assert.equal(runnerFinish.data.records.bestDistance, 100);
-  assert.equal(runnerFinish.data.rewards_enabled, false);
+  assert.equal(runnerFinish.data.rewards_enabled, true);
+  assert.equal(runnerFinish.data.sethis_reward, 0);
   const duplicateRunnerFinish = await api(env, "/api/runner/finish", firstInit, "POST", {
     run_id: runnerStart.data.run_id, distance: 100, points: 1200, footballs: 0
   });
   assert.equal(duplicateRunnerFinish.response.status, 409);
   const runnerWallet = await api(env, "/api/wallet", firstInit);
-  assert.equal(runnerWallet.data.wallet.ct_balance, 3500);
+  assert.equal(runnerWallet.data.wallet.ct_balance, 3000);
   assert.equal(runnerWallet.data.wallet.sethis_balance, 0);
+  const repeatRunnerStart = await api(env, "/api/runner/start", firstInit, "POST", {});
+  assert.equal(repeatRunnerStart.response.status, 201);
+  assert.equal(repeatRunnerStart.data.daily_access_unlocked, true);
+  env.testDb.prepare("UPDATE runner_game_runs SET started_at=datetime('now','-10 seconds') WHERE id=?").run(repeatRunnerStart.data.run_id);
+  const repeatRunnerFinish = await api(env, "/api/runner/finish", firstInit, "POST", { run_id: repeatRunnerStart.data.run_id, distance: 100, points: 1200, footballs: 0 });
+  assert.equal(repeatRunnerFinish.response.status, 200);
+  const walletAfterRepeatRun = await api(env, "/api/wallet", firstInit);
+  assert.equal(walletAfterRepeatRun.data.wallet.ct_balance, 3000, "repeat runs must not charge another daily access fee");
   const unauthenticatedRunnerRecords = await worker.fetch(new Request("https://settlethis.test/api/runner/records"), env);
   assert.equal(unauthenticatedRunnerRecords.status, 401);
 
