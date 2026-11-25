@@ -1101,3 +1101,59 @@
 
 .runner-share-reward-toggle{display:flex;align-items:center;justify-content:center;gap:8px;max-width:360px;margin:8px auto 10px;padding:9px 11px;border:1px solid #27d7f255;border-radius:10px;background:#102b3b;color:#dce8f1;font-size:9px;font-weight:800;line-height:1.4}
 .runner-share-reward-toggle input{width:16px;height:16px;accent-color:#27d7f2;flex:none}
+
+
+/* Full Telegram viewport: the game is the app surface, not a boxed iframe panel. */
+.football-runner-page{height:100dvh;min-height:100dvh;max-height:100dvh;overflow:hidden;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)!important}
+.runner-topbar{width:100%;max-width:none;height:46px;min-height:46px;flex:0 0 46px;padding:0 12px;margin:0}
+.runner-prototype-tag{display:none!important}
+.runner-stage-wrap{width:100%;max-width:none;min-height:0;max-height:none;flex:1;margin:0!important;padding:0;overflow:hidden}
+.runner-stage{min-height:0;min-width:0;flex:1;border:0;border-radius:0}
+.runner-stage canvas{width:100%!important;height:100%!important}
+.runner-controls{display:none!important}
+.runner-overlay{overflow-y:auto;overscroll-behavior:contain;justify-content:flex-start;padding:14px 14px max(18px,env(safe-area-inset-bottom,0))}
+.runner-overlay:has(.runner-result-screen){justify-content:flex-start;align-items:stretch;text-align:center;padding:12px 14px 18px}
+.runner-result-screen{width:100%;max-width:560px;min-height:0;justify-content:flex-start;margin:0 auto;gap:6px}
+.runner-result-screen>h1{margin:4px 0 6px;font-size:clamp(29px,7vw,42px)}
+.runner-distance-podium{width:100%;min-height:112px;margin:0 0 6px;padding:9px}
+.runner-distance-podium>b{font-size:clamp(48px,11vw,66px)}
+.runner-result-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 5px}
+.runner-result-metrics>div{min-height:62px;padding:9px 7px;gap:5px}
+.runner-result-metrics small{font-size:6px;white-space:normal}
+.runner-result-metrics b{font-size:clamp(15px,4vw,21px);white-space:normal;overflow-wrap:anywhere}
+.runner-result-screen>p{min-height:0;margin:0 0 4px}
+.runner-result-earned{width:100%;padding:8px 10px;border:1px solid #27d7f277;border-radius:10px;background:linear-gradient(100deg,#102b3b,#153d4b);color:#7deaff;font-size:12px;font-weight:1000;letter-spacing:.1em}
+.runner-share-trophy{width:100%;max-width:none;margin:0 0 6px;padding:13px 15px 14px;gap:7px;border-radius:14px}
+.runner-share-trophy-brand{font-size:9px}
+.runner-share-trophy-brand img{width:30px;height:30px}
+.runner-share-trophy>small{font-size:8px}
+.runner-share-trophy>strong{font-size:clamp(40px,10vw,56px)}
+.runner-share-trophy>span{font-size:8px}
+.runner-share-trophy-reward{color:#8bf0ff;font-size:10px;letter-spacing:.12em}
+.runner-share-dare{font-size:9px}
+.runner-result-actions{gap:7px;margin-top:2px}
+.runner-result-actions button{min-height:44px}
+.runner-result-actions .runner-share-action{min-height:52px}
+.runner-result-actions .runner-share-action small{font-size:8px}
+.runner-tutorial{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px 20px;background:radial-gradient(ellipse at 50% 20%,#173d50 0%,#101c2c 58%,#09121f 100%);text-align:center;touch-action:none;user-select:none}
+.runner-tutorial h2{margin:0;color:#f8fafc;font-size:clamp(27px,7vw,38px);letter-spacing:-.04em}
+.runner-tutorial p{max-width:340px;margin:0;color:#c8d7e4;font-size:12px;line-height:1.55}
+.runner-tutorial-progress{display:flex;gap:12px;margin:8px 0}
+.runner-tutorial-progress span{width:34px;height:34px;display:grid;place-items:center;border:1px solid #6a8295;border-radius:50%;color:#dbe9f4;font-size:12px;font-weight:900}
+.runner-tutorial-progress span.current{border-color:#27d7f2;background:#27d7f2;color:#06131b;box-shadow:0 0 0 5px #27d7f222}
+.runner-tutorial-progress span.done{border-color:#7de6a8;background:#173f35;color:#9cf5bd}
+.runner-tutorial-gesture{width:clamp(110px,30vw,150px);height:clamp(110px,30vw,150px);display:grid;place-items:center;border:2px solid #27d7f2;border-radius:30px;background:#102b3b;color:#27d7f2;font-size:clamp(64px,18vw,90px);font-weight:900;box-shadow:0 0 45px #27d7f233}
+.runner-tutorial>b{color:#f8fafc;font-size:12px;letter-spacing:.08em}
+.runner-tutorial>small{max-width:300px;color:#a8bac9;font-size:8px;line-height:1.5;letter-spacing:.08em}
+@media(max-height:700px){
+ .runner-topbar{height:40px;min-height:40px;flex-basis:40px}
+ .runner-result-screen{gap:4px}
+ .runner-distance-podium{min-height:88px;padding:6px}
+ .runner-distance-podium>b{font-size:44px}
+ .runner-share-trophy{padding:8px 12px;gap:4px}
+ .runner-share-trophy-brand img{width:24px;height:24px}
+ .runner-share-trophy-stars{font-size:10px}
+ .runner-share-trophy>strong{font-size:36px}
+ .runner-share-dare{padding:4px 10px}
+ .runner-result-actions button{min-height:39px}
+}
