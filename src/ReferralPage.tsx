@@ -27,7 +27,7 @@ export default function ReferralPage({ onBack, showNotice }: { onBack: () => voi
   const [error,setError]=useState("");
   const [communityError,setCommunityError]=useState("");
   const [view,setView]=useState<"progress"|"community"|"activity">("progress");
-  const [showAll,setShowAll]=useState(true);
+  const [showAll,setShowAll]=useState(false);
 
   const refresh=useCallback(async()=>{
     const initData=window.Telegram?.WebApp?.initData;
@@ -140,16 +140,15 @@ export default function ReferralPage({ onBack, showNotice }: { onBack: () => voi
           </article>}
           <div className="rfx-ladder-head"><span>THE MILESTONE LADDER</span><button type="button" onClick={()=>setShowAll(v=>!v)}>{showAll?"SHOW LESS":"SHOW ALL"} <span>{showAll?"−":"+"}</span></button></div>
           <div className="rfx-ladder">
-            {(showAll?data.milestones:data.milestones.filter(m=>m.earned||m.milestone===next?.milestone)).map(item=>{
+            {(showAll?data.milestones.filter(m=>m.earned||m.milestone!==next?.milestone):data.milestones.filter(m=>m.earned||(m.milestone!==next?.milestone&&m.milestone<=(next?.milestone??0)+2))).map(item=>{
               const earned=item.earned;
-              const current=!earned&&item.milestone===next?.milestone;
-              const progress=earned?100:current?Math.min(100,Math.round(data.qualified/item.threshold*100)):0;
-              const state=earned?"earned":current?"current":"locked";
+              const progress=earned?100:0;
+              const state=earned?"earned":"locked";
               return <article key={item.milestone} className={"rfx-milestone "+state}>
                 <span className="rfx-milestone-icon">{earned?<Check width={18} height={18}/>:current?<Trophy width={17} height={17}/>:<Lock width={16} height={16}/>}</span>
                 <div className="rfx-milestone-main">
-                  <div className="rfx-milestone-title"><b>{challengeTitle(item.threshold)}</b><span>{earned?"COMPLETED":current?"IN PROGRESS":"LOCKED"}</span></div>
-                  {current||earned?<><div className="rfx-milestone-meta"><span>{number(Math.min(data.qualified,item.threshold))} / {number(item.threshold)} qualified</span><b>{progress}%</b></div><div className="rfx-mini-track"><i style={{width:progress+"%"}}/></div></>:<small className="rfx-locked-copy">Complete the previous challenge to unlock</small>}
+                  <div className="rfx-milestone-title"><b>{challengeTitle(item.threshold)}</b><span>{earned?"COMPLETED":"LOCKED"}</span></div>
+                  {earned?<><div className="rfx-milestone-meta"><span>{number(item.threshold)} qualified fans</span><b>100%</b></div><div className="rfx-mini-track"><i style={{width:"100%"}}/></div></>:<small className="rfx-locked-copy">Unlocks after your current challenge</small>}
                 </div>
                 <div className="rfx-milestone-reward"><strong>{number(item.reward)}</strong><small>SETHIS</small></div>
               </article>;
