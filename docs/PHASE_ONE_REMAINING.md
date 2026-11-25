@@ -1,6 +1,6 @@
-# Phase One — Remaining Implementation Tracker
+# HISTORICAL / SUPERSEDED — Former Courts & Debate Implementation Tracker
 
-This file is the live checklist for completing Phase One. Preserve the approved UI; implement missing behavior and fix defects behind it.
+This checklist belongs to the retired Courts-and-debate product and is not an active release checklist. Its feature descriptions, CT terminology, test status and remaining-work items must not be treated as current SETHIS Football Games requirements. The current product specification is [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md). Preserve this file only as a historical engineering record.
 
 ## Courts and settlement
 - [x] Fixed argument reactions missing `closes_at` in their Court lookup; reactions now enforce the Court deadline. Audited join, argument, reply and reaction paths for active membership, Court deadline, content visibility, duplicate submission and rate-limit checks.
