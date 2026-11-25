@@ -169,7 +169,7 @@ export default function ReferralPage({ onBack, showNotice }: { onBack: () => voi
             <b className="rfx-shared-percent">{communityPercent}%</b>
           </div>
           <div className="rfx-community-track"><i style={{width:communityPercent+"%"}}/></div>
-          <div className="rfx-community-remaining">{number(Math.max(0,communityTarget-community.qualified))} more qualified referrals to reach this target</div>
+          <div className="rfx-community-remaining">{community.next_target===null?"All current community targets reached":number(Math.max(0,communityTarget-community.qualified))+" more qualified referrals to reach this target"}</div>
 
           <div className="rfx-contribution-card">
             <div className="rfx-contribution-icon"><UserPlus width={21} height={21}/></div>
@@ -179,7 +179,7 @@ export default function ReferralPage({ onBack, showNotice }: { onBack: () => voi
 
           <div className="rfx-how-it-works">
             <div className="rfx-how-title"><span className="rfx-kicker">HOW IT WORKS</span><b>Everyone moves the same counter.</b></div>
-            <div className="rfx-how-step"><span>01</span><p>Invite friends. When an invite qualifies, it adds <b>one</b> to the shared community total.</p></div>
+            <div className="rfx-how-step"><span>01</span><p>Invite friends. When your invite completes onboarding and claims the welcome gift, it adds <b>one</b> to the shared total.</p></div>
             <div className="rfx-how-step"><span>02</span><p>Your contribution is the number of qualified people <b>you</b> have invited.</p></div>
             <div className="rfx-how-step"><span>03</span><p>To count as a contributor, you need at least <b>one genuine qualified referral</b>.</p></div>
           </div>
@@ -220,7 +220,7 @@ export default function ReferralPage({ onBack, showNotice }: { onBack: () => voi
       {view==="activity"&&<div className="rfx-panel">
         <section className="rfx-activity-section">
           <div className="rfx-section-head"><div><span className="rfx-kicker">YOUR INVITE TRACKER</span><h2>Invitations</h2></div><strong className="rfx-count-pill">{number(data.referrals.length)}</strong></div>
-          <div className="rfx-activity-summary"><article><b>{number(data.total)}</b><span>INVITED</span></article><article><b>{number(data.qualified)}</b><span>QUALIFIED</span></article><article><b>{number(data.pending??Math.max(0,data.total-data.qualified))}</b><span>PENDING</span></article></div>
+          <div className="rfx-activity-summary"><article><b>{number(data.total)}</b><span>INVITED</span></article><article><b>{number(data.qualified)}</b><span>QUALIFIED</span></article><article><b>{number(data.pending??Math.max(0,data.total-data.qualified))}</b><span>PENDING</span></article></div><p className="rfx-qualification-note">A referral qualifies when the person you invited completes onboarding and claims their welcome gift.</p>
           {data.referrals.length===0?<div className="rfx-empty"><UserPlus width={22} height={22}/><b>Your first invite starts here.</b><span>Share your link and your invitations will appear here.</span></div>:<div className="rfx-member-list">{data.referrals.map((person,index)=><article key={person.attributed_at+":"+index}>
             <span className="rfx-avatar">{(person.first_name||person.username||"F").slice(0,1).toUpperCase()}</span>
             <div><b>{person.username?"@"+person.username:person.first_name||"SETHIS member"}</b><small>{date(person.attributed_at)}</small></div>
