@@ -20,3 +20,8 @@ test("Mystery rewards vary by difficulty and clue count",()=>{
 test("Mystery reward respects daily remaining balance",()=>{
   assert.equal(calculateMysterySethisReward("hard",1,4),4);
 });
+
+test("Both games stop issuing SETHIS after the daily cap is exhausted",()=>{
+  assert.equal(calculateRunnerSethisReward({distance:9000,points:50000,footballs:30,dailyRemaining:0}).amount,0);
+  assert.equal(calculateMysterySethisReward("hard",1,0),0);
+});
