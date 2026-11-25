@@ -9,6 +9,7 @@ test("Runner reward respects per-run and remaining daily caps",()=>{
   assert.equal(calculateRunnerSethisReward({distance:10000,points:50000,footballs:100,dailyRemaining:40}).amount,40);
   assert.equal(calculateRunnerSethisReward({distance:10000,points:50000,footballs:100,dailyRemaining:300,settings:{per_run_cap:55}}).amount,55);
 });
+// Run this suite on main pushes so the uncapped activity policy is checked in CI.
 test("Runner reward rejects invalid scores",()=>{
   assert.throws(()=>calculateRunnerSethisReward({distance:-1,points:0,footballs:0,dailyRemaining:10}));
 });
