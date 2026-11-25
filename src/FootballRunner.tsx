@@ -278,7 +278,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     try {
       const card = shareCard;
       if (!card) { setShareStatus(shareCardBusy ? "Your challenge card is still being prepared. Try again in a moment." : "The challenge card could not be prepared. Please try again."); return; }
-      const shareData: ShareData = { title: "Your SETHIS Football Runner challenge", text: message, url };
+      const shareData: ShareData = { title: "Your SETHIS Football Runner challenge", text: message };
       if (navigator.share && typeof navigator.canShare === "function" && navigator.canShare({ files: [card] })) {
         const pendingShare = navigator.share({ ...shareData, files: [card] });
         await pendingShare;
