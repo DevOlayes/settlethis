@@ -214,6 +214,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       const data = await response.json();
       if (!response.ok || typeof data.run_id !== "string") throw new Error(data.error || "A new run could not be started.");
       activeRunIdRef.current = data.run_id;
+      setRunnerAccessUnlocked(Boolean(data.daily_access_unlocked));
       engineRef.current?.start();
     } catch (error) {
       setRunSaveStatus(error instanceof Error ? error.message : "A new run could not be started.");
