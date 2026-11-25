@@ -11,8 +11,9 @@ test("Mystery question-set migration creates sourced, difficulty-balanced starte
   db.exec("CREATE TABLE telegram_users(telegram_user_id TEXT PRIMARY KEY)");
   const sql=readFileSync(new URL("../migrations/0057_mystery_question_sets.sql",import.meta.url),"utf8");
   db.exec(sql);
+  db.exec(readFileSync(new URL("../migrations/0058_expand_mystery_question_bank.sql",import.meta.url),"utf8"));
   const counts=db.prepare("SELECT difficulty,COUNT(*) AS total FROM mystery_questions GROUP BY difficulty ORDER BY difficulty").all();
-  assert.deepEqual(counts.map(x=>[x.difficulty,x.total]),[["easy",5],["hard",5],["medium",5]]);
+  assert.deepEqual(counts.map(x=>[x.difficulty,x.total]),[["easy",10],["hard",10],["medium",10]]);
   const invalid=db.prepare("SELECT COUNT(*) AS total FROM mystery_questions WHERE source_url NOT LIKE 'https://%' OR length(trim(explanation))=0 OR correct_option NOT IN ('a','b','c','d')").get();
   assert.equal(invalid.total,0);
   const settings=db.prepare("SELECT entry_easy_ct,entry_medium_ct,entry_hard_ct,reward_easy_sethis,reward_medium_sethis,reward_hard_sethis,question_count FROM mystery_game_settings WHERE id=1").get();
