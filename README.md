@@ -1,35 +1,35 @@
 # SETHIS — Football Games & Entertainment
 
-SETHIS is a mobile-first football gaming and entertainment platform delivered as a Telegram Mini App. Members play football challenges, build a game record, compete on rankings, earn eligible rewards and invite their football community.
+SETHIS is a football gaming and entertainment platform accessed through its official Telegram Mini App. Members play football games, build a game record, compete on shared rankings, earn eligible SETHIS rewards and invite their football community.
 
-**The first featured game is Guess Who? / Mystery Footballer. Football Runner is the second game, currently in free early access.** A player's identity is hidden behind three clues and up to three guesses. Correct answers earn game points, with earlier guesses earning more points. Additional football games will be introduced as they are ready.
+## Current games
 
-## Current product experience
+- **Mystery Footballer** — choose Easy, Medium or Hard and answer a daily set of five multiple-choice football questions. Each question has four options. One incorrect answer ends the attempt; answering all five correctly earns the full SETHIS reward for the selected difficulty.
+- **Football Runner** — a playable football running game with account-linked runs, SETHIS rewards and participation in the shared game rankings.
 
-The member app is organised around five destinations:
+## Member experience
 
-1. **Games** — the home for featured and future football games. Mystery Footballer is the first featured title.
-2. **Tasks** — daily football quizzes, member missions, check-ins and eligible reward activities.
-3. **Rankings** — competitive standings based on recorded game performance. CT spending does not buy a higher rank.
-4. **Referrals** — personal invitations, qualification progress and published referral rewards.
-5. **Wallet** — separate CT and SETHIS balances, rewarded-ad access and transaction records.
+1. **Games** — open Mystery Footballer or Football Runner.
+2. **Tasks** — complete available football quizzes, member missions, check-ins and reward activities.
+3. **Rankings** — compare recorded game performance across the games. Spending GT does not buy ranking points.
+4. **Referrals** — use personal invite links and track qualification and rewards.
+5. **Wallet** — view separate GT and SETHIS balances and recorded transactions.
 
-Help & Information and Customer Care explain the current game rules, tokens, rewards, account requirements and support process.
+## Tokens and rewards
 
-## Core product rules
+- **GT (Game Token)** is the in-app participation currency used for eligible game access and activities.
+- **SETHIS** is the separate platform reward token credited for eligible game and task rewards.
+- GT and SETHIS are distinct balances and are not interchangeable.
+- Wallet credits and debits are validated by the server and recorded in the wallet ledger.
+- Rewarded-ad GT credits are issued only after the provider confirms a valid valued event.
 
-- Registered membership is required. Guest play is not available.
-- **CT** is the in-app participation currency used for eligible game entries and activities.
-- **SETHIS** is a separate platform reward token. It is not interchangeable with CT.
-- Every wallet credit and debit is recorded in the server-side ledger.
-- Rewarded-ad credits are issued only after provider verification.
-- Mystery Footballer scoring is based on when the player is identified: 100 points on clue one, 70 on clue two and 40 on clue three.
-- Game rankings reflect recorded performance, not token spending.
-- The Games hub is designed to grow as more football game formats are developed. Football Runner currently records account-linked personal scores; CT entry, SETHIS rewards, rewarded-ad rescues and public rankings remain disabled until their rules and score-integrity requirements are approved.
+## Access
 
-The detailed current direction, product rules and development sequence are documented in **[Current Product Direction](docs/PRODUCT_DIRECTION.md)**.
+SETHIS gameplay is available through the official Telegram Mini App. A Telegram account and registered member session are required; a general browser session is not a substitute for Telegram access.
 
-> Historical Phase One, Phase Two and Phase Three plans describe the previous Court/debate concept and are retained for project history only. They are not the current product roadmap.
+The authoritative current rules and product guidance are in **[Current Product Direction](docs/PRODUCT_DIRECTION.md)**.
+
+> The Phase One, Phase Two and Phase Three planning documents are historical project records from the former Courts/debate direction. They are not the current product specification.
 
 ## Stack
 
@@ -37,8 +37,8 @@ The detailed current direction, product rules and development sequence are docum
 - Cloudflare Workers for backend services and web delivery
 - Cloudflare D1 for persistent application data
 - Cloudflare R2 for media storage when required
-- Telegram Mini App as the primary member experience
-- Browser-based private Admin Portal for game content, wallet operations, tasks, referrals, moderation and support
+- Telegram Mini App for the member experience
+- Private Admin Portal for game content, wallet operations, tasks, referrals, moderation and support
 
 ## Local development
 
@@ -71,5 +71,3 @@ For Workers Builds, configure:
 - Build command: `npm run build`
 - Deploy command: `npx wrangler deploy`
 - Root directory: repository root
-
-Database and other Cloudflare resources must be provisioned and configured before their related features can work in production.
