@@ -40,3 +40,14 @@ jobs:
             worker-bundle/
             wrangler.jsonc
           retention-days: 3
+      - name: Deploy production Worker when Cloudflare credentials are configured
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 678b6f8f8cd615747fc2d27320a2ecca
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN is not configured; deployment was skipped."
+            exit 0
+          fi
+          npx wrangler deploy --keep-vars --message "SETHIS Admin dashboard and staff workflow cleanup"
