@@ -88,7 +88,7 @@ Help & Information, Customer Care, onboarding, notifications and Admin guidance 
 
 ## 8. Admin and operations
 
-The Admin Portal supports current game content and settings, task review, wallet operations, referrals, Customer Care, official community links, member safety and moderation, audit history and staff access.
+The Admin Portal supports current game content and settings, task review, wallet operations, referrals, Customer Care, official community links, member safety and moderation, audit history, staff access and platform analytics. Country reporting uses only Cloudflare’s approximate two-letter country code; raw IP addresses are not stored for this purpose. Per-game presence is a single row per member and game, refreshed at most once every 45 seconds while the game screen is open.
 
 The current product specification is this document. Older Phase One, Phase Two, Phase Three and token-research documents may contain historical terminology and designs from the retired Courts/debate direction; treat them as historical records, not current product instructions.
 
