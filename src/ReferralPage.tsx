@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Group, Lock, ShareAndroid, Trophy, UserPlus } from "iconoir-react";
 import "./ReferralPage.css";
 
 type ReferralRecord = { attributed_at: string; qualified_at: string | null; username: string | null; first_name: string | null };
 type ReferralReward = { milestone: number; amount: number; created_at: string };
 type ReferralMilestone = { milestone: number; threshold: number; reward: number; title: string; description: string; earned: boolean };
-type ReferralData = { code: string | null; invite_link: string | null; total: number; qualified: number; pending: number; target: number; reward: number; token: string; milestones: ReferralMilestone[]; next_milestone: ReferralMilestone | null; referrals: ReferralRecord[]; rewards: ReferralReward[] };
+export type ReferralData = { code: string | null; invite_link: string | null; total: number; qualified: number; pending: number; target: number; reward: number; token: string; milestones: ReferralMilestone[]; next_milestone: ReferralMilestone | null; referrals: ReferralRecord[]; rewards: ReferralReward[] };
 type LeadershipData={is_leader:boolean;status:string;personal_qualified:number;branch_qualified:number;active_members:number;active_ratio:number;low_activity_since:string|null;recovery_days_remaining:number;commission_earned:number;commission_paid:number;commission_pending:number;branch_leaders:Array<{user_id:string;name:string;status:string;personal_qualified:number;branch_qualified:number;active_ratio:number}>;personal_threshold:number;hybrid_personal_threshold:number;branch_threshold:number;active_threshold:number;recovery_days:number};
-type CommunityData = { invited: number; qualified: number; contributors: number; member_qualified: number; leadership?:LeadershipData; commission_rates?:{direct_percent:number;upline_percent:number;maximum_combined_percent:number}; activity_rule?:{window_days:number;minimum_active_percent:number;warning_below_percent:number;recovery_days:number}; targets: Array<{number:number;threshold:number;title:string;reward_title:string;reward_description:string;achieved:boolean}>; achieved: number[]; next_target: number | null; progress_target: number; progress_percent: number; eligibility: boolean; eligibility_rule: string; reward_status: string; leaderboard?: Array<{rank:number;name:string;qualified:number;is_you:boolean}>; achievements?:Array<{number:number;threshold:number;title:string;achieved_at:string}> };
+export type CommunityData = { invited: number; qualified: number; contributors: number; member_qualified: number; leadership?:LeadershipData; commission_rates?:{direct_percent:number;upline_percent:number;maximum_combined_percent:number}; activity_rule?:{window_days:number;minimum_active_percent:number;warning_below_percent:number;recovery_days:number}; targets: Array<{number:number;threshold:number;title:string;reward_title:string;reward_description:string;achieved:boolean}>; achieved: number[]; next_target: number | null; progress_target: number; progress_percent: number; eligibility: boolean; eligibility_rule: string; reward_status: string; leaderboard?: Array<{rank:number;name:string;qualified:number;is_you:boolean}>; achievements?:Array<{number:number;threshold:number;title:string;achieved_at:string}> };
 
 const number = (value: number) => (Number(value) || 0).toLocaleString();
 const date = (value: string) => new Date(value.endsWith("Z") ? value : value + "Z").toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});
@@ -21,38 +21,16 @@ const challengeTitle = (threshold:number) => {
   return titles[threshold] || `Bring ${number(threshold)} fans into SETHIS`;
 };
 
-export default function ReferralPage({ onBack, showNotice }: { onBack: () => void; showNotice: (message: string) => void }) {
-  const [data,setData]=useState<ReferralData|null>(null);
-  const [community,setCommunity]=useState<CommunityData|null>(null);
-  const [loading,setLoading]=useState(true);
-  const [error,setError]=useState("");
-  const [communityError,setCommunityError]=useState("");
+export default function ReferralPage({ onBack, showNotice, initialData, initialCommunity, initialLoading, initialError, initialCommunityError, onRefresh }: { onBack: () => void; showNotice: (message: string) => void; initialData: ReferralData|null; initialCommunity: CommunityData|null; initialLoading: boolean; initialError: string; initialCommunityError: string; onRefresh: () => Promise<void> }) {
+  const [data,setData]=useState<ReferralData|null>(initialData);
+  const [community,setCommunity]=useState<CommunityData|null>(initialCommunity);
+  const [loading,setLoading]=useState(initialLoading);
+  const [error,setError]=useState(initialError);
+  const [communityError,setCommunityError]=useState(initialCommunityError);
   const [view,setView]=useState<"progress"|"community"|"activity">("progress");
   const [showAll,setShowAll]=useState(false);
 
-  const refresh=useCallback(async()=>{
-    const initData=window.Telegram?.WebApp?.initData;
-    if(!initData){setError("Open SETHIS inside Telegram to access your referrals.");setLoading(false);return;}
-    setLoading(true);setError("");
-    const headers={"x-telegram-init-data":initData};
-    try{
-      const [referralResponse,communityResponse]=await Promise.all([
-        fetch("/api/referrals",{headers,cache:"no-store"}),
-        fetch("/api/referral-community",{headers,cache:"no-store"})
-      ]);
-      const result=await referralResponse.json();
-      if(!referralResponse.ok||!result?.code){
-        const message=referralResponse.status===401?"Telegram could not verify this session. Close and reopen SETHIS from its official bot, then retry.":referralResponse.status===503?"The referral service is temporarily unavailable. Please retry shortly.":(result.error||"Referral information could not be loaded.");
-        throw new Error(message);
-      }
-      setData({...result,referrals:Array.isArray(result.referrals)?result.referrals:[],rewards:Array.isArray(result.rewards)?result.rewards:[],milestones:Array.isArray(result.milestones)?result.milestones:[]});
-      if(communityResponse.ok){setCommunity(await communityResponse.json());setCommunityError("");}
-      else{const communityResult=await communityResponse.json().catch(()=>({}));setCommunityError(communityResult.error||"Community progress could not be loaded.");}
-    }catch(e){setError(e instanceof Error?e.message:"Referral information could not be loaded.");}
-    finally{setLoading(false);}
-  },[]);
-
-  useEffect(()=>{void refresh();},[refresh]);
+  useEffect(()=>{setData(initialData);setCommunity(initialCommunity);setLoading(initialLoading);setError(initialError);setCommunityError(initialCommunityError);},[initialData,initialCommunity,initialLoading,initialError,initialCommunityError]);
 
   const copyLink=async()=>{
     if(!data?.invite_link){showNotice("Your referral link is not available.");return;}
@@ -122,15 +100,15 @@ export default function ReferralPage({ onBack, showNotice }: { onBack: () => voi
         <section className="rfx-stats">
           <div className="rfx-stat-primary"><span className="rfx-kicker">QUALIFIED FANS</span><strong>{number(data.qualified)}</strong><small>of {number(data.total)} invited</small></div>
           <div className="rfx-stat-pair">
-            <article><span>INVITED</span><b>{number(data.total)}</b></article>
-            <article><span>PENDING</span><b>{number(data.pending??Math.max(0,data.total-data.qualified))}</b></article>
+            <article><b>{number(data.total)}</b><span>INVITED</span></article>
+            <article><b>{number(data.pending??Math.max(0,data.total-data.qualified))}</b><span>PENDING</span></article>
           </div>
         </section>
 
         <section className="rfx-milestones">
           <div className="rfx-section-head">
             <div><span className="rfx-kicker">YOUR REFERRAL JOURNEY</span><h2>Milestone challenges</h2><p>Each milestone brings a new SETHIS reward.</p></div>
-            <button type="button" className="rfx-refresh" onClick={()=>void refresh()} aria-label="Refresh referral progress">↻</button>
+            <button type="button" className="rfx-refresh" onClick={()=>void onRefresh()} aria-label="Refresh referral progress">↻</button>
           </div>
           {next&&<article className="rfx-feature-challenge">
             <div className="rfx-feature-top"><span className="rfx-live-tag"><i/> NEXT UNLOCK</span><span className="rfx-reward-pill"><Trophy width={14} height={14}/>{number(next.reward)} SETHIS</span></div>
