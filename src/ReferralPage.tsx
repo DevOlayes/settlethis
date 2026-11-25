@@ -138,14 +138,13 @@ export default function ReferralPage({ onBack, showNotice }: { onBack: () => voi
             <div className="rfx-progress-track"><i style={{width:Math.min(100,data.qualified/next.threshold*100)+"%"}}/></div>
             <span className="rfx-remaining">{remaining?number(remaining)+" more qualified "+(remaining===1?"fan":"fans")+" to unlock": "Milestone ready to unlock"}</span>
           </article>}
-          <div className="rfx-ladder-head"><span>THE MILESTONE LADDER</span><button type="button" onClick={()=>setShowAll(v=>!v)}>{showAll?"SHOW LESS":"SHOW ALL"} <span>{showAll?"−":"+"}</span></button></div>
+          <div className="rfx-ladder-head"><span>THE MILESTONE LADDER</span><button type="button" onClick={()=>setShowAll(v=>!v)}>{showAll?"SHOW LESS":"VIEW ALL"} <span>{showAll?"−":"+"}</span></button></div>
           <div className="rfx-ladder">
             {(showAll?data.milestones.filter(m=>m.earned||m.milestone!==next?.milestone):data.milestones.filter(m=>m.earned||(m.milestone!==next?.milestone&&m.milestone<=(next?.milestone??0)+2))).map(item=>{
               const earned=item.earned;
-              const progress=earned?100:0;
               const state=earned?"earned":"locked";
               return <article key={item.milestone} className={"rfx-milestone "+state}>
-                <span className="rfx-milestone-icon">{earned?<Check width={18} height={18}/>:current?<Trophy width={17} height={17}/>:<Lock width={16} height={16}/>}</span>
+                <span className="rfx-milestone-icon">{earned?<Check width={18} height={18}/>:<Lock width={16} height={16}/>}</span>
                 <div className="rfx-milestone-main">
                   <div className="rfx-milestone-title"><b>{challengeTitle(item.threshold)}</b><span>{earned?"COMPLETED":"LOCKED"}</span></div>
                   {earned?<><div className="rfx-milestone-meta"><span>{number(item.threshold)} qualified fans</span><b>100%</b></div><div className="rfx-mini-track"><i style={{width:"100%"}}/></div></>:<small className="rfx-locked-copy">Unlocks after your current challenge</small>}
