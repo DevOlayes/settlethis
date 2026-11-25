@@ -119,7 +119,7 @@ const refreshTasks=()=>{const initData=window.Telegram?.WebApp?.initData;if(!tel
   const [profileLoaded,setProfileLoaded]=useState(false);
   const [profileError,setProfileError]=useState("");
   const [profileSaveError,setProfileSaveError]=useState("");
-  const [profileActivity,setProfileActivity]=useState({games_played:0,games_won:0,game_points:0,win_rate:0,quizzes_played:0,quizzes_passed:0,quiz_average:0,sethis_earned:0,ct_spent:0});
+  const [profileActivity,setProfileActivity]=useState({games_played:0,games_won:0,game_points:0,mystery_sets_played:0,mystery_sets_won:0,win_rate:0,quizzes_played:0,quizzes_passed:0,quiz_average:0,sethis_earned:0,ct_spent:0});
   const [profileRank,setProfileRank]=useState<number|null>(null);
   const [profileAchievements,setProfileAchievements]=useState<Array<{key:string;title:string;description:string;earned:boolean;progress:number;target:number}>>([]);
   const [profileHistory,setProfileHistory]=useState<{mystery_rounds:Array<{id:string;difficulty:string;status:string;correct_answers:number;total_questions:number;entry_ct:number;reward_sethis:number;started_at:string;completed_at?:string|null;set_date:string}>;quizzes:Array<{quiz_id:string;title:string;score:number;correct_answers:number;total_questions:number;reward_amount:number;submitted_at:string}>;transactions:Array<{token:string;amount:number;transaction_type:string;created_at:string}>}>({mystery_rounds:[],quizzes:[],transactions:[]});
