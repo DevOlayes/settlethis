@@ -1,0 +1,36 @@
+import { useEffect, useState } from "react";
+import "./AdminOverview.css";
+
+type Overview = {
+  users:{total:number;joined_24h:number;joined_7d:number;active_24h:number};
+  games:{runner_24h:number;runner_1h:number;runner_online_5m:number;mystery_24h:number;mystery_1h:number;mystery_online_5m:number};
+  ads:{watched:number};
+  rewards:{sethis_distributed:number};
+  countries:Array<{country_code:string;users:number}>;
+  referrers:Array<{user_id:string;username:string|null;first_name:string;referrals:number;qualified:number}>;
+  supporters:Array<{user_id:string;username:string|null;first_name:string;games_played:number;referrals:number}>;
+  generated_at:string;
+};
+const number=(n:number)=>Number(n||0).toLocaleString();
+const countryNames:Record<string,string>={NG:"Nigeria",GH:"Ghana",KE:"Kenya",ZA:"South Africa",GB:"United Kingdom",US:"United States",IN:"India",BR:"Brazil",EG:"Egypt",CM:"Cameroon",CI:"Côte d’Ivoire"};
+export default function AdminOverview(){
+ const [data,setData]=useState<Overview|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState("");
+ const refresh=async()=>{setLoading(true);setError("");try{const r=await fetch("/api/admin/overview",{cache:"no-store",credentials:"same-origin"});const d=await r.json();if(!r.ok)throw new Error(d.error||"Dashboard data could not be loaded.");setData(d);}catch(e){setError(e instanceof Error?e.message:"Dashboard data is unavailable.");}finally{setLoading(false);}};
+ useEffect(()=>{void refresh();},[]);
+ const metric=(label:string,value:number|undefined,detail:string,accent="")=><article className={"overview-metric "+accent}><span>{label}</span><strong>{loading?"—":number(value||0)}</strong><small>{detail}</small></article>;
+ return <div className="admin-overview">
+  <div className="overview-heading"><div><span className="overview-eyebrow">SETHIS · PLATFORM INTELLIGENCE</span><h2>Overview</h2><p>Your platform at a glance — audience, game activity, rewards and community growth.</p></div><button className="overview-refresh" onClick={()=>void refresh()} disabled={loading}>↻ <span>{loading?"UPDATING":"REFRESH DATA"}</span></button></div>
+  {error&&<div className="overview-error">{error}</div>}
+  <section className="overview-section"><div className="overview-section-head"><div><h3>Audience overview</h3><p>Registered members and recent engagement</p></div><span>MEMBERS</span></div><div className="overview-grid overview-grid-four">{metric("Total registered users",data?.users.total,"All registered Telegram members")}{metric("Joined in 24 hours",data?.users.joined_24h,"New members · last 24 hours","warm")}{metric("Joined in 7 days",data?.users.joined_7d,"New members · last 7 days")}{metric("Active users",data?.users.active_24h,"Seen in the last 24 hours","green")}</div></section>
+  <section className="overview-section"><div className="overview-section-head"><div><h3>Game engagement</h3><p>Distinct players, not number of runs or attempts</p></div><span>LIVE ACTIVITY ESTIMATES</span></div><div className="overview-game-grid">
+   <article className="overview-game-card runner"><div className="overview-game-title"><span className="overview-game-icon">⚽</span><div><b>Football Runner</b><small>Game activity</small></div></div><div className="overview-game-stats"><div><strong>{loading?"—":number(data?.games.runner_online_5m||0)}</strong><span>Active · 5 min</span></div><div><strong>{loading?"—":number(data?.games.runner_1h||0)}</strong><span>Players · 1 hour</span></div><div><strong>{loading?"—":number(data?.games.runner_24h||0)}</strong><span>Players · 24 hours</span></div></div></article>
+   <article className="overview-game-card mystery"><div className="overview-game-title"><span className="overview-game-icon">🧠</span><div><b>Mystery Footballer</b><small>Question-set challenge</small></div></div><div className="overview-game-stats"><div><strong>{loading?"—":number(data?.games.mystery_online_5m||0)}</strong><span>Active · 5 min</span></div><div><strong>{loading?"—":number(data?.games.mystery_1h||0)}</strong><span>Players · 1 hour</span></div><div><strong>{loading?"—":number(data?.games.mystery_24h||0)}</strong><span>Players · 24 hours</span></div></div></article>
+  </div><p className="overview-footnote">Five-minute activity is an estimate based on recently active game sessions. Hourly and daily figures count distinct members who started a game during that period.</p></section>
+  <section className="overview-grid overview-grid-two"><div className="overview-panel"><div className="overview-section-head"><div><h3>Rewards & advertising</h3><p>Recorded platform totals</p></div></div><div className="overview-big-stat"><span>Total SETHIS distributed</span><strong>{loading?"—":number(data?.rewards.sethis_distributed||0)}</strong><small>All positive SETHIS wallet-ledger credits</small></div><div className="overview-big-stat compact"><span>Rewarded ads watched</span><strong>{loading?"—":number(data?.ads.watched||0)}</strong><small>Verified Monetag reward events</small></div></div>
+   <div className="overview-panel"><div className="overview-section-head"><div><h3>Audience by country</h3><p>Approximate country from Cloudflare request location</p></div></div>{!data?.countries.length&&!loading?<p className="overview-empty">Country reporting will build as members open the Mini App after this feature is enabled.</p>:<div className="overview-country-list">{(data?.countries||[]).slice(0,8).map((c,i)=><div className="overview-country" key={c.country_code||"unknown"}><span className="overview-country-rank">{i+1}</span><b>{countryNames[c.country_code]||c.country_code||"Unknown"}</b><div className="overview-country-track"><i style={{width:Math.max(3,100*c.users/Math.max(1,data?.countries[0]?.users||1))+"%"}}/></div><strong>{number(c.users)}</strong></div>)}</div>}</div>
+  </section>
+  <section className="overview-grid overview-grid-two"><div className="overview-panel"><div className="overview-section-head"><div><h3>Top community referrers</h3><p>Members bringing new people into SETHIS</p></div></div>{!data?.referrers.length&&!loading?<p className="overview-empty">No referral activity recorded yet.</p>:<div className="overview-leader-list">{(data?.referrers||[]).slice(0,6).map((u,i)=><div className="overview-leader" key={u.user_id}><span>{i+1}</span><div><b>{u.first_name||u.username||"Member"}</b><small>{u.username?"@"+u.username:"Telegram member"} · {number(u.qualified)} qualified</small></div><strong>{number(u.referrals)}</strong></div>)}</div>}</div>
+   <div className="overview-panel"><div className="overview-section-head"><div><h3>Most active members</h3><p>Game participation and community contribution</p></div></div>{!data?.supporters.length&&!loading?<p className="overview-empty">Member activity will appear here as games are played.</p>:<div className="overview-leader-list">{(data?.supporters||[]).slice(0,6).map((u,i)=><div className="overview-leader" key={u.user_id}><span>{i+1}</span><div><b>{u.first_name||u.username||"Member"}</b><small>{number(u.referrals)} referrals</small></div><strong>{number(u.games_played)} <small>games</small></strong></div>)}</div>}</div>
+  </section><div className="overview-updated">Last refreshed: {data?.generated_at?new Date(data.generated_at).toLocaleString():"—"} · Dashboard metrics update when refreshed.</div>
+ </div>;
+}
