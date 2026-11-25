@@ -228,7 +228,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(mysteryState.response.status, 200);
   const easyLevel = mysteryState.data.levels.find(level => level.difficulty === "easy");
   assert.equal(easyLevel.ready, true);
-  assert.equal(easyLevel.question_count, 5);
+  assert.equal(Object.hasOwn(easyLevel, "question_count"), false, "question-bank set size is internal and must not be exposed to players");
   assert.equal(easyLevel.entry_ct, 300);
   assert.equal(easyLevel.reward_sethis, 130);
 
