@@ -14,13 +14,13 @@ import "./FootballRunner.css";
 
 type Props = { telegramUser: TelegramUser | null; onBack: () => void; preview?: boolean };
 
-async function createRunnerShareCard(summary:RunnerSummary,playerName:string,avatarUrl?:string,includeReward=false):Promise<File>{
+async function createRunnerShareCard(summary:RunnerSummary,playerName:string,avatarUrl?:string):Promise<File>{
   const canvas=document.createElement("canvas");canvas.width=1200;canvas.height=675;
   const context=canvas.getContext("2d");if(!context)throw new Error("The challenge card could not be prepared.");
   const ctx=context,background=ctx.createLinearGradient(0,0,1200,675);background.addColorStop(0,"#071522");background.addColorStop(.58,"#102b3b");background.addColorStop(1,"#171522");ctx.fillStyle=background;ctx.fillRect(0,0,1200,675);
-  ctx.strokeStyle="rgba(39,215,242,.14)";ctx.lineWidth=2;for(let x=0;x<=1200;x+=100){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,675);ctx.stroke();}for(let y=0;y<=675;y+=90){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(1200,y);ctx.stroke();}
+  ctx.strokeStyle="rgba(233,130,114,.16)";ctx.lineWidth=2;for(let x=0;x<=1200;x+=100){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,675);ctx.stroke();}for(let y=0;y<=675;y+=90){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(1200,y);ctx.stroke();}
   ctx.strokeStyle="rgba(255,255,255,.12)";ctx.lineWidth=4;ctx.strokeRect(54,54,1092,567);ctx.beginPath();ctx.arc(600,338,180,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(600,60);ctx.lineTo(600,615);ctx.stroke();
-  ctx.fillStyle="#27d7f2";ctx.font="900 26px Arial";ctx.fillText("SETHIS  ×  FOOTBALL RUNNER",94,116);
+  ctx.fillStyle="#f39a85";ctx.font="900 26px Arial";ctx.fillText("SETHIS  ×  FOOTBALL RUNNER",94,116);
   ctx.fillStyle="#f8fafc";ctx.font="900 54px Arial";ctx.fillText("RUN COMPLETE.",94,190);
   ctx.fillStyle="#b7c9d8";ctx.font="700 23px Arial";ctx.fillText("A NEW SCORE IS ON THE BOARD.",96,231);
   ctx.save();ctx.beginPath();ctx.arc(160,340,62,0,Math.PI*2);ctx.closePath();ctx.clip();
@@ -28,10 +28,10 @@ async function createRunnerShareCard(summary:RunnerSummary,playerName:string,ava
   if(avatarUrl){try{const avatar=new Image();avatar.crossOrigin="anonymous";const loaded=new Promise<void>(resolve=>{avatar.onload=()=>resolve();avatar.onerror=()=>resolve();avatar.src=avatarUrl;});await Promise.race([loaded,new Promise<void>(resolve=>window.setTimeout(resolve,1300))]);if(avatar.complete&&avatar.naturalWidth>0){ctx.drawImage(avatar,98,278,124,124);avatarLoaded=true;}}catch{}}
   if(!avatarLoaded){ctx.fillStyle="#18394b";ctx.fillRect(98,278,124,124);ctx.fillStyle="#27d7f2";ctx.font="900 58px Arial";ctx.textAlign="center";ctx.fillText((playerName.replace(/^@/,"").slice(0,1)||"S").toUpperCase(),160,360);}
   ctx.restore();ctx.textAlign="left";ctx.fillStyle="#f8fafc";ctx.font="900 30px Arial";ctx.fillText(playerName.slice(0,28),255,326);ctx.fillStyle="#9fb5c7";ctx.font="700 19px Arial";ctx.fillText("IS CHALLENGING YOU TO BEAT THIS RUN",255,362);
-  ctx.fillStyle="#27d7f2";ctx.font="900 84px Arial";ctx.fillText(summary.points.toLocaleString(),94,500);ctx.fillStyle="#d5e5ef";ctx.font="900 22px Arial";ctx.fillText("POINTS",98,535);
+  ctx.fillStyle="#f39a85";ctx.font="900 84px Arial";ctx.fillText(summary.points.toLocaleString(),94,500);ctx.fillStyle="#d5e5ef";ctx.font="900 22px Arial";ctx.fillText("POINTS",98,535);
   ctx.fillStyle="#f8fafc";ctx.font="900 34px Arial";ctx.fillText(summary.distance.toLocaleString()+" M",680,490);ctx.fillStyle="#b7c9d8";ctx.font="800 18px Arial";ctx.fillText("DISTANCE",684,523);
   ctx.fillStyle="#f8fafc";ctx.font="900 34px Arial";ctx.fillText(summary.balls.toLocaleString(),930,490);ctx.fillStyle="#b7c9d8";ctx.font="800 18px Arial";ctx.fillText("FOOTBALLS",934,523);
-  if(includeReward&&summary.sethis>0){ctx.fillStyle="#27d7f2";ctx.font="900 21px Arial";ctx.fillText("SETHIS REWARD · "+summary.sethis.toLocaleString(),680,550);}ctx.fillStyle="#f6c98c";ctx.font="900 25px Arial";ctx.fillText("CAN YOU BEAT ME?",680,580);
+  ctx.fillStyle="#f6c98c";ctx.font="900 25px Arial";ctx.fillText("CAN YOU BEAT ME?",680,580);
   ctx.fillStyle="#d6e4ee";ctx.font="700 17px Arial";ctx.fillText("OPEN THE CHALLENGE LINK IN THE CAPTION TO PLAY",94,586);
   const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error("The challenge image could not be generated.")),"image/png",.94));
   return new File([blob],"sethis-football-run-challenge.png",{type:"image/png"});
@@ -75,7 +75,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     if(!summary||preview){setShareCard(null);setShareCardBusy(false);return;}
     let cancelled=false;setShareCard(null);setShareCardBusy(true);
     const playerName=telegramUser?.username?"@"+telegramUser.username:telegramUser?.first_name||"A SETHIS player";
-    void createRunnerShareCard(summary,playerName,telegramUser?.photo_url,true).then(file=>{if(!cancelled)setShareCard(file);}).catch(()=>{if(!cancelled)setShareCard(null);}).finally(()=>{if(!cancelled)setShareCardBusy(false);});
+    void createRunnerShareCard(summary,playerName,telegramUser?.photo_url).then(file=>{if(!cancelled)setShareCard(file);}).catch(()=>{if(!cancelled)setShareCard(null);}).finally(()=>{if(!cancelled)setShareCardBusy(false);});
     return()=>{cancelled=true;};
   },[summary?.points,summary?.distance,summary?.balls,summary?.sethis,preview,telegramUser?.username,telegramUser?.first_name,telegramUser?.photo_url]);
   const [rescueBusy, setRescueBusy] = useState(false);
@@ -307,7 +307,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     const challenge = createRunnerChallenge({ points: summary.points, distance: summary.distance, balls: summary.balls });
     const url = createRunnerChallengeUrl(challenge,botUsername);
     const playerName = telegramUser?.username ? "@" + telegramUser.username : telegramUser?.first_name || "A SETHIS player";
-    const message = playerName + " is challenging you to beat " + summary.points.toLocaleString() + " points and " + summary.distance.toLocaleString() + "m in SETHIS Football Runner. Open the challenge link and take your turn: " + url;
+    const message = playerName + " is challenging you to beat " + summary.points.toLocaleString() + " points, " + summary.distance.toLocaleString() + " metres and " + summary.balls.toLocaleString() + " footballs in SETHIS Football Runner. Can you beat this run? Play here: " + url;
     try {
       const card = shareCard;
       if (!card) { setShareStatus(shareCardBusy ? "Your challenge card is still being prepared. Try again in a moment." : "The challenge card could not be prepared. Please try again."); return; }
@@ -509,15 +509,15 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <section className="runner-result-metrics" aria-label="Your run summary">
                     <div><small>RUNS PLAYED</small><b>{preview ? "PRACTICE" : (records.totalRuns + (savingRun ? 1 : 0)).toLocaleString()}</b></div>
                     <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
-                    <div><small>SETHIS EARNED</small><b>{summary.sethis.toLocaleString()} <em>SETHIS</em></b></div>
                   </section>
-                  <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>{!preview&&summary.sethis>0&&<div className="runner-result-earned">+{summary.sethis.toLocaleString()} SETHIS EARNED</div>}
+                  <section className="runner-sethis-earned-card" aria-label="SETHIS earned this run"><img src="/football-runner-icon.svg" alt="" /><div><small>SETHIS REWARD</small><strong>+{summary.sethis.toLocaleString()} <em>SETHIS</em></strong><span>{preview?"Practice runs do not earn wallet rewards.":savingRun?"Your reward is being confirmed.":"Your earned reward is credited to your SETHIS wallet."}</span></div></section>
+                  <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
                   <section className="runner-share-trophy" aria-label="Share your Football Runner challenge">
                     <div className="runner-share-trophy-brand"><img src="/football-runner-icon.svg" alt="" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></div>
                     <div className="runner-share-trophy-stars">✦　★　✦</div>
                     <small>{telegramUser?.username?"@"+telegramUser.username:telegramUser?.first_name||"MY RUN"} · MY RECORD</small>
                     <strong>{summary.points.toLocaleString()}<em>PTS</em></strong>
-                    <span>{summary.distance.toLocaleString()} M DISTANCE · {summary.balls.toLocaleString()} FOOTBALLS</span>{!preview&&<b className="runner-share-trophy-reward">+{summary.sethis.toLocaleString()} SETHIS EARNED</b>}
+                    <span>{summary.distance.toLocaleString()} M DISTANCE · {summary.balls.toLocaleString()} FOOTBALLS</span>
                     <b className="runner-share-dare">CAN YOU BEAT ME?</b>
                   </section>
                   <div className="runner-result-actions">
@@ -537,7 +537,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
           <b>{["SWIPE LEFT · CHANGE LANE","SWIPE RIGHT · CHANGE LANE","SWIPE UP · JUMP","SWIPE DOWN · SLIDE"][tutorialStep]}</b>
           <small>USE YOUR FINGER ON THIS PANEL · WRONG DIRECTION RESETS THE LESSON</small>
         </div>}
-          {phase === "running" && collectionPulse > 0 && <div key={collectionPulse} className="runner-collect-fly" aria-hidden="true"><span>⚽</span><b>+100 PTS</b></div>}
+          {phase === "running" && collectionPulse > 0 && <div key={collectionPulse} className="runner-collect-fly" aria-hidden="true"><span>⚽</span><b>+1 BALL</b></div>}
         </div>
 
         {phase === "running" && <button className="runner-pause" onClick={pause} aria-label="Pause run">Ⅱ PAUSE</button>}
