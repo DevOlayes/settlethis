@@ -510,7 +510,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <div><small>RUNS PLAYED</small><b>{preview ? "PRACTICE" : (records.totalRuns + (savingRun ? 1 : 0)).toLocaleString()}</b></div>
                     <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
                   </section>
-                  <section className="runner-sethis-earned-card" aria-label="SETHIS earned this run"><img src="/football-runner-icon.svg" alt="" /><div><small>SETHIS REWARD</small><strong>+{summary.sethis.toLocaleString()} <em>SETHIS</em></strong><span>{preview?"Practice runs do not earn wallet rewards.":savingRun?"Your reward is being confirmed.":"Your earned reward is credited to your SETHIS wallet."}</span></div></section>
+                  <section className="runner-sethis-earned-card" aria-label="SETHIS earned this run"><div className="runner-earned-logos"><img src="/sethis-token-mark.svg" alt="SETHIS token" /><img src="/football-runner-icon.svg" alt="SETHIS Football Runner" /></div><div><small>SETHIS REWARD</small><strong>+{summary.sethis.toLocaleString()} <em>SETHIS</em></strong><span>{preview?"Practice runs do not earn wallet rewards.":savingRun?"Your reward is being confirmed.":"Your earned reward is credited to your SETHIS wallet."}</span></div></section>
                   <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
                   <section className="runner-share-trophy" aria-label="Share your Football Runner challenge">
                     <div className="runner-share-trophy-brand"><img src="/football-runner-icon.svg" alt="" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></div>
