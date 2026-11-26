@@ -1,5 +1,6 @@
 import { ArrowRight } from "iconoir-react";
 import MysteryAvatar from "./MysteryAvatar";
+import BrandMark from "./BrandMark";
 import "./GamesHome.css";
 
 type GameId="mystery"|"runner";
@@ -20,7 +21,7 @@ function MysteryArtwork(){return <div className="gamelib-art gamelib-photo-art g
 function RunnerArtwork(){return <div className="gamelib-art gamelib-photo-art gamelib-runner-photo">
   <img src="/images/football-runner.webp" alt="Football Runner game artwork" loading="lazy" decoding="async"/>
   <div className="gamelib-photo-copy gamelib-runner-overlay">
-    <span className="gamelib-photo-kicker">3D ENDLESS RUNNER</span>
+    <span className="gamelib-photo-kicker"><BrandMark className="gamelib-runner-brand-mark"/> 3D ENDLESS RUNNER</span>
     <strong>FOOTBALL<br/>RUNNER</strong>
     <span className="gamelib-photo-subtitle">RUN THE PITCH</span>
     <span className="gamelib-photo-foot">OWN THE PITCH · JUMP · SLIDE · COLLECT</span>

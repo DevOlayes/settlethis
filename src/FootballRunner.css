@@ -1298,3 +1298,15 @@
  .runner-share-trophy>strong{font-size:29px!important}
  .runner-result-actions button{min-height:33px!important}
 }
+
+
+/* Final Runner alignment and consistent SETHIS branding */
+.runner-game-emblem{width:clamp(68px,18vw,94px)!important;height:auto!important;aspect-ratio:580/460!important;object-fit:contain!important;filter:drop-shadow(0 8px 16px #0009)!important}
+.runner-share-trophy-brand .runner-share-brand-mark{width:27px;height:22px;display:block;flex:none;filter:drop-shadow(0 2px 5px #0005)}
+.runner-result-screen{max-height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#e9827266 transparent;padding-left:2px;padding-right:2px}
+.runner-result-screen .runner-share-card-button{flex:0 0 auto}
+.runner-result-screen .runner-result-actions{flex:0 0 auto}
+.runner-overlay:has(.runner-result-screen){overflow:hidden;}
+.runner-result-screen>p{flex:0 0 auto}
+@media(max-height:760px){.runner-result-screen{justify-content:flex-start!important;padding-top:3px!important;padding-bottom:6px!important}.runner-result-screen .runner-result-heading{margin-bottom:4px}.runner-result-screen .runner-share-card-button{padding-top:6px!important;padding-bottom:7px!important}}
+@media(max-width:390px){.runner-share-trophy-brand .runner-share-brand-mark{width:24px;height:20px}.runner-result-screen{gap:3px!important}}

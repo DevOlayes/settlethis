@@ -93,3 +93,7 @@
 .gamelib-photo-art:after{position:absolute!important;inset:0!important;z-index:1!important;content:"";pointer-events:none}
 .gamelib-photo-art>.gamelib-photo-copy{position:absolute!important;z-index:10!important;left:5.5%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-start}
 .gamelib-mystery-photo>.gamelib-photo-copy,.gamelib-runner-photo>.gamelib-photo-copy{visibility:visible!important;opacity:1!important}
+
+
+.gamelib-runner-overlay .gamelib-photo-kicker{display:flex;align-items:center;gap:7px}
+.gamelib-runner-brand-mark{width:23px;height:19px;flex:none;filter:drop-shadow(0 2px 6px #0008)}

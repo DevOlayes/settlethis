@@ -318,11 +318,11 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     } catch {
       // A challenge can still be shared if referral details are temporarily unavailable.
     }
-    const message = playerName + " is challenging you to beat " + summary.points.toLocaleString() + " points, " + summary.distance.toLocaleString() + " metres and " + summary.balls.toLocaleString() + " footballs in SETHIS Football Runner. Can you beat this run? " + (inviteLink ? "Join SETHIS with my personal invite link: " + inviteLink + " " : "") + "Open this challenge: " + challengeUrl;
+    const message = "Think you can beat my score? Join Settle This now and take the challenge!\n\n" + playerName + " scored " + summary.points.toLocaleString() + " points in SETHIS Football Runner (" + summary.distance.toLocaleString() + " m · " + summary.balls.toLocaleString() + " footballs).\n\n" + (inviteLink ? "Join SETHIS with my personal invite link: " + inviteLink + "\n\n" : "") + "Open this exact challenge: " + challengeUrl;
     try {
       const card = shareCard;
       if (!card) { setShareStatus(shareCardBusy ? "Your achievement image is still being prepared. Try again in a moment." : "The achievement image could not be prepared. Please try again."); return; }
-      const shareData: ShareData = { title: "My SETHIS Football Runner challenge", text: message, url: inviteLink || challengeUrl };
+      const shareData: ShareData = { title: "Think you can beat my SETHIS Football Runner score?", text: message };
       let canShareImage = false;
       try { canShareImage = typeof navigator.share === "function" && typeof navigator.canShare === "function" && navigator.canShare({ files: [card] }); } catch { canShareImage = false; }
       if (canShareImage) {
@@ -456,7 +456,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <h1>CHASE <i>THE</i><br/>DISTANCE.</h1>
                     <p>Three lanes. No easy route. Your record to break.</p>
                   </div>
-                  <img className="runner-game-emblem" src="/football-runner-icon.svg" alt="SETHIS Football Runner emblem" />
+                  <BrandMark className="runner-game-emblem" />
                 </div>
                 {incomingChallenge && <section className="runner-challenge-banner">
                   <span>ONE-ON-ONE CHALLENGE · {incomingChallenge.id.slice(0, 8).toUpperCase()}</span>
@@ -533,7 +533,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <section className="runner-sethis-earned-card" aria-label="SETHIS earned this run"><BrandMark className="runner-earned-coin" /><div><small>SETHIS REWARD</small><strong>+{summary.sethis.toLocaleString()} <em>SETHIS</em></strong><span>{preview?"Practice runs do not earn wallet rewards.":savingRun?"Your reward is being confirmed.":summary.sethis>0?"Credited to your SETHIS wallet.":"No SETHIS reward was earned on this run."}</span></div></section>
                   <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
                   <button type="button" className="runner-share-trophy runner-share-card-button" aria-label="Share this achievement image with your challenge and referral link" onClick={()=>void shareRun()} disabled={preview||savingRun||shareCardBusy}>
-                    <span className="runner-share-trophy-brand"><img src="/sethis-token-mark.svg" alt="" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></span>
+                    <span className="runner-share-trophy-brand"><BrandMark className="runner-share-brand-mark" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></span>
                     <span className="runner-share-trophy-stars">✦　★　✦</span>
                     <small>{telegramUser?.username?"@"+telegramUser.username:telegramUser?.first_name||"MY RUN"} · MY RECORD</small>
                     <strong>{summary.points.toLocaleString()}<em>PTS</em></strong>
