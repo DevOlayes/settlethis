@@ -2,7 +2,7 @@ import { allocatePoolPrize } from "./settlement";
 import { checkinSummary, lagosDate } from "./checkin";
 import { verifyTelegramInitData } from "./telegram-auth";
 import { secureUrl } from "./url-validation";
-import { monetagWalletCreditSql, parseMonetagPostback } from "./monetag";
+import { parseMonetagPostback } from "./monetag";
 import { taskApprovalStatements } from "./task-review";
 import { RANKINGS_SQL, SETHIS_RANKINGS_SQL } from "./rankings";
 import { validateRunnerScore } from "./football-runner/score-validation";
