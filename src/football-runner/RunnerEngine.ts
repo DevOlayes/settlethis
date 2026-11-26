@@ -42,7 +42,8 @@ export class RunnerEngine {
   private readonly cameraLookTarget = new THREE.Vector3();
   private readonly cameraLookCurrent = new THREE.Vector3();
   private readonly input: InputController;
-  private readonly resizeObserver: ResizeObserver;
+  private readonly resizeObserver: ResizeObserver | null;
+  private readonly handleWindowResize = (): void => resizeRunnerScene(this.bundle, this.host);
   private frame = 0;
   private lastFrameTime = 0;
   private targetLane = 0;
@@ -90,8 +91,10 @@ export class RunnerEngine {
     void this.loadRiggedPlayer();
     this.input = new InputController(this.bundle.renderer.domElement, (action) => this.handleAction(action));
     this.input.attach();
-    this.resizeObserver = new ResizeObserver(() => resizeRunnerScene(this.bundle, this.host));
-    this.resizeObserver.observe(host);
+    this.resizeObserver = typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => resizeRunnerScene(this.bundle, this.host)) : null;
+    if (this.resizeObserver) this.resizeObserver.observe(host);
+    else window.addEventListener("resize", this.handleWindowResize);
+    resizeRunnerScene(this.bundle, host);
     this.lastFrameTime = performance.now();
     this.bundle.renderer.render(this.bundle.scene, this.bundle.camera);
     document.addEventListener("visibilitychange", this.onVisibilityChange);
@@ -314,7 +317,8 @@ export class RunnerEngine {
     cancelAnimationFrame(this.frame);
     this.input.detach();
     this.audio.dispose();
-    this.resizeObserver.disconnect();
+    this.resizeObserver?.disconnect();
+    if (!this.resizeObserver) window.removeEventListener("resize", this.handleWindowResize);
     document.removeEventListener("visibilitychange", this.onVisibilityChange);
     this.releaseAllObjects();
     this.pools.forEach((pool) => pool.clear());
