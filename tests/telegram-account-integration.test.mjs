@@ -270,6 +270,46 @@ async function monetagPostback(env, fields, secret = env.MONETAG_POSTBACK_SECRET
   return { response, data: await response.json() };
 }
 
+
+test("referral milestones wait for an explicit claim before crediting SETHIS", async () => {
+  const env = createEnvironment();
+  const inviter = { id: 730001, first_name: "Referral", username: "referral_owner" };
+  const inviterInit = signedInitData(inviter);
+  const signedIn = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData: inviterInit })
+  }), env);
+  assert.equal(signedIn.status, 200);
+  const code = "REFERRALTEST730001";
+  env.testDb.prepare("INSERT INTO referral_codes(code,inviter_user_id) VALUES(?,?)").run(code,String(inviter.id));
+  for (let index=0; index<3; index++) {
+    const invitee = { id: 730010+index, first_name: "Invitee"+index, username: "invitee_"+index };
+    const initData = signedInitData(invitee);
+    const response = await worker.fetch(new Request("https://settlethis.test/api/telegram/auth", {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ initData })
+    }), env);
+    assert.equal(response.status, 200);
+    env.testDb.prepare("INSERT INTO referrals(id,invitee_user_id,inviter_user_id,referral_code,qualified_at) VALUES(?,?,?,?,CURRENT_TIMESTAMP)")
+      .run("referral-row-"+index,String(invitee.id),String(inviter.id),code);
+  }
+  const dashboard = await api(env,"/api/referrals",inviterInit);
+  assert.equal(dashboard.response.status,200);
+  const milestone = dashboard.data.rewards.find(reward=>reward.milestone===3);
+  assert.ok(milestone);
+  assert.equal(milestone.claim_status,"pending");
+  const before = await api(env,"/api/wallet",inviterInit);
+  assert.equal(before.data.wallet.sethis_balance,0);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM wallet_ledger WHERE user_id=? AND transaction_type='referral_reward'").get(String(inviter.id)).n),0);
+  const claimed = await api(env,"/api/referrals/milestones/3/claim",inviterInit,"POST",{});
+  assert.equal(claimed.response.status,200);
+  assert.equal(claimed.data.claimed,true);
+  assert.deepEqual(claimed.data.reward,{token:"SETHIS",amount:500,milestone:3});
+  const duplicate = await api(env,"/api/referrals/milestones/3/claim",inviterInit,"POST",{});
+  assert.equal(duplicate.response.status,409);
+  const after = await api(env,"/api/wallet",inviterInit);
+  assert.equal(after.data.wallet.sethis_balance,500);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM wallet_ledger WHERE user_id=? AND transaction_type='referral_reward'").get(String(inviter.id)).n),1);
+});
+
 test("Monetag postbacks queue verified rewards and explicit claims credit them exactly once", async () => {
   const env = createEnvironment();
   const user = { id: 710001, first_name: "AdTest", username: "ad_test_member" };
@@ -381,6 +421,7 @@ test("Monetag postbacks queue verified rewards and explicit claims credit them e
   });
   assert.equal(thirtieth.data.accepted, true);
   assert.deepEqual(thirtieth.data.reward, { token: "SETHIS", amount: 150 });
+  assert.equal(thirtieth.data.claim_required, true);
   env.testDb.prepare("UPDATE ad_reward_events SET created_at=datetime('now','-21 minutes') WHERE provider_event_id=?").run("cap-thirtieth-event");
   const thirtyFirst = await monetagPostback(env, {
     ymid: "cap-thirty-first-event",
@@ -395,5 +436,6 @@ test("Monetag postbacks queue verified rewards and explicit claims credit them e
   assert.equal(capWallet.data.wallet.sethis_balance, 150);
   assert.equal(capWallet.data.wallet.ct_balance, 0);
   assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM ad_reward_events WHERE telegram_user_id=?").get(String(capUser.id)).n), 30);
-  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM notifications WHERE user_id=? AND type='wallet_credit'").get(String(capUser.id)).n), 1);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM ad_reward_events WHERE telegram_user_id=? AND claim_status='pending'").get(String(capUser.id)).n), 1);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM notifications WHERE user_id=? AND type='ad_reward_ready'").get(String(capUser.id)).n), 1);
 });
