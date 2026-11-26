@@ -404,7 +404,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
         <button onClick={requestExit} aria-label="Exit Football Runner">←</button>
         <div className="runner-brand-lockup"><b>SETHIS <i>×</i> RUNNER</b><span>RUNNER FIELD SERIES</span></div>
         <span className="runner-prototype-tag">{preview ? "PREVIEW · NO REWARDS" : ""}</span>
-        <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"}>{soundEnabled ? "♫ SOUND ON" : "♪ SOUND OFF"}</button>
+        <button className="runner-sound-toggle" type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sound" : "Enable game sound"} title={soundEnabled ? "Mute sound" : "Turn sound on"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>{soundEnabled?<><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></>:<path d="m16 9 5 6m0-6-5 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>}</svg></button>
       </header>
 
       <section className="runner-stage-wrap">
