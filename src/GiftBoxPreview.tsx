@@ -292,7 +292,8 @@ export default function GiftBoxPreview() {
       gift.lid.rotation.x += (lidTarget - gift.lid.rotation.x) * easing;
       const rewardY = target ? 2.62 : 0.18;
       gift.reward.position.y += (rewardY - gift.reward.position.y) * (1 - Math.exp(-dt * 2.8));
-      gift.reward.rotation.y += ((target ? 0.22 : 0) - gift.reward.rotation.y) * easing;\n      gift.reward.rotation.z += ((target ? -0.035 : 0) - gift.reward.rotation.z) * easing;
+      gift.reward.rotation.y += ((target ? 0.22 : 0) - gift.reward.rotation.y) * easing;
+      gift.reward.rotation.z += ((target ? -0.035 : 0) - gift.reward.rotation.z) * easing;
       gift.glow.intensity += ((target ? 5.2 : 0) - gift.glow.intensity) * easing;
       gift.glow.position.y = 2.15 + (target ? 0.5 : 0);
       if (!reducedMotion && !target) {
