@@ -3725,3 +3725,53 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
   .sethis-wallet-symbol{width:44px;height:44px;flex-basis:44px}
   .sethis-wallet-symbol-mark{width:31px;height:25px}
 }
+
+/* SETHIS wallet: withdrawal is an action attached to the reward balance. */
+.wallet-balances-refined .sethis-card{
+  position:relative;
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr);
+  grid-template-rows:auto auto;
+  align-items:center;
+  column-gap:10px;
+  row-gap:8px;
+  min-height:112px;
+  overflow:hidden;
+}
+.wallet-balances-refined .sethis-wallet-symbol{grid-column:1;grid-row:1 / span 2;width:42px;height:42px;flex-basis:42px;border-radius:12px}
+.wallet-balances-refined .sethis-wallet-symbol-mark{width:30px;height:25px}
+.wallet-balances-refined .sethis-wallet-details{grid-column:2;grid-row:1;min-width:0;position:relative;z-index:1}
+.wallet-balances-refined .sethis-wallet-details>strong{font-size:clamp(20px,5.4vw,29px)}
+.wallet-balances-refined .sethis-wallet-details>strong i{font-size:9px}
+.wallet-balances-refined .sethis-wallet-watermark{font-size:38px;right:-4px;bottom:0}
+.sethis-withdraw-button{
+  grid-column:2;grid-row:2;justify-self:start;position:relative;z-index:2;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-width:104px;min-height:29px;padding:0 12px;
+  border:1px solid #E98272;border-radius:8px;
+  background:linear-gradient(110deg,#E98272,#f29a83);
+  color:#21101d;font:900 8px Manrope,sans-serif;letter-spacing:.1em;
+  box-shadow:0 4px 12px #0003;cursor:pointer;
+}
+.sethis-withdraw-button span{font-size:13px;line-height:1}
+.sethis-withdraw-button:active{transform:scale(.97)}
+.withdrawal-info-modal{border:1px solid #31516b;background:radial-gradient(ellipse at 0 0,#27d7f21c,transparent 45%),linear-gradient(150deg,#172b42,#101b2c 65%,#0b1220)}
+.withdrawal-modal-brand{display:flex;align-items:center;justify-content:space-between;margin:0 0 17px}
+.withdrawal-modal-brand>svg{width:42px;height:34px;filter:drop-shadow(0 3px 8px #0005)}
+.withdrawal-modal-brand>svg path{fill:#E98272}
+.withdrawal-modal-lock{width:38px;height:38px;display:grid;place-items:center;border:1px solid #27d7f255;border-radius:11px;background:#1b354b;color:#27d7f2}
+.withdrawal-modal-lock svg{width:20px;height:20px}
+.withdrawal-info-modal .eyebrow{color:#27d7f2}
+.withdrawal-info-modal h2{color:#fff}
+.withdrawal-info-modal>p{color:#d2deea}
+.withdrawal-info-modal .withdrawal-balance-note{border-color:#31516b;background:linear-gradient(110deg,#192d43,#132238)}
+.withdrawal-info-modal .withdrawal-balance-note>svg{width:30px;height:26px}
+.withdrawal-info-modal .withdrawal-balance-note>svg path{fill:#E98272}
+.withdrawal-info-modal .withdrawal-balance-note small{color:#b9c9d9}
+.withdrawal-info-modal .primary-wide{background:#E98272;color:#21101d}
+@media(max-width:390px){
+  .wallet-balances-refined .sethis-card{min-height:108px;padding:11px 10px;column-gap:8px;row-gap:7px}
+  .wallet-balances-refined .sethis-wallet-symbol{width:38px;height:38px;flex-basis:38px}
+  .wallet-balances-refined .sethis-wallet-details>strong{font-size:20px}
+  .sethis-withdraw-button{min-width:96px;min-height:27px}
+}
