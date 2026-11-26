@@ -1,0 +1,58 @@
+.reward-celebration-overlay{
+  position:fixed;inset:0;z-index:10000;display:grid;place-items:center;
+  padding:22px;background:#100d18c9;backdrop-filter:blur(9px);
+  animation:reward-overlay-in .2s ease both;
+}
+.reward-celebration-card{
+  position:relative;width:min(100%,360px);overflow:hidden;text-align:center;
+  padding:74px 25px 25px;border:1px solid #e9827280;border-radius:24px;
+  color:#fff;background:
+    radial-gradient(ellipse at 50% 0%,#e9827230,transparent 47%),
+    linear-gradient(150deg,#493541 0%,#302b3d 48%,#211f2c 100%);
+  box-shadow:0 28px 90px #000b,inset 0 1px #ffffff25;
+  animation:reward-card-fly-in .62s cubic-bezier(.18,.88,.24,1.18) both;
+}
+.reward-celebration-close{
+  position:absolute;right:13px;top:13px;width:34px;height:34px;display:grid;place-items:center;
+  border:1px solid #ffffff26;border-radius:50%;background:#ffffff0c;color:#fff;cursor:pointer;
+}
+.reward-flight-track{
+  position:absolute;left:0;right:0;top:12px;height:57px;pointer-events:none;
+}
+.reward-flight-glow{
+  position:absolute;left:50%;top:28px;width:145px;height:2px;transform:translateX(-50%) rotate(-9deg);
+  background:linear-gradient(90deg,transparent,#f39a8577,#f9d8a8,transparent);
+  filter:blur(2px);
+}
+.reward-flight-ball{
+  position:absolute;left:calc(50% - 22px);top:0;color:#f7d9c2;
+  filter:drop-shadow(0 5px 10px #e9827266);
+  animation:reward-ball-flight 1.25s cubic-bezier(.2,.75,.3,1) both;
+}
+.reward-celebration-kicker{
+  display:inline-block;color:#f5a18d;font-size:9px;font-weight:950;letter-spacing:.18em;
+}
+.reward-celebration-card h2{
+  margin:10px 0 5px;color:#fff;font-size:29px;line-height:1.08;letter-spacing:-.04em;
+}
+.reward-celebration-source{margin:0;color:#d6cbd8;font-size:11px}
+.reward-celebration-amount{
+  display:flex;align-items:baseline;justify-content:center;gap:9px;margin:24px 0 12px;
+  color:#fff;text-shadow:0 5px 22px #f39a8535;
+}
+.reward-celebration-amount strong{font-size:clamp(38px,11vw,52px);font-weight:950;line-height:1;letter-spacing:-.055em}
+.reward-celebration-amount span{color:#f5a18d;font-size:13px;font-weight:950;letter-spacing:.1em}
+.reward-celebration-confirmation{margin:0 0 22px;color:#d8d1df;font-size:11px}
+.reward-celebration-cta{
+  width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:12px;
+  border:1px solid #ffc0a2;border-radius:12px;background:linear-gradient(135deg,#e98272,#f6a184);
+  color:#21101d;font-size:10px;font-weight:950;letter-spacing:.13em;cursor:pointer;
+  box-shadow:0 9px 24px #e9827235,inset 0 1px #ffffff75;
+}
+.reward-celebration-cta span{font-size:17px}
+@keyframes reward-overlay-in{from{opacity:0}to{opacity:1}}
+@keyframes reward-card-fly-in{0%{opacity:0;transform:translateY(45px) scale(.84)}65%{opacity:1;transform:translateY(-5px) scale(1.025)}100%{transform:translateY(0) scale(1)}}
+@keyframes reward-ball-flight{0%{opacity:0;transform:translate(-125px,27px) rotate(-160deg) scale(.45)}20%{opacity:1}100%{opacity:1;transform:translate(125px,-5px) rotate(430deg) scale(1)}}
+@media(prefers-reduced-motion:reduce){
+ .reward-celebration-overlay,.reward-celebration-card,.reward-flight-ball{animation:none!important}
+}
