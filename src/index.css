@@ -4554,3 +4554,60 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .section-back-row button:active{transform:translateY(1px);background:#44303a}
 .section-back-row>span{color:#aaa3b5;font-size:8px;font-weight:900;letter-spacing:.15em;text-align:right}
 @media(max-width:380px){.section-back-row{margin-bottom:12px}.section-back-row>span{font-size:7px;letter-spacing:.1em}}
+
+
+/* One readable navigation and typography system across the five main sections */
+:root,body,.app-shell,.main-content,.inner-page,.referral-page,.wallet-page,.tasks-page,.rankings-page,
+button,input,textarea,select,.bottom-nav,.bottom-nav button,.bottom-nav button small{
+  font-family:Manrope,Arial,sans-serif;
+}
+.inner-page{width:100%;max-width:820px;margin-left:auto;margin-right:auto}
+.inner-page h1,.referral-page h1{font-family:Manrope,Arial,sans-serif;font-weight:850;letter-spacing:-.055em}
+.inner-page h2,.inner-page h3,.referral-page h2,.referral-page h3{font-family:Manrope,Arial,sans-serif;letter-spacing:-.035em}
+.section-back-row{min-height:44px;margin-bottom:16px;padding-bottom:11px}
+.section-back-row button,.rfx-back{
+  min-height:38px;padding:0 14px;border:1px solid #e9827288;border-radius:10px;
+  background:linear-gradient(135deg,#392936,#251d2d);color:#fff3ef;
+  font:900 9px/1 Manrope,Arial,sans-serif;letter-spacing:.1em;
+  box-shadow:0 5px 16px #0003;
+}
+.section-back-row button span,.rfx-back span{color:#f39a85;font-size:17px}
+.section-back-row>span{font:850 8px/1.3 Manrope,Arial,sans-serif;color:#d2c5d8;letter-spacing:.12em}
+.bottom-nav{
+  z-index:55;height:calc(82px + env(safe-area-inset-bottom,0px));
+  padding:7px 7px calc(7px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(180deg,#2a1c32f7,#160d20fc);
+  border-top:1px solid #e9827255;box-shadow:0 -12px 34px #08050dbb;
+}
+.bottom-nav button{
+  min-width:0;width:100%;height:100%;padding:4px 2px 3px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  border:1px solid transparent;border-radius:13px;background:transparent;
+  color:#e1d7e7;font:850 10px/1.1 Manrope,Arial,sans-serif;letter-spacing:.015em;
+}
+.bottom-nav button .bottom-nav-icon{
+  width:34px;height:31px;display:grid;place-items:center;border-radius:10px;
+  background:#ffffff0d;color:#e8dfea;
+}
+.bottom-nav button .bottom-nav-icon svg{width:22px;height:22px;stroke-width:2}
+.bottom-nav button small{font:850 9px/1 Manrope,Arial,sans-serif;color:inherit;letter-spacing:.015em}
+.bottom-nav button.selected{
+  color:#fff;background:linear-gradient(145deg,#59343e,#352637);
+  border-color:#e9827270;box-shadow:inset 0 1px #ffffff20,0 4px 14px #0004;
+}
+.bottom-nav button.selected .bottom-nav-icon{
+  color:#281722;background:linear-gradient(145deg,#ffb18e,#e98272);
+  box-shadow:0 0 0 3px #e9827222,0 4px 12px #0004;
+}
+.bottom-nav button.selected:before{display:none}
+.bottom-nav button.selected:after{content:"";position:absolute;top:-1px;left:27%;right:27%;height:3px;border-radius:0 0 4px 4px;background:#ffb18e;box-shadow:0 0 12px #e98272aa}
+.bottom-nav button:focus-visible{outline:3px solid #ffb18e;outline-offset:2px}
+@media(max-width:540px){
+ .bottom-nav{height:calc(80px + env(safe-area-inset-bottom,0px));padding-left:4px;padding-right:4px;gap:2px}
+ .bottom-nav button{gap:5px;border-radius:11px}
+ .bottom-nav button .bottom-nav-icon{width:32px;height:30px}
+ .bottom-nav button .bottom-nav-icon svg{width:21px;height:21px}
+ .bottom-nav button small{font-size:9px}
+ .section-back-row{margin-bottom:13px}
+}
+@media(prefers-reduced-motion:reduce){.bottom-nav button,.bottom-nav button .bottom-nav-icon{transition:none}}
