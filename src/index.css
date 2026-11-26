@@ -4420,3 +4420,64 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
   .onboarding-gift-claim-button{min-height:48px;font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){.welcome-gift-3d:before{animation:none}.onboarding-gift-claim-button{transition:none}}
+
+
+/* Wallet-inspired onboarding refresh: visual-first stories, warm plum and coral */
+.onboarding-premium{
+  isolation:isolate;
+  background:
+    radial-gradient(ellipse at 50% 32%,#e9827218 0%,transparent 43%),
+    radial-gradient(ellipse at 8% 100%,#f6c39d0c 0%,transparent 38%),
+    linear-gradient(145deg,#211f2c 0%,#302b3d 48%,#493541 100%)!important;
+  padding:calc(env(safe-area-inset-top,0px) + 18px) clamp(18px,5vw,56px) calc(env(safe-area-inset-bottom,0px) + 18px);
+}
+.onboarding-premium:before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.7;
+  background:
+    repeating-linear-gradient(48deg,transparent 0 27px,#f6c39d08 28px,#f6c39d08 29px,transparent 30px 56px),
+    repeating-radial-gradient(circle at 50% 44%,transparent 0 54px,#e9827210 55px,#e9827210 56px,transparent 57px 86px);
+  mask-image:linear-gradient(180deg,#000 0%,#000b 70%,transparent 100%);
+}
+.onboarding-topline{max-width:760px;margin:0 auto 10px;flex:0 0 auto}
+.onboarding-brand{gap:9px}
+.onboarding-brand b{font-size:10px;letter-spacing:.16em}
+.onboarding-premium>.onboarding-visual{
+  flex:1 1 auto;width:100%;max-width:760px;min-height:260px;height:44vh;max-height:470px;
+  margin:0 auto 10px;border:1px solid #f6c39d25;border-radius:22px;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 52%,#e9827225 0%,transparent 58%),
+    linear-gradient(145deg,#211f2c,#302b3d 58%,#493541);
+  box-shadow:inset 0 1px 0 #ffffff12,0 18px 46px #09070c55;
+}
+.onboarding-visual:before{display:block;opacity:.7;background:repeating-linear-gradient(135deg,transparent 0 22px,#f6c39d09 23px,#f6c39d09 24px,transparent 25px 48px)}
+.onboarding-visual-1 .onboarding-mystery-art{
+  width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;object-position:center;
+  padding:8px;filter:drop-shadow(0 14px 22px #08060a88);border-radius:18px;
+}
+.onboarding-visual-1:after{background:linear-gradient(180deg,#211f2c0c,transparent 70%,#211f2c30)}
+.onboarding-visual>span{left:18px;bottom:15px;transform:none;width:auto;text-align:left;color:#f6c39d;font-size:8px;letter-spacing:.18em;text-shadow:0 2px 8px #000}
+.onboarding-story-copy{width:100%;max-width:760px;margin:0 auto}
+.onboarding-story-copy h2{margin:4px 0 8px;font-size:clamp(31px,7vw,48px);line-height:1.02;letter-spacing:-.045em;color:#fff}
+.onboarding-story-copy p{max-width:600px;margin:0;color:#e5dce0;font-size:clamp(13px,2.5vw,16px);line-height:1.5}
+.onboarding-bottom{max-width:760px;margin:0 auto;padding-top:16px;flex:0 0 auto}
+.onboarding-bottom .primary-wide{min-height:52px;border-radius:13px;background:linear-gradient(110deg,#e98272,#f2aa8e)!important;color:#211f2c!important;box-shadow:0 8px 24px #e9827230;font-size:10px;letter-spacing:.12em}
+.onboarding-back{border-color:#f6c39d55;background:#ffffff09;color:#fff}
+.onboarding-token-coin{border-color:#f6c39d;background:radial-gradient(circle at 32% 25%,#694553,#493541 58%,#211f2c 100%);box-shadow:0 0 0 8px #e982721c,0 22px 50px #0007,inset 0 0 0 5px #ffffff0b}
+.onboarding-token-coin .coin-rim{border-color:#f6c39d}
+.onboarding-token-coin .coin-brand-mark{color:#f6c39d!important}
+.onboarding-premium>.eyebrow{color:#f6c39d!important}
+.onboarding-premium .welcome-gift-stage>.eyebrow{color:#f6c39d!important}
+@media(max-width:520px){
+ .onboarding-premium{padding-left:16px;padding-right:16px}
+ .onboarding-topline{margin-bottom:8px}
+ .onboarding-premium>.onboarding-visual{min-height:250px;height:45vh;max-height:440px;margin-bottom:13px}
+ .onboarding-visual-1 .onboarding-mystery-art{padding:4px}
+ .onboarding-story-copy h2{font-size:clamp(30px,8.5vw,40px)}
+ .onboarding-story-copy p{font-size:13px;line-height:1.45}
+ .onboarding-bottom{padding-top:14px}
+}
+@media(max-height:680px){
+ .onboarding-premium>.onboarding-visual{min-height:190px;height:36vh;max-height:300px}
+ .onboarding-story-copy h2{font-size:clamp(27px,6vh,36px)}
+ .onboarding-bottom{padding-top:10px}
+}
