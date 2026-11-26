@@ -71,7 +71,7 @@ function Root(){
   return()=>{active=false;unbindViewport?.();};
  },[retry,isAdmin,isGiftBoxPreview]);
  if(isAdmin)return <AdminPortal/>;
- if(isGiftBoxPreview)return <GiftBoxPreview/>;
+ if(isGiftBoxPreview)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing your gift</h1><p>Loading the interactive preview…</p></div></main>}><GiftBoxPreview/></Suspense>;
  if(isAvatarAnimationDiagnostic)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the animation test</h1><p>Loading Sports Male 03 and its run cycle…</p></div></main>}><AvatarAnimationDiagnostic onBack={()=>{window.location.href="/avatar-diagnostic";}}/></Suspense>;
  if(isAvatarDiagnostic)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the avatar test</h1><p>Loading Sports Male 03 directly…</p></div></main>}><FootballRunner telegramUser={null} preview onBack={()=>{window.location.href="/";}}/></Suspense>;
  if(isRunnerPreview)return <Suspense fallback={<main className="telegram-app-loading"><div><h1>Preparing the pitch</h1><p>Loading browser preview…</p></div></main>}><FootballRunner telegramUser={null} preview onBack={()=>{window.location.href="/";}}/></Suspense>;
