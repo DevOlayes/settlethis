@@ -322,10 +322,17 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       const card = shareCard;
       if (!card) { setShareStatus(shareCardBusy ? "Your achievement image is still being prepared. Try again in a moment." : "The achievement image could not be prepared. Please try again."); return; }
       const shareData: ShareData = { title: "My SETHIS Football Runner challenge", text: message, url: inviteLink || challengeUrl };
-      if (navigator.share && typeof navigator.canShare === "function" && navigator.canShare({ files: [card] })) {
-        await navigator.share({ ...shareData, files: [card] });
-        setShareStatus("Your achievement image, challenge and referral link are ready to share.");
-        return;
+      let canShareImage = false;
+      try { canShareImage = typeof navigator.share === "function" && typeof navigator.canShare === "function" && navigator.canShare({ files: [card] }); } catch { canShareImage = false; }
+      if (canShareImage) {
+        try {
+          await navigator.share({ ...shareData, files: [card] });
+          setShareStatus("Your achievement image, challenge and referral link are ready to share.");
+          return;
+        } catch (shareError) {
+          if (shareError instanceof Error && shareError.name === "AbortError") return;
+          // Fall through to the saved-image and Telegram-share fallback.
+        }
       }
       const objectUrl = URL.createObjectURL(card);
       const downloadLink = document.createElement("a");
