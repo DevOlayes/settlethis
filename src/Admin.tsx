@@ -124,10 +124,10 @@ export default function AdminPortal(){
     <button className={section==="fixtures"?"active":""} onClick={()=>{setSection("fixtures");loadFixtures();}}><i>▦</i><span>Fixtures & Results</span></button>
     <button className={section==="coverage"?"active":""} onClick={()=>{setSection("coverage");loadCoverage();}}><i>◎</i><span>Competition Coverage</span></button>
     <button className={section==="polls"?"active":""} onClick={()=>{setSection("polls");loadPolls();}}><i>◉</i><span>Match Polls</span></button>
-    <button className={section==="editorial"?"active":""} onClick={()=>{setSection("editorial");loadSuggestions();}}><i>✎</i><span>Editorial Queue</span></button>
+    <button className={section==="editorial"?"active":""} onClick={()=>{setSection("editorial");loadQueue();}}><i>✎</i><span>Editorial Queue</span></button>
     <button className={section==="debateSources"?"active":""} onClick={()=>setSection("debateSources")}><i>⌕</i><span>Debate Sources</span></button>
-    <button className={section==="courts"?"active":""} onClick={()=>{setSection("courts");loadCourts();}}><i>⚖</i><span>Settle the Argument</span></button>
-    <button className={section==="pools"?"active":""} onClick={()=>{setSection("pools");loadPools();}}><i>◫</i><span>Community Pools</span></button>
+    <button className={section==="courts"?"active":""} onClick={()=>{setSection("courts");loadAdminCourts();}}><i>⚖</i><span>Settle the Argument</span></button>
+    <button className={section==="pools"?"active":""} onClick={()=>{setSection("pools");loadAdminPools();}}><i>◫</i><span>Community Pools</span></button>
     <button className={section==="settleArgument"?"active":""} onClick={()=>setSection("settleArgument")}><i>▤</i><span>Episodes & Formats</span></button>
   </div>
   <div className="admin-nav-group"><span className="admin-nav-label">REWARDS & WALLET</span>
