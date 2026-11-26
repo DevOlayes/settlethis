@@ -54,6 +54,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [hud, setHud] = useState<RunnerHud>(EMPTY_HUD);
   const [collectionPulse, setCollectionPulse] = useState(0);
   const [engineError, setEngineError] = useState(false);
+  const [engineErrorMessage, setEngineErrorMessage] = useState("");
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [records, setRecords] = useState<RunnerRecords>(EMPTY_RECORDS);
   const [recordsLoading, setRecordsLoading] = useState(!preview);
@@ -127,7 +128,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       engine = new RunnerEngine(host, {
         onPhase: setPhase,
         onHud: setHud,
-        onEnvironmentStatus: (status) => { if (status === "error") setEngineError(true); },
+        onEnvironmentStatus: (status) => { if (status === "error") { setEngineError(true); setEngineErrorMessage("The 3D game environment could not be initialized."); } },
         onSummary: (result) => {
           const previousRecords = recordsRef.current;
           setRunAchievement(previousRecords.totalRuns === 0
@@ -186,8 +187,10 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       });
       engine.setSoundEnabled(soundEnabled);
       engineRef.current = engine;
-    } catch {
+    } catch (error) {
+      console.error("Football Runner engine initialization failed.", error);
       setEngineError(true);
+      setEngineErrorMessage(error instanceof Error ? error.message : "The 3D game environment could not be initialized.");
       return;
     }
 
@@ -418,7 +421,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             <div className="runner-overlay">
               <span className="runner-overline">GAME ENGINE UNAVAILABLE</span>
               <h1>This device can't start the 3D scene.</h1>
-              <p>Try a browser with WebGL support. This browser preview does not access accounts, balances or rewards.</p>
+              <p>{engineErrorMessage || "Try a browser with WebGL support."} If the problem continues, reload the game or return to Games.</p>
               <button onClick={onBack}>BACK TO SETHIS</button>
             </div>
           ) : phase !== "running" ? (
