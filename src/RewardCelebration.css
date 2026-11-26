@@ -4,6 +4,7 @@
   animation:reward-overlay-in .2s ease both;
 }
 .reward-celebration-card{
+  z-index:10002;
   position:relative;width:min(100%,360px);overflow:hidden;text-align:center;
   padding:74px 25px 25px;border:1px solid #e9827280;border-radius:24px;
   color:#fff;background:
