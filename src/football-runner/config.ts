@@ -62,8 +62,8 @@ export const RUNNER_CONFIG = {
     slidingPlayerHeight: 1.08,
   },
   scoring: {
-    distancePointsPerMetre: 12,
-    footballPickupPoints: 100,
+    distancePointsPerMetre: 700 / 475,
+    footballPickupPoints: 0,
     historyLimit: 20,
   },
   ui: {
