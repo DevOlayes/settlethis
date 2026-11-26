@@ -291,7 +291,7 @@ export class RunnerEngine {
     if (this.disposed || !this.over) return;
     const summary: RunnerSummary = {
       distance: Math.floor(this.distance), points: this.points, balls: this.balls,
-      distancePoints: Math.floor(this.distance * RUNNER_CONFIG.scoring.distancePointsPerMetre),
+      distancePoints: Math.floor(Math.floor(this.distance) * RUNNER_CONFIG.scoring.distancePointsPerMetre),
       footballPoints: 0,
       rewardFootball: 0, rewardDistance: 0, rewardPerformance: 0, sethis: 0,
     };
@@ -551,7 +551,7 @@ export class RunnerEngine {
       this.lastSpeedTier = speedTier;
       this.audio.milestone("speed");
     }
-    this.points = Math.floor(this.distance * config.scoring.distancePointsPerMetre);
+    this.points = Math.floor(Math.floor(this.distance) * config.scoring.distancePointsPerMetre);
     this.spawnDistance += speed * delta;
     this.bundle.world.position.z = (this.bundle.world.position.z + speed * delta) % config.world.length;
 
@@ -645,7 +645,7 @@ export class RunnerEngine {
       if ((crossedContactPlane || alreadyOverlapping) && width < widthLimit) {
         if (object.userData.kind === "ball") {
           this.balls++;
-          this.points = Math.floor(this.distance * config.scoring.distancePointsPerMetre);
+          this.points = Math.floor(Math.floor(this.distance) * config.scoring.distancePointsPerMetre);
           this.audio.collect();
           this.spawnCollectionEffect(object.position);
           this.callbacks.onHud({
