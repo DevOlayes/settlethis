@@ -13,9 +13,9 @@ export function validateRunnerScore(input: RunnerScoreInput): boolean {
   if (!Number.isSafeInteger(footballs) || footballs < 0 || footballs > 100_000) return false;
   const maximumDistance = Math.floor((elapsedMs / 1000) * 20 + 45);
   const maximumFootballs = Math.floor(distance / 2.5) + 8;
-  const expectedPoints = distance * 12 + footballs * 100;
+  const expectedPoints = Math.floor(distance * (700 / 475));
   return distance <= maximumDistance
     && footballs <= maximumFootballs
-    && points >= expectedPoints - 12
-    && points <= expectedPoints + 12;
+    && points >= expectedPoints - 2
+    && points <= expectedPoints + 2;
 }
