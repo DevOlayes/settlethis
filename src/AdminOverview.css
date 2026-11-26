@@ -10,7 +10,7 @@
 .overview-section-head h3{font-size:13px;margin:0 0 4px;letter-spacing:-.015em;color:#fff}
 .overview-section-head>span{font-size:8px;font-weight:900;letter-spacing:.1em;color:#bbaeb9;background:#ffffff08;border:1px solid #ffffff12;border-radius:20px;padding:6px 9px}
 .overview-grid{display:grid;gap:12px}
-.overview-grid-four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.overview-grid-four{grid-template-columns:repeat(3,minmax(0,1fr))}
 .overview-grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .overview-metric{min-width:0;min-height:116px;padding:15px;border:1px solid #ffffff12;border-radius:13px;background:linear-gradient(145deg,#302431,#251c29)}
 .overview-metric>span,.overview-metric small{display:block;color:#b7aab7;font-size:9px;line-height:1.45}
