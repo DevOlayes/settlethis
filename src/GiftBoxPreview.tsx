@@ -39,10 +39,8 @@ function buildGift(scene: THREE.Scene) {
   addBox(box, 0.035, 1.7, 1.75, inner, 1.09, 1.04, 0);
 
   // Satin bands wrap the body continuously across the front and visible right face.
-  addBox(box, 0.29, 1.9, 0.035, gold, -0.43, 1.04, 1.075);
-  addBox(box, 0.29, 1.9, 0.035, goldLight, 0.43, 1.04, 1.075);
-  addBox(box, 0.035, 1.9, 0.29, darkGold, 1.255, 1.04, -0.42);
-  addBox(box, 0.035, 1.9, 0.29, gold, 1.255, 1.04, 0.42);
+  addBox(box, 0.29, 1.9, 0.035, goldLight, 0, 1.04, 1.075);
+  addBox(box, 0.035, 1.9, 0.29, gold, 1.255, 1.04, 0);
 
   // The lid is a single hinged assembly. Its pivot sits exactly on the back upper edge.
   const lid = new THREE.Group();
@@ -56,10 +54,8 @@ function buildGift(scene: THREE.Scene) {
   // Ribbon crosses both axes of the lid top and continues down the skirt.
   addBox(lid, 2.73, 0.026, 0.29, goldLight, 0, 0.235, 0);
   addBox(lid, 0.29, 0.026, 2.34, gold, 0, 0.237, 0);
-  addBox(lid, 0.29, 0.42, 0.035, goldLight, -0.43, -0.18, 1.245);
-  addBox(lid, 0.29, 0.42, 0.035, gold, 0.43, -0.18, 1.245);
-  addBox(lid, 0.035, 0.42, 0.29, darkGold, 1.365, -0.18, -0.42);
-  addBox(lid, 0.035, 0.42, 0.29, gold, 1.365, -0.18, 0.42);
+  addBox(lid, 0.29, 0.42, 0.035, goldLight, 0, -0.18, 1.245);
+  addBox(lid, 0.035, 0.42, 0.29, gold, 1.365, -0.18, 0);
 
   // Bow loops are curved satin tubes with a fine highlight, not flat oval stickers.
   const bow = new THREE.Group();
@@ -118,6 +114,22 @@ function buildGift(scene: THREE.Scene) {
   const cardAccent = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.025, 0.035), goldLight);
   cardAccent.position.set(0, 0.09, 0.28);
   reward.add(cardAccent);
+  const labelCanvas = document.createElement("canvas");
+  labelCanvas.width = 512; labelCanvas.height = 256;
+  const labelCtx = labelCanvas.getContext("2d");
+  if (labelCtx) {
+    labelCtx.clearRect(0, 0, 512, 256);
+    labelCtx.fillStyle = "#f6c99b"; labelCtx.font = "900 82px Arial"; labelCtx.textAlign = "center";
+    labelCtx.fillText("3,500 GT", 256, 145);
+    labelCtx.font = "700 24px Arial"; labelCtx.letterSpacing = "7px";
+    labelCtx.fillText("WELCOME GIFT", 256, 195);
+  }
+  const labelTexture = new THREE.CanvasTexture(labelCanvas);
+  labelTexture.colorSpace = THREE.SRGBColorSpace;
+  const label = new THREE.Mesh(new THREE.PlaneGeometry(1.48, 0.74), new THREE.MeshBasicMaterial({ map: labelTexture, transparent: true, side: THREE.DoubleSide }));
+  label.rotation.x = -Math.PI / 2;
+  label.position.set(0, 0.085, 0);
+  reward.add(label);
 
   const glow = new THREE.PointLight(0xffc58f, 0, 5.5);
   glow.position.set(0, 2.2, 0);
