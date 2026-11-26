@@ -95,42 +95,117 @@ function buildGift(scene: THREE.Scene) {
   const hangingRight = addBox(bow, 0.32, 0.035, 0.58, goldLight, 0.34, -0.32, 1.03);
   hangingRight.rotation.x = -0.28;
 
-  // Only the 3,500 GT reward rises from the gift: no box, plaque or extra object.
+  // A substantial, dimensional welcome medallion rises from the box.
+  // Its beveled metal edge, layered face, raised rings and embossed-style lettering
+  // make the 3,500 GT reward itself the hero rather than a flat floating label.
   const reward = new THREE.Group();
-  reward.position.set(0, 0.22, 0);
+  reward.position.set(0, 0.18, 0);
+  reward.scale.setScalar(1.12);
+  reward.rotation.x = -0.12;
   box.add(reward);
-  const labelCanvas = document.createElement("canvas");
-  labelCanvas.width = 768;
-  labelCanvas.height = 384;
-  const labelCtx = labelCanvas.getContext("2d");
-  if (labelCtx) {
-    labelCtx.clearRect(0, 0, 768, 384);
-    labelCtx.shadowColor = "#f6c39d";
-    labelCtx.shadowBlur = 28;
-    labelCtx.textAlign = "center";
-    labelCtx.textBaseline = "middle";
-    labelCtx.fillStyle = "#fff7ed";
-    labelCtx.font = "900 132px Arial";
-    labelCtx.fillText("3,500", 384, 158);
-    labelCtx.shadowBlur = 18;
-    labelCtx.fillStyle = "#f6c39d";
-    labelCtx.font = "900 76px Arial";
-    labelCtx.fillText("GT", 384, 265);
+
+  const coinEdge = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.76, 0.76, 0.17, 96, 1, false),
+    new THREE.MeshPhysicalMaterial({ color: 0xd98b65, metalness: 0.82, roughness: 0.22, clearcoat: 0.8 })
+  );
+  coinEdge.rotation.x = Math.PI / 2;
+  coinEdge.castShadow = true;
+  coinEdge.receiveShadow = true;
+  reward.add(coinEdge);
+
+  const faceCanvas = document.createElement("canvas");
+  faceCanvas.width = 1024;
+  faceCanvas.height = 1024;
+  const faceCtx = faceCanvas.getContext("2d");
+  if (faceCtx) {
+    const grad = faceCtx.createRadialGradient(340, 270, 70, 512, 512, 590);
+    grad.addColorStop(0, "#694553");
+    grad.addColorStop(0.58, "#493541");
+    grad.addColorStop(1, "#211f2c");
+    faceCtx.fillStyle = grad;
+    faceCtx.fillRect(0, 0, 1024, 1024);
+    faceCtx.strokeStyle = "rgba(246,195,157,.88)";
+    faceCtx.lineWidth = 13;
+    faceCtx.beginPath(); faceCtx.arc(512, 512, 474, 0, Math.PI * 2); faceCtx.stroke();
+    faceCtx.strokeStyle = "rgba(246,195,157,.38)";
+    faceCtx.lineWidth = 4;
+    faceCtx.beginPath(); faceCtx.arc(512, 512, 438, 0, Math.PI * 2); faceCtx.stroke();
+    faceCtx.strokeStyle = "rgba(233,130,114,.35)";
+    faceCtx.lineWidth = 2;
+    faceCtx.beginPath(); faceCtx.arc(512, 512, 395, 0, Math.PI * 2); faceCtx.stroke();
+    // Subtle wallet-style diagonal guilloche pattern.
+    faceCtx.save();
+    faceCtx.beginPath(); faceCtx.arc(512, 512, 385, 0, Math.PI * 2); faceCtx.clip();
+    faceCtx.strokeStyle = "rgba(255,225,205,.075)";
+    faceCtx.lineWidth = 3;
+    for (let x = -500; x < 1500; x += 46) {
+      faceCtx.beginPath(); faceCtx.moveTo(x, 80); faceCtx.lineTo(x + 760, 940); faceCtx.stroke();
+    }
+    faceCtx.restore();
+    faceCtx.textAlign = "center";
+    faceCtx.textBaseline = "middle";
+    faceCtx.shadowColor = "#f6c39d";
+    faceCtx.shadowBlur = 34;
+    faceCtx.fillStyle = "#fff0dc";
+    faceCtx.font = "900 190px Arial";
+    faceCtx.fillText("3,500", 512, 450);
+    faceCtx.shadowBlur = 22;
+    faceCtx.fillStyle = "#f6c39d";
+    faceCtx.font = "900 112px Arial";
+    faceCtx.letterSpacing = "18px";
+    faceCtx.fillText("GT", 512, 625);
+    faceCtx.shadowBlur = 0;
+    faceCtx.fillStyle = "rgba(246,195,157,.86)";
+    faceCtx.font = "700 30px Arial";
+    faceCtx.letterSpacing = "12px";
+    faceCtx.fillText("WELCOME BONUS", 512, 760);
+    // Fine ornamental dots at the cardinal points.
+    for (const angle of [0, Math.PI / 2, Math.PI, Math.PI * 1.5]) {
+      const x = 512 + Math.cos(angle) * 420;
+      const y = 512 + Math.sin(angle) * 420;
+      faceCtx.beginPath(); faceCtx.arc(x, y, 12, 0, Math.PI * 2);
+      faceCtx.fillStyle = "#f6c39d"; faceCtx.fill();
+    }
   }
-  const labelTexture = new THREE.CanvasTexture(labelCanvas);
-  labelTexture.colorSpace = THREE.SRGBColorSpace;
-  const rewardText = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.95, 0.98),
-    new THREE.MeshBasicMaterial({ map: labelTexture, transparent: true, depthWrite: false, side: THREE.DoubleSide })
+  const faceTexture = new THREE.CanvasTexture(faceCanvas);
+  faceTexture.colorSpace = THREE.SRGBColorSpace;
+  const coinFace = new THREE.Mesh(
+    new THREE.CircleGeometry(0.705, 96),
+    new THREE.MeshPhysicalMaterial({ map: faceTexture, metalness: 0.28, roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.16 })
   );
-  rewardText.position.set(0, 0.25, 0.28);
-  reward.add(rewardText);
-  const rewardHalo = new THREE.Mesh(
-    new THREE.PlaneGeometry(2.35, 1.25),
-    new THREE.MeshBasicMaterial({ color: 0xf6c39d, transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide })
+  coinFace.position.z = 0.092;
+  reward.add(coinFace);
+
+  const outerRim = new THREE.Mesh(
+    new THREE.TorusGeometry(0.72, 0.026, 12, 96),
+    new THREE.MeshStandardMaterial({ color: 0xffdfb0, metalness: 0.82, roughness: 0.2 })
   );
-  rewardHalo.position.set(0, 0.24, 0.22);
-  reward.add(rewardHalo);
+  outerRim.position.z = 0.105;
+  reward.add(outerRim);
+  const innerRim = new THREE.Mesh(
+    new THREE.TorusGeometry(0.62, 0.009, 8, 96),
+    new THREE.MeshStandardMaterial({ color: 0xf6c39d, metalness: 0.72, roughness: 0.25 })
+  );
+  innerRim.position.z = 0.108;
+  reward.add(innerRim);
+
+  // A restrained orbit halo and raised studs give the medallion a premium 3D silhouette.
+  const halo = new THREE.Mesh(
+    new THREE.TorusGeometry(0.91, 0.012, 8, 120),
+    new THREE.MeshBasicMaterial({ color: 0xf6c39d, transparent: true, opacity: 0.68 })
+  );
+  halo.position.z = -0.02;
+  halo.rotation.y = 0.16;
+  reward.add(halo);
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    const stud = new THREE.Mesh(
+      new THREE.SphereGeometry(0.027, 12, 10),
+      new THREE.MeshStandardMaterial({ color: 0xffe4c6, metalness: 0.7, roughness: 0.2 })
+    );
+    stud.position.set(Math.cos(angle) * 0.67, Math.sin(angle) * 0.67, 0.115);
+    reward.add(stud);
+  }
 
   const glow = new THREE.PointLight(0xffc58f, 0, 5.5);
   glow.position.set(0, 2.2, 0);
@@ -215,13 +290,13 @@ export default function GiftBoxPreview() {
       const easing = 1 - Math.exp(-dt * (reducedMotion ? 40 : 3.1));
       const lidTarget = target ? gift.lidOpenTarget : 0;
       gift.lid.rotation.x += (lidTarget - gift.lid.rotation.x) * easing;
-      const rewardY = target ? 2.45 : 0.22;
+      const rewardY = target ? 2.62 : 0.18;
       gift.reward.position.y += (rewardY - gift.reward.position.y) * (1 - Math.exp(-dt * 2.8));
-      gift.reward.rotation.y += ((target ? 0.12 : 0) - gift.reward.rotation.y) * easing;
+      gift.reward.rotation.y += ((target ? 0.22 : 0) - gift.reward.rotation.y) * easing;\n      gift.reward.rotation.z += ((target ? -0.035 : 0) - gift.reward.rotation.z) * easing;
       gift.glow.intensity += ((target ? 5.2 : 0) - gift.glow.intensity) * easing;
       gift.glow.position.y = 2.15 + (target ? 0.5 : 0);
       if (!reducedMotion && !target) {
-        gift.reward.position.y = 0.22 + Math.sin(time * 0.0013) * 0.018;
+        gift.reward.position.y = 0.18 + Math.sin(time * 0.0013) * 0.018;
       }
       renderer.render(scene, camera);
     };
