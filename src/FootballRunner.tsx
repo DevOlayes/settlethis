@@ -531,7 +531,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <strong>{summary.points.toLocaleString()}<em>PTS</em></strong>
                     <span>{summary.distance.toLocaleString()} M DISTANCE · {summary.balls.toLocaleString()} FOOTBALLS</span>
                     <b className="runner-share-dare">CAN YOU BEAT ME?</b>
-                    <span className="runner-share-card-cta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5h14v-5" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/></svg><b>{shareCardBusy?"PREPARING YOUR IMAGE…":"SHARE THIS CHALLENGE"}</b><small>Achievement image · challenge · invite link</small></span>
+                    <span className="runner-share-card-cta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8.7 10.6 6.6-4.2M8.7 13.4l6.6 4.2" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/><circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.9"/><circle cx="18" cy="5" r="3" fill="none" stroke="currentColor" strokeWidth="1.9"/><circle cx="18" cy="19" r="3" fill="none" stroke="currentColor" strokeWidth="1.9"/></svg><b>{shareCardBusy?"PREPARING YOUR IMAGE…":"SHARE THIS CHALLENGE"}</b><small>Achievement image · challenge · invite link</small></span>
                   </button>
                   <div className="runner-result-actions">
                     <button onClick={requestStart} disabled={startBusy || savingRun}>{savingRun?"SAVING…":startBusy?"PREPARING…":"PLAY AGAIN"}</button>
