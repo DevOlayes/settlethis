@@ -1,27 +1,35 @@
-/* SETHIS admin information architecture and responsive control-room shell */
-.admin-workspace{width:min(1680px,100%);padding:22px 26px 56px;grid-template-columns:264px minmax(0,1fr);column-gap:22px;row-gap:18px;background:transparent}
-.admin-workspace>:not(.admin-tabs){grid-column:2;min-width:0}
-.admin-tabs{grid-column:1;grid-row:1 / span 30;position:sticky;top:82px;display:flex;flex-direction:column;align-items:stretch;gap:14px;height:calc(100dvh - 100px);max-height:calc(100dvh - 100px);overflow:auto;padding:15px 12px;border:1px solid #ffffff13;border-radius:18px;background:linear-gradient(180deg,#21172b 0%,#17111f 100%);box-shadow:0 18px 50px #08040d55}
-.admin-nav-brand{display:flex;align-items:center;gap:11px;padding:5px 7px 16px;border-bottom:1px solid #ffffff12}
-.admin-nav-brand-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#f3a18c,#df7167);color:#25121c;font-size:21px;font-weight:1000;box-shadow:0 7px 20px #e9827230}
-.admin-nav-brand b,.admin-nav-brand small{display:block}.admin-nav-brand b{font-size:13px;letter-spacing:.12em;color:#fff}.admin-nav-brand small{margin-top:3px;font-size:8px;letter-spacing:.16em;color:#c5aebc;font-weight:800}
-.admin-nav-group{display:grid;gap:3px}
-.admin-nav-label{padding:4px 10px 7px;color:#d18b83;font-size:9px;font-weight:900;letter-spacing:.14em}
-.admin-tabs button{width:100%;min-height:39px;display:flex;align-items:center;gap:11px;padding:9px 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:#d0c6d3;text-align:left;font-size:11px;font-weight:650;letter-spacing:0;line-height:1.3;transition:background .18s,border-color .18s,color .18s}
-.admin-tabs button i{width:19px;flex:0 0 19px;text-align:center;color:#b99aaf;font-size:15px;font-style:normal}
+/* SETHIS Admin — structured desktop console, responsive mobile workspace */
+.admin-workspace{box-sizing:border-box;width:100%;max-width:1740px;min-height:100dvh;margin:0 auto;padding:22px 28px 54px;display:grid;grid-template-columns:248px minmax(0,1fr);grid-auto-rows:max-content;column-gap:26px;row-gap:18px;align-items:start;background:transparent}
+.admin-workspace>*{min-width:0}
+.admin-workspace>:not(.admin-tabs){grid-column:2}
+.admin-tabs{grid-column:1;grid-row:1 / span 30;position:sticky;top:18px;display:flex;flex-direction:column;align-items:stretch;gap:22px;width:100%;height:calc(100dvh - 36px);max-height:calc(100dvh - 36px);overflow-y:auto;overflow-x:hidden;padding:18px 13px;border:1px solid #ffffff12;border-radius:19px;background:linear-gradient(180deg,#211827 0%,#19131f 100%);box-shadow:0 22px 60px #08050d55}
+.admin-nav-brand{display:flex;align-items:center;gap:12px;padding:4px 7px 19px;border-bottom:1px solid #ffffff12}
+.admin-nav-brand-mark{width:42px;height:42px;display:grid;place-items:center;flex:0 0 42px;border-radius:13px;background:linear-gradient(145deg,#f5ad98,#dd756b);box-shadow:0 8px 22px #e9827230}
+.admin-nav-brand-mark svg{width:27px;height:27px}
+.admin-nav-brand b,.admin-nav-brand small{display:block}.admin-nav-brand b{font-size:14px;letter-spacing:.15em;color:#fff;font-weight:950}.admin-nav-brand small{margin-top:4px;font-size:8px;letter-spacing:.17em;color:#bcaebc;font-weight:800}
+.admin-nav-group{display:grid;gap:4px}
+.admin-nav-label{padding:0 10px 7px;color:#a98d9c;font-size:9px;font-weight:900;letter-spacing:.15em}
+.admin-tabs button{width:100%;min-height:42px;display:flex;align-items:center;gap:12px;padding:9px 11px;border:1px solid transparent;border-radius:10px;background:transparent;color:#c9c0cc;text-align:left;font-family:inherit;font-size:11px;font-weight:650;letter-spacing:0;line-height:1.35;transition:background .18s,border-color .18s,color .18s}
+.admin-tabs button i{width:19px;flex:0 0 19px;text-align:center;color:#9e8a9c;font-size:16px;font-style:normal}
 .admin-tabs button span{flex:1;min-width:0}
-.admin-tabs button em{min-width:19px;height:19px;display:grid;place-items:center;padding:0 5px;border-radius:20px;background:#713c48;color:#ffd9d1;font-size:9px;font-style:normal;font-weight:900}
-.admin-tabs button:hover{background:#ffffff0a;color:#fff}
+.admin-tabs button em{min-width:19px;height:19px;display:grid;place-items:center;padding:0 5px;border-radius:20px;background:#743f4b;color:#ffe0d9;font-size:9px;font-style:normal;font-weight:900}
+.admin-tabs button:hover{background:#ffffff09;color:#fff}
 .admin-tabs button:hover i{color:#f3a18c}
-.admin-tabs button.active{border-color:#e9827245;background:linear-gradient(100deg,#482832,#32202f);color:#fff;box-shadow:inset 3px 0 #e98272,0 7px 18px #08040d30}
+.admin-tabs button.active{border-color:#e9827240;background:linear-gradient(100deg,#482b34,#302330);color:#fff;box-shadow:inset 3px 0 #ed927f,0 7px 18px #08040d22}
 .admin-tabs button.active i{color:#f3a18c}
-.admin-welcome{min-height:132px;margin:0;padding:24px 27px;border:1px solid #ffffff15;border-radius:18px;background:radial-gradient(ellipse at 90% 0,#e9827224,transparent 42%),linear-gradient(120deg,#2b1c31,#1d1526 75%);position:relative;overflow:hidden}
-.admin-welcome:after{content:"";position:absolute;right:6%;top:18px;width:155px;height:100px;opacity:.13;background:repeating-linear-gradient(90deg,transparent 0 18px,#f3a18c 19px 20px),repeating-linear-gradient(0deg,transparent 0 18px,#f3a18c 19px 20px);mask-image:linear-gradient(110deg,transparent,#000)}
-.admin-kicker{color:#f3a18c}
-.admin-welcome h1{font-size:clamp(26px,3vw,36px);margin:8px 0;color:#fff}
-.admin-welcome p{max-width:600px;color:#e0d2df;font-size:12px}
-.admin-workspace .admin-notice,.admin-workspace .admin-error{grid-column:2}
-.admin-tabs::-webkit-scrollbar{width:5px}.admin-tabs::-webkit-scrollbar-thumb{background:#ffffff20;border-radius:8px}
-@media(max-width:900px){.admin-workspace{grid-template-columns:220px minmax(0,1fr);padding:16px;column-gap:14px}.admin-tabs{padding:12px 9px}.admin-tabs button{font-size:10px}}
-@media(max-width:680px){.admin-workspace{display:flex;flex-direction:column;padding:12px 10px 34px;gap:12px}.admin-workspace>*{width:100%}.admin-tabs{order:1;position:sticky;top:62px;z-index:50;width:100%;height:auto;max-height:190px;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:9px;padding:10px;border-radius:14px}.admin-nav-brand{grid-column:1/-1;padding-bottom:9px}.admin-nav-group{min-width:0;gap:2px}.admin-nav-label{padding:4px 6px 5px;font-size:8px}.admin-tabs button{min-height:35px;padding:7px 6px;gap:6px;font-size:9px}.admin-tabs button i{width:15px;flex-basis:15px;font-size:12px}.admin-welcome{order:0;min-height:112px;padding:18px 16px}.admin-welcome:after{right:-35px;opacity:.08}.admin-workspace>.admin-notice,.admin-workspace>.admin-error{order:2}.admin-workspace>:not(.admin-tabs):not(.admin-welcome):not(.admin-notice):not(.admin-error){order:3}}
-@media(max-width:390px){.admin-tabs{grid-template-columns:1fr}.admin-nav-brand{grid-column:1}}
+.admin-welcome{min-height:112px;margin:0;padding:11px 3px 17px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #ffffff12;background:transparent;position:relative}
+.admin-welcome:after{display:none}
+.admin-kicker{font-size:9px;font-weight:900;letter-spacing:.15em;color:#e99584}
+.admin-welcome h1{margin:8px 0 5px;font-size:29px;line-height:1.15;letter-spacing:-.04em;color:#fff;font-weight:850}
+.admin-welcome p{margin:0;color:#b9aebb;font-size:12px;line-height:1.55}
+.admin-welcome-meta{display:grid;justify-items:end;gap:5px;color:#fff}
+.admin-welcome-meta strong{font-size:11px;font-weight:750}
+.admin-welcome-meta small{font-size:9px;color:#a99ba9}
+.admin-live-indicator{display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid #5b9b7840;border-radius:20px;background:#28493635;color:#a5d7b4;font-size:8px;font-weight:900;letter-spacing:.08em}
+.admin-live-indicator i{width:6px;height:6px;border-radius:50%;background:#74d99c;box-shadow:0 0 10px #74d99c}
+.admin-workspace .admin-notice,.admin-workspace .admin-error{grid-column:2;margin:0}
+.admin-tabs::-webkit-scrollbar{width:4px}.admin-tabs::-webkit-scrollbar-thumb{background:#ffffff1c;border-radius:8px}
+.admin-workspace>main,.admin-workspace>section:not(.admin-tabs){min-width:0}
+@media(max-width:1100px){.admin-workspace{grid-template-columns:220px minmax(0,1fr);padding:18px 18px 40px;column-gap:18px}.admin-tabs{padding:15px 10px}.admin-tabs button{font-size:10px}}
+@media(max-width:760px){.admin-workspace{display:flex;flex-direction:column;padding:12px 12px 34px;gap:13px}.admin-workspace>*{width:100%}.admin-welcome{order:0;min-height:90px;padding:6px 2px 13px}.admin-welcome h1{font-size:24px}.admin-welcome-meta{gap:4px}.admin-tabs{order:1;position:sticky;top:8px;z-index:60;width:100%;height:auto;max-height:230px;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:12px;padding:11px;border-radius:14px}.admin-nav-brand{grid-column:1/-1;padding-bottom:10px}.admin-nav-group{min-width:0;gap:2px}.admin-nav-label{padding:4px 7px 5px;font-size:8px}.admin-tabs button{min-height:35px;padding:7px 6px;gap:7px;font-size:9px}.admin-tabs button i{width:15px;flex-basis:15px;font-size:12px}.admin-workspace .admin-notice,.admin-workspace .admin-error{order:2}.admin-workspace>:not(.admin-tabs):not(.admin-welcome):not(.admin-notice):not(.admin-error){order:3}}
+@media(max-width:420px){.admin-workspace{padding-left:9px;padding-right:9px}.admin-tabs{grid-template-columns:1fr;max-height:250px}.admin-nav-brand{grid-column:1}.admin-welcome-meta strong{max-width:110px;overflow:hidden;text-overflow:ellipsis}}
