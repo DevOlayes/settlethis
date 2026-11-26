@@ -20,9 +20,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      # Bootstrap the committed lockfile once; all verification installs then use npm ci.
-      - name: Generate the npm dependency lockfile
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      # Resolve the dependency tree from package.json, update the committed lockfile, and verify it with a clean install below.
+      - name: Resolve dependencies and generate the npm lockfile
+        run: npm install --no-audit --no-fund
       - name: Commit generated lockfile to main
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
