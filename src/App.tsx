@@ -58,7 +58,7 @@ function OnboardingArt({step}:{step:number}) {
  return <div className={`onboarding-visual onboarding-visual-${step}`} aria-hidden="true">
   <div className="onboarding-art-backdrop">
    {step===0&&<><div className="art-pitch-markings"/><div className="art-icon-main"><SoccerBall {...iconProps}/></div><span className="art-orbit art-orbit-one"/><span className="art-orbit art-orbit-two"/></>}
-   {step===1&&<><div className="art-icon-main mystery-person"><User {...iconProps}/><span className="art-question-mark">5</span></div><span className="art-clue-chip">FIVE QUESTIONS</span></>}
+   {step===1&&<img className="onboarding-mystery-art" src="/images/mystery-footballer.webp" alt="" loading="eager" decoding="async"/>}
    {step===2&&<div className="onboarding-token-coin"><span className="coin-rim"/><BrandMark className="coin-brand-mark"/><i>SETHIS</i><Coins className="coin-detail" width={26} height={26}/></div>}
    {step===3&&<><div className="art-icon-main"><Gamepad {...iconProps}/></div><span className="art-entry-token"><Coins width={27} height={27} strokeWidth={1.8}/><b>GT</b></span><span className="art-play-label">GAME ACCESS</span></>}
   </div>
