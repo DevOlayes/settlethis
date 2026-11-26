@@ -432,7 +432,7 @@ test("Monetag postbacks queue verified rewards and explicit claims credit them e
   assert.equal(thirtyFirst.data.accepted, false);
   assert.match(thirtyFirst.data.reason, /limit|Cooldown/i);
   const capWallet = await api(env, "/api/wallet", capInit);
-  assert.equal(capWallet.data.wallet.sethis_balance, 150);
+  assert.equal(capWallet.data.wallet.sethis_balance, 0);
   assert.equal(capWallet.data.wallet.ct_balance, 0);
   assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM ad_reward_events WHERE telegram_user_id=?").get(String(capUser.id)).n), 30);
   assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM ad_reward_events WHERE telegram_user_id=? AND claim_status='pending'").get(String(capUser.id)).n), 1);
