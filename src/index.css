@@ -3979,3 +3979,5 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
   font-size:10px;font-weight:900;letter-spacing:.08em;
 }
 .runner-load-failure button.runner-load-back{border-color:#9b8acb66;background:#302b3d;color:#fff}
+
+/* Final main-branch release sync for the profile and Football Runner fixes. */
