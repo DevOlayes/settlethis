@@ -245,9 +245,11 @@ export default function GiftBox3D({ opened = false, className = "" }: { opened?:
     renderer.toneMappingExposure = 1.18;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(34, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
-    camera.position.set(4.35, 3.55, 5.6);
-    camera.lookAt(0, 1.45, 0);
+    // A calmer, more front-facing three-quarter view keeps the gift dimensional
+    // while giving its silhouette the clean, layered feel of the onboarding artwork.
+    const camera = new THREE.PerspectiveCamera(31, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+    camera.position.set(3.45, 2.75, 8.1);
+    camera.lookAt(0, 1.28, 0);
     scene.add(new THREE.HemisphereLight(0xffe4d2, 0x24142d, 2.0));
     const key = new THREE.DirectionalLight(0xffd6b4, 3.1);
     key.position.set(-3.5, 7, 5);
