@@ -3981,3 +3981,108 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .runner-load-failure button.runner-load-back{border-color:#9b8acb66;background:#302b3d;color:#fff}
 
 /* Final main-branch release sync for the profile and Football Runner fixes. */
+
+
+/* Wallet brand alignment: warm plum, coral and orange for both token balances. */
+.wallet-balances-refined .sethis-card{
+  min-height:132px;
+  padding:16px 15px;
+  border:1px solid #e9827280;
+  background:
+    radial-gradient(ellipse at 8% 0%,#e9827230,transparent 48%),
+    radial-gradient(ellipse at 100% 100%,#f39a8515,transparent 46%),
+    linear-gradient(145deg,#493541 0%,#302b3d 55%,#211f2c 100%);
+  box-shadow:inset 0 1px #ffffff20,0 14px 30px #0005;
+}
+.wallet-balances-refined .sethis-wallet-symbol{
+  width:54px;height:54px;flex:0 0 54px;
+  display:grid;place-items:center;
+  border:2px solid #f3b18e;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 32% 25%,#f8d4ad 0%,#d98b65 38%,#9a584c 72%,#5a3540 100%);
+  box-shadow:0 0 0 4px #e982721b,0 7px 18px #0005,inset 0 0 0 2px #6c3e3c88;
+}
+.wallet-balances-refined .sethis-wallet-symbol:before{
+  content:"";position:absolute;inset:4px;border:1px solid #ffe1bf99;border-radius:50%;pointer-events:none;
+}
+.wallet-balances-refined .sethis-wallet-symbol-mark{
+  width:34px;height:27px;filter:drop-shadow(0 2px 3px #542a25);
+}
+.wallet-balances-refined .sethis-wallet-symbol-mark path{fill:#fff0dc}
+.wallet-balances-refined .sethis-wallet-details>small{
+  color:#f39a85;font-size:8px;font-weight:900;letter-spacing:.13em;
+}
+.wallet-balances-refined .sethis-wallet-details>strong i{
+  color:#f39a85;font-size:10px;
+}
+.wallet-balances-refined .sethis-wallet-details>p{
+  color:#e5c7c2;font-size:8px;
+}
+.wallet-balances-refined .sethis-wallet-watermark{color:#f6d1c008}
+.sethis-withdraw-button{
+  color:#241a25!important;
+  font-weight:800!important;
+  letter-spacing:.07em;
+  background:linear-gradient(135deg,#E98272,#F39A85)!important;
+}
+.wallet-balances-refined .ct-card{
+  min-height:88px;
+  padding:12px 15px;
+  border:1px solid #9b8acb55;
+  border-radius:15px;
+  background:linear-gradient(145deg,#302b3d,#211f2c);
+}
+.wallet-balances-refined .ct-card small{color:#c8bce0}
+.wallet-balances-refined .ct-card strong{color:#fff}
+.wallet-balances-refined .ct-card strong i{color:#E98272}
+.wallet-balances-refined .ct-card p{color:#c3bdca}
+
+/* Game Token top-up: replace generic coin stacks with football identity and make ad actions obvious. */
+.ct-topup-emblem{
+  width:58px;height:58px;border-radius:50%;
+  border:1px solid #f0a18e;
+  background:radial-gradient(circle at 32% 25%,#493541,#302b3d 72%);
+  color:#f39a85;
+  box-shadow:0 0 0 5px #e9827215,0 8px 22px #0005;
+}
+.ct-topup-emblem svg{width:31px;height:31px;stroke-width:1.8}
+.ct-topup-balance-mark{
+  width:43px;height:43px;border-radius:50%;
+  border:1px solid #e9827277;
+  background:radial-gradient(circle at 32% 25%,#493541,#211f2c 78%);
+  color:#f39a85;
+}
+.ct-topup-balance-mark svg{width:24px;height:24px}
+.ct-topup-action-copy{align-items:center;gap:12px}
+.ct-topup-play{
+  width:44px;height:44px;flex:0 0 44px;
+  border:1px solid #f39a85;
+  border-radius:50%;
+  background:linear-gradient(145deg,#e98272,#bd665f);
+  color:#21101d;
+  font-size:17px;font-weight:900;
+  box-shadow:0 0 0 5px #e9827220,0 5px 16px #0005;
+}
+.ct-topup-action-copy p{font-size:10px;line-height:1.55;color:#f1eaf0}
+.ct-balance-modal .ct-topup-watch{
+  min-height:52px;
+  background:linear-gradient(135deg,#E98272,#F39A85)!important;
+  color:#21101d!important;
+  font-size:10px;font-weight:950;letter-spacing:.08em;
+  box-shadow:0 8px 22px #e982723d,inset 0 1px #ffffff55;
+}
+.ct-balance-modal .ct-topup-watch:disabled{
+  background:#76606a!important;color:#21101d!important;opacity:1;
+}
+@media(max-width:390px){
+  .wallet-balances-refined .sethis-card{min-height:126px;padding:13px 11px;gap:9px}
+  .wallet-balances-refined .sethis-wallet-symbol{width:46px;height:46px;flex-basis:46px}
+  .wallet-balances-refined .sethis-wallet-symbol-mark{width:30px;height:24px}
+  .wallet-balances-refined .sethis-wallet-details>strong{font-size:clamp(18px,5vw,25px)}
+  .sethis-withdraw-button{min-width:76px;min-height:33px;padding:0 9px;font-size:8px}
+  .wallet-balances-refined .ct-card{min-height:82px;padding:10px 12px}
+  .ct-topup-emblem{width:53px;height:53px}
+  .ct-topup-play{width:40px;height:40px;flex-basis:40px}
+  .ct-balance-modal .ct-topup-watch{min-height:50px;font-size:9px}
+}
