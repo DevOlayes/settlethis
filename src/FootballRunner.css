@@ -1170,3 +1170,9 @@
 .runner-sethis-earned-card strong em{font-size:11px;font-style:normal;letter-spacing:.08em;color:#f39a85}
 .runner-sethis-earned-card span{font-size:10px;line-height:1.4;color:#d6cbd7}
 @media(max-width:390px){.runner-sethis-earned-card{gap:11px;padding:11px 12px}.runner-sethis-earned-card>img{width:46px;height:46px;flex-basis:46px}.runner-sethis-earned-card strong{font-size:22px}}
+
+.runner-earned-logos{display:flex;align-items:center;gap:5px;flex:0 0 auto}
+.runner-earned-logos img{width:44px;height:44px;object-fit:cover;border-radius:12px;border:1px solid #f39a8570;box-shadow:0 0 16px #e9827225}
+.runner-earned-logos img:first-child{border-radius:50%}
+.runner-earned-logos img+img{width:38px;height:38px;margin-left:-9px;border-radius:11px}
+@media(max-width:390px){.runner-earned-logos img{width:39px;height:39px}.runner-earned-logos img+img{width:33px;height:33px}}
