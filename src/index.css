@@ -4342,3 +4342,16 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
     padding-inline:6px;
   }
 }
+
+
+/* Reward claim and celebration actions */
+.task-ad-action-stack .ad-claim-button{
+  min-height:35px;padding-inline:10px;border:1px solid #f7b08f;border-radius:10px;
+  background:linear-gradient(135deg,#e98272,#f3a080);color:#21101d;
+  font-size:9px;font-weight:950;letter-spacing:.06em;white-space:nowrap;
+  box-shadow:0 5px 14px #e9827225,inset 0 1px #ffffff55;
+}
+.ct-balance-modal .ct-topup-watch.ad-pending-claim{
+  margin:0 0 9px;background:linear-gradient(135deg,#f6bd87,#e98272)!important;
+  color:#21101d!important;border-color:#ffc39c;
+}
