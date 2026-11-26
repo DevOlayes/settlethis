@@ -340,3 +340,9 @@
 @media(prefers-reduced-motion:reduce){
   .gift-preview-open-button{transition:none}
 }
+
+/* Final micro-finish: a restrained satin highlight and consistent mobile-safe stage framing. */
+.gift-preview-canvas{filter:drop-shadow(0 18px 24px #0a071080)}
+.gift-preview-page.is-open .gift-preview-canvas{filter:drop-shadow(0 18px 28px #0a071099)}
+.gift-preview-header,.gift-preview-footer{backdrop-filter:blur(12px)}
+@media(max-width:520px){.gift-preview-content h1{letter-spacing:-.04em}.gift-preview-object{touch-action:manipulation}}
