@@ -294,3 +294,18 @@
  .rfx-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
  .rfx-actions button{min-width:0;padding-left:6px;padding-right:6px;white-space:normal}
 }
+
+
+/* Reward claim and celebration actions */
+.rfx-claim-button{
+  min-height:32px;padding:0 13px;border:1px solid #f4ad92;border-radius:9px;
+  background:linear-gradient(135deg,#e98272,#f3a080);color:#21101d;
+  font:950 9px Manrope,sans-serif;letter-spacing:.09em;cursor:pointer;
+  box-shadow:0 5px 14px #e9827225,inset 0 1px #ffffff55;
+}
+.rfx-claim-button:disabled{opacity:.55;cursor:wait}
+.rfx-milestone-main .rfx-claim-button{margin-top:10px}
+.rfx-claimed-label{display:inline-block;margin-top:9px;color:#f0a18e;font-size:8px;font-weight:900;letter-spacing:.1em}
+.rfx-reward-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.rfx-reward-pending{border-color:#e9827270!important;background:linear-gradient(110deg,#493541,#302b3d)!important}
+.rfx-reward-pending .rfx-reward-check{color:#f39a85}
