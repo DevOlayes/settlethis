@@ -5,9 +5,9 @@ import BrandMark from "./BrandMark";
 import "./GiftBoxPreview.css";
 
 function buildGift(scene: THREE.Scene) {
-  const coral = new THREE.MeshStandardMaterial({ color: 0xe98272, roughness: 0.34, metalness: 0.04 });
-  const coralLight = new THREE.MeshStandardMaterial({ color: 0xf39a85, roughness: 0.3, metalness: 0.04 });
-  const coralSide = new THREE.MeshStandardMaterial({ color: 0x984e5b, roughness: 0.42 });
+  const coral = new THREE.MeshPhysicalMaterial({ color: 0xe98272, roughness: 0.52, metalness: 0, clearcoat: 0.28, clearcoatRoughness: 0.38 });
+  const coralLight = new THREE.MeshPhysicalMaterial({ color: 0xf39a85, roughness: 0.48, metalness: 0, clearcoat: 0.32, clearcoatRoughness: 0.35 });
+  const coralSide = new THREE.MeshPhysicalMaterial({ color: 0x984e5b, roughness: 0.55, metalness: 0, clearcoat: 0.22, clearcoatRoughness: 0.42 });
   const inner = new THREE.MeshStandardMaterial({ color: 0x382137, roughness: 0.8 });
   const gold = new THREE.MeshStandardMaterial({ color: 0xe9bd88, metalness: 0.72, roughness: 0.24 });
   const goldLight = new THREE.MeshStandardMaterial({ color: 0xffdfb0, metalness: 0.58, roughness: 0.2 });
@@ -26,11 +26,11 @@ function buildGift(scene: THREE.Scene) {
   };
 
   // Four separate walls and a real floor leave an open cavity beneath the lid.
-  addBox(box, 2.48, 0.16, 2.12, coralSide, 0, 0.08, 0);
-  addBox(box, 2.48, 1.88, 0.14, coral, 0, 1.02, 0.99);
-  addBox(box, 2.48, 1.88, 0.14, coralSide, 0, 1.02, -0.99);
-  addBox(box, 0.14, 1.88, 1.86, coralLight, -1.17, 1.02, 0);
-  addBox(box, 0.14, 1.88, 1.86, coralSide, 1.17, 1.02, 0);
+  addBox(box, 2.48, 0.10, 2.12, coralSide, 0, 0.05, 0);
+  addBox(box, 2.48, 1.88, 0.085, coral, 0, 1.02, 1.015);
+  addBox(box, 2.48, 1.88, 0.085, coralSide, 0, 1.02, -1.015);
+  addBox(box, 0.085, 1.88, 1.95, coralLight, -1.2075, 1.02, 0);
+  addBox(box, 0.085, 1.88, 1.95, coralSide, 1.2075, 1.02, 0);
   // Inner lining and inset base.
   addBox(box, 2.24, 0.045, 1.86, inner, 0, 0.19, 0);
   addBox(box, 2.27, 1.7, 0.035, inner, 0, 1.04, 0.91);
@@ -39,27 +39,27 @@ function buildGift(scene: THREE.Scene) {
   addBox(box, 0.035, 1.7, 1.75, inner, 1.09, 1.04, 0);
 
   // Satin bands wrap the body continuously across the front and visible right face.
-  addBox(box, 0.29, 1.9, 0.035, goldLight, 0, 1.04, 1.075);
-  addBox(box, 0.035, 1.9, 0.29, gold, 1.255, 1.04, 0);
+  addBox(box, 0.22, 1.9, 0.022, goldLight, 0, 1.04, 1.066);
+  addBox(box, 0.022, 1.9, 0.22, gold, 1.255, 1.04, 0);
 
   // The lid is a single hinged assembly. Its pivot sits exactly on the back upper edge.
   const lid = new THREE.Group();
   lid.position.set(0, 1.98, -1.055);
   box.add(lid);
-  addBox(lid, 2.72, 0.2, 2.34, coralLight, 0, 0.12, 0);
-  addBox(lid, 2.72, 0.42, 0.14, coral, 0, -0.18, 1.16);
-  addBox(lid, 2.72, 0.42, 0.14, coralSide, 0, -0.18, -1.16);
-  addBox(lid, 0.14, 0.42, 2.2, coralLight, -1.29, -0.18, 0);
-  addBox(lid, 0.14, 0.42, 2.2, coralSide, 1.29, -0.18, 0);
+  addBox(lid, 2.66, 0.12, 2.26, coralLight, 0, 0.06, 1.055);
+  addBox(lid, 2.66, 0.27, 0.085, coral, 0, -0.075, 2.145);
+  addBox(lid, 2.66, 0.27, 0.085, coralSide, 0, -0.075, -0.035);
+  addBox(lid, 0.085, 0.27, 2.10, coralLight, -1.2875, -0.075, 1.055);
+  addBox(lid, 0.085, 0.27, 2.10, coralSide, 1.2875, -0.075, 1.055);
   // Ribbon crosses both axes of the lid top and continues down the skirt.
-  addBox(lid, 2.73, 0.026, 0.29, goldLight, 0, 0.235, 0);
-  addBox(lid, 0.29, 0.026, 2.34, gold, 0, 0.237, 0);
-  addBox(lid, 0.29, 0.42, 0.035, goldLight, 0, -0.18, 1.245);
-  addBox(lid, 0.035, 0.42, 0.29, gold, 1.365, -0.18, 0);
+  addBox(lid, 2.67, 0.018, 0.22, goldLight, 0, 0.129, 1.055);
+  addBox(lid, 0.22, 0.018, 2.26, gold, 0, 0.13, 1.055);
+  addBox(lid, 0.22, 0.27, 0.022, goldLight, 0, -0.075, 2.19);
+  addBox(lid, 0.022, 0.27, 0.22, gold, 1.33, -0.075, 1.055);
 
   // Bow loops are curved satin tubes with a fine highlight, not flat oval stickers.
   const bow = new THREE.Group();
-  bow.position.set(0, 0.29, 0.02);
+  bow.position.set(0, 0.17, 1.055);
   lid.add(bow);
   const makeLoop = (side: number) => {
     const pts = [
@@ -95,41 +95,42 @@ function buildGift(scene: THREE.Scene) {
   const hangingRight = addBox(bow, 0.32, 0.035, 0.58, goldLight, 0.34, -0.32, 1.03);
   hangingRight.rotation.x = -0.28;
 
-  // Reward card rises from the cavity only after the lid starts opening.
+  // Only the 3,500 GT reward rises from the gift: no box, plaque or extra object.
   const reward = new THREE.Group();
-  reward.position.set(0, 0.35, 0);
+  reward.position.set(0, 0.22, 0);
   box.add(reward);
-  const card = new THREE.Mesh(
-    new THREE.BoxGeometry(1.68, 0.12, 1.04),
-    new THREE.MeshStandardMaterial({ color: 0x34203c, metalness: 0.32, roughness: 0.28, emissive: 0x3a2036, emissiveIntensity: 0.5 })
-  );
-  card.castShadow = true;
-  reward.add(card);
-  const cardTop = new THREE.Mesh(
-    new THREE.BoxGeometry(1.58, 0.018, 0.94),
-    new THREE.MeshStandardMaterial({ color: 0x513044, metalness: 0.25, roughness: 0.32 })
-  );
-  cardTop.position.y = 0.07;
-  reward.add(cardTop);
-  const cardAccent = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.025, 0.035), goldLight);
-  cardAccent.position.set(0, 0.09, 0.28);
-  reward.add(cardAccent);
   const labelCanvas = document.createElement("canvas");
-  labelCanvas.width = 512; labelCanvas.height = 256;
+  labelCanvas.width = 768;
+  labelCanvas.height = 384;
   const labelCtx = labelCanvas.getContext("2d");
   if (labelCtx) {
-    labelCtx.clearRect(0, 0, 512, 256);
-    labelCtx.fillStyle = "#f6c99b"; labelCtx.font = "900 82px Arial"; labelCtx.textAlign = "center";
-    labelCtx.fillText("3,500 GT", 256, 145);
-    labelCtx.font = "700 24px Arial"; labelCtx.letterSpacing = "7px";
-    labelCtx.fillText("WELCOME GIFT", 256, 195);
+    labelCtx.clearRect(0, 0, 768, 384);
+    labelCtx.shadowColor = "#f6c39d";
+    labelCtx.shadowBlur = 28;
+    labelCtx.textAlign = "center";
+    labelCtx.textBaseline = "middle";
+    labelCtx.fillStyle = "#fff7ed";
+    labelCtx.font = "900 132px Arial";
+    labelCtx.fillText("3,500", 384, 158);
+    labelCtx.shadowBlur = 18;
+    labelCtx.fillStyle = "#f6c39d";
+    labelCtx.font = "900 76px Arial";
+    labelCtx.fillText("GT", 384, 265);
   }
   const labelTexture = new THREE.CanvasTexture(labelCanvas);
   labelTexture.colorSpace = THREE.SRGBColorSpace;
-  const label = new THREE.Mesh(new THREE.PlaneGeometry(1.48, 0.74), new THREE.MeshBasicMaterial({ map: labelTexture, transparent: true, side: THREE.DoubleSide }));
-  label.rotation.x = -Math.PI / 2;
-  label.position.set(0, 0.085, 0);
-  reward.add(label);
+  const rewardText = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.95, 0.98),
+    new THREE.MeshBasicMaterial({ map: labelTexture, transparent: true, depthWrite: false, side: THREE.DoubleSide })
+  );
+  rewardText.position.set(0, 0.25, 0.28);
+  reward.add(rewardText);
+  const rewardHalo = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.35, 1.25),
+    new THREE.MeshBasicMaterial({ color: 0xf6c39d, transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide })
+  );
+  rewardHalo.position.set(0, 0.24, 0.22);
+  reward.add(rewardHalo);
 
   const glow = new THREE.PointLight(0xffc58f, 0, 5.5);
   glow.position.set(0, 2.2, 0);
@@ -214,13 +215,13 @@ export default function GiftBoxPreview() {
       const easing = 1 - Math.exp(-dt * (reducedMotion ? 40 : 3.1));
       const lidTarget = target ? gift.lidOpenTarget : 0;
       gift.lid.rotation.x += (lidTarget - gift.lid.rotation.x) * easing;
-      const rewardY = target ? 2.42 : 0.35;
+      const rewardY = target ? 2.45 : 0.22;
       gift.reward.position.y += (rewardY - gift.reward.position.y) * (1 - Math.exp(-dt * 2.8));
       gift.reward.rotation.y += ((target ? 0.12 : 0) - gift.reward.rotation.y) * easing;
       gift.glow.intensity += ((target ? 5.2 : 0) - gift.glow.intensity) * easing;
       gift.glow.position.y = 2.15 + (target ? 0.5 : 0);
       if (!reducedMotion && !target) {
-        gift.reward.position.y = 0.35 + Math.sin(time * 0.0013) * 0.025;
+        gift.reward.position.y = 0.22 + Math.sin(time * 0.0013) * 0.018;
       }
       renderer.render(scene, camera);
     };
