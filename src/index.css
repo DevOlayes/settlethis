@@ -4611,3 +4611,7 @@ button,input,textarea,select,.bottom-nav,.bottom-nav button,.bottom-nav button s
  .section-back-row{margin-bottom:13px}
 }
 @media(prefers-reduced-motion:reduce){.bottom-nav button,.bottom-nav button .bottom-nav-icon{transition:none}}
+
+
+/* Typography is inherited consistently by every main and nested game surface. */
+.app-shell *,.football-runner-page *{font-family:Manrope,Arial,sans-serif!important}
