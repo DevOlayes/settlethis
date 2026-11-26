@@ -4086,3 +4086,106 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
   .ct-topup-play{width:40px;height:40px;flex-basis:40px}
   .ct-balance-modal .ct-topup-watch{min-height:50px;font-size:9px}
 }
+
+
+/* Final wallet hierarchy: SETHIS is the hero balance; Game Token is supporting. */
+.wallet-balances-refined .sethis-card{
+  min-height:148px;
+  padding:18px 16px;
+  border:1px solid #e98272a6;
+  border-radius:18px;
+  background:
+    radial-gradient(ellipse at 8% 0%,#e9827230,transparent 48%),
+    radial-gradient(ellipse at 100% 100%,#f39a8518,transparent 46%),
+    linear-gradient(145deg,#493541 0%,#302b3d 55%,#211f2c 100%);
+  box-shadow:inset 0 1px #ffffff24,0 16px 34px #0006;
+}
+.wallet-balances-refined .sethis-wallet-symbol{
+  position:relative;
+  width:60px;height:60px;flex:0 0 60px;
+  border:2px solid #f6c39d;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 24%,#f8d8b4 0%,#d98b65 34%,#a45e53 68%,#593541 100%);
+  box-shadow:0 0 0 4px #e9827224,0 8px 20px #0006,inset 0 0 0 2px #6c3e3c88;
+}
+.wallet-balances-refined .sethis-wallet-symbol:before{
+  content:"";position:absolute;inset:4px;border:1px solid #ffe4c6b0;border-radius:50%;pointer-events:none;
+}
+.wallet-balances-refined .sethis-wallet-symbol-mark{
+  width:36px;height:29px;filter:drop-shadow(0 2px 3px #542a25);
+}
+.wallet-balances-refined .sethis-wallet-details>small{
+  color:#f39a85;font-size:8px;font-weight:950;letter-spacing:.14em;
+}
+.wallet-balances-refined .sethis-wallet-details>strong i{
+  color:#f39a85;font-size:11px;font-style:normal;
+}
+.wallet-balances-refined .sethis-wallet-details>p{color:#e8c9c5;font-size:8px}
+.sethis-withdraw-button{
+  color:#171019!important;
+  font-weight:850!important;
+  letter-spacing:.075em;
+}
+.wallet-balances-refined .ct-card{
+  min-height:78px;
+  padding:10px 14px;
+  border-radius:14px;
+  border:1px solid #9b8acb55;
+  background:linear-gradient(145deg,#302b3d,#211f2c);
+}
+.wallet-balances-refined .ct-card small{color:#c8bce0}
+.wallet-balances-refined .ct-card strong{color:#fff}
+.wallet-balances-refined .ct-card strong i{color:#f39a85}
+.wallet-balances-refined .ct-card p{color:#c3bdca}
+
+/* Distinctive pitch-mark emblem instead of a familiar coin-stack graphic. */
+.ct-topup-emblem{
+  width:62px;height:62px;border-radius:19px;
+  display:grid;place-items:center;
+  border:1px solid #f0a18e;
+  background:linear-gradient(145deg,#493541,#302b3d 72%);
+  color:#f39a85;
+  box-shadow:0 0 0 5px #e9827218,0 9px 24px #0006;
+}
+.ct-topup-emblem svg{display:block;width:37px;height:37px}
+.ct-topup-balance-mark{
+  display:grid;place-items:center;
+  width:45px;height:45px;border-radius:14px;
+  border:1px solid #e9827277;
+  background:linear-gradient(145deg,#493541,#211f2c);
+  color:#f39a85;
+}
+.ct-topup-balance-mark svg{display:block;width:29px;height:29px}
+.ct-topup-play{
+  width:50px;height:50px;flex:0 0 50px;
+  border:2px solid #ffd0ad;
+  border-radius:50%;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,#ffad79,#e98272);
+  color:#171019;
+  font-size:19px;font-weight:950;
+  box-shadow:0 0 0 6px #e982722b,0 8px 20px #0006;
+}
+.ct-topup-action-copy{gap:15px}
+.ct-topup-action-copy p{font-size:10px;line-height:1.6;color:#fff}
+.ct-balance-modal .ct-topup-watch{
+  color:#171019!important;
+  font-weight:950!important;
+  text-shadow:none!important;
+  background:linear-gradient(135deg,#f39a85,#ffb17f)!important;
+  box-shadow:0 9px 24px #e9827248,inset 0 1px #ffffff70;
+}
+.ct-balance-modal .ct-topup-watch:disabled{
+  color:#171019!important;opacity:1;
+}
+@media(max-width:390px){
+  .wallet-balances-refined .sethis-card{min-height:140px;padding:15px 12px;column-gap:10px}
+  .wallet-balances-refined .sethis-wallet-symbol{width:52px;height:52px;flex-basis:52px}
+  .wallet-balances-refined .sethis-wallet-symbol-mark{width:31px;height:25px}
+  .wallet-balances-refined .sethis-wallet-details>strong{font-size:clamp(18px,5vw,25px)}
+  .wallet-balances-refined .ct-card{min-height:72px;padding:9px 12px}
+  .ct-topup-emblem{width:56px;height:56px}
+  .ct-topup-play{width:46px;height:46px;flex-basis:46px}
+  .ct-balance-modal .ct-topup-watch{min-height:52px;font-size:9px}
+}
