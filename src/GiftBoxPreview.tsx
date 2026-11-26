@@ -15,7 +15,7 @@ function buildGift(scene: THREE.Scene) {
   const box = new THREE.Group();
   scene.add(box);
 
-  const addBox = (parent: THREE.Object3D, w: number, h: number, d: number, material: THREE.Material, x: number, y: number, z: number, bevel = false) => {
+  const addBox = (parent: THREE.Object3D, w: number, h: number, d: number, material: THREE.Material, x: number, y: number, z: number) => {
     const geometry = new THREE.BoxGeometry(w, h, d);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(x, y, z);
@@ -214,7 +214,7 @@ export default function GiftBoxPreview() {
       const easing = 1 - Math.exp(-dt * (reducedMotion ? 40 : 3.1));
       const lidTarget = target ? gift.lidOpenTarget : 0;
       gift.lid.rotation.x += (lidTarget - gift.lid.rotation.x) * easing;
-      const rewardY = target ? 1.62 : 0.35;
+      const rewardY = target ? 2.42 : 0.35;
       gift.reward.position.y += (rewardY - gift.reward.position.y) * (1 - Math.exp(-dt * 2.8));
       gift.reward.rotation.y += ((target ? 0.12 : 0) - gift.reward.rotation.y) * easing;
       gift.glow.intensity += ((target ? 5.2 : 0) - gift.glow.intensity) * easing;
