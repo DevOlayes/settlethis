@@ -13,6 +13,8 @@ export class RunnerAudioFeedback {
   private stepElapsed = 0;
   private stepIndex = 0;
   private disposed = false;
+  private musicTimer: number | null = null;
+  private musicStep = 0;
 
   async unlock(): Promise<void> {
     if (this.disposed || !this.enabled) return;
@@ -43,6 +45,8 @@ export class RunnerAudioFeedback {
     this.running = running && this.enabled;
     this.stepElapsed = 0;
     this.updateAmbienceLevel();
+    if (this.running) this.startMusic();
+    else this.stopMusic();
   }
 
   updateRun(delta: number, speedRatio: number): void {
@@ -69,12 +73,14 @@ export class RunnerAudioFeedback {
   }
 
   collect(): void {
-    // A three-note football pickup chime with a soft leather-like impact.
-    this.noiseSweep(360, 115, 0.075, 0.026, "lowpass");
-    this.tone(660, 660, 0.12, 0.052, "sine");
-    this.tone(880, 880, 0.15, 0.052, "sine", 0.075);
-    this.tone(1180, 1180, 0.2, 0.045, "sine", 0.15);
-    this.tone(330, 220, 0.12, 0.025, "triangle", 0.02);
+    // A soft leather tap followed by a bright, rising stadium-style reward flourish.
+    this.noiseSweep(760, 180, 0.095, 0.035, "bandpass");
+    this.tone(132, 72, 0.16, 0.075, "sine");
+    this.tone(392, 523.25, 0.13, 0.035, "triangle", 0.025);
+    this.tone(659.25, 659.25, 0.15, 0.052, "sine", 0.075);
+    this.tone(783.99, 783.99, 0.17, 0.05, "sine", 0.15);
+    this.tone(1046.5, 1046.5, 0.22, 0.042, "sine", 0.225);
+    this.noiseSweep(1500, 520, 0.18, 0.012, "highpass");
   }
 
   collision(): void {
@@ -101,6 +107,7 @@ export class RunnerAudioFeedback {
   dispose(): void {
     this.disposed = true;
     this.running = false;
+    this.stopMusic();
     try {
       this.ambienceSource?.stop();
     } catch {
@@ -117,7 +124,7 @@ export class RunnerAudioFeedback {
   private createContext(context: AudioContext): void {
     this.context = context;
     this.master = context.createGain();
-    this.master.gain.value = 0.9;
+    this.master.gain.value = 0.78;
     this.master.connect(context.destination);
 
     const buffer = context.createBuffer(1, Math.floor(context.sampleRate * 2), context.sampleRate);
@@ -151,8 +158,50 @@ export class RunnerAudioFeedback {
 
   private updateAmbienceLevel(): void {
     if (!this.context || !this.ambienceGain) return;
-    const target = this.enabled ? (this.running ? 0.018 : 0.004) : 0;
+    const target = this.enabled ? (this.running ? 0.0025 : 0.001) : 0;
     this.ambienceGain.gain.setTargetAtTime(target, this.context.currentTime, 0.22);
+  }
+
+  private startMusic(): void {
+    if (!this.context || !this.enabled || this.musicTimer !== null) return;
+    this.musicStep = 0;
+    this.playMusicBeat();
+    this.musicTimer = window.setInterval(() => this.playMusicBeat(), 440);
+  }
+
+  private stopMusic(): void {
+    if (this.musicTimer !== null) window.clearInterval(this.musicTimer);
+    this.musicTimer = null;
+  }
+
+  private playMusicBeat(): void {
+    if (!this.context || !this.running || !this.enabled) return;
+    // Original upbeat four-bar loop: warm major chords, a rounded bass pulse
+    // and a light off-beat melody. Kept deliberately soft beneath gameplay.
+    const chords = [
+      [261.63, 329.63, 392.00], // C
+      [196.00, 246.94, 293.66], // G
+      [220.00, 261.63, 329.63], // Am
+      [174.61, 220.00, 261.63], // F
+    ];
+    const bass = [65.41, 49.00, 55.00, 43.65];
+    const melody = [523.25, 659.25, 783.99, 659.25, 587.33, 659.25, 880.00, 783.99];
+    const step = this.musicStep++;
+    const bar = Math.floor(step / 4) % 4;
+    const beat = step % 4;
+    if (beat === 0) {
+      for (const frequency of chords[bar]) {
+        this.tone(frequency, frequency * 1.002, 0.72, 0.012, "sine");
+      }
+    }
+    if (beat === 0 || beat === 2) {
+      this.tone(bass[bar], bass[bar] * 0.98, 0.24, 0.035, "triangle");
+      this.tone(92, 48, 0.12, 0.018, "sine");
+    }
+    if (beat === 1 || beat === 3) {
+      const note = melody[(step + bar) % melody.length];
+      this.tone(note, note * 0.995, 0.16, 0.012, "sine");
+    }
   }
 
   private footstep(alternate: boolean): void {
