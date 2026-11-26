@@ -29,7 +29,7 @@ export default function RewardCelebration({ reward, onClose }: { reward: RewardC
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
   return <div className="reward-celebration-overlay" role="presentation" onClick={onClose}>
-    <Confetti width={size.width} height={size.height} numberOfPieces={reducedMotion?0:190} recycle={false} gravity={0.24} tweenDuration={4200} frameRate={45} zIndex={10001} run={!reducedMotion} />
+    <Confetti width={size.width} height={size.height} numberOfPieces={reducedMotion?0:190} recycle={false} gravity={0.24} tweenDuration={4200} frameRate={45} run={!reducedMotion} style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:10001}} />
     <section className="reward-celebration-card" role="dialog" aria-modal="true" aria-labelledby="reward-celebration-title" onClick={event => event.stopPropagation()}>
       <button type="button" className="reward-celebration-close" onClick={onClose} aria-label="Close reward celebration"><Xmark width={18} height={18}/></button>
       <div className="reward-flight-track" aria-hidden="true"><span className="reward-flight-glow"/><SoccerBall className="reward-flight-ball" width={43} height={43}/></div>
