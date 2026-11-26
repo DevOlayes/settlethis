@@ -3,7 +3,7 @@ import { Check, Group, Lock, ShareAndroid, Trophy, UserPlus } from "iconoir-reac
 import "./ReferralPage.css";
 
 type ReferralRecord = { attributed_at: string; qualified_at: string | null; username: string | null; first_name: string | null };
-type ReferralReward = { milestone: number; amount: number; created_at: string };
+type ReferralReward = { milestone: number; amount: number; created_at: string; claim_status:"pending"|"claimed"; claimed_at?:string|null };
 type ReferralMilestone = { milestone: number; threshold: number; reward: number; title: string; description: string; earned: boolean };
 export type ReferralData = { code: string | null; invite_link: string | null; total: number; qualified: number; pending: number; target: number; reward: number; token: string; milestones: ReferralMilestone[]; next_milestone: ReferralMilestone | null; referrals: ReferralRecord[]; rewards: ReferralReward[] };
 type LeadershipData={is_leader:boolean;status:string;personal_qualified:number;branch_qualified:number;active_members:number;active_ratio:number;low_activity_since:string|null;recovery_days_remaining:number;commission_earned:number;commission_paid:number;commission_pending:number;branch_leaders:Array<{user_id:string;name:string;status:string;personal_qualified:number;branch_qualified:number;active_ratio:number}>;personal_threshold:number;hybrid_personal_threshold:number;branch_threshold:number;active_threshold:number;recovery_days:number};
@@ -21,7 +21,7 @@ const challengeTitle = (threshold:number) => {
   return titles[threshold] || `Bring ${number(threshold)} fans into SETHIS`;
 };
 
-export default function ReferralPage({ onBack, showNotice, initialData, initialCommunity, initialLoading, initialError, initialCommunityError, onRefresh }: { onBack: () => void; showNotice: (message: string) => void; initialData: ReferralData|null; initialCommunity: CommunityData|null; initialLoading: boolean; initialError: string; initialCommunityError: string; onRefresh: () => Promise<void> }) {
+export default function ReferralPage({ onBack, showNotice, initialData, initialCommunity, initialLoading, initialError, initialCommunityError, onRefresh, onCelebrate }: { onBack: () => void; showNotice: (message: string) => void; initialData: ReferralData|null; initialCommunity: CommunityData|null; initialLoading: boolean; initialError: string; initialCommunityError: string; onRefresh: () => Promise<void>; onCelebrate:(reward:{amount:number;token:"SETHIS"|"GT";source:string})=>void }) {
   const [data,setData]=useState<ReferralData|null>(initialData);
   const [community,setCommunity]=useState<CommunityData|null>(initialCommunity);
   const [loading,setLoading]=useState(initialLoading);
@@ -29,6 +29,7 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
   const [communityError,setCommunityError]=useState(initialCommunityError);
   const [view,setView]=useState<"progress"|"community"|"activity">("progress");
   const [showAll,setShowAll]=useState(false);
+  const [claimingMilestone,setClaimingMilestone]=useState<number|null>(null);
 
   useEffect(()=>{setData(initialData);setCommunity(initialCommunity);setLoading(initialLoading);setError(initialError);setCommunityError(initialCommunityError);},[initialData,initialCommunity,initialLoading,initialError,initialCommunityError]);
 
@@ -43,6 +44,21 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
     if(window.Telegram?.WebApp?.openTelegramLink)window.Telegram.WebApp.openTelegramLink(url);
     else window.open(url,"_blank","noopener,noreferrer");
   };
+  const claimMilestone=async(threshold:number)=>{
+    const initData=window.Telegram?.WebApp?.initData;
+    if(!initData){showNotice("Open SETHIS inside Telegram to claim referral rewards.");return;}
+    if(claimingMilestone!==null)return;
+    setClaimingMilestone(threshold);
+    try{
+      const response=await fetch("/api/referrals/milestones/"+threshold+"/claim",{method:"POST",headers:{"x-telegram-init-data":initData}});
+      const result=await response.json();
+      if(!response.ok||!result.claimed)throw new Error(result.error||"The referral reward could not be claimed.");
+      onCelebrate({amount:Number(result.reward?.amount)||0,token:"SETHIS",source:number(threshold)+" qualified football referrals"});
+      await onRefresh();
+    }catch(error){showNotice(error instanceof Error?error.message:"The referral reward could not be claimed. Please try again.");}
+    finally{setClaimingMilestone(null);}
+  };
+
 
   const displayData:ReferralData=data||{code:null,invite_link:null,total:0,qualified:0,pending:0,target:0,reward:0,token:"SETHIS",milestones:[],next_milestone:null,referrals:[],rewards:[]};
   const displayCommunity:CommunityData=community||{invited:0,qualified:0,contributors:0,member_qualified:0,targets:[],achieved:[],next_target:1000,progress_target:1000,progress_percent:0,eligibility:false,eligibility_rule:"",reward_status:"not_announced"};
@@ -124,12 +140,14 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
           <div className="rfx-ladder">
             {(showAll?displayData.milestones.filter(m=>m.earned||m.milestone!==next?.milestone):displayData.milestones.filter(m=>m.earned||(m.milestone!==next?.milestone&&m.milestone<=(next?.milestone??0)+2))).map(item=>{
               const earned=item.earned;
+              const rewardRecord=displayData.rewards.find(reward=>reward.milestone===item.threshold);
+              const claimable=earned&&rewardRecord?.claim_status==="pending";
               const state=earned?"earned":"locked";
-              return <article key={item.milestone} className={"rfx-milestone "+state}>
+              return <article key={item.milestone} className={"rfx-milestone "+state+(claimable?" claimable":"")}>
                 <span className="rfx-milestone-icon">{earned?<Check width={18} height={18}/>:<Lock width={16} height={16}/>}</span>
                 <div className="rfx-milestone-main">
                   <div className="rfx-milestone-title"><b>{challengeTitle(item.threshold)}</b><span>{earned?"COMPLETED":"LOCKED"}</span></div>
-                  {earned?<><div className="rfx-milestone-meta"><span>{number(item.threshold)} qualified fans</span><b>100%</b></div><div className="rfx-mini-track"><i style={{width:"100%"}}/></div></>:<small className="rfx-locked-copy">Unlocks after your current challenge</small>}
+                  {earned?<><div className="rfx-milestone-meta"><span>{number(item.threshold)} qualified fans</span><b>100%</b></div><div className="rfx-mini-track"><i style={{width:"100%"}}/></div>{claimable?<button type="button" className="rfx-claim-button" disabled={claimingMilestone!==null} onClick={()=>void claimMilestone(item.threshold)}>{claimingMilestone===item.threshold?"CREDITING…":"CLAIM REWARD"}</button>:<small className="rfx-claimed-label">{rewardRecord?.claim_status==="claimed"?"REWARD CLAIMED":"REWARD READY"}</small>}</>:<small className="rfx-locked-copy">Unlocks after your current challenge</small>}
                 </div>
                 <div className="rfx-milestone-reward"><strong>{number(item.reward)}</strong><small>SETHIS</small></div>
               </article>;
@@ -218,8 +236,8 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
         </section>
         <section className="rfx-activity-section">
           <div className="rfx-section-head"><div><span className="rfx-kicker">YOUR EARNINGS</span><h2>Reward history</h2></div><strong className="rfx-count-pill">{number(displayData.rewards.length)}</strong></div>
-          {displayData.rewards.length===0?<div className="rfx-empty"><Trophy width={22} height={22}/><b>No referral rewards yet.</b><span>Rewards appear here when milestones are earned.</span></div>:<div className="rfx-reward-list">{displayData.rewards.map(reward=><article key={reward.milestone}>
-            <span className="rfx-reward-check"><Check width={16} height={16}/></span><div><b>{number(reward.milestone)} qualified referrals</b><small>{date(reward.created_at)}</small></div><strong>+{number(reward.amount)} <small>SETHIS</small></strong>
+          {displayData.rewards.length===0?<div className="rfx-empty"><Trophy width={22} height={22}/><b>No referral rewards yet.</b><span>Rewards appear here when milestones are earned.</span></div>:<div className="rfx-reward-list">{displayData.rewards.map(reward=><article key={reward.milestone} className={reward.claim_status==="pending"?"rfx-reward-pending":""}>
+            <span className="rfx-reward-check"><Check width={16} height={16}/></span><div><b>{number(reward.milestone)} qualified referrals</b><small>{reward.claim_status==="pending"?"Milestone unlocked · awaiting your claim":date(reward.claimed_at||reward.created_at)}</small></div><div className="rfx-reward-actions"><strong>+{number(reward.amount)} <small>SETHIS</small></strong>{reward.claim_status==="pending"&&<button type="button" className="rfx-claim-button" disabled={claimingMilestone!==null} onClick={()=>void claimMilestone(reward.milestone)}>{claimingMilestone===reward.milestone?"CLAIMING…":"CLAIM"}</button>}</div>
           </article>)}</div>}
         </section>
       </div>}
