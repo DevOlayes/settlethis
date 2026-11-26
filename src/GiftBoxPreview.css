@@ -215,3 +215,128 @@
   .gift-preview-scene{height:365px}
   .gift-preview-object{height:340px}
 }
+
+
+/* Wallet-matched luxury finish: exact SETHIS plum / warm-coral treatment and its
+   fine diagonal guilloche pattern, carried through the entire welcome stage. */
+.gift-preview-page{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  color:#faf8fc;
+  background:
+    radial-gradient(ellipse at 50% 34%,#493541 0%,#302b3d 32%,#211f2c 66%,#150a21 100%);
+}
+.gift-preview-page:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.78;
+  background:
+    radial-gradient(circle at 50% 43%,transparent 0 155px,#f6c39d08 156px 157px,transparent 158px 196px,#e9827210 197px 198px,transparent 199px),
+    repeating-linear-gradient(135deg,transparent 0 25px,#f6d1c008 25px 26px,transparent 26px 52px),
+    radial-gradient(ellipse at 8% 0%,#e9827220,transparent 43%),
+    radial-gradient(ellipse at 100% 100%,#f39a8514,transparent 44%);
+}
+.gift-preview-content{position:relative;z-index:1}
+.gift-preview-header{
+  border-bottom:1px solid #f6c39d20;
+  background:linear-gradient(90deg,#211f2cdd,#302b3ddd,#211f2cdd);
+  box-shadow:0 8px 28px #09060d35;
+}
+.gift-preview-tag{
+  color:#f6c39d;
+  border-color:#e9827266;
+  background:linear-gradient(120deg,#493541aa,#302b3daa);
+}
+.gift-preview-eyebrow{
+  color:#f39a85;
+  text-shadow:0 0 18px #e9827240;
+}
+.gift-preview-content h1{
+  text-shadow:0 5px 24px #09060d88;
+  letter-spacing:-.045em;
+}
+.gift-preview-intro{color:#e5dce6}
+.gift-preview-scene{
+  position:relative;
+  isolation:isolate;
+  background:
+    radial-gradient(ellipse at 50% 62%,#f6c39d12 0%,transparent 52%),
+    repeating-linear-gradient(135deg,transparent 0 30px,#f6d1c006 30px 31px,transparent 31px 62px);
+  border:1px solid #f6c39d16;
+  border-radius:28px;
+  box-shadow:inset 0 1px #ffffff08,0 22px 60px #08050c22;
+}
+.gift-preview-scene:before,
+.gift-preview-scene:after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  pointer-events:none;
+  border:1px solid #f6c39d20;
+  border-radius:50%;
+}
+.gift-preview-scene:before{
+  width:320px;height:320px;left:50%;top:43%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 0 18px #e9827208,0 0 0 38px #f6c39d06,0 0 60px #e9827212;
+}
+.gift-preview-scene:after{
+  width:250px;height:250px;left:50%;top:43%;
+  transform:translate(-50%,-50%);
+  border-style:dashed;
+  border-color:#f6c39d18;
+}
+.gift-preview-object{position:relative;z-index:1}
+.gift-preview-aura{
+  background:radial-gradient(ellipse,#e9827240 0%,#f6c39d22 32%,#9b8acb12 58%,transparent 75%);
+  filter:blur(30px);
+}
+.gift-preview-page.is-open .gift-preview-aura{
+  background:radial-gradient(ellipse,#f6c39d88 0%,#e9827244 38%,#9b8acb20 62%,transparent 76%);
+}
+.gift-preview-floor-glow{
+  background:#e9827255;
+  box-shadow:0 0 42px #f6c39d25;
+}
+.gift-preview-caption{
+  z-index:2;
+  color:#f0d9d1;
+  text-shadow:0 2px 12px #09060d;
+}
+.gift-preview-page.is-open .gift-preview-caption{
+  color:#f6c39d;
+  text-shadow:0 0 16px #e9827266;
+}
+.gift-preview-open-button{
+  min-height:52px;
+  border:1px solid #f6c39d;
+  border-radius:12px;
+  background:linear-gradient(115deg,#e98272 0%,#f39a85 52%,#f6c39d 100%);
+  color:#211f2c;
+  box-shadow:0 12px 30px #e9827230,inset 0 1px #fff9,inset 0 -2px #8d4a3940;
+  letter-spacing:.12em;
+}
+.gift-preview-open-button:hover{
+  box-shadow:0 15px 38px #e9827250,inset 0 1px #fff;
+  filter:saturate(1.08) brightness(1.04);
+}
+.gift-preview-safety-note{color:#c8bce0}
+.gift-preview-footer{
+  position:relative;
+  z-index:1;
+  border-top-color:#f6c39d24;
+  color:#c3bdca;
+}
+.gift-preview-footer a{color:#f39a85}
+@media(max-width:520px){
+  .gift-preview-scene{border-radius:22px}
+  .gift-preview-scene:before{width:270px;height:270px}
+  .gift-preview-scene:after{width:215px;height:215px}
+}
+@media(prefers-reduced-motion:reduce){
+  .gift-preview-open-button{transition:none}
+}
