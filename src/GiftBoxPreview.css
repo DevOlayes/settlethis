@@ -74,3 +74,125 @@
 @media(max-width:520px){.gift-preview-page{padding:0 15px 14px}.gift-preview-header{height:64px}.gift-preview-tag{font-size:7px;padding:7px 8px;letter-spacing:.09em}.gift-preview-content{padding:33px 0 14px}.gift-preview-intro{font-size:11px}.gift-preview-scene{height:365px;margin-top:2px}.gift-preview-object{width:100%;height:340px}.gift-preview-gift{transform:scale(.88) rotateX(-7deg) rotateY(-13deg)}.gift-preview-page.is-open .gift-preview-gift{transform:scale(.88) rotateX(-7deg) rotateY(-13deg)}.gift-preview-caption{bottom:11px;font-size:7px}.gift-preview-footer{align-items:flex-start;flex-direction:column;justify-content:center;padding:12px 0 4px;gap:9px}}
 @media(max-width:360px){.gift-preview-gift{transform:scale(.78) rotateX(-7deg) rotateY(-13deg)}.gift-preview-page.is-open .gift-preview-gift{transform:scale(.78) rotateX(-7deg) rotateY(-13deg)}.gift-preview-scene{height:340px}}
 @media(prefers-reduced-motion:reduce){.gift-preview-gift,.gift-preview-page.is-open .gift-preview-sparkle,.gift-preview-page.is-open .gift-preview-bow{animation:none}.gift-preview-box-lid,.gift-preview-prize,.gift-preview-light,.gift-preview-aura,.gift-preview-floor-glow{transition-duration:.01ms}}
+
+
+/* SETHIS gift preview refinement: closed, hinged, unmistakably three-dimensional. */
+.gift-preview-page{
+  --gift-coral:#e98272;
+  --gift-coral-light:#f39a85;
+  --gift-coral-deep:#bd665f;
+  --gift-plum:#150a21;
+  --gift-gold:#f6c39d;
+  background:
+    radial-gradient(ellipse at 50% 43%,#493541 0%,#302b3d 35%,#211f2c 67%,#150a21 100%);
+}
+.gift-preview-tag{color:#d8d1df;border-color:#9b8acb55}
+.gift-preview-eyebrow{color:#f39a85}
+.gift-preview-eyebrow:before,.gift-preview-eyebrow:after{background:#e98272}
+.gift-preview-intro{color:#d8d1df}
+.gift-preview-scene{perspective:1450px;perspective-origin:50% 43%}
+.gift-preview-object{perspective:1450px}
+.gift-preview-gift{
+  width:330px;height:300px;
+  transform:rotateX(-13deg) rotateY(-27deg);
+  transform-style:preserve-3d;
+  filter:drop-shadow(0 34px 26px #08050dcc);
+}
+.gift-preview-box{
+  left:50%;top:111px;width:236px;height:154px;
+  transform:translateX(-50%) translateZ(0);
+  transform-style:preserve-3d;
+}
+.gift-preview-box-front{
+  inset:0;
+  transform:translateZ(83px);
+  background:linear-gradient(110deg,#f39a85 0%,#e98272 43%,#bd665f 100%);
+  border:1px solid #ffd0c477;
+  box-shadow:inset 0 2px 15px #fff3,inset -18px -12px 26px #5a2b3d55;
+}
+.gift-preview-box-side{
+  top:0;left:35px;width:166px;height:154px;
+  transform:rotateY(90deg) translateZ(118px);
+  background:linear-gradient(100deg,#bd665f 0%,#8e4b50 54%,#493541 100%);
+  border:1px solid #f6b29c88;
+  box-shadow:inset -20px 0 28px #21101f66;
+}
+.gift-preview-box-top{
+  left:0;top:-83px;width:236px;height:166px;
+  transform:rotateX(90deg) translateZ(83px);
+  transform-origin:50% 50%;
+  background:linear-gradient(145deg,#f7b39a 0%,#e98272 58%,#bd665f 100%);
+  border:1px solid #ffd0c477;
+  box-shadow:inset 0 8px 25px #fff4,0 2px 8px #21101f33;
+}
+.gift-preview-front-ribbon{background:linear-gradient(90deg,#f9d9b8,#f6c39d 48%,#b97869);box-shadow:0 0 12px #f6c39d55}
+.gift-preview-side-ribbon{background:linear-gradient(90deg,#f6c39d,#d18b78,#98605d)}
+.gift-preview-box-lid{
+  left:-10px;top:-103px;width:256px;height:48px;
+  transform-origin:50% 100%;
+  transform:rotateX(0deg) translateY(0);
+  transform-style:preserve-3d;
+  transition:transform 1.55s cubic-bezier(.18,.82,.16,1);
+  filter:drop-shadow(0 7px 8px #09051099);
+}
+.gift-preview-lid-front{
+  left:0;top:0;width:256px;height:48px;
+  transform:translateZ(93px);
+  background:linear-gradient(100deg,#f39a85,#e98272 55%,#bd665f);
+  border:1px solid #ffd0c4;
+}
+.gift-preview-lid-side{
+  left:43px;top:0;width:170px;height:48px;
+  transform:rotateY(90deg) translateZ(128px);
+  background:linear-gradient(90deg,#bd665f,#75424d);
+  border:1px solid #f6b29c;
+}
+.gift-preview-lid-top{
+  left:0;top:-93px;width:256px;height:186px;
+  transform:rotateX(90deg) translateZ(93px);
+  transform-origin:50% 50%;
+  background:linear-gradient(145deg,#ffc0a5 0%,#f39a85 52%,#bd665f 100%);
+  border:1px solid #ffd4c7;
+  box-shadow:inset 0 8px 25px #fff5,0 3px 12px #21101f44;
+}
+.gift-preview-lid-ribbon{background:linear-gradient(90deg,#fff0d8,#f6c39d 52%,#b97869)}
+.gift-preview-bow{filter:drop-shadow(0 5px 5px #24101f66)}
+.gift-preview-light{background:radial-gradient(ellipse,#fff0c4 0%,#f6c39d88 35%,#e9827222 60%,transparent 74%)}
+.gift-preview-prize{
+  border-color:#f6c39d99;
+  background:linear-gradient(145deg,#493541f5,#211f2cf7);
+  box-shadow:0 18px 44px #08050dcc,0 0 34px #f6c39d55,inset 0 1px #fff5;
+}
+.gift-preview-prize strong{color:#fff}
+.gift-preview-prize strong small,.gift-preview-prize-star{color:#f6c39d}
+.gift-preview-prize em{color:#f39a85}
+.gift-preview-page.is-open .gift-preview-box-lid{
+  transform:translateY(-2px) rotateX(-118deg);
+}
+.gift-preview-aura{background:radial-gradient(circle,#e9827230 0%,#9b8acb18 48%,transparent 72%)}
+.gift-preview-page.is-open .gift-preview-aura{background:radial-gradient(circle,#f6c39d70 0%,#e9827238 43%,transparent 74%)}
+.gift-preview-floor-glow{background:#e9827240}
+.gift-preview-page.is-open .gift-preview-floor-glow{background:#f6c39d88}
+.gift-preview-caption{color:#c8bce0}
+.gift-preview-page.is-open .gift-preview-caption{color:#f39a85}
+.gift-preview-open-button{
+  border-color:#f6b29c;
+  background:linear-gradient(110deg,#e98272,#f39a85 58%,#ffb17f);
+  color:#21101d;
+  box-shadow:0 9px 28px #e9827238,inset 0 1px #fff9;
+}
+.gift-preview-safety-note,.gift-preview-footer{color:#c3bdca}
+.gift-preview-footer{border-top-color:#9b8acb33}
+.gift-preview-footer a{color:#f39a85}
+@keyframes giftPresentFloat{
+  0%,100%{transform:rotateX(-13deg) rotateY(-27deg) translateY(0)}
+  50%{transform:rotateX(-13deg) rotateY(-27deg) translateY(-7px)}
+}
+@media(max-width:520px){
+  .gift-preview-gift{transform:scale(.88) rotateX(-13deg) rotateY(-27deg)}
+  .gift-preview-page.is-open .gift-preview-gift{transform:scale(.88) rotateX(-13deg) rotateY(-27deg)}
+}
+@media(max-width:360px){
+  .gift-preview-gift{transform:scale(.78) rotateX(-13deg) rotateY(-27deg)}
+  .gift-preview-page.is-open .gift-preview-gift{transform:scale(.78) rotateX(-13deg) rotateY(-27deg)}
+}
