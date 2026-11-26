@@ -1238,3 +1238,63 @@
  .runner-overlay:has(.runner-lobby-hero) .runner-entry-note{margin:3px 0;padding:5px 8px}
  .runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button{min-height:36px;height:36px}
 }
+
+
+/* Runner viewport correction: one safe-area inset, centred lobby and result layouts. */
+.runner-overlay{
+  justify-content:center!important;
+  align-items:center!important;
+  padding:clamp(10px,2.2vh,18px) 14px!important;
+}
+.runner-overlay:has(.runner-result-screen){
+  justify-content:center!important;
+  align-items:center!important;
+  padding:10px 12px!important;
+}
+.runner-result-screen{
+  width:min(100%,560px)!important;
+  min-height:100%!important;
+  height:auto!important;
+  margin:auto!important;
+  justify-content:center!important;
+  align-items:stretch!important;
+  gap:clamp(4px,1vh,8px)!important;
+}
+.runner-result-screen>h1{margin:2px 0 4px!important}
+.runner-distance-podium{margin:0 0 3px!important}
+.runner-result-metrics{margin:0 0 3px!important}
+.runner-sethis-earned-card{margin:4px 0!important;padding:9px 12px!important;gap:11px!important}
+.runner-sethis-earned-card .runner-earned-coin{
+  display:block;width:50px;height:40px;flex:0 0 50px;
+  object-fit:contain;border:0;border-radius:0;background:transparent;
+  box-shadow:none;filter:drop-shadow(0 3px 7px #0007);
+}
+.runner-sethis-earned-card .runner-earned-coin path{fill:#E98272}
+.runner-share-trophy{margin:0 0 3px!important;padding:9px 12px!important;gap:5px!important}
+.runner-result-actions{margin-top:0!important}
+@media(max-height:760px){
+ .runner-overlay{padding:8px 12px!important}
+ .runner-overlay:has(.runner-result-screen){padding:6px 10px!important}
+ .runner-result-screen{gap:3px!important}
+ .runner-distance-podium{min-height:82px!important;padding:5px!important}
+ .runner-distance-podium>b{font-size:clamp(38px,9vh,52px)!important}
+ .runner-result-metrics>div{min-height:50px!important;padding:6px 5px!important}
+ .runner-sethis-earned-card{padding:6px 9px!important}
+ .runner-sethis-earned-card .runner-earned-coin{width:42px;height:34px;flex-basis:42px}
+ .runner-share-trophy{padding:6px 10px!important;gap:3px!important}
+ .runner-share-trophy>strong{font-size:clamp(30px,7vh,40px)!important}
+ .runner-result-actions button{min-height:36px!important}
+}
+@media(max-height:620px){
+ .runner-result-screen{gap:2px!important}
+ .runner-result-screen>h1{font-size:25px!important;margin:0!important}
+ .runner-distance-podium{min-height:68px!important}
+ .runner-distance-podium>b{font-size:36px!important}
+ .runner-distance-podium .runner-podium-stars{display:none}
+ .runner-result-metrics>div{min-height:43px!important;padding:4px!important}
+ .runner-sethis-earned-card span{font-size:8px!important}
+ .runner-share-trophy{padding:4px 8px!important}
+ .runner-share-trophy-brand img{width:21px!important;height:21px!important}
+ .runner-share-trophy>strong{font-size:29px!important}
+ .runner-result-actions button{min-height:33px!important}
+}

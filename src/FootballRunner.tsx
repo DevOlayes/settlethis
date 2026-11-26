@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { RunnerEngine } from "./football-runner/RunnerEngine";
+import BrandMark from "./BrandMark";
 import AvatarDiagnostic from "./AvatarDiagnostic";
 import type { TelegramUser } from "./telegram";
 import {
@@ -529,7 +530,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <div><small>RUNS PLAYED</small><b>{preview ? "PRACTICE" : (records.totalRuns + (savingRun ? 1 : 0)).toLocaleString()}</b></div>
                     <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
                   </section>
-                  <section className="runner-sethis-earned-card" aria-label="SETHIS earned this run"><img className="runner-earned-coin" src="/sethis-token-mark.svg" alt="SETHIS coin" /><div><small>SETHIS REWARD</small><strong>+{summary.sethis.toLocaleString()} <em>SETHIS</em></strong><span>{preview?"Practice runs do not earn wallet rewards.":savingRun?"Your reward is being confirmed.":summary.sethis>0?"Credited to your SETHIS wallet.":"No SETHIS reward was earned on this run."}</span></div></section>
+                  <section className="runner-sethis-earned-card" aria-label="SETHIS earned this run"><BrandMark className="runner-earned-coin" /><div><small>SETHIS REWARD</small><strong>+{summary.sethis.toLocaleString()} <em>SETHIS</em></strong><span>{preview?"Practice runs do not earn wallet rewards.":savingRun?"Your reward is being confirmed.":summary.sethis>0?"Credited to your SETHIS wallet.":"No SETHIS reward was earned on this run."}</span></div></section>
                   <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
                   <button type="button" className="runner-share-trophy runner-share-card-button" aria-label="Share this achievement image with your challenge and referral link" onClick={()=>void shareRun()} disabled={preview||savingRun||shareCardBusy}>
                     <span className="runner-share-trophy-brand"><img src="/sethis-token-mark.svg" alt="" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></span>
