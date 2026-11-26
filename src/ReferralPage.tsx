@@ -69,7 +69,7 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
 
   return <div className="referral-page rfx-page">
     <div className="rfx-topline">
-      <button type="button" className="rfx-back" onClick={onBack} aria-label="Back to games"><span aria-hidden="true">←</span> BACK</button>
+      <button type="button" className="rfx-back" onClick={onBack} aria-label="Back to previous section"><span aria-hidden="true">←</span> BACK</button>
       <span className="rfx-brand-label">SETHIS <i/> REFERRALS</span>
     </div>
 
