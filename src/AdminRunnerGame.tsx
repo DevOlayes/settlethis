@@ -1,7 +1,7 @@
 import {useEffect,useState} from "react";
 import "./AdminRunnerGame.css";
 type Settings={entry_cost:number;ball_reward:number;distance_step:number;distance_reward:number;points_threshold_one:number;points_reward_one:number;points_threshold_two:number;points_reward_two:number;per_run_cap:number;daily_cap:number;active_player_run_threshold:number};
-const defaults:Settings={entry_cost:500,ball_reward:2,distance_step:500,distance_reward:5,points_threshold_one:5000,points_reward_one:10,points_threshold_two:10000,points_reward_two:20,per_run_cap:100,daily_cap:300,active_player_run_threshold:10};
+const defaults:Settings={entry_cost:500,ball_reward:2,distance_step:500,distance_reward:5,points_threshold_one:600,points_reward_one:10,points_threshold_two:1200,points_reward_two:20,per_run_cap:100,daily_cap:300,active_player_run_threshold:10};
 const fields:Array<{key:keyof Settings;label:string;min:number;max:number;hint:string}>=[
  {key:"entry_cost",label:"Daily access price (GT)",min:1,max:100000,hint:"Charged once for daily access; repeat runs remain available during the access period."},
  {key:"ball_reward",label:"SETHIS per football collected",min:0,max:100,hint:"Reward for each validated football collected during a run."},
