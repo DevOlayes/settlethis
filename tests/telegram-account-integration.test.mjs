@@ -181,7 +181,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   env.testDb.prepare("UPDATE runner_game_runs SET started_at=datetime('now','-10 seconds') WHERE id=?")
     .run(runnerStart.data.run_id);
   const runnerFinish = await api(env, "/api/runner/finish", gameInit, "POST", {
-    run_id: runnerStart.data.run_id, distance: 100, points: 1200, footballs: 0
+    run_id: runnerStart.data.run_id, distance: 100, points: 147, footballs: 0
   });
   assert.equal(runnerFinish.response.status, 200);
   assert.equal(runnerFinish.data.saved, true);
