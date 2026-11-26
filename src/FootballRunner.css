@@ -1310,3 +1310,39 @@
 .runner-result-screen>p{flex:0 0 auto}
 @media(max-height:760px){.runner-result-screen{justify-content:flex-start!important;padding-top:3px!important;padding-bottom:6px!important}.runner-result-screen .runner-result-heading{margin-bottom:4px}.runner-result-screen .runner-share-card-button{padding-top:6px!important;padding-bottom:7px!important}}
 @media(max-width:390px){.runner-share-trophy-brand .runner-share-brand-mark{width:24px;height:20px}.runner-result-screen{gap:3px!important}}
+
+
+/* Keep the game viewport anchored: starting a run must not resize/reposition the page. */
+.football-runner-page{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:0!important;
+  max-height:100dvh!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+.football-runner-page,.football-runner-page *{box-sizing:border-box}
+.runner-topbar{flex:0 0 58px;min-height:58px}
+.runner-stage-wrap{
+  flex:1 1 0!important;
+  min-height:0!important;
+  max-height:none!important;
+  height:0;
+  margin-top:8px!important;
+  margin-bottom:0!important;
+}
+.runner-stage{flex:1 1 0!important;min-height:0!important;height:100%;min-width:0}
+.runner-overlay{overflow-y:auto;overscroll-behavior:contain}
+.runner-overlay:has(.runner-result-screen){padding-top:10px!important;padding-bottom:10px!important}
+.runner-result-screen{min-height:0!important}
+.runner-controls{flex:0 0 auto;padding:8px 0 max(8px,env(safe-area-inset-bottom,0px))}
+@media(max-width:540px){
+ .runner-topbar{flex-basis:48px;min-height:48px;height:48px}
+ .runner-stage-wrap{margin-top:5px!important}
+ .runner-stage{min-height:0!important}
+ .runner-controls{padding-top:5px;padding-bottom:max(6px,env(safe-area-inset-bottom,0px))}
+ .runner-overlay{padding:12px!important}
+}
