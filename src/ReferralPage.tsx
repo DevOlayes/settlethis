@@ -54,7 +54,7 @@ export default function ReferralPage({ onBack, showNotice, initialData, initialC
       const result=await response.json();
       if(!response.ok||!result.claimed)throw new Error(result.error||"The referral reward could not be claimed.");
       onCelebrate({amount:Number(result.reward?.amount)||0,token:"SETHIS",source:number(threshold)+" qualified football referrals"});
-      await onRefresh();
+      void onRefresh();
     }catch(error){showNotice(error instanceof Error?error.message:"The referral reward could not be claimed. Please try again.");}
     finally{setClaimingMilestone(null);}
   };
