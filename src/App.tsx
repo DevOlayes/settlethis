@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type CSSProperties } from "react";
+import { Component, lazy, Suspense, useEffect, useState, type CSSProperties, type ErrorInfo, type ReactNode } from "react";
 import { SoccerBall, User, Search, Coins, Gift, Gamepad, Trophy, TaskList, UserPlus, Wallet } from "iconoir-react";
 import BrandMark from "./BrandMark";
 import WalletHelpCentre from "./WalletHelpCentre";
@@ -23,6 +23,27 @@ type CheckinDay={date:string;checked_in:boolean};
 type CheckinState={today:string;days:CheckinDay[];streak:number;total_checkins:number;checked_in_today:boolean};
 
 type Tab = "Games" | "Tasks" | "Rankings" | "Wallet" | "Referrals";
+
+type RunnerLoadBoundaryProps = { onBack: () => void; children: ReactNode };
+type RunnerLoadBoundaryState = { hasError: boolean };
+class RunnerLoadBoundary extends Component<RunnerLoadBoundaryProps, RunnerLoadBoundaryState> {
+  state: RunnerLoadBoundaryState = { hasError: false };
+  static getDerivedStateFromError(): RunnerLoadBoundaryState { return { hasError: true }; }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("Football Runner failed while loading.", error, info.componentStack);
+  }
+  render() {
+    if (this.state.hasError) return <div className="runner-load-failure" role="alert">
+      <span className="runner-overline">FOOTBALL RUNNER</span>
+      <h2>The game couldn't finish loading.</h2>
+      <p>Check your connection and reload the game. Your wallet and game records have not been changed.</p>
+      <button type="button" onClick={() => window.location.reload()}>RELOAD GAME</button>
+      <button type="button" className="runner-load-back" onClick={this.props.onBack}>BACK TO GAMES</button>
+    </div>;
+    return this.props.children;
+  }
+}
+
 const onboardingStories=[
  {title:"Football has a new home.",body:"SETHIS is a growing arena of football games and challenges. Your first test? Mystery Footballer.",label:"PLAY · COMPETE · RETURN",detail:"Choose between Mystery Footballer and Football Runner, then build your game record."},
  {title:"Five questions. One perfect set.",body:"Choose Easy, Medium or Hard and answer all five multiple-choice questions. Get every answer right to earn the full difficulty reward.",label:"MYSTERY FOOTBALLER",detail:"Five questions. Four options each. One perfect set earns the full reward."},
@@ -201,7 +222,7 @@ const refreshTasks=()=>{const initData=window.Telegram?.WebApp?.initData;if(!tel
       <button className="profile-dot" title={telegramUser ? (telegramUser.username ? `@${telegramUser.username}` : telegramUser.first_name) : "Guest"} aria-label="Open profile" onClick={() => {if(telegramUser){setProfileOpen(true);void loadProfile();}else showNotice("Open Settle This! inside Telegram to create your football profile.");}}>{telegramUser?.photo_url ? <img className="telegram-avatar" src={telegramUser.photo_url} alt="" referrerPolicy="no-referrer" /> : <span>{telegramUser?.first_name?.slice(0, 1).toUpperCase() || "G"}</span>}</button>
     </div></header>}
     <main className={"main-content"+(activeGame==="runner"?" main-content-runner":"")}>
-      {activeGame==="runner" ? <Suspense fallback={<div className="telegram-app-loading"><div><h1>Preparing the pitch</h1><p>Loading Football Runner…</p></div></div>}><FootballRunner telegramUser={telegramUser} onBack={()=>setActiveGame(null)}/></Suspense>
+      {activeGame==="runner" ? <RunnerLoadBoundary onBack={()=>setActiveGame(null)}><Suspense fallback={<div className="telegram-app-loading"><div><h1>Preparing the pitch</h1><p>Loading Football Runner…</p></div></div>}><FootballRunner telegramUser={telegramUser} onBack={()=>setActiveGame(null)}/></Suspense></RunnerLoadBoundary>
        : activeGame==="mystery" ? <MysteryGame telegramUser={telegramUser} onWalletChange={(wallet)=>setWalletBalances(wallet)} showNotice={showNotice} onBack={()=>setActiveGame(null)}/>
        : <>
       {tab === "Games" && <GamesHome onSelect={(game)=>setActiveGame(game)}/>}
