@@ -196,3 +196,22 @@
   .gift-preview-gift{transform:scale(.78) rotateX(-13deg) rotateY(-27deg)}
   .gift-preview-page.is-open .gift-preview-gift{transform:scale(.78) rotateX(-13deg) rotateY(-27deg)}
 }
+
+
+/* True 3D WebGL gift stage */
+.gift-preview-scene{height:420px;perspective:none;overflow:visible}
+.gift-preview-object{width:min(100%,440px);height:390px;overflow:visible;transform:none;padding:0;border:0;background:transparent}
+.gift-preview-object:disabled{opacity:1}
+.gift-preview-canvas{display:block;width:100%;height:100%;outline:none}
+.gift-preview-object:focus-visible{outline:2px solid #f6c39d;outline-offset:5px;border-radius:20px}
+.gift-preview-aura{width:360px;height:330px;filter:blur(24px);opacity:.7}
+.gift-preview-floor-glow{bottom:35px;width:290px;height:38px;filter:blur(24px)}
+.gift-preview-page.is-open .gift-preview-floor-glow{width:360px}
+@media(max-width:520px){
+  .gift-preview-scene{height:390px}
+  .gift-preview-object{height:365px;width:100%}
+}
+@media(max-width:360px){
+  .gift-preview-scene{height:365px}
+  .gift-preview-object{height:340px}
+}
