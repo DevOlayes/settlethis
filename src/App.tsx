@@ -365,7 +365,7 @@ function WalletContent({ balances,onWatchAd,adEnabled,adBusy }: { showNotice: (m
     <span className="eyebrow">YOUR GAME BALANCES</span><h2 className="wallet-title">Wallet</h2>
     <div className="wallet-balances wallet-balances-refined">
       <div className="balance-card sethis-card">
-        <div className="sethis-wallet-coin"><span className="sethis-wallet-coin-glow"/><BrandMark className="sethis-wallet-coin-mark"/></div>
+        <div className="sethis-wallet-symbol"><BrandMark className="sethis-wallet-symbol-mark"/></div>
         <div className="sethis-wallet-details"><small>MAIN REWARD TOKEN</small><strong>{balances.sethis.toLocaleString()} <i>SETHIS</i></strong><p>TOTAL SETHIS EARNED</p></div><span className="sethis-wallet-watermark">SETHIS</span>
       </div>
       <div className="balance-card ct-card"><small>GAME ENTRY CURRENCY</small><strong>{balances.ct.toLocaleString()} <i>GT</i></strong><p>Ready for your next game</p></div>
