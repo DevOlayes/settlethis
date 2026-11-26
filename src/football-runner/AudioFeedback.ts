@@ -35,6 +35,7 @@ export class RunnerAudioFeedback {
     if (!enabled) {
       this.running = false;
       this.stepElapsed = 0;
+      this.stopMusic();
       this.updateAmbienceLevel();
       return;
     }
