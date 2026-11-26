@@ -4615,3 +4615,89 @@ button,input,textarea,select,.bottom-nav,.bottom-nav button,.bottom-nav button s
 
 /* Typography is inherited consistently by every main and nested game surface. */
 .app-shell *,.football-runner-page *{font-family:Manrope,Arial,sans-serif!important}
+
+
+/* Onboarding refresh: balanced vertical composition, Wallet palette and its fine pattern */
+.onboarding-overlay{
+  place-items:center!important;
+  padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))!important;
+}
+.onboarding-premium{
+  width:min(520px,100%)!important;
+  height:min(690px,calc(100dvh - max(24px,env(safe-area-inset-top,0px)) - max(24px,env(safe-area-inset-bottom,0px))))!important;
+  min-height:min(570px,calc(100dvh - 24px))!important;
+  max-height:calc(100dvh - max(24px,env(safe-area-inset-top,0px)) - max(24px,env(safe-area-inset-bottom,0px)))!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;
+  padding:clamp(17px,3.2vh,28px) clamp(17px,4vw,28px)!important;
+  border-color:#a895ff66!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,#51417d55 0,transparent 52%),
+    radial-gradient(ellipse at 100% 85%,#e9827220 0,transparent 42%),
+    radial-gradient(#d8c8ff13 .75px,transparent .85px),
+    repeating-linear-gradient(135deg,#ffffff05 0 1px,transparent 1px 13px),
+    linear-gradient(155deg,#242036 0%,#1b1929 58%,#151321 100%)!important;
+  background-size:auto,auto,19px 19px,auto,auto!important;
+  box-shadow:0 28px 90px #000c,inset 0 1px #ffffff14!important;
+}
+.onboarding-topline{flex:0 0 auto;margin-bottom:clamp(12px,2.2vh,20px)!important}
+.onboarding-visual{
+  flex:0 0 auto!important;
+  height:clamp(205px,31vh,258px)!important;
+  min-height:195px!important;
+  margin:0 0 clamp(15px,2.6vh,22px)!important;
+  border:1px solid #a895ff3b!important;border-radius:16px!important;
+  background:
+    radial-gradient(ellipse at 50% 48%,#a895ff20,transparent 62%),
+    radial-gradient(#e6d9ff16 .8px,transparent .9px),
+    repeating-linear-gradient(135deg,#ffffff08 0 1px,transparent 1px 14px),
+    linear-gradient(145deg,#29253d,#1c1a2a 72%,#211b2b)!important;
+  background-size:auto,20px 20px,auto,auto!important;
+  box-shadow:inset 0 1px #ffffff12,0 12px 30px #09081255!important;
+}
+.onboarding-visual:before{background:radial-gradient(circle at 50% 48%,#e9827220,transparent 65%)!important}
+.onboarding-visual svg{width:100%!important;height:160px!important;max-width:190px!important;stroke-width:1.65!important;filter:drop-shadow(0 7px 18px #0008)!important}
+.onboarding-visual-0 svg,.onboarding-visual-3 svg{max-width:178px!important}
+.onboarding-visual-1 .onboarding-mystery-art{
+  width:100%!important;height:100%!important;max-width:100%!important;
+  object-fit:contain!important;object-position:center!important;
+  border-radius:0!important;filter:drop-shadow(0 10px 20px #0009)!important;
+}
+.onboarding-art-backdrop{width:100%;height:100%;position:relative;display:grid;place-items:center;overflow:hidden}
+.onboarding-art-backdrop:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,#a895ff0a,transparent 45%,#e9827210)}
+.onboarding-visual-2 .onboarding-token-coin{width:clamp(118px,20vh,150px)!important;height:clamp(118px,20vh,150px)!important}
+.onboarding-visual-2 .coin-brand-mark{width:62px!important;height:52px!important}
+.onboarding-story-copy{flex:0 0 auto;text-align:center!important;padding:0 5px}
+.onboarding-story-copy h2{
+  max-width:440px;margin:0 auto 9px!important;
+  font-size:clamp(29px,5.2vh,38px)!important;line-height:1.04!important;
+  letter-spacing:-.045em!important;text-align:center!important;color:#fff!important;
+}
+.onboarding-story-copy p{
+  max-width:390px;margin:0 auto!important;font-size:13px!important;
+  line-height:1.55!important;text-align:center!important;color:#d8d2e3!important;
+}
+.onboarding-bottom{flex:0 0 auto;margin-top:clamp(17px,3vh,25px)!important}
+.onboarding-bottom .primary-wide{min-height:46px!important;border-radius:10px!important;background:linear-gradient(110deg,#ff9c83,#e98272)!important;color:#251720!important;box-shadow:0 8px 22px #e9827233!important}
+.onboarding-back{min-height:44px!important;border-radius:10px!important;border-color:#a895ff55!important;background:#28253a!important;color:#eeeafa!important}
+.onboarding-visual-gift{height:clamp(205px,29vh,250px)!important}
+.onboarding-gift-model{max-width:420px!important;filter:drop-shadow(0 18px 24px #07060c77)!important}
+.onboarding-gift-copy h2{font-size:clamp(27px,5.2vh,36px)!important}
+.onboarding-gift-bottom .onboarding-gift-claim-button{min-height:49px!important;background:linear-gradient(110deg,#ff9c83,#e98272)!important;color:#251720!important}
+.onboarding-gift-bottom .gift-once-note{color:#c5bfd3!important}
+.onboarding-visual-gift .welcome-gold-coin{z-index:4}
+@media(max-width:520px){
+  .onboarding-premium{padding:15px 14px!important;min-height:min(550px,calc(100dvh - 24px))!important}
+  .onboarding-topline{margin-bottom:10px!important}
+  .onboarding-premium>.onboarding-visual{height:clamp(190px,29vh,230px)!important;min-height:180px!important;margin-bottom:13px!important}
+  .onboarding-story-copy h2{font-size:clamp(27px,7.5vw,35px)!important;margin-bottom:7px!important}
+  .onboarding-story-copy p{font-size:12px!important;line-height:1.48!important}
+  .onboarding-bottom{margin-top:15px!important}
+}
+@media(max-height:680px){
+  .onboarding-premium{height:calc(100dvh - 16px)!important;min-height:0!important;padding:10px 14px!important}
+  .onboarding-topline{margin-bottom:7px!important}
+  .onboarding-premium>.onboarding-visual{height:clamp(150px,26vh,190px)!important;min-height:145px!important;margin-bottom:9px!important}
+  .onboarding-story-copy h2{font-size:clamp(24px,5vh,31px)!important}
+  .onboarding-story-copy p{font-size:11px!important}
+  .onboarding-bottom{margin-top:10px!important}
+}

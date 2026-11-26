@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
 function buildGift(scene: THREE.Scene) {
   const coral = new THREE.MeshPhysicalMaterial({ color: 0xe98272, roughness: 0.52, metalness: 0, clearcoat: 0.28, clearcoatRoughness: 0.38 });
@@ -11,9 +12,11 @@ function buildGift(scene: THREE.Scene) {
   const darkGold = new THREE.MeshStandardMaterial({ color: 0xb77c61, metalness: 0.55, roughness: 0.3 });
   const box = new THREE.Group();
   scene.add(box);
+  box.scale.set(1.02, 0.86, 0.96);
 
   const addBox = (parent: THREE.Object3D, w: number, h: number, d: number, material: THREE.Material, x: number, y: number, z: number) => {
-    const geometry = new THREE.BoxGeometry(w, h, d);
+    const radius = Math.min(0.045, Math.min(w, h, d) * 0.18);
+    const geometry = new RoundedBoxGeometry(w, h, d, 3, radius);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(x, y, z);
     mesh.castShadow = true;
@@ -249,7 +252,7 @@ export default function GiftBox3D({ opened = false, className = "" }: { opened?:
     // while giving its silhouette the clean, layered feel of the onboarding artwork.
     const camera = new THREE.PerspectiveCamera(31, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
     camera.position.set(3.45, 2.75, 8.1);
-    camera.lookAt(0, 1.28, 0);
+    camera.lookAt(0, 1.12, 0);
     scene.add(new THREE.HemisphereLight(0xffe4d2, 0x24142d, 2.0));
     const key = new THREE.DirectionalLight(0xffd6b4, 3.1);
     key.position.set(-3.5, 7, 5);
@@ -272,10 +275,10 @@ export default function GiftBox3D({ opened = false, className = "" }: { opened?:
       frame = requestAnimationFrame(animate);
       const dt = Math.min((time - (last || time)) / 1000, 0.04); last = time;
       const target = openedRef.current ? 1 : 0;
-      const easing = 1 - Math.exp(-dt * (reducedMotion ? 40 : 3.1));
+      const easing = 1 - Math.exp(-dt * (reducedMotion ? 50 : 16));
       gift.lid.rotation.x += ((target ? gift.lidOpenTarget : 0) - gift.lid.rotation.x) * easing;
       const rewardY = target ? 2.62 : 0.18;
-      gift.reward.position.y += (rewardY - gift.reward.position.y) * (1 - Math.exp(-dt * 2.8));
+      gift.reward.position.y += (rewardY - gift.reward.position.y) * (1 - Math.exp(-dt * 14));
       gift.reward.rotation.y += ((target ? 0.22 : 0) - gift.reward.rotation.y) * easing;
       gift.reward.rotation.z += ((target ? -0.035 : 0) - gift.reward.rotation.z) * easing;
       gift.glow.intensity += ((target ? 5.2 : 0) - gift.glow.intensity) * easing;
