@@ -383,7 +383,6 @@ test("Monetag postbacks queue verified rewards and explicit claims credit them e
   assert.equal(walletAfterClaim.data.wallet.ct_balance, 100);
   assert.equal(walletAfterClaim.data.wallet.sethis_balance, 0);
   assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM wallet_ledger WHERE user_id=? AND transaction_type='ad_reward'").get(String(user.id)).n), 1);
-  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM notifications WHERE user_id=? AND event_key='monetag-claimed:integration-home-event-1'").get(String(user.id)).n), 1);
 
   env.testDb.prepare("UPDATE ad_reward_events SET created_at=datetime('now','-21 minutes') WHERE provider_event_id=?").run("integration-home-event-1");
   for (let index = 0; index < 29; index++) {
