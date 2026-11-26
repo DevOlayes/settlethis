@@ -3891,3 +3891,91 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
  .wallet-balances-refined .sethis-wallet-details>strong{font-size:clamp(18px,5.1vw,25px)}
  .sethis-withdraw-button{min-width:76px;min-height:33px;padding:0 10px;font-size:8px}
 }
+
+
+/* Profile and settings: use the live SETHIS plum, coral and warm-orange palette. */
+.profile-modal{
+  border-color:#9b8acb66;
+  background:
+    radial-gradient(ellipse at 100% 0%,#e9827218,transparent 42%),
+    linear-gradient(145deg,#302b3d 0%,#211f2c 58%,#1b1926 100%);
+  box-shadow:0 24px 70px #000a,inset 0 1px #ffffff12;
+}
+.profile-modal h2{color:#fff}
+.profile-modal .modal-close{
+  border:1px solid #ffffff20;
+  background:#393344;
+  color:#fff;
+}
+.profile-identity{
+  border-color:#e9827255;
+  background:linear-gradient(110deg,#493541,#302b3d 72%);
+}
+.profile-identity img,.profile-identity>span{
+  border:1px solid #e9827277;
+  background:linear-gradient(145deg,#493541,#211f2c);
+  color:#fff;
+}
+.profile-connected{color:#f39a85!important}
+.profile-section-label{
+  border-bottom-color:#9b8acb55;
+  color:#f39a85;
+}
+.profile-stats-grid>div{
+  border-color:#9b8acb44;
+  background:linear-gradient(145deg,#302b3d,#211f2c);
+}
+.profile-stats-grid b{color:#fff}
+.profile-stats-grid small{color:#c8bce0}
+.profile-history-row{
+  border-color:#9b8acb3d;
+  background:linear-gradient(110deg,#302b3d,#211f2c);
+}
+.profile-history-row b{color:#fff}
+.profile-history-row small{color:#c3bdca}
+.profile-history-row>strong.won{color:#f39a85}
+.profile-history-empty{
+  border-color:#9b8acb55;
+  color:#c3bdca;
+}
+.profile-field{color:#f0eaf4}
+.profile-field input,.profile-field select,.profile-field textarea{
+  border-color:#9b8acb66;
+  background:#211f2c;
+  color:#fff;
+}
+.profile-field input::placeholder,.profile-field textarea::placeholder{color:#a99eaf}
+.profile-field input:focus,.profile-field select:focus,.profile-field textarea:focus{
+  outline:0;
+  border-color:#e98272;
+  box-shadow:0 0 0 3px #e9827226;
+}
+.profile-character-count{color:#c8bce0}
+.profile-account-note{
+  border-color:#9b8acb55;
+  background:linear-gradient(110deg,#302b3d,#211f2c);
+}
+.profile-account-note b{color:#f39a85}
+.profile-account-note span{color:#d8d1df}
+.profile-state{color:#f4f1f7}
+.profile-state-spinner{border-top-color:#e98272}
+.profile-modal>.primary-wide{
+  border:1px solid #e98272;
+  background:linear-gradient(135deg,#e98272,#f39a85);
+  color:#fff;
+  box-shadow:0 7px 20px #e9827230,inset 0 1px #ffffff45;
+}
+.runner-load-failure{
+  width:100%;min-height:55dvh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;padding:28px 20px;
+  background:radial-gradient(ellipse at 50% 0%,#493541 0%,#302b3d 42%,#1b1926 100%);
+  color:#fff;text-align:center;
+}
+.runner-load-failure h2{margin:0;font-size:clamp(24px,6vw,34px)}
+.runner-load-failure p{max-width:340px;margin:0 0 6px;color:#d8d1df;font-size:12px;line-height:1.6}
+.runner-load-failure button{
+  width:min(100%,260px);min-height:43px;border:1px solid #e98272;border-radius:10px;
+  background:linear-gradient(135deg,#e98272,#f39a85);color:#fff;
+  font-size:10px;font-weight:900;letter-spacing:.08em;
+}
+.runner-load-failure button.runner-load-back{border-color:#9b8acb66;background:#302b3d;color:#fff}
