@@ -199,7 +199,7 @@ test("Telegram accounts persist independently through onboarding, profile, check
   assert.equal(repeatRunnerStart.response.status, 201);
   assert.equal(repeatRunnerStart.data.daily_access_unlocked, true);
   env.testDb.prepare("UPDATE runner_game_runs SET started_at=datetime('now','-10 seconds') WHERE id=?").run(repeatRunnerStart.data.run_id);
-  const repeatRunnerFinish = await api(env, "/api/runner/finish", gameInit, "POST", { run_id: repeatRunnerStart.data.run_id, distance: 100, points: 1200, footballs: 0 });
+  const repeatRunnerFinish = await api(env, "/api/runner/finish", gameInit, "POST", { run_id: repeatRunnerStart.data.run_id, distance: 100, points: 147, footballs: 0 });
   assert.equal(repeatRunnerFinish.response.status, 200);
   const walletAfterRepeatRun = await api(env, "/api/wallet", gameInit);
   assert.equal(walletAfterRepeatRun.data.wallet.ct_balance, 3000, "repeat runs must not charge another daily access fee");
