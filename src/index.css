@@ -3775,3 +3775,119 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
   .wallet-balances-refined .sethis-wallet-details>strong{font-size:20px}
   .sethis-withdraw-button{min-width:96px;min-height:27px}
 }
+
+
+/* Final wallet polish: restore the compact horizontal SETHIS reward card. */
+.wallet-balances-refined .sethis-card{
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr) auto;
+  grid-template-rows:1fr;
+  align-items:center;
+  column-gap:11px;
+  row-gap:0;
+  min-height:104px;
+  padding:13px 14px;
+  overflow:hidden;
+}
+.wallet-balances-refined .sethis-wallet-symbol{
+  grid-column:1;grid-row:1;
+  width:44px;height:44px;flex-basis:44px;
+  border-radius:13px;
+}
+.wallet-balances-refined .sethis-wallet-symbol-mark{width:33px;height:27px}
+.wallet-balances-refined .sethis-wallet-details{
+  grid-column:2;grid-row:1;min-width:0;gap:5px;
+}
+.wallet-balances-refined .sethis-wallet-details>small{font-size:7px;letter-spacing:.13em}
+.wallet-balances-refined .sethis-wallet-details>strong{
+  font-size:clamp(21px,5.6vw,30px);
+  letter-spacing:-.04em;
+}
+.wallet-balances-refined .sethis-wallet-details>strong i{font-size:9px}
+.wallet-balances-refined .sethis-wallet-details>p{font-size:7px}
+.wallet-balances-refined .sethis-wallet-watermark{right:-5px;bottom:-12px;font-size:43px}
+.sethis-withdraw-button{
+  grid-column:3;grid-row:1;justify-self:end;align-self:center;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:83px;min-height:36px;padding:0 13px;
+  border:1px solid #E98272;border-radius:10px;
+  background:linear-gradient(135deg,#E98272,#F39A85);
+  color:#fff;
+  font:900 9px Manrope,sans-serif;letter-spacing:.09em;
+  box-shadow:0 5px 15px #e9827230,inset 0 1px #ffffff45;
+  cursor:pointer;transition:transform .16s ease,filter .16s ease,box-shadow .16s ease;
+}
+.sethis-withdraw-button:hover{filter:brightness(1.06);box-shadow:0 7px 19px #e9827245,inset 0 1px #ffffff55}
+.sethis-withdraw-button:active{transform:translateY(1px) scale(.98)}
+.sethis-withdraw-button span{display:none}
+
+/* Withdrawal header: modest, balanced logo and lock on one shared row. */
+.withdrawal-modal-brand{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:38px;margin:0 0 17px}
+.withdrawal-modal-brand>svg{display:block;width:35px;height:28px;flex:0 0 35px;object-fit:contain}
+.withdrawal-modal-lock{width:34px;height:34px;flex:0 0 34px;border-radius:10px}
+.withdrawal-modal-lock svg{display:block;width:17px;height:17px}
+.withdrawal-info-modal .withdrawal-balance-note{display:flex;align-items:center;gap:12px}
+.withdrawal-info-modal .withdrawal-balance-note>svg{display:block;width:25px;height:20px;flex:0 0 25px;object-fit:contain}
+
+/* Match the Wallet Help Centre's plum/slate and coral visual language in Game Token top-up. */
+.ct-balance-modal{
+  border:1px solid #9b8acb55;
+  border-radius:20px;
+  background:
+    radial-gradient(ellipse at 100% 0%,#e9827215,transparent 42%),
+    linear-gradient(145deg,#302b3d,#1b1926);
+  box-shadow:0 22px 65px #0009,inset 0 1px #ffffff12;
+}
+.ct-balance-modal .modal-close{
+  border:1px solid #ffffff20;border-radius:50%;
+  background:#302b3d;color:#f4f1f7;
+}
+.ct-topup-emblem{
+  width:49px;height:49px;border:1px solid #e9827266;border-radius:13px;
+  background:linear-gradient(145deg,#493541,#302b3d);
+  color:#E98272;box-shadow:0 7px 20px #0003;
+}
+.ct-topup-hero>.eyebrow{color:#c8bce0!important}
+.ct-topup-hero h2{color:#fff}
+.ct-topup-hero>p{color:#c3bdca}
+.ct-topup-balance{
+  border:1px solid #9b8acb55;border-radius:12px;
+  background:linear-gradient(110deg,#302b3d,#211f2c);
+}
+.ct-topup-balance small{color:#c8bce0}
+.ct-topup-balance b{color:#fff}
+.ct-topup-balance b i{color:#E98272}
+.ct-topup-balance-mark{
+  border:1px solid #9b8acb48;border-radius:11px;
+  background:#302b3d;color:#E98272;
+}
+.ct-balance-modal .ct-balance-ad-card{
+  border:1px solid #9b8acb48;border-radius:14px;
+  background:linear-gradient(145deg,#302b3d,#211f2c);
+}
+.ct-balance-modal .ct-balance-ad-head>div small{color:#c3bdca!important}
+.ct-balance-modal .ct-balance-ad-head>strong{
+  border:1px solid #e9827255;border-radius:9px;
+  background:#3b2930!important;color:#fff!important;
+}
+.ct-topup-play{background:#493541;color:#E98272}
+.ct-topup-action-copy p{color:#e2dce7}
+.ct-balance-modal .ct-ad-progress>div:first-child{color:#c8bce0}
+.ct-balance-modal .ct-ad-progress-track{background:#393344}
+.ct-balance-modal .ct-ad-progress-track span{background:linear-gradient(90deg,#E98272,#F4A18F)!important}
+.ct-balance-modal .ct-ad-status{color:#d8d1df}
+.ct-balance-modal .ct-ad-status button{color:#E98272!important}
+.ct-balance-modal .ct-topup-watch{
+  min-height:47px;border:1px solid #E98272;border-radius:11px;
+  background:linear-gradient(135deg,#E98272,#F39A85)!important;
+  color:#fff!important;font-weight:900;box-shadow:0 7px 20px #e9827230;
+}
+.ct-balance-modal .ct-topup-watch:disabled{background:#594b56!important;color:#e5dfe7!important}
+.ct-topup-footnote{color:#bfb5c9}
+@media(max-width:390px){
+ .wallet-balances-refined .sethis-card{grid-template-columns:38px minmax(0,1fr) auto;column-gap:8px;min-height:98px;padding:11px 10px}
+ .wallet-balances-refined .sethis-wallet-symbol{width:38px;height:38px;flex-basis:38px}
+ .wallet-balances-refined .sethis-wallet-symbol-mark{width:29px;height:23px}
+ .wallet-balances-refined .sethis-wallet-details>strong{font-size:clamp(18px,5.1vw,25px)}
+ .sethis-withdraw-button{min-width:76px;min-height:33px;padding:0 10px;font-size:8px}
+}
