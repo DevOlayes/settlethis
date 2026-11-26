@@ -270,7 +270,7 @@ async function monetagPostback(env, fields, secret = env.MONETAG_POSTBACK_SECRET
   return { response, data: await response.json() };
 }
 
-test("Monetag postbacks enforce secret, valued-event, user, placement, shared cooldown, daily cap and exactly-once wallet notifications", async () => {
+test("Monetag postbacks queue verified rewards and explicit claims credit them exactly once", async () => {
   const env = createEnvironment();
   const user = { id: 710001, first_name: "AdTest", username: "ad_test_member" };
   const initData = signedInitData(user);
@@ -312,7 +312,8 @@ test("Monetag postbacks enforce secret, valued-event, user, placement, shared co
 
   const creditedHome = await monetagPostback(env, payload);
   assert.equal(creditedHome.response.status, 200);
-  assert.deepEqual(creditedHome.data.reward, { token: "CT", amount: 100 });
+  assert.deepEqual(creditedHome.data.reward, { token: "GT", amount: 100 });
+  assert.equal(creditedHome.data.claim_required, true);
   const duplicateHome = await monetagPostback(env, payload);
   assert.equal(duplicateHome.data.accepted, true);
   assert.equal(duplicateHome.data.duplicate, true);
@@ -324,11 +325,25 @@ test("Monetag postbacks enforce secret, valued-event, user, placement, shared co
   });
   assert.equal(blockedTasksDuringSharedCooldown.data.accepted, false);
 
-  const walletAfterHome = await api(env, "/api/wallet", initData);
-  assert.equal(walletAfterHome.data.wallet.ct_balance, 100);
-  assert.equal(walletAfterHome.data.wallet.sethis_balance, 0);
+  const walletBeforeClaim = await api(env, "/api/wallet", initData);
+  assert.equal(walletBeforeClaim.data.wallet.ct_balance, 0);
+  assert.equal(walletBeforeClaim.data.wallet.sethis_balance, 0);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM wallet_ledger WHERE user_id=? AND transaction_type='ad_reward'").get(String(user.id)).n), 0);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM notifications WHERE user_id=? AND event_key='monetag:integration-home-event-1' AND type='ad_reward_ready'").get(String(user.id)).n), 1);
+  const pendingRewards = await api(env, "/api/ads/rewards", initData);
+  assert.equal(pendingRewards.data.rewards.length, 1);
+  assert.equal(pendingRewards.data.rewards[0].reward_token, "GT");
+  const claimedHome = await api(env, "/api/ads/rewards/"+pendingRewards.data.rewards[0].id+"/claim", initData, "POST", {});
+  assert.equal(claimedHome.response.status, 200);
+  assert.equal(claimedHome.data.claimed, true);
+  assert.deepEqual(claimedHome.data.reward, { token: "GT", amount: 100 });
+  const duplicateClaim = await api(env, "/api/ads/rewards/"+pendingRewards.data.rewards[0].id+"/claim", initData, "POST", {});
+  assert.equal(duplicateClaim.response.status, 409);
+  const walletAfterClaim = await api(env, "/api/wallet", initData);
+  assert.equal(walletAfterClaim.data.wallet.ct_balance, 100);
+  assert.equal(walletAfterClaim.data.wallet.sethis_balance, 0);
   assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM wallet_ledger WHERE user_id=? AND transaction_type='ad_reward'").get(String(user.id)).n), 1);
-  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM notifications WHERE user_id=? AND event_key='monetag:integration-home-event-1'").get(String(user.id)).n), 1);
+  assert.equal(Number(env.testDb.prepare("SELECT COUNT(*) AS n FROM notifications WHERE user_id=? AND event_key='monetag-claimed:integration-home-event-1'").get(String(user.id)).n), 1);
 
   env.testDb.prepare("UPDATE ad_reward_events SET created_at=datetime('now','-21 minutes') WHERE provider_event_id=?").run("integration-home-event-1");
   for (let index = 0; index < 29; index++) {
