@@ -3642,3 +3642,86 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .ct-balance-modal .ct-topup-watch:disabled{background:#52665a!important;color:#e1e9e2!important;opacity:.8}
 .ct-topup-footnote{display:block;margin-top:10px;color:#aebdb2;font-size:7px;text-align:center;line-height:1.5}
 @media(max-width:390px){.wallet-balances-refined .sethis-card{gap:11px;padding:15px 12px}.sethis-wallet-coin{width:63px;height:63px;flex-basis:63px}.sethis-wallet-coin-mark{width:36px;height:29px}.wallet-balances-refined .sethis-wallet-details>strong{font-size:27px}.withdrawal-coming-card{gap:9px;padding:12px 10px}.withdrawal-coming-status{font-size:6px}.ct-balance-modal{padding:20px 15px}.ct-topup-hero h2{font-size:24px}}
+
+/* Wallet refinement: compact SETHIS card, approved navy/slate/cyan palette. */
+.wallet-balances-refined .sethis-card{
+  min-height:104px;
+  padding:13px 15px;
+  gap:13px;
+  border:1px solid #31516b;
+  background:
+    radial-gradient(ellipse at 12% 0%,#27d7f222 0,transparent 43%),
+    linear-gradient(125deg,#172b42 0%,#121d2e 62%,#0b1220 100%);
+  box-shadow:inset 0 1px #ffffff12,0 10px 24px #0003;
+}
+.sethis-wallet-symbol{
+  position:relative;
+  z-index:1;
+  flex:0 0 49px;
+  width:49px;
+  height:49px;
+  display:grid;
+  place-items:center;
+  border:1px solid #27d7f255;
+  border-radius:13px;
+  background:linear-gradient(145deg,#203c55,#14263b);
+  box-shadow:inset 0 1px #ffffff18,0 5px 15px #0003;
+}
+.sethis-wallet-symbol-mark{width:35px;height:28px;filter:drop-shadow(0 2px 5px #0005)}
+.sethis-wallet-symbol-mark path{fill:#E98272}
+.wallet-balances-refined .sethis-wallet-details{gap:4px}
+.wallet-balances-refined .sethis-wallet-details>small{color:#75e5f4;font-size:7px}
+.wallet-balances-refined .sethis-wallet-details>strong{font-size:clamp(25px,6.4vw,32px)}
+.wallet-balances-refined .sethis-wallet-details>strong i{color:#27d7f2;font-size:10px}
+.wallet-balances-refined .sethis-wallet-details>p{margin-top:1px;color:#b9c9d9;font-size:7px}
+.sethis-wallet-watermark{right:-5px;bottom:-12px;color:#d9f7ff09;font-size:48px}
+.wallet-balances-refined .ct-card{border-color:#394b65;background:linear-gradient(110deg,#17263b,#111a2a)}
+
+/* Keep withdrawal access in the same SETHIS visual language. */
+.withdrawal-coming-card{
+  border-color:#31516b;
+  background:linear-gradient(110deg,#172b42,#111d2d 72%);
+}
+.withdrawal-lock-icon,.withdrawal-info-mark{
+  border-color:#27d7f244;
+  background:linear-gradient(145deg,#203c55,#14263b);
+  color:#27d7f2;
+}
+.withdrawal-copy small,.withdrawal-coming-status{color:#73dfef}
+.withdrawal-info-modal .withdrawal-balance-note{border-color:#31516b;background:#142238}
+.withdrawal-info-modal .withdrawal-balance-note>svg path{fill:#E98272}
+
+/* GT top-up modal: navy and slate surfaces with electric-cyan details. */
+.ct-balance-modal{
+  border-color:#31516b;
+  background:
+    radial-gradient(ellipse at 12% 0%,#27d7f21c,transparent 42%),
+    linear-gradient(150deg,#14243a,#101b2c 55%,#0b1220);
+}
+.ct-balance-modal .modal-close{background:#1a2b40;color:#eaf8ff;border-color:#36516b}
+.ct-topup-emblem,.ct-balance-ad-head>strong,.ct-topup-play,.ct-topup-balance-mark{
+  border-color:#27d7f255;
+  background:linear-gradient(145deg,#203e56,#172b42);
+  color:#7de9f7;
+}
+.ct-topup-hero>.eyebrow{color:#27d7f2!important}
+.ct-topup-hero>p{color:#c2d2e2}
+.ct-topup-balance{border-color:#31516b;background:linear-gradient(110deg,#192d43,#132238)}
+.ct-topup-balance small{color:#9eb8cd}
+.ct-topup-balance b i{color:#27d7f2}
+.ct-balance-modal .ct-balance-ad-card{border-color:#304d67;background:linear-gradient(145deg,#172b40,#111f31)}
+.ct-balance-modal .ct-balance-ad-head>div small{color:#9ebbd0!important}
+.ct-balance-modal .ct-balance-ad-head>strong{background:#1d3a50!important;color:#8ceaf6!important;border-color:#27d7f255}
+.ct-topup-action-copy p{color:#d5e2ed}
+.ct-balance-modal .ct-ad-progress>div:first-child{color:#b6cadb}
+.ct-balance-modal .ct-ad-progress-track{background:#26394d}
+.ct-balance-modal .ct-ad-progress-track span{background:linear-gradient(90deg,#27d7f2,#75e7f4)!important}
+.ct-balance-modal .ct-ad-status{color:#d2e0ec}
+.ct-balance-modal .ct-ad-status button{color:#27d7f2!important}
+.ct-balance-modal .ct-topup-watch:disabled{background:#304258!important;color:#c5d2de!important}
+.ct-topup-footnote{color:#9eb0c2}
+@media(max-width:390px){
+  .wallet-balances-refined .sethis-card{min-height:96px;padding:11px 12px;gap:10px}
+  .sethis-wallet-symbol{width:44px;height:44px;flex-basis:44px}
+  .sethis-wallet-symbol-mark{width:31px;height:25px}
+}
