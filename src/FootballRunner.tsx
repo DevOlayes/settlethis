@@ -20,19 +20,19 @@ async function createRunnerShareCard(summary:RunnerSummary,playerName:string,ava
   const ctx=context,background=ctx.createLinearGradient(0,0,1200,675);background.addColorStop(0,"#170b21");background.addColorStop(.58,"#382239");background.addColorStop(1,"#1b1324");ctx.fillStyle=background;ctx.fillRect(0,0,1200,675);
   ctx.strokeStyle="rgba(233,130,114,.22)";ctx.lineWidth=2;for(let x=0;x<=1200;x+=100){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,675);ctx.stroke();}for(let y=0;y<=675;y+=90){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(1200,y);ctx.stroke();}
   ctx.strokeStyle="rgba(255,255,255,.16)";ctx.lineWidth=4;ctx.strokeRect(54,54,1092,567);ctx.beginPath();ctx.arc(600,338,180,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(600,60);ctx.lineTo(600,615);ctx.stroke();
-  ctx.fillStyle="#f39a85";ctx.font="900 26px Arial";ctx.fillText("SETHIS  ×  FOOTBALL RUNNER",94,116);
-  ctx.fillStyle="#fff7f5";ctx.font="900 54px Arial";ctx.fillText("RUN COMPLETE.",94,190);
-  ctx.fillStyle="#e5c9c6";ctx.font="700 23px Arial";ctx.fillText("A NEW SCORE IS ON THE BOARD.",96,231);
+  ctx.fillStyle="#f39a85";ctx.font="900 26px Manrope, Arial";ctx.fillText("SETHIS  ×  FOOTBALL RUNNER",94,116);
+  ctx.fillStyle="#fff7f5";ctx.font="900 54px Manrope, Arial";ctx.fillText("RUN COMPLETE.",94,190);
+  ctx.fillStyle="#e5c9c6";ctx.font="700 23px Manrope, Arial";ctx.fillText("A NEW SCORE IS ON THE BOARD.",96,231);
   ctx.save();ctx.beginPath();ctx.arc(160,340,62,0,Math.PI*2);ctx.closePath();ctx.clip();
   let avatarLoaded=false;
   if(avatarUrl){try{const avatar=new Image();avatar.crossOrigin="anonymous";const loaded=new Promise<void>(resolve=>{avatar.onload=()=>resolve();avatar.onerror=()=>resolve();avatar.src=avatarUrl;});await Promise.race([loaded,new Promise<void>(resolve=>window.setTimeout(resolve,1300))]);if(avatar.complete&&avatar.naturalWidth>0){ctx.drawImage(avatar,98,278,124,124);avatarLoaded=true;}}catch{}}
-  if(!avatarLoaded){ctx.fillStyle="#18394b";ctx.fillRect(98,278,124,124);ctx.fillStyle="#27d7f2";ctx.font="900 58px Arial";ctx.textAlign="center";ctx.fillText((playerName.replace(/^@/,"").slice(0,1)||"S").toUpperCase(),160,360);}
-  ctx.restore();ctx.textAlign="left";ctx.fillStyle="#f8fafc";ctx.font="900 30px Arial";ctx.fillText(playerName.slice(0,28),255,326);ctx.fillStyle="#9fb5c7";ctx.font="700 19px Arial";ctx.fillText("IS CHALLENGING YOU TO BEAT THIS RUN",255,362);
-  ctx.fillStyle="#f39a85";ctx.font="900 84px Arial";ctx.fillText(summary.points.toLocaleString(),94,500);ctx.fillStyle="#f3e4e8";ctx.font="900 22px Arial";ctx.fillText("POINTS",98,535);
-  ctx.fillStyle="#f8fafc";ctx.font="900 34px Arial";ctx.fillText(summary.distance.toLocaleString()+" M",680,490);ctx.fillStyle="#b7c9d8";ctx.font="800 18px Arial";ctx.fillText("DISTANCE",684,523);
-  ctx.fillStyle="#f8fafc";ctx.font="900 34px Arial";ctx.fillText(summary.balls.toLocaleString(),930,490);ctx.fillStyle="#b7c9d8";ctx.font="800 18px Arial";ctx.fillText("FOOTBALLS",934,523);
-  ctx.fillStyle="#f39a85";ctx.font="900 25px Arial";ctx.fillText("CAN YOU BEAT ME?",680,580);
-  ctx.fillStyle="#d6e4ee";ctx.font="700 17px Arial";ctx.fillText("OPEN THE CHALLENGE LINK IN THE CAPTION TO PLAY",94,586);
+  if(!avatarLoaded){ctx.fillStyle="#4a3048";ctx.fillRect(98,278,124,124);ctx.fillStyle="#f39a85";ctx.font="900 58px Manrope, Arial";ctx.textAlign="center";ctx.fillText((playerName.replace(/^@/,"").slice(0,1)||"S").toUpperCase(),160,360);}
+  ctx.restore();ctx.textAlign="left";ctx.fillStyle="#f8fafc";ctx.font="900 30px Manrope, Arial";ctx.fillText(playerName.slice(0,28),255,326);ctx.fillStyle="#e5c9c6";ctx.font="700 19px Manrope, Arial";ctx.fillText("IS CHALLENGING YOU TO BEAT THIS RUN",255,362);
+  ctx.fillStyle="#f39a85";ctx.font="900 84px Manrope, Arial";ctx.fillText(summary.points.toLocaleString(),94,500);ctx.fillStyle="#f3e4e8";ctx.font="900 22px Manrope, Arial";ctx.fillText("POINTS",98,535);
+  ctx.fillStyle="#f8fafc";ctx.font="900 34px Manrope, Arial";ctx.fillText(summary.distance.toLocaleString()+" M",680,490);ctx.fillStyle="#e5c9c6";ctx.font="800 18px Manrope, Arial";ctx.fillText("DISTANCE",684,523);
+  ctx.fillStyle="#f8fafc";ctx.font="900 34px Manrope, Arial";ctx.fillText(summary.balls.toLocaleString(),930,490);ctx.fillStyle="#e5c9c6";ctx.font="800 18px Manrope, Arial";ctx.fillText("FOOTBALLS",934,523);
+  ctx.fillStyle="#f39a85";ctx.font="900 25px Manrope, Arial";ctx.fillText("CAN YOU BEAT ME?",680,580);
+  ctx.fillStyle="#f3e4e8";ctx.font="700 17px Manrope, Arial";ctx.fillText("OPEN THE INVITE AND CHALLENGE LINKS TO JOIN & PLAY",94,586);
   const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error("The challenge image could not be generated.")),"image/png",.94));
   return new File([blob],"sethis-football-run-challenge.png",{type:"image/png"});
 }
