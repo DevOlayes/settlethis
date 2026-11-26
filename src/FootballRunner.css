@@ -1176,3 +1176,65 @@
 .runner-earned-logos img:first-child{border-radius:50%}
 .runner-earned-logos img+img{width:38px;height:38px;margin-left:-9px;border-radius:11px}
 @media(max-width:390px){.runner-earned-logos img{width:39px;height:39px}.runner-earned-logos img+img{width:33px;height:33px}}
+
+
+/* Runner polish: compact lobby, clear controls and one SETHIS coin */
+.football-runner-page,.football-runner-page button{font-family:Manrope,Arial,sans-serif}
+.runner-topbar .runner-back-button{width:auto;min-width:94px;height:36px;padding:0 11px;border:1px solid #e98272a6;border-radius:9px;background:linear-gradient(135deg,#3b2635,#241d2b);color:#fff1ed;font-size:8px;font-weight:950;letter-spacing:.09em;white-space:nowrap}
+.runner-topbar .runner-back-button:active{background:#4b2d3a}
+.runner-topbar .runner-sound-toggle{margin-left:auto;flex:0 0 44px;width:44px;height:44px;border:1px solid #ffd0a0;border-radius:13px;background:linear-gradient(145deg,#ffb18e,#e98272 70%,#c95e60);color:#241522;box-shadow:0 0 0 3px #e9827228,0 6px 20px #0006;display:grid;place-items:center}
+.runner-topbar .runner-sound-toggle svg{width:23px;height:23px}
+.runner-topbar .runner-sound-toggle[aria-pressed="false"]{border-color:#a99bad;background:linear-gradient(145deg,#66586d,#3b3345);color:#fff}
+.runner-topbar .runner-sound-toggle:focus-visible,.runner-topbar .runner-back-button:focus-visible{outline:3px solid #ffd0a0;outline-offset:3px}
+.runner-sethis-earned-card{gap:13px}
+.runner-sethis-earned-card .runner-earned-coin{width:54px;height:54px;flex:0 0 54px;object-fit:contain;border:0;border-radius:50%;background:transparent;box-shadow:0 0 0 4px #f39a8520,0 6px 18px #0005}
+.runner-share-card-button{appearance:none;-webkit-appearance:none;cursor:pointer;font:inherit;color:inherit;text-align:center}
+.runner-share-card-button:disabled{opacity:.7;cursor:wait}
+.runner-share-card-button:focus-visible{outline:3px solid #f3b49d;outline-offset:4px}
+.runner-share-card-button:active:not(:disabled){transform:translateY(1px);filter:brightness(1.08)}
+.runner-share-card-button .runner-share-card-cta{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:7px;padding:10px 12px;border:1px solid #ffd0a088;border-radius:10px;background:linear-gradient(105deg,#f3a18a,#e98272 60%,#d96e66);color:#241824;box-shadow:0 8px 20px #e9827230}
+.runner-share-card-button .runner-share-card-cta svg{width:18px;height:18px;flex:none}
+.runner-share-card-button .runner-share-card-cta b{font-size:9px;font-weight:1000;letter-spacing:.09em}
+.runner-share-card-button .runner-share-card-cta small{font-size:7px;color:#4a2930;font-weight:800;letter-spacing:.02em}
+.runner-share-card-button .runner-share-trophy-brand{width:100%;justify-content:center}
+.runner-share-card-button .runner-share-trophy-brand img{width:27px;height:27px;object-fit:contain}
+.runner-share-card-button .runner-share-trophy-stars{display:block}
+.runner-share-card-button .runner-share-dare{display:block}
+.runner-share-action{background:linear-gradient(105deg,#f19a88,#e98272 60%,#d96e66)!important;border-color:#ffd0a0!important;color:#241824!important}
+.runner-overlay:has(.runner-lobby-hero){padding:8px 14px 12px;gap:0}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{height:clamp(104px,16vh,142px);margin:0 auto 5px}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-title{margin:0 auto 6px;padding:0 4px}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-title .runner-overline{margin-bottom:4px;font-size:7px}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-title h1{font-size:clamp(32px,8.4vw,47px);line-height:.9}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-title p{margin:6px 0 0;font-size:10px}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-records{gap:7px;margin:2px auto 7px}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-records>div{min-height:58px;padding:8px 10px;border-radius:9px}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-records small{font-size:7px}
+.runner-overlay:has(.runner-lobby-hero) .runner-lobby-records b{font-size:clamp(16px,4.6vw,22px)}
+.runner-overlay:has(.runner-lobby-hero) .runner-entry-note{margin:6px 0;padding:8px 10px;gap:8px}
+.runner-overlay:has(.runner-lobby-hero) .runner-entry-note>b{font-size:9px}
+.runner-overlay:has(.runner-lobby-hero) .runner-entry-note>span{font-size:8px;line-height:1.35}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions{gap:5px}
+.runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button{min-height:42px;height:42px}
+.runner-overlay:has(.runner-lobby-hero)>small{margin-top:6px;font-size:6px;line-height:1.35}
+.runner-overlay:has(.runner-lobby-hero) .runner-instructions{margin:5px 0 7px;padding:9px 10px}
+@media(max-width:540px){
+ .runner-topbar{gap:7px}
+ .runner-topbar .runner-back-button{min-width:88px;height:34px;padding:0 8px;font-size:7px}
+ .runner-topbar .runner-sound-toggle{flex-basis:42px;width:42px;height:42px;margin-left:auto}
+ .runner-overlay:has(.runner-lobby-hero){padding:6px 10px 9px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{height:clamp(96px,15vh,126px);margin-bottom:4px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-title{margin-bottom:4px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-title h1{font-size:clamp(30px,8.2vw,41px)}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-records>div{min-height:52px;padding:7px 8px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-entry-note{margin:5px 0;padding:7px 8px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button{min-height:40px;height:40px}
+}
+@media(max-height:680px){
+ .runner-overlay:has(.runner-lobby-hero){padding-top:4px;padding-bottom:7px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-hero{height:86px;margin-bottom:3px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-title h1{font-size:29px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-lobby-records>div{min-height:45px;padding:5px 8px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-entry-note{margin:3px 0;padding:5px 8px}
+ .runner-overlay:has(.runner-lobby-hero) .runner-ready-actions>button{min-height:36px;height:36px}
+}
