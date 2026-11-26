@@ -3015,6 +3015,8 @@ button:focus-visible,a:focus-visible{outline:2px solid #e98272;outline-offset:3p
 .onboarding-visual svg{position:relative;width:82%;height:118px;fill:none;stroke:#a98acb;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 4px 12px #0005)}
 .onboarding-visual-0 svg{stroke:#ed6b4a;stroke-width:1.65}
 .onboarding-visual-1 svg{stroke:#b69bd5;stroke-width:2}
+.onboarding-visual-1 .onboarding-mystery-art{position:relative;z-index:1;display:block;width:auto;height:calc(100% - 18px);max-width:82%;object-fit:contain;object-position:center;filter:drop-shadow(0 8px 16px #0009);border-radius:8px}
+.onboarding-visual-1:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#21112f35,transparent 25%,transparent 75%,#1d102b45);pointer-events:none}
 .onboarding-visual-3 svg{stroke:#ed6b4a;stroke-width:2}
 .onboarding-visual>span{position:absolute;left:12px;bottom:10px;font-size:7px;font-weight:900;letter-spacing:.16em;color:#b8a9c9}
 .onboarding-token-coin{width:104px;height:104px;position:relative;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 32% 25%,#573678,#392051 55%,#241334 100%);border:2px solid #ed6b4a;box-shadow:0 0 0 5px #ed6b4a15,0 12px 30px #0007,inset 0 0 0 4px #ffffff0b}
