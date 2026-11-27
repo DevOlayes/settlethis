@@ -4734,3 +4734,17 @@ button,input,textarea,select,.bottom-nav,.bottom-nav button,.bottom-nav button s
  .ad-countdown-panel>div b{font-size:21px}
  .ad-countdown-panel>small{max-width:125px;font-size:7px}
 }
+
+/* Single-state rewarded-ad action: one button for watch, claim, or next-ad timer. */
+.task-ad-reward .task-ad-action-stack{width:92px;min-width:92px;flex:0 0 92px;align-items:stretch;gap:5px}
+.task-ad-reward .task-ad-action-stack>.task-reward-amount{display:block;text-align:center;white-space:nowrap}
+.task-ad-reward .task-ad-action-stack>.ad-single-action{
+ box-sizing:border-box;width:100%;min-width:0;height:34px;min-height:34px;padding:0 4px;
+ display:inline-flex;align-items:center;justify-content:center;border:1px solid #ab503a;
+ border-radius:7px;background:linear-gradient(120deg,#f4a28d,#cb4e2e);color:#261c31;
+ font-size:8px;font-weight:900;letter-spacing:.02em;line-height:1;white-space:nowrap;
+ overflow:hidden;text-overflow:clip
+}
+.task-ad-reward .task-ad-action-stack>.ad-single-action:disabled{opacity:.86;color:#f7d8ce}
+@media(max-width:600px){.task-ad-reward .task-ad-action-stack{width:86px;min-width:86px;flex-basis:86px}}
+@media(max-width:370px){.task-ad-reward .task-ad-action-stack{width:78px;min-width:78px;flex-basis:78px}.task-ad-reward .task-ad-action-stack>.ad-single-action{font-size:7px}}
