@@ -15,6 +15,19 @@ test("maps the Tasks valued event to 150 SETHIS", () => {
   if(result.ok) assert.deepEqual(result.value,{eventId:"tasks-event-1",userId:"123456789",zoneId:"12269852",placement:"tasks_sethis",token:"SETHIS",amount:150,balanceField:"sethis_balance",idempotencyKey:"monetag:tasks-event-1"});
 });
 
+test("maps the Football Runner lobby bonus to 100 GT", () => {
+  const result = parseMonetagPostback({ymid:"runner-lobby-1",reward_event_type:"valued",telegram_id:"123456789",zone_id:"12269852",request_var:"runner_lobby_gt"},"12269852");
+  assert.equal(result.ok,true);
+  if(result.ok) assert.deepEqual(result.value,{eventId:"runner-lobby-1",userId:"123456789",zoneId:"12269852",placement:"runner_lobby_gt",token:"CT",amount:100,balanceField:"ct_balance",idempotencyKey:"monetag:runner-lobby-1"});
+});
+
+test("maps the Football Runner completed-run bonus to 2 SETHIS", () => {
+  const event="runner_run_12345678-1234-1234-1234-123456789abc_1_abcdef123456";
+  const result = parseMonetagPostback({ymid:event,reward_event_type:"valued",telegram_id:"123456789",zone_id:"12269852",request_var:"runner_run_sethis"},"12269852");
+  assert.equal(result.ok,true);
+  if(result.ok) assert.deepEqual(result.value,{eventId:event,userId:"123456789",zoneId:"12269852",placement:"runner_run_sethis",token:"SETHIS",amount:2,balanceField:"sethis_balance",idempotencyKey:"monetag:"+event});
+});
+
 test("rejects non-valued events and malformed event or Telegram IDs", () => {
   assert.equal(parseMonetagPostback({ymid:"event-1",reward_event_type:"non_valued",telegram_id:"123456789",zone_id:"12269852",request_var:"home_ct"},"12269852").ok,false);
   assert.equal(parseMonetagPostback({ymid:"bad id",reward_event_type:"valued",telegram_id:"123456789",zone_id:"12269852",request_var:"home_ct"},"12269852").ok,false);
