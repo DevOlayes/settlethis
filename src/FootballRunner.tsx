@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import createAdHandler from "monetag-tg-sdk";
 import { RunnerEngine } from "./football-runner/RunnerEngine";
 import BrandMark from "./BrandMark";
 import AvatarDiagnostic from "./AvatarDiagnostic";
@@ -64,6 +65,12 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [savingRun, setSavingRun] = useState(false);
   const [runSaveStatus, setRunSaveStatus] = useState("");
   const [shareStatus, setShareStatus] = useState("");
+  const [runnerAdZone, setRunnerAdZone] = useState<number | null>(null);
+  const [runnerAdBusy, setRunnerAdBusy] = useState(false);
+  const [runnerAdMessage, setRunnerAdMessage] = useState("");
+  const [runnerLobbyAdAvailable, setRunnerLobbyAdAvailable] = useState(false);
+  const [runnerBonusAdsRemaining, setRunnerBonusAdsRemaining] = useState(0);
+  const [runnerRunAdUsed, setRunnerRunAdUsed] = useState(false);
   const [botUsername,setBotUsername]=useState("");
   const [runnerAccessUnlocked,setRunnerAccessUnlocked]=useState(false);
   const [shareCard,setShareCard] = useState<File|null>(null);
@@ -79,10 +86,9 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     void createRunnerShareCard(summary,playerName,telegramUser?.photo_url).then(file=>{if(!cancelled)setShareCard(file);}).catch(()=>{if(!cancelled)setShareCard(null);}).finally(()=>{if(!cancelled)setShareCardBusy(false);});
     return()=>{cancelled=true;};
   },[summary?.points,summary?.distance,summary?.balls,summary?.sethis,preview,telegramUser?.username,telegramUser?.first_name,telegramUser?.photo_url]);
-  const [rescueBusy, setRescueBusy] = useState(false);
-  const [rescueStatus, setRescueStatus] = useState("");
   const [runAchievement, setRunAchievement] = useState<"first" | "record" | "standard">("standard");
   const activeRunIdRef = useRef<string | null>(null);
+  const completedRunIdRef = useRef<string | null>(null);
   const recordsRef = useRef<RunnerRecords>(EMPTY_RECORDS);
   useEffect(() => { setCollectionPulse(hud.balls); }, [hud.balls]);
   const [instructionsOpen, setInstructionsOpen] = useState(false);
@@ -120,6 +126,20 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   }, [telegramUser, initData, preview]);
 
   useEffect(() => {
+    if (preview || !telegramUser || !initData) return;
+    let active = true;
+    Promise.all([
+      fetch("/api/ads/config", { headers: { "x-telegram-init-data": initData }, cache: "no-store" }).then(r => r.ok ? r.json() : null),
+      fetch("/api/ads/status", { headers: { "x-telegram-init-data": initData }, cache: "no-store" }).then(r => r.ok ? r.json() : null),
+    ]).then(([config, status]) => {
+      if (!active) return;
+      if (config?.enabled && Number.isSafeInteger(config.zone_id) && config.zone_id > 0) setRunnerAdZone(config.zone_id);
+      if (status) { setRunnerLobbyAdAvailable(Boolean(status.runner_lobby_available)); setRunnerBonusAdsRemaining(Math.max(0, Number(status.runner_run_bonus_remaining) || 0)); }
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [preview, telegramUser, initData]);
+
+  useEffect(() => {
     if (avatarDiagnostic) return;
     const host = mountRef.current;
     if (!host) return;
@@ -127,7 +147,10 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     let engine: RunnerEngine;
     try {
       engine = new RunnerEngine(host, {
-        onPhase: setPhase,
+        onPhase: (nextPhase) => {
+          setPhase(nextPhase);
+          if (nextPhase === "collision") window.setTimeout(() => engineRef.current?.endCollision(), 0);
+        },
         onHud: setHud,
         onEnvironmentStatus: (status) => { if (status === "error") { setEngineError(true); setEngineErrorMessage("The 3D game environment could not be initialized."); } },
         onSummary: (result) => {
@@ -137,6 +160,8 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             : result.distance > previousRecords.bestDistance || result.points > previousRecords.bestPoints
               ? "record"
               : "standard");
+          setRunnerRunAdUsed(false);
+          setRunnerAdMessage("");
           setSummary({
             ...result,
             rewardFootball: 0,
@@ -166,6 +191,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
               return data;
             })
             .then((data) => {
+              completedRunIdRef.current = runId;
               activeRunIdRef.current = null;
               const saved = data.records as RunnerRecords;
               const next: RunnerRecords = {
@@ -253,49 +279,64 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     const actions:Record<string,"left"|"right"|"jump"|"slide">={ArrowLeft:"left",ArrowRight:"right",ArrowUp:"jump",ArrowDown:"slide"};
     const action=actions[event.key];if(action){event.preventDefault();completeTutorialAction(action);}
   };
-  const watchToContinue = async () => {
-    if (preview || rescueBusy || !initData || !activeRunIdRef.current) return;
-    setRescueBusy(true);
-    setRescueStatus("Preparing your rewarded ad…");
+  const watchRunnerAd = async (placement: "runner_lobby_gt" | "runner_run_sethis") => {
+    if (preview || runnerAdBusy || !telegramUser || !initData || !runnerAdZone) return;
+    if (placement === "runner_run_sethis" && (!summary || savingRun || !completedRunIdRef.current || runnerRunAdUsed)) return;
+    setRunnerAdBusy(true);
+    if (placement === "runner_run_sethis") setRunnerRunAdUsed(true);
+    setRunnerAdMessage("Checking rewarded-ad availability…");
+    const startedAt = Date.now();
     try {
-      const startResponse = await fetch("/api/runner/rescue/start", {
-        method: "POST",
-        headers: { "content-type": "application/json", "x-telegram-init-data": initData },
-        body: JSON.stringify({ run_id: activeRunIdRef.current }),
-      });
-      const attempt = await startResponse.json();
-      if (!startResponse.ok || typeof attempt.ymid !== "string" || !attempt.zone_id) throw new Error(attempt.error || "A rescue ad is not available right now.");
-      setRescueStatus("Watch the full ad to get back into your run.");
-      const { default: createAdHandler } = await import("monetag-tg-sdk");
-      const showAd = createAdHandler(Number(attempt.zone_id));
-      const result = await showAd({ type: "end", ymid: attempt.ymid, requestVar: "runner_rescue" }) as unknown as { reward_event_type?: string } | undefined;
-      if (result?.reward_event_type !== "valued") throw new Error("The ad was not completed for a valid reward. Your run will now end.");
-      setRescueStatus("Ad completed. Confirming your rescue…");
-      let verified = false;
-      for (let check = 0; check < 30; check += 1) {
-        const statusResponse = await fetch("/api/runner/rescue/status?ymid=" + encodeURIComponent(attempt.ymid), {
-          headers: { "x-telegram-init-data": initData }, cache: "no-store",
-        });
-        if (statusResponse.ok) {
-          const status = await statusResponse.json();
-          if (status.verified === true && status.status === "valued") { verified = true; break; }
-          if (status.status === "non_valued" || status.status === "expired") break;
-        }
-        await new Promise((resolve) => window.setTimeout(resolve, 650));
+      const sr = await fetch("/api/ads/status", { headers: { "x-telegram-init-data": initData }, cache: "no-store" });
+      const status = await sr.json();
+      if (!sr.ok) throw new Error(status.error || "Ad availability could not be checked.");
+      setRunnerLobbyAdAvailable(Boolean(status.runner_lobby_available));
+      setRunnerBonusAdsRemaining(Math.max(0, Number(status.runner_run_bonus_remaining) || 0));
+      if (!status.configured) throw new Error("Rewarded ads are not available right now.");
+      if (Number(status.cooldown_seconds) > 0) throw new Error("Please wait " + Math.ceil(Number(status.cooldown_seconds) / 60) + " minute(s) before watching another ad.");
+      if (Number(status.remaining_today) <= 0) throw new Error("You have reached today's rewarded-ad limit.");
+      if (placement === "runner_lobby_gt" && !status.runner_lobby_available) throw new Error("Your daily lobby ad bonus has already been used.");
+      if (placement === "runner_run_sethis" && Number(status.runner_run_bonus_remaining) <= 0) throw new Error("You have reached today's completed-run ad bonus limit.");
+      const ymid = placement === "runner_run_sethis"
+        ? "runner_run_" + completedRunIdRef.current + "_" + Date.now() + "_" + crypto.randomUUID().replaceAll("-", "")
+        : "runner_lobby_" + telegramUser.id + "_" + Date.now() + "_" + crypto.randomUUID().replaceAll("-", "");
+      const showAd = createAdHandler(runnerAdZone);
+      const result = await showAd({ type: "end", ymid, requestVar: placement }) as { reward_event_type?: string } | undefined;
+      if (result?.reward_event_type !== "valued") {
+        setRunnerAdMessage(result?.reward_event_type === "non_valued" ? "This ad did not qualify for a reward. No bonus was issued." : "Ad closed. No bonus was issued.");
+        if (placement === "runner_run_sethis") setRunnerRunAdUsed(false);
+        return;
       }
-      if (!verified) throw new Error("Monetag has not confirmed this ad yet. Your run cannot resume without confirmation.");
-      setRescueStatus("");
-      engineRef.current?.revive();
+      setRunnerAdMessage("Ad completed. Waiting for server confirmation…");
+      for (let attempt = 0; attempt < 20; attempt += 1) {
+        const rr = await fetch("/api/ads/rewards", { headers: { "x-telegram-init-data": initData }, cache: "no-store" });
+        if (rr.ok) {
+          const data = await rr.json();
+          const reward = Array.isArray(data.rewards) ? data.rewards.find((item: { placement?: string; created_at?: string }) => item.placement === placement && Date.parse(item.created_at || "") >= startedAt - 5000) : null;
+          if (reward?.id) {
+            const cr = await fetch("/api/ads/rewards/" + encodeURIComponent(reward.id) + "/claim", { method: "POST", headers: { "content-type": "application/json", "x-telegram-init-data": initData }, body: "{}" });
+            const claim = await cr.json();
+            if (!cr.ok) throw new Error(claim.error || "The ad reward could not be claimed.");
+            const amount = Math.max(0, Number(claim.reward?.amount) || 0);
+            if (placement === "runner_run_sethis") {
+              setSummary(current => current ? { ...current, sethis: current.sethis + amount } : current);
+              setRunnerAdMessage("Bonus claimed: +" + amount.toLocaleString() + " SETHIS. Your wallet has been updated.");
+            } else {
+              setRunnerLobbyAdAvailable(false);
+              setRunnerAdMessage("Daily bonus claimed: +" + amount.toLocaleString() + " GT. Your wallet has been updated.");
+            }
+            const latest = await fetch("/api/ads/status", { headers: { "x-telegram-init-data": initData }, cache: "no-store" });
+            if (latest.ok) { const v = await latest.json(); setRunnerLobbyAdAvailable(Boolean(v.runner_lobby_available)); setRunnerBonusAdsRemaining(Math.max(0, Number(v.runner_run_bonus_remaining) || 0)); }
+            return;
+          }
+        }
+        await new Promise(resolve => window.setTimeout(resolve, 1500));
+      }
+      setRunnerAdMessage("Your ad was completed. Monetag confirmation is processing. Any verified reward will appear in your pending ad rewards.");
     } catch (error) {
-      setRescueStatus(error instanceof Error ? error.message : "The ad could not be verified. Your run has ended.");
-      engineRef.current?.endCollision();
-    } finally {
-      setRescueBusy(false);
-    }
-  };
-  const endCollision = () => {
-    if (rescueBusy) return;
-    engineRef.current?.endCollision();
+      setRunnerAdMessage(error instanceof Error ? error.message : "The rewarded ad could not be completed.");
+      if (placement === "runner_run_sethis") setRunnerRunAdUsed(false);
+    } finally { setRunnerAdBusy(false); }
   };
 
   const shareRun = async () => {
@@ -467,29 +508,15 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <p>One collision ends the run. Watch the route ahead and keep a safe lane open.</p>
                 </section>}
                 {!preview&&<div className="runner-entry-note"><b>{runnerAccessUnlocked?"ACCESS UNLOCKED TODAY":"500 GT DAILY ACCESS"}</b><span>{runnerAccessUnlocked?"Repeat runs are free for the rest of today.":"Pay once to unlock unlimited runs for today."} Earn SETHIS from verified performance. Less-active accounts have a starter daily limit; consistently active players unlock uncapped performance rewards.</span></div>}
+                {!preview && <button type="button" className="runner-ad-optional" onClick={() => void watchRunnerAd("runner_lobby_gt")} disabled={runnerAdBusy || !runnerLobbyAdAvailable || !runnerAdZone}>{runnerAdBusy ? "OPENING REWARDED AD…" : runnerLobbyAdAvailable ? "▶  WATCH AD · GET 100 GT" : "DAILY AD BONUS CLAIMED"}</button>}
+                {runnerAdMessage && phase === "ready" && <p className="runner-ad-status" role="status">{runnerAdMessage}</p>}
                 <div className="runner-ready-actions">
                   <button onClick={requestStart} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"START RUN"}</button>
                   <button className="runner-secondary" onClick={() => setInstructionsOpen((open) => !open)} aria-expanded={instructionsOpen}>{instructionsOpen ? "HIDE INSTRUCTIONS" : "HOW TO PLAY"}</button>
                 </div>
                 <small>SWIPE LEFT OR RIGHT TO CHANGE LANES · UP TO JUMP · DOWN TO SLIDE</small>
               </>}
-              {phase === "collision" && <>
-                <div className="runner-collision-panel">
-                  <span className="runner-overline">COLLISION · YOUR RUN IS STILL HERE</span>
-                  <div className="runner-rescue-emblem" aria-hidden="true">▶</div>
-                  <h1>DON’T CALL IT YET.</h1>
-                  <p>Your distance, score and collected footballs are ready to carry on. Complete a rewarded ad to pick up this same run where you left off.</p>
-                  <div className="runner-collision-actions">
-                    <button className="runner-rescue-primary" onClick={() => void watchToContinue()} disabled={preview || rescueBusy}>
-                      <span className="runner-rescue-button-title">{rescueBusy ? "PREPARING YOUR RESCUE…" : preview ? "WATCH AD IN TELEGRAM" : "WATCH AD & KEEP RUNNING"}</span>
-                      <span className="runner-rescue-button-subtitle">{preview ? "Rewarded rescue is available in the Telegram game" : "Complete one short rewarded ad · Continue this run"}</span>
-                    </button>
-                    <button className="runner-secondary" onClick={endCollision} disabled={rescueBusy}>END RUN</button>
-                  </div>
-                  {rescueStatus && <small className="runner-rescue-status" role="status">{rescueStatus}</small>}
-                  <small>UP TO 2 RESCUES PER RUN · 10 PER DAY</small>
-                </div>
-              </>}
+              {phase === "collision" && <div className="runner-collision-panel"><span className="runner-overline">RUN COMPLETE</span><h1>THAT’S THE RUN.</h1><p>Your result is being prepared.</p></div>}
               {phase === "paused" && <>
                 <span className="runner-overline">TAKE A BREATHER</span>
                 <h1>Run paused</h1>
@@ -514,6 +541,8 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
                   </section>
                   <section className="runner-sethis-earned-card" aria-label="SETHIS earned this run"><BrandMark className="runner-earned-coin" /><div><small>SETHIS REWARD</small><strong>+{summary.sethis.toLocaleString()} <em>SETHIS</em></strong><span>{preview?"Practice runs do not earn wallet rewards.":savingRun?"Your reward is being confirmed.":summary.sethis>0?"Credited to your SETHIS wallet.":"No SETHIS reward was earned on this run."}</span></div></section>
+                  {!preview && <section className="runner-ad-bonus-card" aria-label="Optional SETHIS ad bonus"><div><small>OPTIONAL EXTRA REWARD</small><strong>+2 SETHIS</strong><span>Watch one rewarded ad to add a little extra to this completed run. Your normal reward is already safe.</span></div><button type="button" onClick={() => void watchRunnerAd("runner_run_sethis")} disabled={runnerAdBusy || runnerRunAdUsed || savingRun || runnerBonusAdsRemaining <= 0 || !runnerAdZone}>{runnerAdBusy ? "VERIFYING…" : runnerRunAdUsed ? "BONUS AD USED" : runnerBonusAdsRemaining <= 0 ? "DAILY LIMIT REACHED" : "▶  WATCH AD"}</button></section>}
+                  {runnerAdMessage && phase === "over" && <p className="runner-ad-status" role="status">{runnerAdMessage}</p>}
                   <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
                   <button type="button" className="runner-share-trophy runner-share-card-button" aria-label="Share this Football Runner challenge" onClick={()=>void shareRun()} disabled={preview||savingRun}>
                     <span className="runner-share-trophy-brand"><BrandMark className="runner-share-brand-mark" /><span>SETHIS FOOTBALL RUNNER</span><b>CHALLENGE</b></span>
