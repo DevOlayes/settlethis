@@ -157,6 +157,7 @@ const refreshTasks=()=>{const initData=window.Telegram?.WebApp?.initData;if(!tel
     const [ctBalanceOpen, setCtBalanceOpen] = useState(false);
   const [rankingView,setRankingView]=useState<"leaderboard"|"game">("leaderboard");
   const [rankingLimit,setRankingLimit]=useState(10);
+  useEffect(()=>{if(tab==="Rankings")setRankingLimit(10);},[tab]);
   const [profileOpen,setProfileOpen]=useState(false);
   const [profileForm,setProfileForm]=useState({country:"",bio:""});
   const [profileBusy,setProfileBusy]=useState(false);
