@@ -1346,3 +1346,16 @@
  .runner-controls{padding-top:5px;padding-bottom:max(6px,env(safe-area-inset-bottom,0px))}
  .runner-overlay{padding:12px!important}
 }
+
+/* Voluntary rewarded-ad placements: lobby and completed-run only. */
+.runner-ad-optional{width:100%;min-height:40px;margin:5px 0 2px;padding:9px 12px;border:1px solid #e9827280;border-radius:10px;background:linear-gradient(110deg,#392630,#292332);color:#ffd0c2;font:900 9px/1.2 Manrope,Arial,sans-serif;letter-spacing:.07em;box-shadow:inset 0 1px #ffffff12}
+.runner-ad-optional:disabled{opacity:.62;cursor:default}
+.runner-ad-status{margin:5px auto!important;max-width:420px;color:#f2c3b8!important;font-size:9px!important;line-height:1.45!important;text-align:center}
+.runner-ad-bonus-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:5px 0;padding:10px 12px;border:1px solid #e9827277;border-radius:11px;background:linear-gradient(110deg,#382630,#282231);text-align:left}
+.runner-ad-bonus-card>div{display:grid;gap:3px;min-width:0}
+.runner-ad-bonus-card small{color:#f39a85;font-size:7px;font-weight:950;letter-spacing:.13em}
+.runner-ad-bonus-card strong{color:#fff;font-size:20px;font-weight:950;line-height:1.1}
+.runner-ad-bonus-card span{color:#d6cbd7;font-size:8px;line-height:1.4}
+.runner-ad-bonus-card button{flex:0 0 auto;min-width:104px;min-height:38px;padding:0 10px;border:1px solid #ffd0a0;border-radius:8px;background:linear-gradient(110deg,#f4a28d,#e98272);color:#261c31;font:950 8px/1.1 Manrope,Arial,sans-serif;letter-spacing:.04em}
+.runner-ad-bonus-card button:disabled{opacity:.58;cursor:default}
+@media(max-width:360px){.runner-ad-bonus-card{gap:7px;padding:8px}.runner-ad-bonus-card button{min-width:88px;font-size:7px}.runner-ad-bonus-card strong{font-size:18px}}
