@@ -318,6 +318,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
             const claim = await cr.json();
             if (!cr.ok) throw new Error(claim.error || "The ad reward could not be claimed.");
             const amount = Math.max(0, Number(claim.reward?.amount) || 0);
+            if (claim.wallet) window.dispatchEvent(new CustomEvent("sethis:wallet-updated", { detail: claim.wallet }));
             if (placement === "runner_run_sethis") {
               setSummary(current => current ? { ...current, sethis: current.sethis + amount } : current);
               setRunnerAdMessage("Bonus claimed: +" + amount.toLocaleString() + " SETHIS. Your wallet has been updated.");
