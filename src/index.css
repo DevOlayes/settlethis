@@ -4705,3 +4705,36 @@ button,input,textarea,select,.bottom-nav,.bottom-nav button,.bottom-nav button s
   .onboarding-story-copy p{font-size:11px!important}
   .onboarding-bottom{margin-top:10px!important}
 }
+
+
+/* Live reward-wait timers */
+.live-cooldown-chip{
+ display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+ width:100%;padding:6px 4px;border:1px solid #e9827266;border-radius:8px;
+ background:linear-gradient(135deg,#392832,#261e2b);box-shadow:inset 0 1px 0 #ffffff0c;
+ text-align:center;line-height:1.1
+}
+.live-cooldown-chip[hidden],.ad-countdown-panel[hidden]{display:none!important}
+.live-cooldown-chip small{font-size:6px!important;font-weight:900;letter-spacing:.1em;color:#e9b4a8!important}
+.live-cooldown-chip b{font:900 13px/1.15 Manrope,Inter,sans-serif!important;letter-spacing:.04em;color:#fff!important;font-variant-numeric:tabular-nums}
+.social-cooldown-chip{padding:5px 3px;border-color:#9b8acb55;background:linear-gradient(135deg,#30283b,#211d2b)}
+.social-cooldown-chip small{font-size:5.5px!important;color:#c6b5dd!important}
+.social-cooldown-chip b{font-size:12px!important;color:#f4f0fa!important}
+.ad-countdown-panel{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 10px;
+ padding:12px 13px;border:1px solid #e9827270;border-radius:11px;
+ background:linear-gradient(115deg,#382630,#28212f);box-shadow:inset 0 1px 0 #ffffff0b
+}
+.ad-countdown-panel>div{display:flex;flex-direction:column;gap:4px}
+.ad-countdown-panel>div span{font-size:7px;font-weight:900;letter-spacing:.12em;color:#e9b4a8}
+.ad-countdown-panel>div b{font:900 23px/1.1 Manrope,Inter,sans-serif;letter-spacing:.04em;color:#fff;font-variant-numeric:tabular-nums}
+.ad-countdown-panel>small{max-width:145px;font-size:8px;line-height:1.5;text-align:right;color:#d3c7d8}
+.tasks-page .task-ad-action-stack .live-cooldown-chip{margin:1px 0}
+.ct-balance-modal .ad-countdown-panel{margin:12px 0;border-color:#e9827270}
+@media(max-width:390px){
+ .live-cooldown-chip{padding:5px 2px}
+ .live-cooldown-chip b{font-size:11px!important}
+ .social-cooldown-chip b{font-size:10px!important}
+ .ad-countdown-panel>div b{font-size:21px}
+ .ad-countdown-panel>small{max-width:125px;font-size:7px}
+}
