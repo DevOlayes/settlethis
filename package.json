@@ -29,5 +29,6 @@
     "typescript": "^5.8.0",
     "wrangler": "^4.0.0",
     "@types/three": "^0.180.0"
-  }
+  },
+  "description": "SETHIS Telegram Mini App"
 }
