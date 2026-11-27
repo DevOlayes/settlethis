@@ -1,4 +1,4 @@
-import { Address, Cell, loadStateInit } from "@ton/core";
+import { Cell, loadStateInit } from "@ton/core";
 import { allocatePoolPrize } from "./settlement";
 import { checkinSummary, lagosDate } from "./checkin";
 import { verifyTelegramInitData } from "./telegram-auth";
