@@ -4769,3 +4769,5 @@ button,input,textarea,select,.bottom-nav,.bottom-nav button,.bottom-nav button s
 .task-ad-reward .task-ad-action-stack>.ad-single-action .ad-action-label{display:block;max-width:100%;white-space:normal;font-size:7px;line-height:1.05}
 .task-ad-reward .task-ad-action-stack>.ad-single-action .ad-action-time{display:block;font-size:10px;line-height:1.05;white-space:nowrap;font-weight:950}
 @media(max-width:370px){.task-ad-reward .task-ad-action-stack>.ad-single-action{font-size:7px}.task-ad-reward .task-ad-action-stack>.ad-single-action .ad-action-label{font-size:6px}.task-ad-reward .task-ad-action-stack>.ad-single-action .ad-action-time{font-size:9px}}
+
+.gram-wallet-task .brand-task-symbol{overflow:hidden;background:#241a32;border:1px solid #ffffff20;border-radius:9px}.gram-wallet-task .brand-task-symbol img{display:block;width:100%;height:100%;object-fit:cover}
