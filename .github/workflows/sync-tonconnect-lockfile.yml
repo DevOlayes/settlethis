@@ -3,8 +3,6 @@ name: Sync TON Connect lockfile
 on:
   push:
     branches: [main]
-    paths:
-      - "package.json"
   workflow_dispatch:
 
 permissions:
