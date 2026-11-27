@@ -1,11 +1,11 @@
-export type MonetagPlacement = "home_ct" | "tasks_sethis";
+export type MonetagPlacement = "home_ct" | "tasks_sethis" | "runner_lobby_gt" | "runner_run_sethis";
 export type MonetagPostback = {
   eventId: string;
   userId: string;
   zoneId: string;
   placement: MonetagPlacement;
   token: "CT" | "SETHIS";
-  amount: 100 | 150;
+  amount: 2 | 100 | 150;
   balanceField: "ct_balance" | "sethis_balance";
   idempotencyKey: string;
 };
@@ -34,6 +34,12 @@ export function parseMonetagPostback(body: Record<string, unknown>, expectedZone
   }
   if (requestVar === "tasks_sethis") {
     return { ok: true, value: { eventId,userId,zoneId,placement:"tasks_sethis",token:"SETHIS",amount:150,balanceField:"sethis_balance",idempotencyKey:"monetag:"+eventId } };
+  }
+  if (requestVar === "runner_lobby_gt") {
+    return { ok: true, value: { eventId,userId,zoneId,placement:"runner_lobby_gt",token:"CT",amount:100,balanceField:"ct_balance",idempotencyKey:"monetag:"+eventId } };
+  }
+  if (requestVar === "runner_run_sethis") {
+    return { ok: true, value: { eventId,userId,zoneId,placement:"runner_run_sethis",token:"SETHIS",amount:2,balanceField:"sethis_balance",idempotencyKey:"monetag:"+eventId } };
   }
   return { ok: false, reason: "Unrecognised reward placement." };
 }
