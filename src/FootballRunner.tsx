@@ -69,6 +69,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
   const [runnerAdBusy, setRunnerAdBusy] = useState(false);
   const [runnerAdMessage, setRunnerAdMessage] = useState("");
   const [runnerLobbyAdAvailable, setRunnerLobbyAdAvailable] = useState(false);
+  const [runnerAdStatusLoaded, setRunnerAdStatusLoaded] = useState(false);
   const [runnerBonusAdsRemaining, setRunnerBonusAdsRemaining] = useState(0);
   const [runnerRunAdUsed, setRunnerRunAdUsed] = useState(false);
   const [botUsername,setBotUsername]=useState("");
@@ -134,7 +135,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
     ]).then(([config, status]) => {
       if (!active) return;
       if (config?.enabled && Number.isSafeInteger(config.zone_id) && config.zone_id > 0) setRunnerAdZone(config.zone_id);
-      if (status) { setRunnerLobbyAdAvailable(Boolean(status.runner_lobby_available)); setRunnerBonusAdsRemaining(Math.max(0, Number(status.runner_run_bonus_remaining) || 0)); }
+      if (status) { setRunnerLobbyAdAvailable(Boolean(status.runner_lobby_available)); setRunnerBonusAdsRemaining(Math.max(0, Number(status.runner_run_bonus_remaining) || 0)); setRunnerAdStatusLoaded(true); }
     }).catch(() => {});
     return () => { active = false; };
   }, [preview, telegramUser, initData]);
@@ -292,6 +293,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
       if (!sr.ok) throw new Error(status.error || "Ad availability could not be checked.");
       setRunnerLobbyAdAvailable(Boolean(status.runner_lobby_available));
       setRunnerBonusAdsRemaining(Math.max(0, Number(status.runner_run_bonus_remaining) || 0));
+      setRunnerAdStatusLoaded(true);
       if (!status.configured) throw new Error("Rewarded ads are not available right now.");
       if (Number(status.cooldown_seconds) > 0) throw new Error("Please wait " + Math.ceil(Number(status.cooldown_seconds) / 60) + " minute(s) before watching another ad.");
       if (Number(status.remaining_today) <= 0) throw new Error("You have reached today's rewarded-ad limit.");
@@ -327,7 +329,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
               setRunnerAdMessage("Daily bonus claimed: +" + amount.toLocaleString() + " GT. Your wallet has been updated.");
             }
             const latest = await fetch("/api/ads/status", { headers: { "x-telegram-init-data": initData }, cache: "no-store" });
-            if (latest.ok) { const v = await latest.json(); setRunnerLobbyAdAvailable(Boolean(v.runner_lobby_available)); setRunnerBonusAdsRemaining(Math.max(0, Number(v.runner_run_bonus_remaining) || 0)); }
+            if (latest.ok) { const v = await latest.json(); setRunnerLobbyAdAvailable(Boolean(v.runner_lobby_available)); setRunnerBonusAdsRemaining(Math.max(0, Number(v.runner_run_bonus_remaining) || 0)); setRunnerAdStatusLoaded(true); }
             return;
           }
         }
@@ -509,7 +511,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                   <p>One collision ends the run. Watch the route ahead and keep a safe lane open.</p>
                 </section>}
                 {!preview&&<div className="runner-entry-note"><b>{runnerAccessUnlocked?"ACCESS UNLOCKED TODAY":"500 GT DAILY ACCESS"}</b><span>{runnerAccessUnlocked?"Repeat runs are free for the rest of today.":"Pay once to unlock unlimited runs for today."} Earn SETHIS from verified performance. Less-active accounts have a starter daily limit; consistently active players unlock uncapped performance rewards.</span></div>}
-                {!preview && <button type="button" className="runner-ad-optional" onClick={() => void watchRunnerAd("runner_lobby_gt")} disabled={runnerAdBusy || !runnerLobbyAdAvailable || !runnerAdZone}>{runnerAdBusy ? "OPENING REWARDED AD…" : runnerLobbyAdAvailable ? "▶  WATCH AD · GET 100 GT" : "DAILY AD BONUS CLAIMED"}</button>}
+                {!preview && <button type="button" className="runner-ad-optional" onClick={() => void watchRunnerAd("runner_lobby_gt")} disabled={runnerAdBusy || !runnerAdStatusLoaded || !runnerLobbyAdAvailable || !runnerAdZone}>{runnerAdBusy ? "OPENING REWARDED AD…" : !runnerAdZone ? "REWARDED ADS UNAVAILABLE" : !runnerAdStatusLoaded ? "CHECKING DAILY BONUS…" : runnerLobbyAdAvailable ? "▶  WATCH AD · GET 100 GT" : "DAILY AD BONUS CLAIMED"}</button>}
                 {runnerAdMessage && phase === "ready" && <p className="runner-ad-status" role="status">{runnerAdMessage}</p>}
                 <div className="runner-ready-actions">
                   <button onClick={requestStart} disabled={startBusy || savingRun}>{savingRun?"SAVING RESULT…":startBusy?"PREPARING RUN…":"START RUN"}</button>
@@ -542,7 +544,7 @@ export default function FootballRunner({ telegramUser, onBack, preview = false }
                     <div><small>FOOTBALLS</small><b>{summary.balls.toLocaleString()}</b></div>
                   </section>
                   <section className="runner-sethis-earned-card" aria-label="SETHIS earned this run"><BrandMark className="runner-earned-coin" /><div><small>SETHIS REWARD</small><strong>+{summary.sethis.toLocaleString()} <em>SETHIS</em></strong><span>{preview?"Practice runs do not earn wallet rewards.":savingRun?"Your reward is being confirmed.":summary.sethis>0?"Credited to your SETHIS wallet.":"No SETHIS reward was earned on this run."}</span></div></section>
-                  {!preview && <section className="runner-ad-bonus-card" aria-label="Optional SETHIS ad bonus"><div><small>OPTIONAL EXTRA REWARD</small><strong>+2 SETHIS</strong><span>Watch one rewarded ad to add a little extra to this completed run. Your normal reward is already safe.</span></div><button type="button" onClick={() => void watchRunnerAd("runner_run_sethis")} disabled={runnerAdBusy || runnerRunAdUsed || savingRun || runnerBonusAdsRemaining <= 0 || !runnerAdZone}>{runnerAdBusy ? "VERIFYING…" : runnerRunAdUsed ? "BONUS AD USED" : runnerBonusAdsRemaining <= 0 ? "DAILY LIMIT REACHED" : "▶  WATCH AD"}</button></section>}
+                  {!preview && <section className="runner-ad-bonus-card" aria-label="Optional SETHIS ad bonus"><div><small>OPTIONAL EXTRA REWARD</small><strong>+2 SETHIS</strong><span>Watch one rewarded ad to add a little extra to this completed run. Your normal reward is already safe.</span></div><button type="button" onClick={() => void watchRunnerAd("runner_run_sethis")} disabled={runnerAdBusy || runnerRunAdUsed || savingRun || !runnerAdStatusLoaded || runnerBonusAdsRemaining <= 0 || !runnerAdZone}>{runnerAdBusy ? "VERIFYING…" : runnerRunAdUsed ? "BONUS AD USED" : !runnerAdZone ? "AD UNAVAILABLE" : !runnerAdStatusLoaded ? "CHECKING…" : runnerBonusAdsRemaining <= 0 ? "DAILY LIMIT REACHED" : "▶  WATCH AD"}</button></section>}
                   {runnerAdMessage && phase === "over" && <p className="runner-ad-status" role="status">{runnerAdMessage}</p>}
                   <p>{preview ? "Practice run only · no account rewards." : savingRun ? "Saving your run…" : runSaveStatus || "Your run has been recorded."}</p>
                   <button type="button" className="runner-share-trophy runner-share-card-button" aria-label="Share this Football Runner challenge" onClick={()=>void shareRun()} disabled={preview||savingRun}>
