@@ -19,7 +19,8 @@
     "monetag-tg-sdk": "^1.0.4",
     "iconoir-react": "^7.12.2",
     "three": "^0.180.0",
-    "react-confetti": "6.4.0"
+    "react-confetti": "6.4.0",
+    "@ton/core": "^0.62.1"
   },
   "devDependencies": {
     "@types/react": "^19.1.0",
