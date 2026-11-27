@@ -4748,3 +4748,11 @@ button,input,textarea,select,.bottom-nav,.bottom-nav button,.bottom-nav button s
 .task-ad-reward .task-ad-action-stack>.ad-single-action:disabled{opacity:.86;color:#f7d8ce}
 @media(max-width:600px){.task-ad-reward .task-ad-action-stack{width:86px;min-width:86px;flex-basis:86px}}
 @media(max-width:370px){.task-ad-reward .task-ad-action-stack{width:78px;min-width:78px;flex-basis:78px}.task-ad-reward .task-ad-action-stack>.ad-single-action{font-size:7px}}
+
+
+/* Social task action: one clear compact state, no secondary timer chips. */
+.tasks-page .social-task-action{box-sizing:border-box;width:88px;min-width:88px;height:34px;min-height:34px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:clip;font:900 8px/1 Manrope,Arial,sans-serif;letter-spacing:.035em;border-radius:8px;}
+.tasks-page .social-task-action:disabled{opacity:.82;cursor:default;}
+.tasks-page .social-task-action:not(:disabled){background:linear-gradient(120deg,#f4a28d,#cb4e2e);border-color:#ab503a;color:#261c31;}
+.tasks-page .task-invite-row .task-reward-button:disabled{opacity:.75;cursor:default;}
+@media(max-width:370px){.tasks-page .social-task-action{width:78px;min-width:78px;font-size:7px;}}
