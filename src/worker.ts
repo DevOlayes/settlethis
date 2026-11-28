@@ -160,7 +160,7 @@ async function handleTelegramBotUpdate(request:Request,env:Env){
  const commandName=command?.[1]?.toLowerCase()||"";
  const payload=command?.[2]||"";
  if(commandName==="start"){
-  const referred=payload.startsWith("ref_")?"Your friend's invite will be carried into your SETHIS registration.\\n\\n":"";
+  const referred=payload.startsWith("ref_")?"Your friend's invite will be carried into your SETHIS registration.\n\n":"";
   const welcome=[
    "⚽ WELCOME TO SETHIS!",
    "Football knowledge. Quick-fire challenges. Bragging rights.",
