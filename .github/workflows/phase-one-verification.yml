@@ -24,6 +24,12 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Audit dependency vulnerabilities
         run: npm audit --audit-level=high
+      - name: Generate padded square TON Connect icon
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin
+          rsvg-convert --width=180 --height=180 public/tonconnect-icon.svg > public/tonconnect-icon.png
+          test -s public/tonconnect-icon.png
       - name: Build application and Worker
         run: npm run build
       - name: Run automated unit tests
