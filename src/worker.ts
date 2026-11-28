@@ -166,6 +166,7 @@ async function handleTelegramBotUpdate(request:Request,env:Env){
    "Football knowledge. Quick-fire challenges. Bragging rights.",
    "Think you know the game? Prove it in Guess Who? — our Mystery Footballer challenge.",
    "Read the clues, make your guesses and build your game record.",
+   "Play. Compete with friends. Earn eligible SETHIS rewards.",
    "Your SETHIS account and game progress live inside Telegram.",
    referred+"Tap below to open the Mini App and get started. 👇"
   ].filter(Boolean).join("\n\n");
