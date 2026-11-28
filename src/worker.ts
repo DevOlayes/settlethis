@@ -160,16 +160,12 @@ async function handleTelegramBotUpdate(request:Request,env:Env){
  const commandName=command?.[1]?.toLowerCase()||"";
  const payload=command?.[2]||"";
  if(commandName==="start"){
-  const referred=payload.startsWith("ref_")?"Your friend's invite will be carried into your SETHIS registration.\n\n":"";
   const welcome=[
    "⚽ WELCOME TO SETHIS!",
-   "Football knowledge. Quick-fire challenges. Bragging rights.",
-   "Think you know the game? Prove it in Guess Who? — our Mystery Footballer challenge.",
-   "Read the clues, make your guesses and build your game record.",
-   "Play. Compete with friends. Earn eligible SETHIS rewards.",
-   "Your SETHIS account and game progress live inside Telegram.",
-   referred+"Tap below to open the Mini App and get started. 👇"
-  ].filter(Boolean).join("\n\n");
+   "Think you know football? Prove it.",
+   "Play exciting football games, crack challenges, compete with friends and earn SETHIS rewards.",
+   "Your football game arena starts here. 👇"
+  ].join("\n\n");
   // A failed membership write must never block the welcome message.
   try {
    await telegramBotCall(env,"sendMessage",{chat_id:chat.id,text:welcome,reply_markup:{inline_keyboard:[[{text:"⚽ OPEN SETHIS & START PLAYING",web_app:{url:SETHIS_MINI_APP_URL}}]]}});
