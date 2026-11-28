@@ -9,7 +9,7 @@ async function request(path:string,init?:RequestInit){
 }
 export default function AdminTelegramBroadcast(){
  const [status,setStatus]=useState<BroadcastStatus|null>(null);
- const [message,setMessage]=useState("");
+ const [message,setMessage]=useState("⚽ WELCOME TO SETHIS!\n\nThink you know football? Prove it. Play Mystery Footballer and Football Runner, build your game record and earn eligible SETHIS rewards.\n\n🎯 START WITH MYSTERY FOOTBALLER\nChoose Easy, Medium or Hard and answer five multiple-choice football questions. Get all five right to earn the full difficulty reward.\n\nReady to play? Open the SETHIS Mini App and join the game. 👇\nhttps://sethis.online/");
  const [loading,setLoading]=useState(true);
  const [sending,setSending]=useState(false);
  const [error,setError]=useState("");
