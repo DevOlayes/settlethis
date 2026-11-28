@@ -161,10 +161,10 @@ async function handleTelegramBotUpdate(request:Request,env:Env){
  const payload=command?.[2]||"";
  if(commandName==="start"){
   const welcome=[
-   "⚽ WELCOME TO SETHIS!",
-   "Think you know football? Prove it.",
-   "Play exciting football games, crack challenges, compete with friends and earn SETHIS rewards.",
-   "Your football game arena starts here. 👇"
+   "⚽ WELCOME TO SETHIS! 🔥",
+   "Think you know football? Prove it. 🏆",
+   "🎮 Play exciting football games, crack challenges, compete with friends 🤝 and earn SETHIS rewards! 🔥",
+   "Your football game arena starts here. 🚀👇"
   ].join("\n\n");
   // A failed membership write must never block the welcome message.
   try {
