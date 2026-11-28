@@ -148,7 +148,7 @@ async function handleTelegramBotUpdate(request:Request,env:Env){
  if(!env.TELEGRAM_BOT_TOKEN)return json({error:"Telegram bot is not configured."},503);
  const expected=(await sha256Hex(env.TELEGRAM_BOT_TOKEN+"|sethis-telegram-webhook-v1")).slice(0,32);
  if(request.headers.get("x-telegram-bot-api-secret-token")!==expected)return json({error:"Webhook signature is invalid."},403);
- try{await ensureTelegramBotSetup(env,true);}catch(error){console.error("telegram_domain_sync_error",error instanceof Error?error.message:String(error));}
+ if(new URL(request.url).hostname!=="sethis.online"){try{await ensureTelegramBotSetup(env,true);}catch(error){console.error("telegram_domain_sync_error",error instanceof Error?error.message:String(error));}}
  const update=await request.json() as {message?:{text?:string;chat?:{id?:number;type?:string};from?:{id?:number;is_bot?:boolean;username?:string;first_name?:string}}};
  const message=update.message,from=message?.from,chat=message?.chat;
  if(!message||!from?.id||!chat?.id||chat.type!=="private"||from.is_bot)return json({ok:true});
