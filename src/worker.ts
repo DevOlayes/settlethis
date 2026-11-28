@@ -157,10 +157,21 @@ async function handleTelegramBotUpdate(request:Request,env:Env){
  const commandName=command?.[1]?.toLowerCase()||"";
  const payload=command?.[2]||"";
  if(commandName==="start"){
-  await env.DB.prepare("INSERT INTO telegram_bot_members(telegram_user_id,username,first_name,broadcast_opt_in,pending_start_payload,start_payload,started_at,stopped_at,last_interaction_at,updated_at) VALUES(?,?,?,1,?,?,CURRENT_TIMESTAMP,NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP) ON CONFLICT(telegram_user_id) DO UPDATE SET username=excluded.username,first_name=excluded.first_name,broadcast_opt_in=1,pending_start_payload=CASE WHEN excluded.pending_start_payload IS NOT NULL THEN excluded.pending_start_payload ELSE telegram_bot_members.pending_start_payload END,start_payload=CASE WHEN excluded.start_payload IS NOT NULL THEN excluded.start_payload ELSE telegram_bot_members.start_payload END,started_at=COALESCE(telegram_bot_members.started_at,CURRENT_TIMESTAMP),stopped_at=NULL,last_interaction_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP").bind(telegramId,from.username||null,from.first_name||"",payload||null,payload||null).run();
-  const referred=payload.startsWith("ref_")?"Your friend's invite has been carried into your SETHIS registration.\n\n":"";
-   const welcome="⚽ WELCOME TO SETHIS!\n\nThink you know football? Prove it.\nPlay Mystery Footballer and Football Runner, build your game record and earn eligible SETHIS rewards.\n\n🎯 START WITH MYSTERY FOOTBALLER\nChoose Easy, Medium or Hard and answer five multiple-choice football questions. Get all five right to earn the full difficulty reward.\n\nReady to play? Open the SETHIS Mini App and join the game. 👇";
-  await telegramBotCall(env,"sendMessage",{chat_id:chat.id,text:welcome,reply_markup:{inline_keyboard:[[{text:"⚽ OPEN SETHIS & START PLAYING",web_app:{url:SETHIS_MINI_APP_URL}}]]}});
+  const referred=payload.startsWith("ref_")?"Your friend's invite will be carried into your SETHIS registration.\\n\\n":"";
+  const welcome="⚽ WELCOME TO SETHIS!\\n\\nThink you know football? Prove it.\\nPlay Mystery Footballer and Football Runner, build your game record and earn eligible SETHIS rewards.\\n\\n🎯 START WITH MYSTERY FOOTBALLER\\nChoose Easy, Medium or Hard and answer five multiple-choice football questions. Get all five right to earn the full difficulty reward.\\n\\n"+referred+"Ready to play? Open the SETHIS Mini App and join the game. 👇";
+  // A failed membership write must never block the welcome message.
+  try {
+   await telegramBotCall(env,"sendMessage",{chat_id:chat.id,text:welcome,reply_markup:{inline_keyboard:[[{text:"⚽ OPEN SETHIS & START PLAYING",web_app:{url:SETHIS_MINI_APP_URL}}]]}});
+  } catch(firstError) {
+   const detail=firstError instanceof Error?firstError.message:String(firstError);
+   if(!/web.?app|inline keyboard|button/i.test(detail))throw firstError;
+   await telegramBotCall(env,"sendMessage",{chat_id:chat.id,text:welcome+"\\n\\nOpen SETHIS: "+SETHIS_MINI_APP_URL,reply_markup:{inline_keyboard:[[{text:"⚽ OPEN SETHIS & START PLAYING",url:SETHIS_MINI_APP_URL}]]}});
+  }
+  try {
+   await env.DB.prepare("INSERT INTO telegram_bot_members(telegram_user_id,username,first_name,broadcast_opt_in,pending_start_payload,start_payload,started_at,stopped_at,last_interaction_at,updated_at) VALUES(?,?,?,1,?,?,CURRENT_TIMESTAMP,NULL,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP) ON CONFLICT(telegram_user_id) DO UPDATE SET username=excluded.username,first_name=excluded.first_name,broadcast_opt_in=1,pending_start_payload=CASE WHEN excluded.pending_start_payload IS NOT NULL THEN excluded.pending_start_payload ELSE telegram_bot_members.pending_start_payload END,start_payload=CASE WHEN excluded.start_payload IS NOT NULL THEN excluded.start_payload ELSE telegram_bot_members.start_payload END,started_at=COALESCE(telegram_bot_members.started_at,CURRENT_TIMESTAMP),stopped_at=NULL,last_interaction_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP").bind(telegramId,from.username||null,from.first_name||"",payload||null,payload||null).run();
+  } catch(error) {
+   console.error("telegram_start_membership_save_failed",telegramId,error instanceof Error?error.message:String(error));
+  }
  }else if(commandName==="stop"){
   await env.DB.prepare("UPDATE telegram_bot_members SET broadcast_opt_in=0,stopped_at=CURRENT_TIMESTAMP,last_interaction_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE telegram_user_id=?").bind(telegramId).run();
   await telegramBotCall(env,"sendMessage",{chat_id:chat.id,text:"You have opted out of SETHIS broadcast messages. You can still open the Mini App and play. Send /start whenever you want to opt in again."});
