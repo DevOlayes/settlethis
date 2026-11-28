@@ -40,79 +40,6 @@
     ]
   },
   {
-    "app_name": "gramwallet",
-    "name": "Gram Wallet",
-    "image": "https://static.gramwallet.io/gramwallet/icon-288.png",
-    "about_url": "https://gramwallet.io/?utm_source=tc",
-    "universal_url": "https://connect.gramwallet.io",
-    "deepLink": "gramwallet-tc://",
-    "bridge": [
-      {
-        "type": "js",
-        "key": "gramwallet"
-      },
-      {
-        "type": "sse",
-        "url": "https://tonconnectbridge.mytonwallet.org/bridge/"
-      }
-    ],
-    "platforms": [
-      "ios",
-      "android",
-      "chrome"
-    ],
-    "features": [
-      {
-        "name": "SendTransaction",
-        "maxMessages": 255,
-        "extraCurrencySupported": false
-      },
-      {
-        "name": "SignData",
-        "types": [
-          "text",
-          "binary",
-          "cell"
-        ]
-      }
-    ]
-  },
-  {
-    "app_name": "telegram-wallet",
-    "name": "Walt (ex. Wallet)",
-    "image": "https://wallet.tg/images/logo-288.png",
-    "about_url": "https://walt.io/",
-    "universal_url": "https://t.me/walt?attach=wallet",
-    "bridge": [
-      {
-        "type": "sse",
-        "url": "https://walletbot.me/tonconnect-bridge/bridge"
-      }
-    ],
-    "platforms": [
-      "ios",
-      "android",
-      "macos",
-      "windows",
-      "linux"
-    ],
-    "features": [
-      {
-        "name": "SendTransaction",
-        "maxMessages": 255,
-        "extraCurrencySupported": true
-      },
-      {
-        "name": "SignData",
-        "types": [
-          "text",
-          "binary",
-          "cell"
-        ]
-      }
-    ]
-  },
-  {
     "app_name": "tonkeeper",
     "name": "Keeper",
     "image": "https://tonkeeper.com/assets/tonconnect-icon.png",
@@ -186,6 +113,79 @@
         "name": "SendTransaction",
         "maxMessages": 255,
         "extraCurrencySupported": false
+      },
+      {
+        "name": "SignData",
+        "types": [
+          "text",
+          "binary",
+          "cell"
+        ]
+      }
+    ]
+  },
+  {
+    "app_name": "gramwallet",
+    "name": "Gram Wallet",
+    "image": "https://static.gramwallet.io/gramwallet/icon-288.png",
+    "about_url": "https://gramwallet.io/?utm_source=tc",
+    "universal_url": "https://connect.gramwallet.io",
+    "deepLink": "gramwallet-tc://",
+    "bridge": [
+      {
+        "type": "js",
+        "key": "gramwallet"
+      },
+      {
+        "type": "sse",
+        "url": "https://tonconnectbridge.mytonwallet.org/bridge/"
+      }
+    ],
+    "platforms": [
+      "ios",
+      "android",
+      "chrome"
+    ],
+    "features": [
+      {
+        "name": "SendTransaction",
+        "maxMessages": 255,
+        "extraCurrencySupported": false
+      },
+      {
+        "name": "SignData",
+        "types": [
+          "text",
+          "binary",
+          "cell"
+        ]
+      }
+    ]
+  },
+  {
+    "app_name": "telegram-wallet",
+    "name": "Walt (ex. Wallet)",
+    "image": "https://wallet.tg/images/logo-288.png",
+    "about_url": "https://walt.io/",
+    "universal_url": "https://t.me/walt?attach=wallet",
+    "bridge": [
+      {
+        "type": "sse",
+        "url": "https://walletbot.me/tonconnect-bridge/bridge"
+      }
+    ],
+    "platforms": [
+      "ios",
+      "android",
+      "macos",
+      "windows",
+      "linux"
+    ],
+    "features": [
+      {
+        "name": "SendTransaction",
+        "maxMessages": 255,
+        "extraCurrencySupported": true
       },
       {
         "name": "SignData",
